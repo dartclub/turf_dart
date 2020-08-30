@@ -313,12 +313,12 @@ class GeometryCollection extends Geometry {
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
-class Feature extends GeoJSONObject {
+class Feature<T extends Geometry> extends GeoJSONObject {
   Feature({this.bbox, this.id, this.properties, this.geometry, this.fields})
       : super.withType(GeoJSONObjectTypes.feature);
   dynamic id;
   Map<String, dynamic> properties;
-  Geometry geometry;
+  T geometry;
   Map<String, dynamic> fields;
   @override
   BBox bbox;
@@ -346,10 +346,10 @@ class Feature extends GeoJSONObject {
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
 @JsonSerializable(explicitToJson: true)
-class FeatureCollection extends GeoJSONObject {
+class FeatureCollection<T extends Geometry> extends GeoJSONObject {
   FeatureCollection({this.bbox, this.features})
       : super.withType(GeoJSONObjectTypes.featureCollection);
-  List<Feature> features;
+  List<Feature<T>> features;
   @override
   BBox bbox;
   factory FeatureCollection.fromJson(Map<String, dynamic> json) =>
