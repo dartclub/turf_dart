@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import '../turf_dart.dart';
+import 'geojson.dart';
 import 'helpers.dart';
 
 num distance(Position from, Position to, [Unit unit]) {

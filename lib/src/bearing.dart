@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import '../turf_dart.dart';
+import 'geojson.dart';
 import 'helpers.dart';
 
 num bearing(Position start, Position end, {calcFinal = false}) {
