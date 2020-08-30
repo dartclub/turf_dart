@@ -3,7 +3,7 @@ import 'dart:math';
 import 'geojson.dart';
 import 'helpers.dart';
 
-num distance(Position from, Position to, [Unit unit]) {
+num distanceRaw(Position from, Position to, [Unit unit]) {
   var dLat = degreesToRadians((to.lat - from.lat));
   var dLon = degreesToRadians((to.lng - from.lng));
   var lat1 = degreesToRadians(from.lat);
@@ -13,3 +13,6 @@ num distance(Position from, Position to, [Unit unit]) {
 
   return radiansToLength(2 * atan2(sqrt(a), sqrt(1 - a)), unit);
 }
+
+num distance(Point from, Point to, [Unit unit]) =>
+    distanceRaw(from.coordinates, to.coordinates, unit);

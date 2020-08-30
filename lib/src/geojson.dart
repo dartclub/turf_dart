@@ -1,26 +1,36 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'geojson.g.dart';
 
-enum GeoJSONObjectType {
-  point,
-  multiPoint,
-  lineString,
-  multiLineString,
-  polygon,
-  multiPolygon,
-  geometryCollection,
-  feature,
-  featureCollection,
+class GeoJSONObjectType {
+  static String none = '';
+  static String point = 'Point';
+  static String multiPoint = 'MultiPoint';
+  static String lineString = 'LineString';
+  static String multiLineString = 'MultiLineString';
+  static String polygon = 'Polygon';
+  static String multiPolygon = 'MultiPolygon';
+  static String geometryCollection = 'GeometryCollection';
+  static String feature = 'Feature';
+  static String featureCollection = 'FeatureCollection';
 }
 
 abstract class GeoJSONObject {
-  // TODO implement type
+  @JsonKey(ignore: true)
+  final String type;
+  GeoJSONObject.withType(this.type);
+  Map<String, dynamic> serialize(Map<String, dynamic> map) => {
+        'type': type,
+        ...map,
+      };
+  toJson();
 }
 
 class _Coordinates extends GeoJSONObject implements Iterable<double> {
   final List<double> _items;
 
-  _Coordinates(List<double> list) : _items = List.of(list, growable: false);
+  _Coordinates(List<double> list)
+      : _items = List.of(list, growable: false),
+        super.withType(GeoJSONObjectType.none);
 
   @override
   double get first => _items?.first;
@@ -130,6 +140,7 @@ class _Coordinates extends GeoJSONObject implements Iterable<double> {
   @override
   Iterable<T> whereType<T>() => _items.whereType<T>();
 
+  @override
   List<double> toJson() => _items;
 }
 
@@ -181,55 +192,127 @@ class BBox extends _Coordinates {
   double get alt2 => _items[25];
 }
 
-abstract class Geometry extends GeoJSONObject {}
+abstract class Geometry extends GeoJSONObject {
+  Geometry.withType(String type) : super.withType(type);
+}
 
 abstract class GeometryType<T> extends Geometry {
   T coordinates;
 
-  GeometryType(this.coordinates);
+  GeometryType.withType(this.coordinates, String type) : super.withType(type);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Point extends GeometryType<Position> {
-  Point({coordinates}) : super(coordinates);
+  Point({Position coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.point);
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
-  Map<String, dynamic> toJson() => _$PointToJson(this);
+  @override
+  Map<String, dynamic> toJson() => super.serialize(_$PointToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true)
 class MultiPoint extends GeometryType<List<Position>> {
-  MultiPoint({coordinates}) : super(coordinates);
+  MultiPoint({List<Position> coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.multiPoint);
+  factory MultiPoint.fromJson(Map<String, dynamic> json) =>
+      _$MultiPointFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => super.serialize(_$MultiPointToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true)
 class LineString extends GeometryType<List<Position>> {
-  LineString({coordinates}) : super(coordinates);
+  LineString({List<Position> coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.lineString);
+  factory LineString.fromJson(Map<String, dynamic> json) =>
+      _$LineStringFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => super.serialize(_$LineStringToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true)
 class MultiLineString extends GeometryType<List<List<Position>>> {
-  MultiLineString({coordinates}) : super(coordinates);
+  MultiLineString({List<List<Position>> coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.multiLineString);
+  factory MultiLineString.fromJson(Map<String, dynamic> json) =>
+      _$MultiLineStringFromJson(json);
+  @override
+  Map<String, dynamic> toJson() =>
+      super.serialize(_$MultiLineStringToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true)
 class Polygon extends GeometryType<List<List<Position>>> {
-  Polygon({coordinates}) : super(coordinates);
+  Polygon({List<List<Position>> coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.polygon);
+  factory Polygon.fromJson(Map<String, dynamic> json) =>
+      _$PolygonFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => super.serialize(_$PolygonToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true)
 class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
-  MultiPolygon({coordinates}) : super(coordinates);
+  MultiPolygon({List<List<List<Position>>> coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.multiPolygon);
+  factory MultiPolygon.fromJson(Map<String, dynamic> json) =>
+      _$MultiPolygonFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));
 }
 
+@JsonSerializable(explicitToJson: true, createFactory: false)
 class GeometryCollection extends Geometry {
-  GeometryCollection({this.geometries});
+  GeometryCollection({this.geometries})
+      : super.withType(GeoJSONObjectType.geometryCollection);
 
   List<GeometryType> geometries;
+
+  @override
+  Map<String, dynamic> toJson() =>
+      super.serialize(_$GeometryCollectionToJson(this));
 }
 
 class Feature extends GeoJSONObject {
-  Feature({this.id, this.properties, this.geometry});
+  Feature({this.id, this.properties, this.geometry, this.fields})
+      : super.withType(GeoJSONObjectType.feature);
   dynamic id;
   Map<String, dynamic> properties;
   Geometry geometry;
+  Map<String, dynamic> fields;
+  factory Feature.fromJson(Map<String, dynamic> json) => Feature(
+        id: json['id'],
+        geometry: json['geometry'],
+        properties: json['properties'],
+        fields: Map.fromEntries(
+          json.entries.where(
+            (el) =>
+                el.key != 'geometry' &&
+                el.key != 'properties' &&
+                el.key != 'id',
+          ),
+        ),
+      );
+  @override
+  Map<String, dynamic> toJson() => super.serialize({
+        ...fields,
+        'id': id,
+        'geometry': geometry.toJson(),
+        'properties': properties,
+      });
 }
 
+@JsonSerializable(explicitToJson: true)
 class FeatureCollection extends GeoJSONObject {
-  FeatureCollection({this.features});
+  FeatureCollection({this.features})
+      : super.withType(GeoJSONObjectType.featureCollection);
   List<Feature> features;
+
+  factory FeatureCollection.fromJson(Map<String, dynamic> json) =>
+      _$FeatureCollectionFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() =>
+      super.serialize(_$FeatureCollectionToJson(this));
 }

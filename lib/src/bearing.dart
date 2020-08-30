@@ -3,10 +3,10 @@ import 'dart:math';
 import 'geojson.dart';
 import 'helpers.dart';
 
-num bearing(Position start, Position end, {calcFinal = false}) {
+num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
   // Reverse calculation
   if (calcFinal == true) {
-    return calculateFinalBearing(start, end);
+    return calculateFinalBearingRaw(start, end);
   }
 
   num lon1 = degreesToRadians(start.lng);
@@ -19,9 +19,15 @@ num bearing(Position start, Position end, {calcFinal = false}) {
   return radiansToDegrees(atan2(a, b));
 }
 
-num calculateFinalBearing(Position start, Position end) {
+num bearing(Point start, Point end, {bool calcFinal = false}) =>
+    bearingRaw(start.coordinates, end.coordinates, calcFinal: calcFinal);
+
+num calculateFinalBearingRaw(Position start, Position end) {
   // Swap start & end
-  var bear = bearing(end, start);
+  var bear = bearingRaw(end, start);
   bear = (bear + 180) % 360;
   return bear;
 }
+
+num calculateFinalBearing(Point start, Point end) =>
+    calculateFinalBearingRaw(start.coordinates, end.coordinates);
