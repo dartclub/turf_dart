@@ -1,22 +1,7 @@
-A library for Dart developers.
+# turf.dart
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+A [turf.js](https://github.com/Turfjs/turf)-like geospatial analysis library working with GeoJSON, written in pure Dart.
 
-## Usage
+This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant object-representation and serialization for GeoJSON.
 
-A simple usage example:
-
-```dart
-import 'package:turf_dart/turf_dart.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
