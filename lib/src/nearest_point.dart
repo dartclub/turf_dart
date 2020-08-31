@@ -16,9 +16,7 @@ Feature<Point> nearestPoint(
     }
   }
 
-  // TODO implement clone function -> Feature<Point>.clone(old) instead of formJson toJson
-
-  nearest = Feature<Point>.fromJson(points.features[bestFeatureIndex].toJson());
+  nearest = points.features[bestFeatureIndex].clone();
   nearest.properties['featureIndex'] = bestFeatureIndex;
   nearest.properties['distanceToPoint'] = minDist;
   return nearest;

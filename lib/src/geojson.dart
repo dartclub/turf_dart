@@ -23,10 +23,11 @@ abstract class GeoJSONObject {
         ...map,
       };
   toJson();
+  GeoJSONObject clone();
 }
 
 /// Coordinate types, following https://tools.ietf.org/html/rfc7946#section-4
-class CoordinateType implements Iterable<num> {
+abstract class CoordinateType implements Iterable<num> {
   final List<num> _items;
 
   CoordinateType(List<num> list) : _items = List.of(list, growable: false);
@@ -134,9 +135,11 @@ class CoordinateType implements Iterable<num> {
   Iterable<T> whereType<T>() => _items.whereType<T>();
 
   List<num> toJson() => _items;
+
+  CoordinateType clone();
 }
 
-/// Position, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.1
+// Position, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.1
 /// Please make sure, you arrange your parameters like this:
 /// 1. Longitude, 2. Latitude, 3. Altitude (optional)
 class Position extends CoordinateType {
@@ -157,6 +160,9 @@ class Position extends CoordinateType {
   num get lng => _items[0];
   num get lat => _items[1];
   num get alt => _items[2];
+
+  @override
+  Position clone() => Position.of(_items);
 }
 
 // Bounding box, as specified here https://tools.ietf.org/html/rfc7946#section-5
@@ -185,6 +191,9 @@ class BBox extends CoordinateType {
   num get lng2 => _items[3];
   num get lat2 => _items[4];
   num get alt2 => _items[5];
+
+  @override
+  BBox clone() => BBox.of(_items);
 }
 
 abstract class Geometry extends GeoJSONObject {
@@ -235,6 +244,10 @@ class Point extends GeometryType<Position> {
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$PointToJson(this));
+
+  @override
+  Point clone() =>
+      Point(coordinates: coordinates?.clone(), bbox: bbox?.clone());
 }
 
 /// MultiPoint, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.3
@@ -248,6 +261,12 @@ class MultiPoint extends GeometryType<List<Position>> {
   BBox bbox;
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPointToJson(this));
+
+  @override
+  MultiPoint clone() => MultiPoint(
+        coordinates: coordinates?.map((e) => e?.clone())?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
 
 /// LineString, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.4
@@ -261,6 +280,11 @@ class LineString extends GeometryType<List<Position>> {
   BBox bbox;
   @override
   Map<String, dynamic> toJson() => super.serialize(_$LineStringToJson(this));
+
+  @override
+  LineString clone() => LineString(
+      coordinates: coordinates?.map((e) => e?.clone())?.toList(),
+      bbox: bbox?.clone());
 }
 
 /// MultiLineString, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.5
@@ -275,6 +299,14 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
   @override
   Map<String, dynamic> toJson() =>
       super.serialize(_$MultiLineStringToJson(this));
+
+  @override
+  MultiLineString clone() => MultiLineString(
+        coordinates: coordinates
+            ?.map((e) => e?.map((e) => e?.clone())?.toList())
+            ?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
 
 /// Polygon, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.6
@@ -288,6 +320,14 @@ class Polygon extends GeometryType<List<List<Position>>> {
   BBox bbox;
   @override
   Map<String, dynamic> toJson() => super.serialize(_$PolygonToJson(this));
+
+  @override
+  Polygon clone() => Polygon(
+        coordinates: coordinates
+            ?.map((e) => e?.map((e) => e?.clone())?.toList())
+            ?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
 
 /// MultiPolygon, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.7
@@ -301,6 +341,15 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
   BBox bbox;
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));
+
+  @override
+  GeoJSONObject clone() => MultiPolygon(
+        coordinates: coordinates
+            ?.map((e) =>
+                e?.map((e) => e?.map((e) => e?.clone())?.toList())?.toList())
+            ?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
 
 /// GeometryCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.8
@@ -322,6 +371,12 @@ class GeometryCollection extends Geometry {
   @override
   Map<String, dynamic> toJson() =>
       super.serialize(_$GeometryCollectionToJson(this));
+
+  @override
+  GeoJSONObject clone() => GeometryCollection(
+        geometries: geometries?.map((e) => e?.clone())?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
@@ -332,6 +387,24 @@ class Feature<T extends Geometry> extends GeoJSONObject {
   Map<String, dynamic> properties;
   T geometry;
   Map<String, dynamic> fields;
+
+  dynamic operator [](String key) {
+    switch (key) {
+      case 'id':
+        return id;
+      case 'properties':
+        return properties;
+      case 'geometry':
+        return geometry;
+      case 'type':
+        return type;
+      case 'bbox':
+        return bbox;
+      default:
+        return fields[key];
+    }
+  }
+
   @override
   BBox bbox;
   factory Feature.fromJson(Map<String, dynamic> json) => Feature(
@@ -354,6 +427,15 @@ class Feature<T extends Geometry> extends GeoJSONObject {
         'geometry': geometry.toJson(),
         'properties': properties,
       });
+
+  @override
+  Feature<T> clone() => Feature<T>(
+        geometry: geometry?.clone(),
+        bbox: bbox?.clone(),
+        fields: Map.of(fields),
+        properties: Map.of(properties),
+        id: id,
+      );
 }
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
@@ -370,4 +452,10 @@ class FeatureCollection<T extends Geometry> extends GeoJSONObject {
   @override
   Map<String, dynamic> toJson() =>
       super.serialize(_$FeatureCollectionToJson(this));
+
+  @override
+  FeatureCollection<T> clone() => FeatureCollection(
+        features: features?.map((e) => e?.clone())?.toList(),
+        bbox: bbox?.clone(),
+      );
 }
