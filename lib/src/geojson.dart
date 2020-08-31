@@ -147,6 +147,13 @@ class Position extends CoordinateType {
   Position.of(List<num> list) : super(list);
   factory Position.fromJson(List<num> list) => Position.of(list);
 
+  // TODO implement override operators +, -, * with vector operations
+
+  @override
+  bool operator ==(dynamic other) => other is Position
+      ? lat == other.lat && lng == other.lng && alt == other.alt
+      : false;
+
   num get lng => _items[0];
   num get lat => _items[1];
   num get alt => _items[2];
@@ -221,6 +228,11 @@ class Point extends GeometryType<Position> {
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
   @override
   BBox bbox;
+
+  @override
+  bool operator ==(dynamic other) =>
+      other is Point ? coordinates == other.coordinates : false;
+
   @override
   Map<String, dynamic> toJson() => super.serialize(_$PointToJson(this));
 }

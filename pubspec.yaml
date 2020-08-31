@@ -1,6 +1,6 @@
 name: turf
 description: A turf.js-like geospatial analysis library working with GeoJSON, written in pure Dart.
-version: 0.0.1+2
+version: 0.0.1+4
 environment:
   sdk: '>=2.7.0 <3.0.0'
 homepage: https://github.com/dartclub/turf_dart
