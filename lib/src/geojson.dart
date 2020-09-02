@@ -401,7 +401,7 @@ class Feature<T extends Geometry> extends GeoJSONObject {
       case 'bbox':
         return bbox;
       default:
-        return fields[key];
+        return fields != null ? fields[key] : null;
     }
   }
 
@@ -420,9 +420,10 @@ class Feature<T extends Geometry> extends GeoJSONObject {
           ),
         ),
       );
+
   @override
   Map<String, dynamic> toJson() => super.serialize({
-        ...fields,
+        if (fields != null) ...fields,
         'id': id,
         'geometry': geometry.toJson(),
         'properties': properties,
