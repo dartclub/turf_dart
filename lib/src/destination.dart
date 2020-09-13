@@ -4,7 +4,7 @@ import 'geojson.dart';
 import 'helpers.dart';
 
 Position destinationRaw(Position origin, num distance, num bearing,
-    [Unit unit]) {
+    [Unit unit = Unit.kilometers]) {
   num longitude1 = degreesToRadians(origin.lng);
   num latitude1 = degreesToRadians(origin.lat);
   num bearingRad = degreesToRadians(bearing);
