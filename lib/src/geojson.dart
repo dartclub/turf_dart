@@ -137,6 +137,17 @@ abstract class CoordinateType implements Iterable<num> {
   List<num> toJson() => _items;
 
   CoordinateType clone();
+
+  CoordinateType toSigned();
+
+  bool get isSigned;
+  _untilSigned(val, limit) {
+    if (val > limit) {
+      return _untilSigned(val - 360, limit);
+    } else {
+      return val;
+    }
+  }
 }
 
 // Position, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.1
@@ -162,6 +173,16 @@ class Position extends CoordinateType {
   num get alt => _items[2];
 
   @override
+  bool get isSigned => lng <= 180 && lat <= 90;
+
+  @override
+  Position toSigned() => Position.named(
+        lng: _untilSigned(lng, 180),
+        lat: _untilSigned(lat, 90),
+        alt: alt,
+      );
+
+  @override
   Position clone() => Position.of(_items);
 }
 
@@ -178,7 +199,8 @@ class BBox extends CoordinateType {
     num lat2 = 0,
     num alt2 = 0,
   ]) : super([lng1, lat1, alt1, lng2, lat2, alt2]);
-  BBox.named({num lat1, num lat2, num lng1, num lng2, num alt1, num alt2})
+  BBox.named(
+      {num lat1, num lat2, num lng1, num lng2, num alt1 = 0, num alt2 = 0})
       : super([lng1, lat1, alt1, lng2, lat2, alt2]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
@@ -194,6 +216,19 @@ class BBox extends CoordinateType {
 
   @override
   BBox clone() => BBox.of(_items);
+
+  @override
+  bool get isSigned => lng1 <= 180 && lng2 <= 180 && lat1 <= 90 && lat2 <= 90;
+
+  @override
+  CoordinateType toSigned() => BBox.named(
+        alt1: alt1,
+        alt2: alt2,
+        lat1: _untilSigned(lat1, 90),
+        lat2: _untilSigned(lat2, 90),
+        lng1: _untilSigned(lng1, 180),
+        lng2: _untilSigned(lng2, 180),
+      );
 }
 
 abstract class Geometry extends GeoJSONObject {

@@ -80,7 +80,7 @@ num round(value, [precision = 0]) {
   return round(value * multiplier) / multiplier;
 }
 
-num radiansToLength(num radians, Unit unit) {
+num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
   var factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
@@ -88,7 +88,7 @@ num radiansToLength(num radians, Unit unit) {
   return radians * factor;
 }
 
-num lengthToRadians(num distance, Unit unit) {
+num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
   num factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
@@ -96,7 +96,7 @@ num lengthToRadians(num distance, Unit unit) {
   return distance / factor;
 }
 
-num lengthToDegrees(num distance, [Unit unit]) {
+num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
   return radiansToDegrees(lengthToRadians(distance, unit));
 }
 

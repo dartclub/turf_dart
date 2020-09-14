@@ -14,5 +14,5 @@ num distanceRaw(Position from, Position to, [Unit unit = Unit.kilometers]) {
   return radiansToLength(2 * atan2(sqrt(a), sqrt(1 - a)), unit);
 }
 
-num distance(Point from, Point to, [Unit unit]) =>
+num distance(Point from, Point to, [Unit unit = Unit.kilometers]) =>
     distanceRaw(from.coordinates, to.coordinates, unit);

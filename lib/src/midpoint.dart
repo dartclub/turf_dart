@@ -5,7 +5,9 @@ import 'geojson.dart';
 
 Position midpointRaw(Position point1, Position point2) {
   var dist = distanceRaw(point1, point2);
+  print(dist);
   var heading = bearingRaw(point1, point2);
+  print(heading);
   var midpoint = destinationRaw(point1, dist / 2, heading);
 
   return midpoint;
