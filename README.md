@@ -21,7 +21,7 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - [x] [distance](https://github.com/FranzImsch/turf_dart/blob/master/lib/distance.dart)
 - [ ] envelope
 - [ ] length
-- [ ] (midpoint)[https://github.com/FranzImsch/turf_dart/blob/master/lib/midpoint.dart]
+- [x] (midpoint)[https://github.com/FranzImsch/turf_dart/blob/master/lib/midpoint.dart]
 - [ ] pointOnFeature
 - [ ] polygonTangents
 - [ ] pointToLineDistance
@@ -120,7 +120,7 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - [ ] triangleGrid
 
 ### Classification
-- [ ] [nearestPoint](https://github.com/FranzImsch/turf_dart/blob/master/lib/nearest_point.dart)
+- [x] [nearestPoint](https://github.com/FranzImsch/turf_dart/blob/master/lib/nearest_point.dart)
 
 ### Aggregation
 - [ ] collect
