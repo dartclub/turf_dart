@@ -47,40 +47,51 @@ main() {
       _expectArgs(bbox1);
       _expectArgs(bbox2);
     });
-    test('Longitude normalization', () {
-      var rand = Random();
-      _rand() => rand.nextDouble() * (360 * 2) - 360;
-      test('Position.toSigned', () {
-        for (var i = 0; i < 10; i++) {
-          var coord = Position.named(lat: _rand(), lng: _rand(), alt: 0);
-          var zeroZero = Position(0, 0);
-          var distToCoord = distanceRaw(zeroZero, coord);
-          var distToNormalizedCoord = distanceRaw(zeroZero, coord.toSigned());
+  });
+  group('Longitude normalization', () {
+    var rand = Random();
+    _rand() => rand.nextDouble() * (360 * 2) - 360;
+    test('Position.toSigned', () {
+      for (var i = 0; i < 10; i++) {
+        var coord = Position.named(lat: _rand(), lng: _rand(), alt: 0);
+        var zeroZero = Position(0, 0);
+        var distToCoord = distanceRaw(zeroZero, coord);
+        var distToNormalizedCoord = distanceRaw(zeroZero, coord.toSigned());
 
-          expect(distToCoord, distToNormalizedCoord);
-        }
-      });
-      test('BBox.toSigned', () {
-        for (var i = 0; i < 10; i++) {
-          var coord = BBox.named(
-            lat1: _rand(),
-            lat2: _rand(),
-            lng1: _rand(),
-            lng2: _rand(),
-          );
-          var zeroZero = Position(0, 0);
+        expect(distToCoord, distToNormalizedCoord);
+      }
+    });
+    test('BBox.toSigned', () {
+      for (var i = 0; i < 10; i++) {
+        var coord = BBox.named(
+          lat1: _rand(),
+          lat2: _rand(),
+          lng1: _rand(),
+          lng2: _rand(),
+        );
+        var zeroZero = Position(0, 0);
 
-          var distToCoord1 = distanceRaw(
-              zeroZero, Position.named(lng: coord.lng1, lat: coord.lat1));
-          var distToNormalizedCoord1 = distanceRaw(zeroZero, coord.toSigned());
-          expect(distToCoord1, distToNormalizedCoord1);
+        var distToCoord1 = distanceRaw(
+            zeroZero, Position.named(lng: coord.lng1, lat: coord.lat1));
+        var normalized = coord.toSigned();
+        var distToNormalized = distanceRaw(
+            zeroZero,
+            Position.named(
+                lat: normalized.lat1,
+                lng: normalized.lng1,
+                alt: normalized.alt1));
+        expect(distToCoord1, distToNormalized);
 
-          var distToCoord2 = distanceRaw(
-              zeroZero, Position.named(lng: coord.lng2, lat: coord.lat2));
-          var distToNormalizedCoord2 = distanceRaw(zeroZero, coord.toSigned());
-          expect(distToCoord2, distToNormalizedCoord2);
-        }
-      });
+        var distToCoord2 = distanceRaw(
+            zeroZero, Position.named(lng: coord.lng2, lat: coord.lat2));
+        var distToNormalized2 = distanceRaw(
+            zeroZero,
+            Position.named(
+                lat: normalized.lat2,
+                lng: normalized.lng2,
+                alt: normalized.alt2));
+        expect(distToCoord2, distToNormalized2);
+      }
     });
     test('Point', () {});
     test('Point', () {});

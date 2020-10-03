@@ -225,7 +225,7 @@ class BBox extends CoordinateType {
   bool get isSigned => lng1 <= 180 && lng2 <= 180 && lat1 <= 90 && lat2 <= 90;
 
   @override
-  CoordinateType toSigned() => BBox.named(
+  BBox toSigned() => BBox.named(
         alt1: alt1,
         alt2: alt2,
         lat1: _untilSigned(lat1, 90),
