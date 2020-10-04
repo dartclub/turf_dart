@@ -82,17 +82,6 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - [ ] shortestPath
 - [ ] unkinkPolygon
 
-### Helper
-- [ ] featureCollection
-- [ ] feature
-- [ ] geometryCollection
-- [ ] lineString
-- [ ] multiLineString
-- [ ] multiPoint
-- [ ] multiPolygon
-- [ ] point
-- [ ] polygon
-
 ### Random
 - [ ] randomPosition
 - [ ] randomPoint
