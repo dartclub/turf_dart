@@ -183,7 +183,7 @@ class Position extends CoordinateType {
   Position toSigned() => Position.named(
         lng: _untilSigned(lng, 180),
         lat: _untilSigned(lat, 90),
-        alt: alt,
+        alt: alt ?? 0,
       );
 
   @override
@@ -226,8 +226,8 @@ class BBox extends CoordinateType {
 
   @override
   BBox toSigned() => BBox.named(
-        alt1: alt1,
-        alt2: alt2,
+        alt1: alt1 ?? 0,
+        alt2: alt2 ?? 0,
         lat1: _untilSigned(lat1, 90),
         lat2: _untilSigned(lat2, 90),
         lng1: _untilSigned(lng1, 180),
