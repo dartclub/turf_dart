@@ -23,6 +23,11 @@ main() {
       _expectArgs(pos1);
       _expectArgs(pos2);
     });
+    test('Position deserialization', () {
+      expect(Position.of([1]).toList(), [1, 0, 0]);
+      expect(Position.of([1, 2]).toList(), [1, 2, 0]);
+      expect(Position.of([1, 2, 3]).toList(), [1, 2, 3]);
+    });
     test('BBox', () {
       _expectArgs(BBox bbox) {
         expect(bbox.lng1, 1);
@@ -61,6 +66,7 @@ main() {
         expect(distToCoord, distToNormalizedCoord);
       }
     });
+
     test('BBox.toSigned', () {
       for (var i = 0; i < 10; i++) {
         var coord = BBox.named(

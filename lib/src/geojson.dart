@@ -162,7 +162,13 @@ class Position extends CoordinateType {
   Position.named({num lat, num lng, num alt = 0}) : super([lng, lat, alt]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  Position.of(List<num> list) : super(list);
+  Position.of(List<num> list)
+      : super(list.length < 3
+            ? [
+                ...list,
+                ...List.generate(3 - list.length, (val) => 0).toList(),
+              ]
+            : list);
   factory Position.fromJson(List<num> list) => Position.of(list);
 
   // TODO implement override operators +, -, * with vector operations
@@ -183,7 +189,7 @@ class Position extends CoordinateType {
   Position toSigned() => Position.named(
         lng: _untilSigned(lng, 180),
         lat: _untilSigned(lat, 90),
-        alt: alt ?? 0,
+        alt: alt,
       );
 
   @override
