@@ -77,7 +77,8 @@ num round(value, [precision = 0]) {
     throw Exception("precision must be a positive number");
   }
   num multiplier = pow(10, precision);
-  return round(value * multiplier) / multiplier;
+  num result = (value * multiplier);
+  return result.round() / multiplier;
 }
 
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
