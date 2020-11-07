@@ -15,21 +15,17 @@ void checkLatLngInRange(Point result) {
 
 main() {
   test('simple midpoint', () {
-    Point result = midpoint(
-      Point(
-        coordinates: Position.named(
-          lat: -33.4312226,
-          lng: -70.5920118,
-        ),
+    Position result = midpointRaw(
+      Position.named(
+        lat: -33.4312226,
+        lng: -70.5920118,
       ),
-      Point(
-        coordinates: Position.named(
-          lat: -33.5149429,
-          lng: -70.8961298,
-        ),
+      Position.named(
+        lat: -33.5149429,
+        lng: -70.8961298,
       ),
     );
-    checkLatLngInRange(result);
+    checkLatLngInRange(Point(coordinates: result.toSigned()));
   });
 
   test('midpoint -- horizontal equator', () {
@@ -120,25 +116,21 @@ main() {
   });
 
   test('midpoint -- diagonal forward over equator', () {
-    Point pt1 = Point(
-      coordinates: Position.named(
-        lng: -5,
-        lat: -1,
-      ),
+    Position pt1 = Position.named(
+      lng: -5,
+      lat: -1,
     );
-    Point pt2 = Point(
-      coordinates: Position.named(
-        lng: 5,
-        lat: 10,
-      ),
+    Position pt2 = Position.named(
+      lng: 5,
+      lat: 10,
     );
 
-    Point result = midpoint(pt1, pt2);
+    Position result = midpointRaw(pt1, pt2);
 
-    checkLatLngInRange(result);
+    checkLatLngInRange(Point(coordinates: result.toSigned()));
     expect(
-        distance(pt1, result).toStringAsFixed(6) ==
-            distance(pt2, result).toStringAsFixed(6),
+        distanceRaw(pt1, result).toStringAsFixed(6) ==
+            distanceRaw(pt2, result).toStringAsFixed(6),
         true);
   });
 
