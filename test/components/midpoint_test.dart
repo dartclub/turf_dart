@@ -44,6 +44,8 @@ main() {
     Point result = midpoint(pt1, pt2);
 
     checkLatLngInRange(result);
+    expect(distance(pt1, result).toStringAsFixed(6),
+        equals(distance(pt2, result).toStringAsFixed(6)));
   });
 
   test('midpoint -- vertical from equator', () {
@@ -63,10 +65,8 @@ main() {
     Point result = midpoint(pt1, pt2);
 
     checkLatLngInRange(result);
-    expect(
-        distance(pt1, result).toStringAsFixed(6) ==
-            distance(pt2, result).toStringAsFixed(6),
-        true);
+    expect(distance(pt1, result).toStringAsFixed(6),
+        equals(distance(pt2, result).toStringAsFixed(6)));
   });
 
   test('midpoint -- vertical to equator', () {
@@ -86,10 +86,8 @@ main() {
     Point result = midpoint(pt1, pt2);
 
     checkLatLngInRange(result);
-    expect(
-        distance(pt1, result).toStringAsFixed(6) ==
-            distance(pt2, result).toStringAsFixed(6),
-        true);
+    expect(distance(pt1, result).toStringAsFixed(6),
+        equals(distance(pt2, result).toStringAsFixed(6)));
   });
 
   test('midpoint -- diagonal back over equator', () {
@@ -109,10 +107,8 @@ main() {
     Point result = midpoint(pt1, pt2);
 
     checkLatLngInRange(result);
-    expect(
-        distance(pt1, result).toStringAsFixed(6) ==
-            distance(pt2, result).toStringAsFixed(6),
-        true);
+    expect(distance(pt1, result).toStringAsFixed(6),
+        equals(distance(pt2, result).toStringAsFixed(6)));
   });
 
   test('midpoint -- diagonal forward over equator', () {
@@ -128,10 +124,8 @@ main() {
     Position result = midpointRaw(pt1, pt2);
 
     checkLatLngInRange(Point(coordinates: result.toSigned()));
-    expect(
-        distanceRaw(pt1, result).toStringAsFixed(6) ==
-            distanceRaw(pt2, result).toStringAsFixed(6),
-        true);
+    expect(distanceRaw(pt1, result).toStringAsFixed(6),
+        equals(distanceRaw(pt2, result).toStringAsFixed(6)));
   });
 
   test('midpoint -- long distance', () {
@@ -151,9 +145,7 @@ main() {
     Point result = midpoint(pt1, pt2);
 
     checkLatLngInRange(result);
-    expect(
-        distance(pt1, result).toStringAsFixed(6) ==
-            distance(pt2, result).toStringAsFixed(6),
-        true);
+    expect(distance(pt1, result).toStringAsFixed(6),
+        equals(distance(pt2, result).toStringAsFixed(6)));
   });
 }
