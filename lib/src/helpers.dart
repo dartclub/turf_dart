@@ -110,12 +110,12 @@ num bearingToAzimuth(num bearing) {
 }
 
 num radiansToDegrees(num radians) {
-  num degrees = radians % (2 * pi);
+  num degrees = radians.remainder(2 * pi);
   return degrees * 180 / pi;
 }
 
 num degreesToRadians(num degrees) {
-  num radians = degrees % 360;
+  num radians = degrees.remainder(360);
   return radians * pi / 180;
 }
 
