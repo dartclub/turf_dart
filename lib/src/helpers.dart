@@ -102,7 +102,7 @@ num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 num bearingToAzimuth(num bearing) {
-  num angle = bearing % 360;
+  num angle = bearing.remainder(360);
   if (angle < 0) {
     angle += 360;
   }
