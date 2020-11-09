@@ -77,7 +77,8 @@ num round(value, [precision = 0]) {
     throw Exception("precision must be a positive number");
   }
   num multiplier = pow(10, precision);
-  return round(value * multiplier) / multiplier;
+  num result = (value * multiplier);
+  return result.round() / multiplier;
 }
 
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
@@ -101,7 +102,7 @@ num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 num bearingToAzimuth(num bearing) {
-  num angle = bearing % 360;
+  num angle = bearing.remainder(360);
   if (angle < 0) {
     angle += 360;
   }
@@ -109,12 +110,12 @@ num bearingToAzimuth(num bearing) {
 }
 
 num radiansToDegrees(num radians) {
-  num degrees = radians % (2 * pi);
+  num degrees = radians.remainder(2 * pi);
   return degrees * 180 / pi;
 }
 
 num degreesToRadians(num degrees) {
-  num radians = degrees % 360;
+  num radians = degrees.remainder(360);
   return radians * pi / 180;
 }
 

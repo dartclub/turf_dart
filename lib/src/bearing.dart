@@ -24,9 +24,8 @@ num bearing(Point start, Point end, {bool calcFinal = false}) =>
 
 num calculateFinalBearingRaw(Position start, Position end) {
   // Swap start & end
-  var bear = bearingRaw(end, start);
-  bear = (bear + 180) % 360;
-  return bear;
+  num reverseBearing = bearingRaw(end, start) + 180;
+  return reverseBearing.remainder(360);
 }
 
 num calculateFinalBearing(Point start, Point end) =>
