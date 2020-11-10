@@ -33,7 +33,7 @@ jobs:
       - name: Analyze project source
         run: dart analyze
         # Run always
-        if: ${{true}}
+        if: always()
 
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
@@ -41,4 +41,4 @@ jobs:
       - name: Run tests
         run: dart test
         # Run always
-        if: ${{true}}
+        if: always()
