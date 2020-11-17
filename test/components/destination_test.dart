@@ -100,6 +100,31 @@ main() {
         reason: 'Destination longitude is incorrect');
   });
 
+  test('point 5000 km away bearing 90', () {
+    num testBearing = 90;
+    num testDistanceKm = 5000;
+    Point testStart = Point(
+      coordinates: Position.named(
+        lng: -75,
+        lat: 39,
+      ),
+    );
+    Point testEnd = Point(
+      coordinates: Position.named(
+        lng: -22.885356,
+        lat: 26.440011,
+      ),
+    );
+    Point actualEnd =
+        destination(testStart, testDistanceKm, testBearing, Unit.kilometers);
+    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+        reason: 'Destination latitude is incorrect');
+    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+        reason: 'Destination longitude is incorrect');
+  });
+
   test('point 5000 miles away bearing 90', () {
     num testBearing = 90;
     num testDistanceMiles = 5000;
@@ -111,8 +136,8 @@ main() {
     );
     Point testEnd = Point(
       coordinates: Position.named(
-        lng: -22.885356,
-        lat: 26.440011,
+        lng: 1.123703,
+        lat: 10.990466,
       ),
     );
     Point actualEnd =
