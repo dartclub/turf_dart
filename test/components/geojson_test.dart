@@ -63,7 +63,10 @@ main() {
         var distToCoord = distanceRaw(zeroZero, coord);
         var distToNormalizedCoord = distanceRaw(zeroZero, coord.toSigned());
 
-        expect(distToCoord, distToNormalizedCoord);
+        expect(
+          distToCoord.toStringAsFixed(6),
+          distToNormalizedCoord.toStringAsFixed(6),
+        );
       }
     });
 
@@ -86,7 +89,10 @@ main() {
                 lat: normalized.lat1,
                 lng: normalized.lng1,
                 alt: normalized.alt1));
-        expect(distToCoord1, distToNormalized);
+        expect(
+          distToCoord1.toStringAsFixed(6),
+          distToNormalized.toStringAsFixed(6),
+        );
 
         var distToCoord2 = distanceRaw(
             zeroZero, Position.named(lng: coord.lng2, lat: coord.lat2));
@@ -96,7 +102,10 @@ main() {
                 lat: normalized.lat2,
                 lng: normalized.lng2,
                 alt: normalized.alt2));
-        expect(distToCoord2, distToNormalized2);
+        expect(
+          distToCoord2.toStringAsFixed(6),
+          distToNormalized2.toStringAsFixed(6),
+        );
       }
     });
     test('Point', () {});
