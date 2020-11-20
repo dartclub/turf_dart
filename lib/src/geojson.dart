@@ -1,10 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'geojson.g.dart';
 
-//TODO assemble multipoint from points
-//TODO assemble multilinestring from linestring
-//TODO assemble polygon from 3 or more points
-
 class GeoJSONObjectTypes {
   static const String point = 'Point';
   static const String multiPoint = 'MultiPoint';
