@@ -5,10 +5,10 @@ import 'helpers.dart';
 
 Position destinationRaw(Position origin, num distance, num bearing,
     [Unit unit = Unit.kilometers]) {
-  num longitude1 = degreesToRadians(origin.lng);
-  num latitude1 = degreesToRadians(origin.lat);
-  num bearingRad = degreesToRadians(bearing);
-  num radians = lengthToRadians(distance, unit);
+  var longitude1 = degreesToRadians(origin.lng!);
+  var latitude1 = degreesToRadians(origin.lat!);
+  var bearingRad = degreesToRadians(bearing);
+  var radians = lengthToRadians(distance, unit);
 
   // Main
   num latitude2 = asin(sin(latitude1) * cos(radians) +

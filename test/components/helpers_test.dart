@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   test('radiansToLength', () {
     expect(radiansToLength(1, Unit.radians), equals(1));
     expect(radiansToLength(1, Unit.kilometers), equals(earthRadius / 1000));

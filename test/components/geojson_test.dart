@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   group('GeoJSON Objects', () {
     test('Position', () {
-      _expectArgs(Position pos) {
+      void _expectArgs(Position pos) {
         expect(pos.lng, 1);
         expect(pos.lat, 2);
         expect(pos.alt, 3);
@@ -29,7 +29,7 @@ main() {
       expect(Position.of([1, 2, 3]).toList(), [1, 2, 3]);
     });
     test('BBox', () {
-      _expectArgs(BBox bbox) {
+      void _expectArgs(BBox bbox) {
         expect(bbox.lng1, 1);
         expect(bbox.lat1, 2);
         expect(bbox.alt1, 3);
@@ -55,7 +55,7 @@ main() {
   });
   group('Longitude normalization', () {
     var rand = Random();
-    _rand() => rand.nextDouble() * (360 * 2) - 360;
+    num _rand() => rand.nextDouble() * (360 * 2) - 360;
     test('Position.toSigned', () {
       for (var i = 0; i < 10; i++) {
         var coord = Position.named(lat: _rand(), lng: _rand(), alt: 0);
