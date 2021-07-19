@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'geojson.g.dart';
 
 //TODO assemble multipoint from points
@@ -350,9 +351,8 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
 
   @override
   MultiLineString clone() => MultiLineString(
-        coordinates: coordinates
-            .map((e) => e.map((e) => e.clone()).toList())
-            .toList(),
+        coordinates:
+            coordinates.map((e) => e.map((e) => e.clone()).toList()).toList(),
         bbox: bbox?.clone(),
       );
 }
@@ -371,9 +371,8 @@ class Polygon extends GeometryType<List<List<Position>>> {
 
   @override
   Polygon clone() => Polygon(
-        coordinates: coordinates
-            .map((e) => e.map((e) => e.clone()).toList())
-            .toList(),
+        coordinates:
+            coordinates.map((e) => e.map((e) => e.clone()).toList()).toList(),
         bbox: bbox?.clone(),
       );
 }
@@ -393,8 +392,7 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
   @override
   GeoJSONObject clone() => MultiPolygon(
         coordinates: coordinates
-            .map((e) =>
-                e.map((e) => e.map((e) => e.clone()).toList()).toList())
+            .map((e) => e.map((e) => e.map((e) => e.clone()).toList()).toList())
             .toList(),
         bbox: bbox?.clone(),
       );
@@ -429,7 +427,14 @@ class GeometryCollection extends Geometry {
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
-class Feature<T extends Geometry?> extends GeoJSONObject {
+class Feature<T extends Geometry> extends GeoJSONObject {
+  dynamic id;
+  Map<String, dynamic>? properties;
+  T? geometry;
+  Map<String, dynamic> fields;
+  @override
+  BBox? bbox;
+  
   Feature({
     this.bbox,
     this.id,
@@ -437,10 +442,6 @@ class Feature<T extends Geometry?> extends GeoJSONObject {
     this.geometry,
     this.fields = const {},
   }) : super.withType(GeoJSONObjectTypes.feature);
-  dynamic id;
-  Map<String, dynamic>? properties;
-  T? geometry;
-  Map<String, dynamic> fields;
 
   dynamic operator [](String key) {
     switch (key) {
@@ -459,11 +460,9 @@ class Feature<T extends Geometry?> extends GeoJSONObject {
     }
   }
 
-  @override
-  BBox? bbox;
-  factory Feature.fromJson(Map<String, dynamic> json) => Feature(
+  static Feature<T> fromJson<T extends Geometry>(Map<String, dynamic> json) => Feature<T>(
         id: json['id'],
-        geometry: Geometry.deserialize(json['geometry']) as Never?,
+        geometry: Geometry.deserialize(json['geometry']) as T,
         properties: json['properties'],
         fields: Map.fromEntries(
           json.entries.where(
@@ -491,6 +490,22 @@ class Feature<T extends Geometry?> extends GeoJSONObject {
         properties: Map.of(properties!),
         id: id,
       );
+
+  Feature<T> copyWith({
+    dynamic id,
+    Map<String, dynamic>? properties,
+    T? geometry,
+    Map<String, dynamic>? fields,
+    BBox? bbox,
+  }) {
+    return Feature<T>(
+      id: id ?? this.id,
+      properties: properties ?? this.properties,
+      geometry: geometry ?? this.geometry,
+      fields: fields ?? this.fields,
+      bbox: bbox ?? this.bbox,
+    );
+  }
 }
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3

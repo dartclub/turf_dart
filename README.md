@@ -154,7 +154,7 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - [ ] booleanEqual
 - [ ] booleanOverlap
 - [ ] booleanParallel
-- [ ] booleanPointInPolygon
+- [x] [booleanPointInPolygon](https://github.com/dartclub/turf_dart/blob/master/lib/boolean_point_in_poligon.dart)
 - [ ] booleanPointOnLine
 - [ ] booleanWithin
 

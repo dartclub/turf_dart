@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
+
+import 'geojson.dart';
 
 enum Unit {
   meters,
@@ -147,4 +150,57 @@ num convertArea(num area,
   }
 
   return (area / startFactor) * finalFactor;
+}
+
+Feature<Polygon> polygon(
+  List<List<Position>> coordinates, {
+  Map<String, String>? properties,
+  BBox? bbox,
+  dynamic id,
+}) {
+  coordinates.forEach((ring) {
+    if (ring.length < 4) {
+      throw Exception(
+          'Each LinearRing of a Polygon must have 4 or more Positions.');
+    }
+
+    for (var j = 0; j < ring[ring.length - 1].length; j++) {
+      // Check if first point of Polygon contains two numbers
+      if (ring[ring.length - 1][j] != ring[0][j]) {
+        throw Exception('First and last Position are not equivalent.');
+      }
+    }
+  });
+
+  final geom = Polygon(coordinates: coordinates);
+  return feature(geom, properties: properties, bbox: bbox, id: id);
+}
+
+Feature<Point> point(
+  Position coordinates, {
+  Map<String, String>? properties,
+  BBox? bbox,
+  dynamic id,
+}) {
+  final geom = Point(coordinates: coordinates);
+  return feature<Point>(geom, properties: properties, bbox: bbox, id: id);
+}
+
+Feature<T> feature<T extends Geometry>(
+  T geom, {
+  Map<String, String>? properties,
+  BBox? bbox,
+  dynamic id,
+}) {
+  var feat = Feature<T>();
+  if (id != null && id.isNotEmpty) {
+    feat = feat.copyWith(id: id);
+  }
+  if (bbox != null) {
+    feat = feat.copyWith(bbox: bbox);
+  }
+
+  feat = feat.copyWith(properties: properties, geometry: geom);
+
+  return feat;
 }
