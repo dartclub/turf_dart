@@ -74,9 +74,9 @@ const areaFactors = <Unit, num>{
 
 num round(value, [precision = 0]) {
   if (!(precision >= 0)) {
-    throw Exception("precision must be a positive number");
+    throw Exception('precision must be a positive number');
   }
-  num multiplier = pow(10, precision);
+  var multiplier = pow(10, precision);
   num result = (value * multiplier);
   return result.round() / multiplier;
 }
@@ -84,15 +84,15 @@ num round(value, [precision = 0]) {
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
   var factor = factors[unit];
   if (factor == null) {
-    throw Exception("$unit units is invalid");
+    throw Exception('$unit units is invalid');
   }
   return radians * factor;
 }
 
 num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
-  num factor = factors[unit];
+  var factor = factors[unit];
   if (factor == null) {
-    throw Exception("$unit units is invalid");
+    throw Exception('$unit units is invalid');
   }
   return distance / factor;
 }
@@ -102,7 +102,7 @@ num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 num bearingToAzimuth(num bearing) {
-  num angle = bearing.remainder(360);
+  var angle = bearing.remainder(360);
   if (angle < 0) {
     angle += 360;
   }
@@ -115,7 +115,7 @@ num radiansToDegrees(num radians) {
 }
 
 num degreesToRadians(num degrees) {
-  num radians = degrees.remainder(360);
+  var radians = degrees.remainder(360);
   return radians * pi / 180;
 }
 
@@ -125,7 +125,7 @@ num convertLength(
   Unit finalUnit = Unit.kilometers,
 ]) {
   if (length < 0) {
-    throw Exception("length must be a positive number");
+    throw Exception('length must be a positive number');
   }
   return radiansToLength(lengthToRadians(length, originalUnit), finalUnit);
 }
@@ -133,17 +133,17 @@ num convertLength(
 num convertArea(num area,
     [originalUnit = Unit.meters, finalUnit = Unit.kilometers]) {
   if (area < 0) {
-    throw Exception("area must be a positive number");
+    throw Exception('area must be a positive number');
   }
 
-  num startFactor = areaFactors[originalUnit];
+  var startFactor = areaFactors[originalUnit];
   if (startFactor == null) {
-    throw Exception("invalid original units");
+    throw Exception('invalid original units');
   }
 
-  num finalFactor = areaFactors[finalUnit];
+  var finalFactor = areaFactors[finalUnit];
   if (finalFactor == null) {
-    throw Exception("invalid final units");
+    throw Exception('invalid final units');
   }
 
   return (area / startFactor) * finalFactor;
