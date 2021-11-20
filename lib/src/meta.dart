@@ -8,7 +8,23 @@ typedef GeomEachCallback = dynamic Function(
   dynamic featureId,
 );
 
-/// Iterate over each geometry in any GeoJSON object, similar to Array.forEach()
+/// Iterate over each geometry in [geoJSON], calling [callback] on each
+/// iteration. Similar to Array.forEach()
+///
+/// For example:
+///
+/// ```dart
+/// FeatureCollection featureCollection = FeatureCollection(
+///   features: [
+///     point1,
+///     point2,
+///     point3,
+///   ],
+/// );
+/// geomEach(featureCollection, (currentGeometry, featureIndex, featureProperties, featureBBox, featureId) {
+///   someOperationOnEachPoint(currentGeometry);
+/// });
+/// ```
 void geomEach(dynamic geoJSON, GeomEachCallback callback) {
   dynamic geometry;
   var stopG;
