@@ -1,26 +1,30 @@
 name: dart pub publish --dry-run, Publishing Preview for PRs
 on:
   pull_request:
-      branches:
+    branches:
       - releases
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image: google/dart:latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup credentials
-      run: | 
-        mkdir -p ~/.pub-cache 
-        cat <<EOF > ~/.pub-cache/credentials.json
-        {
-          "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
-          "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
-          "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
-          "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-          "expiration": 1763721248000
-        }
-        EOF
-    - name: Publish package
-      run: dart pub publish --dry-run
+      - uses: actions/checkout@v1
+
+      - name: Print Dart SDK version
+        run: dart --version
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # Consider passing '--fatal-infos' for slightly stricter analysis.
+      - name: Analyze project source
+        run: dart analyze
+        # Run always
+        if: always()
+
+      - name: Publish package (dry-run)
+        run: dart pub publish --dry-run
