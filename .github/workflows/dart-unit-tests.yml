@@ -1,10 +1,10 @@
-name: Dart
+name: Dart Unit Tests
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [ "*" ]
 
 jobs:
   build:
