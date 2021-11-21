@@ -28,9 +28,9 @@ jobs:
 
       - name: Setup credentials
         env:
-          oauth_access_token: ${{ secrets.OAUTH_ACCESS_TOKEN }}
-          oauth_refresh_token: ${{ secrets.OAUTH_REFRESH_TOKEN }}
-          oauth_expiration: ${{ secrets.OAUTH_EXPIRATION }}
+          OAUTH_ACCESS_TOKEN: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          OAUTH_REFRESH_TOKEN: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          OAUTH_EXPIRATION: ${{ secrets.OAUTH_EXPIRATION }}
         run: |
           mkdir -p ~/.pub-cache 
           cat <<EOF > ~/.pub-cache/credentials.json
