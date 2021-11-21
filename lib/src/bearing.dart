@@ -20,7 +20,7 @@ num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
 }
 
 num bearing(Point start, Point end, {bool calcFinal = false}) =>
-    bearingRaw(start.coordinates, end.coordinates, calcFinal: calcFinal);
+    bearingRaw(start.coordinates!, end.coordinates!, calcFinal: calcFinal);
 
 num calculateFinalBearingRaw(Position start, Position end) {
   // Swap start & end
@@ -29,4 +29,4 @@ num calculateFinalBearingRaw(Position start, Position end) {
 }
 
 num calculateFinalBearing(Point start, Point end) =>
-    calculateFinalBearingRaw(start.coordinates, end.coordinates);
+    calculateFinalBearingRaw(start.coordinates!, end.coordinates!);
