@@ -23,4 +23,4 @@ jobs:
         }
         EOF
     - name: Publish package
-      run: dart pub publish -f --dry-run
+      run: dart pub publish --dry-run
