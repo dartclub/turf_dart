@@ -41,6 +41,16 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
     ],
   ),
 );
+
+List<GeoJSONObject> collection(Feature feature) {
+  FeatureCollection featureCollection = FeatureCollection(
+    features: [
+      feature,
+    ],
+  );
+  return [feature, featureCollection];
+}
+
 List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   Feature feature = Feature(
     geometry: geometry,
@@ -57,6 +67,66 @@ List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
 }
 
 main() {
+  test('propEach --featureCollection', () {
+    collection(pt).forEach((input) {
+      propEach(input, (prop, i) {
+        expect(prop, {'a': 1});
+        expect(i, 0);
+      });
+    });
+  });
+
+  test('propEach --feature', () {
+    propEach(pt, (prop, i) {
+      expect(prop, {'a': 1});
+      expect(i, 0);
+    });
+  });
+
+  test('propEach --breaking of iterations', () {
+    var count = 0;
+    propEach(multiline, (prop, i) {
+      count += 1;
+      return false;
+    });
+    expect(count, 1);
+  });
+
+  test('featureEach --featureCollection', () {
+    collection(pt).forEach((input) {
+      featureEach(input, (feature, i) {
+        expect(feature.properties, {'a': 1});
+        expect(
+            feature.geometry,
+            Point.fromJson({
+              'coordinates': [0, 0],
+            }));
+        expect(i, 0);
+      });
+    });
+  });
+
+  test('featureEach --feature', () {
+    featureEach(pt, (feature, i) {
+      expect(feature.properties, {'a': 1});
+      expect(
+          feature.geometry,
+          Point.fromJson({
+            'coordinates': [0, 0],
+          }));
+      expect(i, 0);
+    });
+  });
+
+  test('featureEach --breaking of iterations', () {
+    var count = 0;
+    featureEach(multiline, (feature, i) {
+      count += 1;
+      return false;
+    });
+    expect(count, 1);
+  });
+
   test('geomEach -- GeometryCollection', () {
     featureAndCollection(geomCollection.geometry!)
         .forEach((GeoJSONObject input) {

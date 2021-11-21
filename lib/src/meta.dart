@@ -99,3 +99,69 @@ void _forEachGeomInGeometryObject(
     throw Exception('Unknown Geometry Type');
   }
 }
+
+/// Callback for propEach
+typedef PropEachCallback = dynamic Function(
+    Map<String, dynamic>? currentProperties, num featureIndex);
+
+/// Iterate over properties in any [geoJSON] object, calling [callback] on each
+/// iteration. Similar to Array.forEach()
+///
+/// For example:
+///
+/// ```dart
+/// FeatureCollection featureCollection = FeatureCollection(
+///   features: [
+///     point1,
+///     point2,
+///     point3,
+///   ],
+/// );
+/// propEach(featureCollection, (currentProperties, featureIndex) {
+///   someOperationOnEachProperty(currentProperties);
+/// });
+/// ```
+void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
+  if (geoJSON is FeatureCollection) {
+    for (var i = 0; i < geoJSON.features.length; i++) {
+      if (callback(geoJSON.features[i].properties, i) == false) break;
+    }
+  } else if (geoJSON is Feature) {
+    callback(geoJSON.properties, 0);
+  } else {
+    throw Exception('Unknown Feature/FeatureCollection Type');
+  }
+}
+
+/// Callback for featureEach
+typedef FeatureEachCallback = dynamic Function(
+    Feature currentFeature, num featureIndex);
+
+/// Iterate over features in any [geoJSON] object, calling [callback] on each
+/// iteration. Similar to Array.forEach.
+///
+/// For example:
+///
+/// ```dart
+/// FeatureCollection featureCollection = FeatureCollection(
+///   features: [
+///     point1,
+///     point2,
+///     point3,
+///   ],
+/// );
+/// featureEach(featureCollection, (currentFeature, featureIndex) {
+///   someOperationOnEachFeature(currentFeature);
+/// });
+/// ```
+void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
+  if (geoJSON is Feature) {
+    callback(geoJSON, 0);
+  } else if (geoJSON is FeatureCollection) {
+    for (var i = 0; i < geoJSON.features.length; i++) {
+      if (callback(geoJSON.features[i], i) == false) break;
+    }
+  } else {
+    throw Exception('Unknown Feature/FeatureCollection Type');
+  }
+}
