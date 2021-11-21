@@ -1,26 +1,47 @@
 name: Publish package to pub.dev
 on:
   push:
-    branches:   
+    branches:
       - releases
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image: google/dart:latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup credentials
-      run: | 
-        mkdir -p ~/.pub-cache 
-        cat <<EOF > ~/.pub-cache/credentials.json
-        {
-          "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
-          "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
-          "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
-          "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-          "expiration": 1763721248000
-        }
-        EOF
-    - name: Publish package
-      run: dart pub publish -f
+      - uses: actions/checkout@v1
+
+      - name: Print Dart SDK version
+        run: dart --version
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # Consider passing '--fatal-infos' for slightly stricter analysis.
+      - name: Analyze project source
+        run: dart analyze
+        # Run always
+        if: always()
+
+      - name: Setup credentials
+        env:
+          OAUTH_ACCESS_TOKEN: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          OAUTH_REFRESH_TOKEN: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          OAUTH_EXPIRATION: ${{ secrets.OAUTH_EXPIRATION }}
+        run: |
+          mkdir -p ~/.pub-cache 
+          cat <<EOF > ~/.pub-cache/credentials.json
+          {
+            "accessToken":"${OAUTH_ACCESS_TOKEN}",
+            "refreshToken":"${OAUTH_REFRESH_TOKEN}",
+            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
+            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
+            "expiration": ${OAUTH_EXPIRATION}
+          }
+          EOF
+
+      - name: Publish package
+        run: dart pub publish --force
