@@ -15,4 +15,4 @@ num distanceRaw(Position from, Position to, [Unit unit = Unit.kilometers]) {
 }
 
 num distance(Point from, Point to, [Unit unit = Unit.kilometers]) =>
-    distanceRaw(from.coordinates, to.coordinates, unit);
+    distanceRaw(from.coordinates!, to.coordinates!, unit);

@@ -1,8 +1,8 @@
 import 'geojson.dart';
 
 typedef GeomEachCallback = dynamic Function(
-  Geometry currentGeometry,
-  int featureIndex,
+  Geometry? currentGeometry,
+  num? featureIndex,
   Map<String, dynamic> featureProperties,
   BBox featureBBox,
   dynamic featureId,

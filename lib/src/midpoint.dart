@@ -12,5 +12,5 @@ Position midpointRaw(Position point1, Position point2) {
 }
 
 Point midpoint(Point point1, Point point2) => Point(
-      coordinates: midpointRaw(point1.coordinates, point2.coordinates),
+      coordinates: midpointRaw(point1.coordinates!, point2.coordinates!),
     );

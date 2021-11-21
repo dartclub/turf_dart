@@ -7,10 +7,10 @@ void checkLatLngInRange(Point result) {
   _lngRange(num lng) => lng >= -180 && lng <= 180;
   _latRange(num lat) => lat >= -90 && lat <= 90;
 
-  expect(_lngRange(result.coordinates.lng), true,
-      reason: 'Longitude of ${result.coordinates.lng} out of range');
-  expect(_latRange(result.coordinates.lat), true,
-      reason: 'Latitude of ${result.coordinates.lat} out of range');
+  expect(_lngRange(result.coordinates!.lng), true,
+      reason: 'Longitude of ${result.coordinates!.lng} out of range');
+  expect(_latRange(result.coordinates!.lat), true,
+      reason: 'Latitude of ${result.coordinates!.lat} out of range');
 }
 
 main() {

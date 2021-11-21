@@ -44,11 +44,11 @@ main() {
       ),
     );
     Point actualEnd = destination(testStart, testDistance, testBearing);
-    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
-        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lat.toStringAsFixed(6)),
         reason: 'Destination latitude is incorrect');
-    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
-        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lng.toStringAsFixed(6)),
         reason: 'Destination longitude is incorrect');
   });
 
@@ -68,11 +68,11 @@ main() {
       ),
     );
     Point actualEnd = destination(testStart, testDistance, testBearing);
-    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
-        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lat.toStringAsFixed(6)),
         reason: 'Destination latitude is incorrect');
-    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
-        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lng.toStringAsFixed(6)),
         reason: 'Destination longitude is incorrect');
   });
 
@@ -92,11 +92,11 @@ main() {
       ),
     );
     Point actualEnd = destination(testStart, testDistance, testBearing);
-    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
-        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lat.toStringAsFixed(6)),
         reason: 'Destination latitude is incorrect');
-    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
-        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lng.toStringAsFixed(6)),
         reason: 'Destination longitude is incorrect');
   });
 
@@ -117,11 +117,11 @@ main() {
     );
     Point actualEnd =
         destination(testStart, testDistanceKm, testBearing, Unit.kilometers);
-    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
-        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lat.toStringAsFixed(6)),
         reason: 'Destination latitude is incorrect');
-    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
-        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lng.toStringAsFixed(6)),
         reason: 'Destination longitude is incorrect');
   });
 
@@ -142,11 +142,11 @@ main() {
     );
     Point actualEnd =
         destination(testStart, testDistanceMiles, testBearing, Unit.miles);
-    expect(actualEnd.coordinates.lat.toStringAsFixed(6),
-        equals(testEnd.coordinates.lat.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lat.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lat.toStringAsFixed(6)),
         reason: 'Destination latitude is incorrect');
-    expect(actualEnd.coordinates.lng.toStringAsFixed(6),
-        equals(testEnd.coordinates.lng.toStringAsFixed(6)),
+    expect(actualEnd.coordinates!.lng.toStringAsFixed(6),
+        equals(testEnd.coordinates!.lng.toStringAsFixed(6)),
         reason: 'Destination longitude is incorrect');
   });
 }

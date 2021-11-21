@@ -90,7 +90,7 @@ num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
 }
 
 num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
-  num factor = factors[unit];
+  num? factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
   }
@@ -136,12 +136,12 @@ num convertArea(num area,
     throw Exception("area must be a positive number");
   }
 
-  num startFactor = areaFactors[originalUnit];
+  num? startFactor = areaFactors[originalUnit];
   if (startFactor == null) {
     throw Exception("invalid original units");
   }
 
-  num finalFactor = areaFactors[finalUnit];
+  num? finalFactor = areaFactors[finalUnit];
   if (finalFactor == null) {
     throw Exception("invalid final units");
   }

@@ -35,9 +35,9 @@ Feature<MultiLineString> multiline = Feature<MultiLineString>(
 Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
   geometry: GeometryCollection(
     geometries: [
-      pt.geometry,
-      line.geometry,
-      multiline.geometry,
+      pt.geometry!,
+      line.geometry!,
+      multiline.geometry!,
     ],
   ),
 );
@@ -58,28 +58,28 @@ List<GeoJSONObject> featureAndCollection(Geometry geometry) {
 
 main() {
   test('geomEach -- GeometryCollection', () {
-    featureAndCollection(geomCollection.geometry)
+    featureAndCollection(geomCollection.geometry!)
         .forEach((GeoJSONObject input) {
       List<Geometry> output = [];
       geomEach(input, (geom, i, props, bbox, id) {
-        output.add(geom);
+        output.add(geom!);
       });
-      expect(output, geomCollection.geometry.geometries);
+      expect(output, geomCollection.geometry!.geometries);
     });
   });
 
   test('geomEach -- bare-GeometryCollection', () {
     List<Geometry> output = [];
     geomEach(geomCollection, (geom, i, props, bbox, id) {
-      output.add(geom);
+      output.add(geom!);
     });
-    expect(output, geomCollection.geometry.geometries);
+    expect(output, geomCollection.geometry!.geometries);
   });
 
   test('geomEach -- bare-pointGeometry', () {
     List<Geometry> output = [];
     geomEach(pt.geometry, (geom, i, props, bbox, id) {
-      output.add(geom);
+      output.add(geom!);
     });
     expect(output, [pt.geometry]);
   });
@@ -87,7 +87,7 @@ main() {
   test('geomEach -- bare-pointFeature', () {
     List<Geometry> output = [];
     geomEach(pt, (geom, i, props, bbox, id) {
-      output.add(geom);
+      output.add(geom!);
     });
     expect(output, [pt.geometry]);
   });
@@ -114,8 +114,8 @@ main() {
     );
     geomEach(
       pt,
-      (Geometry currentGeometry,
-          int featureIndex,
+      (Geometry? currentGeometry,
+          num? featureIndex,
           Map<String, dynamic> featureProperties,
           BBox featureBBox,
           dynamic featureId) {
