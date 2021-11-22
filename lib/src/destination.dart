@@ -25,5 +25,5 @@ Position destinationRaw(Position origin, num distance, num bearing,
 Point destination(Point origin, num distance, num bearing,
         [Unit unit = Unit.kilometers]) =>
     Point(
-      coordinates: destinationRaw(origin.coordinates!, distance, bearing, unit),
+      coordinates: destinationRaw(origin.coordinates, distance, bearing, unit),
     );

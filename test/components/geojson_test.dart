@@ -5,7 +5,7 @@ import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 
 main() {
-  group('GeoJSON Objects', () {
+  group('Coordinate Types:', () {
     test('Position', () {
       _expectArgs(Position pos) {
         expect(pos.lng, 1);
@@ -53,7 +53,7 @@ main() {
       _expectArgs(bbox2);
     });
   });
-  group('Longitude normalization', () {
+  group('Longitude normalization:', () {
     var rand = Random();
     _rand() => rand.nextDouble() * (360 * 2) - 360;
     test('Position.toSigned', () {
@@ -108,15 +108,74 @@ main() {
         );
       }
     });
-    test('Point', () {});
-    test('Point', () {});
-    test('MultiPoint', () {});
-    test('LineString', () {});
-    test('MultiLineString', () {});
-    test('Polygon', () {});
-    test('MultiPolygon', () {});
-    test('GeometryCollection', () {});
-    test('Feature', () {});
-    test('FeatureCollection', () {});
+  });
+
+  group('Test Geometry Types:', () {
+    test('Point', () {
+      var geoJSON = {
+        'coordinates': null,
+        'type': GeoJSONObjectTypes.point,
+      };
+      expect(() => Point.fromJson(geoJSON), throwsA(isA<TypeError>()));
+    });
+
+    var geometries = [
+      GeoJSONObjectTypes.multiPoint,
+      GeoJSONObjectTypes.lineString,
+      GeoJSONObjectTypes.multiLineString,
+      GeoJSONObjectTypes.polygon,
+      GeoJSONObjectTypes.multiPolygon,
+    ];
+
+    var collection = GeometryCollection.fromJson({
+      'type': GeoJSONObjectTypes.geometryCollection,
+      'geometries': geometries
+          .map((type) => {
+                'coordinates': null,
+                'type': type,
+              })
+          .toList(),
+    });
+    for (var i = 0; i < geometries.length; i++) {
+      test(geometries[i], () {
+        expect(geometries[i], collection.geometries[i].type);
+        expect(collection.geometries[i].coordinates,
+            isNotNull); // kind of unnecessary
+        expect(collection.geometries[i].coordinates, isA<List>());
+        expect(collection.geometries[i].coordinates, isEmpty);
+      });
+    }
+  });
+  test('GeometryCollection', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.geometryCollection,
+      'geometries': null,
+    };
+    var collection = GeometryCollection.fromJson(geoJSON);
+    expect(collection.type, GeoJSONObjectTypes.geometryCollection);
+    expect(collection.geometries, isNotNull); // kind of unnecessary
+    expect(collection.geometries, isA<List>());
+    expect(collection.geometries, isEmpty);
+  });
+  test('Feature', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.feature,
+      'geometry': null,
+    };
+    var feature = Feature.fromJson(geoJSON);
+    expect(feature.type, GeoJSONObjectTypes.feature);
+    expect(feature.id, isNull); // kind of unnecessary
+    expect(feature.geometry, isNull);
+  });
+  test('GeometryCollection', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.featureCollection,
+      'features': null,
+    };
+    var collection = FeatureCollection.fromJson(geoJSON);
+    expect(collection.type, GeoJSONObjectTypes.featureCollection);
+    expect(collection.features, isNotNull); // kind of unnecessary
+    expect(collection.features, isA<List>());
+    expect(collection.features, isEmpty);
   });
 }
