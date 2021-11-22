@@ -24,9 +24,13 @@ main() {
       _expectArgs(pos2);
     });
     test('Position deserialization', () {
-      expect(Position.of([1]).toList(), [1, 0, 0]);
-      expect(Position.of([1, 2]).toList(), [1, 2, 0]);
+      expect(Position.of([1, 2]).toList(), [1, 2]);
       expect(Position.of([1, 2, 3]).toList(), [1, 2, 3]);
+
+      // test assert length >= 2 && length <= 3
+      expect(() => Position.of([1]).toList(), throwsA(isA<AssertionError>()));
+      expect(() => Position.of([1, 2, 3, 4]).toList(),
+          throwsA(isA<AssertionError>()));
     });
     test('BBox', () {
       _expectArgs(BBox bbox) {
@@ -51,6 +55,30 @@ main() {
       var bbox2 = BBox.of([1, 2, 3, 4, 5, 6]);
       _expectArgs(bbox1);
       _expectArgs(bbox2);
+
+      // test assert length == 4 || length == 6
+      expect(() => BBox.of([1, 2, 3]).toList(), throwsA(isA<AssertionError>()));
+      expect(() => BBox.of([1, 2, 3, 4, 5]).toList(),
+          throwsA(isA<AssertionError>()));
+      expect(() => BBox.of([1, 2, 3, 4, 5, 6, 7]).toList(),
+          throwsA(isA<AssertionError>()));
+
+      // test 4 dimensional
+      var bbox3 = BBox.named(lng1: 1, lat1: 2, lng2: 3, lat2: 4);
+      expect(bbox3.lng1, 1);
+      expect(bbox3.lat1, 2);
+      expect(bbox3.alt1, null);
+      expect(bbox3.lng2, 3);
+      expect(bbox3.lat2, 4);
+      expect(bbox3.alt2, null);
+      expect(bbox3[0], 1);
+      expect(bbox3[1], 2);
+      expect(bbox3[2], 3);
+      expect(bbox3[3], 4);
+      expect(() => bbox3[4], throwsRangeError);
+      expect(() => bbox3[5], throwsRangeError);
+      expect(bbox3.length, 4);
+      expect(bbox3.toJson(), [1, 2, 3, 4]);
     });
   });
   group('Longitude normalization:', () {
