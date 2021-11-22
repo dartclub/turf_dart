@@ -272,16 +272,16 @@ class BBox extends CoordinateType {
       );
 }
 
-abstract class Geometry extends GeoJSONObject {
-  Geometry.withType(String type) : super.withType(type);
-  static Geometry deserialize(Map<String, dynamic> json) {
+abstract class GeometryObject extends GeoJSONObject {
+  GeometryObject.withType(String type) : super.withType(type);
+  static GeometryObject deserialize(Map<String, dynamic> json) {
     return json['type'] == GeoJSONObjectTypes.geometryCollection
         ? GeometryCollection.fromJson(json)
         : GeometryType.deserialize(json);
   }
 }
 
-abstract class GeometryType<T> extends Geometry {
+abstract class GeometryType<T> extends GeometryObject {
   T coordinates;
   GeometryType.withType(this.coordinates, String type) : super.withType(type);
 
@@ -426,7 +426,7 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
 
 /// GeometryCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.8
 @JsonSerializable(explicitToJson: true, createFactory: false)
-class GeometryCollection extends Geometry {
+class GeometryCollection extends GeometryObject {
   GeometryCollection({this.bbox, this.geometries = const []})
       : super.withType(GeoJSONObjectTypes.geometryCollection);
   @override
@@ -457,7 +457,7 @@ class GeometryCollection extends Geometry {
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
-class Feature<T extends Geometry> extends GeoJSONObject {
+class Feature<T extends GeometryObject> extends GeoJSONObject {
   Feature({
     this.bbox,
     this.id,
@@ -493,7 +493,7 @@ class Feature<T extends Geometry> extends GeoJSONObject {
         id: json['id'],
         geometry: json['geometry'] == null
             ? null
-            : Geometry.deserialize(json['geometry']) as Never?,
+            : GeometryObject.deserialize(json['geometry']) as Never?,
         properties: json['properties'],
         bbox: json['bbox'] == null
             ? null
@@ -528,7 +528,7 @@ class Feature<T extends Geometry> extends GeoJSONObject {
 }
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
-class FeatureCollection<T extends Geometry> extends GeoJSONObject {
+class FeatureCollection<T extends GeometryObject> extends GeoJSONObject {
   FeatureCollection({this.bbox, this.features = const []})
       : super.withType(GeoJSONObjectTypes.featureCollection);
   List<Feature<T>> features;

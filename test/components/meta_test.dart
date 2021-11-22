@@ -41,7 +41,7 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
     ],
   ),
 );
-List<GeoJSONObject> featureAndCollection(Geometry geometry) {
+List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   Feature feature = Feature(
     geometry: geometry,
     properties: {
@@ -60,7 +60,7 @@ main() {
   test('geomEach -- GeometryCollection', () {
     featureAndCollection(geomCollection.geometry!)
         .forEach((GeoJSONObject input) {
-      List<Geometry> output = [];
+      List<GeometryObject> output = [];
       geomEach(input, (geom, i, props, bbox, id) {
         output.add(geom!);
       });
@@ -69,7 +69,7 @@ main() {
   });
 
   test('geomEach -- bare-GeometryCollection', () {
-    List<Geometry> output = [];
+    List<GeometryObject> output = [];
     geomEach(geomCollection, (geom, i, props, bbox, id) {
       output.add(geom!);
     });
@@ -77,15 +77,15 @@ main() {
   });
 
   test('geomEach -- bare-pointGeometry', () {
-    List<Geometry> output = [];
-    geomEach(pt.geometry, (geom, i, props, bbox, id) {
+    List<GeometryObject> output = [];
+    geomEach(pt.geometry!, (geom, i, props, bbox, id) {
       output.add(geom!);
     });
     expect(output, [pt.geometry]);
   });
 
   test('geomEach -- bare-pointFeature', () {
-    List<Geometry> output = [];
+    List<GeometryObject> output = [];
     geomEach(pt, (geom, i, props, bbox, id) {
       output.add(geom!);
     });
@@ -114,8 +114,8 @@ main() {
     );
     geomEach(
       pt,
-      (Geometry? currentGeometry,
-          num? featureIndex,
+      (GeometryObject? currentGeometry,
+          int? featureIndex,
           Map<String, dynamic> featureProperties,
           BBox? featureBBox,
           dynamic featureId) {
@@ -174,8 +174,8 @@ main() {
       // FeatureCollection
       var count = 0;
       func(lines, (
-        Geometry? currentGeometry,
-        num? featureIndex,
+        GeometryObject? currentGeometry,
+        int? featureIndex,
         Map<String, dynamic> featureProperties,
         BBox? featureBBox,
         dynamic featureId,
@@ -187,8 +187,8 @@ main() {
       // Multi Geometry
       var multiCount = 0;
       func(multiLine, (
-        Geometry? currentGeometry,
-        num? featureIndex,
+        GeometryObject? currentGeometry,
+        int? featureIndex,
         Map<String, dynamic> featureProperties,
         BBox? featureBBox,
         dynamic featureId,
