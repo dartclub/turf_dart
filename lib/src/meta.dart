@@ -4,7 +4,7 @@ typedef GeomEachCallback = dynamic Function(
   Geometry? currentGeometry,
   num? featureIndex,
   Map<String, dynamic> featureProperties,
-  BBox featureBBox,
+  BBox? featureBBox,
   dynamic featureId,
 );
 
@@ -27,12 +27,12 @@ typedef GeomEachCallback = dynamic Function(
 /// ```
 void geomEach(dynamic geoJSON, GeomEachCallback callback) {
   dynamic geometry;
-  var stopG;
+  int stopG;
   dynamic geometryMaybeCollection;
   bool isGeometryCollection;
   Map<String, dynamic> featureProperties;
-  BBox featureBBox;
-  var featureId;
+  BBox? featureBBox;
+  dynamic featureId;
   num featureIndex = 0;
   bool isFeatureCollection =
       geoJSON.type == GeoJSONObjectTypes.featureCollection;

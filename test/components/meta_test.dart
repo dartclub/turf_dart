@@ -117,7 +117,7 @@ main() {
       (Geometry? currentGeometry,
           num? featureIndex,
           Map<String, dynamic> featureProperties,
-          BBox featureBBox,
+          BBox? featureBBox,
           dynamic featureId) {
         expect(featureIndex, 0, reason: 'featureIndex');
         expect(featureProperties, properties, reason: 'featureProperties');
@@ -174,10 +174,10 @@ main() {
       // FeatureCollection
       var count = 0;
       func(lines, (
-        Geometry currentGeometry,
-        int featureIndex,
+        Geometry? currentGeometry,
+        num? featureIndex,
         Map<String, dynamic> featureProperties,
-        BBox featureBBox,
+        BBox? featureBBox,
         dynamic featureId,
       ) {
         count += 1;
@@ -187,10 +187,10 @@ main() {
       // Multi Geometry
       var multiCount = 0;
       func(multiLine, (
-        Geometry currentGeometry,
-        int featureIndex,
+        Geometry? currentGeometry,
+        num? featureIndex,
         Map<String, dynamic> featureProperties,
-        BBox featureBBox,
+        BBox? featureBBox,
         dynamic featureId,
       ) {
         multiCount += 1;
