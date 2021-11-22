@@ -159,18 +159,23 @@ abstract class CoordinateType implements Iterable<num> {
 /// Please make sure, you arrange your parameters like this:
 /// 1. Longitude, 2. Latitude, 3. Altitude (optional)
 class Position extends CoordinateType {
-  Position(num lng, num lat, [num alt = 0]) : super([lng, lat, alt]);
-  Position.named({required num lat, required num lng, num alt = 0})
-      : super([lng, lat, alt]);
+  Position(num lng, num lat, [num? alt])
+      : super([
+          lng,
+          lat,
+          if (alt != null) alt,
+        ]);
+  Position.named({required num lat, required num lng, num? alt})
+      : super([
+          lng,
+          lat,
+          if (alt != null) alt,
+        ]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
   Position.of(List<num> list)
-      : super(list.length < 3
-            ? [
-                ...list,
-                ...List.generate(3 - list.length, (val) => 0).toList(),
-              ]
-            : list);
+      : assert(list.length >= 2 && list.length <= 3),
+        super(list);
   factory Position.fromJson(List<num> list) => Position.of(list);
 
   // TODO implement override operators +, -, * with vector operations
@@ -182,7 +187,7 @@ class Position extends CoordinateType {
 
   num get lng => _items[0];
   num get lat => _items[1];
-  num get alt => _items[2];
+  num? get alt => length == 3 ? _items[2] : null;
 
   @override
   bool get isSigned => lng <= 180 && lat <= 90;
@@ -208,28 +213,47 @@ class BBox extends CoordinateType {
     num lat1,
     num alt1,
     num lng2, [
-    num lat2 = 0,
-    num alt2 = 0,
-  ]) : super([lng1, lat1, alt1, lng2, lat2, alt2]);
+    num? lat2,
+    num? alt2,
+  ]) : super([
+          lng1,
+          lat1,
+          alt1,
+          lng2,
+          if (lat2 != null) lat2,
+          if (alt2 != null) alt2,
+        ]);
+
   BBox.named({
-    required num lat1,
-    required num lat2,
     required num lng1,
+    required num lat1,
+    num? alt1,
     required num lng2,
-    num alt1 = 0,
-    num alt2 = 0,
-  }) : super([lng1, lat1, alt1, lng2, lat2, alt2]);
+    required num lat2,
+    num? alt2,
+  }) : super([
+          lng1,
+          lat1,
+          if (alt1 != null) alt1,
+          lng2,
+          lat2,
+          if (alt2 != null) alt2,
+        ]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  BBox.of(List<num> list) : super(list);
+  BBox.of(List<num> list)
+      : assert(list.length == 4 || list.length == 6),
+        super(list);
   factory BBox.fromJson(List<num> list) => BBox.of(list);
+
+  bool get _is3D => length == 6;
 
   num get lng1 => _items[0];
   num get lat1 => _items[1];
-  num get alt1 => _items[2];
-  num get lng2 => _items[3];
-  num get lat2 => _items[4];
-  num get alt2 => _items[5];
+  num? get alt1 => _is3D ? _items[2] : null;
+  num get lng2 => _items[_is3D ? 3 : 2];
+  num get lat2 => _items[_is3D ? 4 : 3];
+  num? get alt2 => _is3D ? _items[5] : null;
 
   @override
   BBox clone() => BBox.of(_items);
