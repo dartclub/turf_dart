@@ -26,11 +26,36 @@ jobs:
       - name: Analyze project source
         run: dart analyze
         if: always()
-      
+
       - name: Run build_runner
         run: dart run build_runner build --delete-conflicting-outputs
         if: always()
 
-      - name: Run tests
-        run: dart test
+      - name: Run tests with coverage enabled
+        run: dart test --coverage=./coverage
         if: always()
+
+      - name: Convert to LCOV report
+        if: always()
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
+
+      - name: Comment on PR with coverage
+        if: always()
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate HTML coverage report
+        if: always()
+        run: |
+          sudo apt install lcov
+          genhtml -o ./coverage/report ./coverage/lcov.info
+
+      - name: Archive coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: ./coverage/report
