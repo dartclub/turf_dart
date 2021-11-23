@@ -69,71 +69,33 @@ void _forEachGeomInGeometryObject(
     BBox? featureBBox,
     dynamic featureId,
     int featureIndex) {
-  GeometryType currentGeometry;
-  num geometryCollectionLength = _getGeometryCollectionLength(geometryObject);
-  for (int geometryIndex = 0;
-      geometryIndex < geometryCollectionLength;
-      geometryIndex++) {
-    currentGeometry = _getGeometry(geometryObject, geometryIndex);
-    _runGeomEachCallbacks(currentGeometry, callback, featureIndex,
-        featureProperties, featureBBox, featureId);
+  if (geometryObject is GeometryType) {
+    if (callback(
+          geometryObject,
+          featureIndex,
+          featureProperties,
+          featureBBox,
+          featureId,
+        ) ==
+        false) {
+      throw _ShortCircuit();
+    }
+  } else if (geometryObject is GeometryCollection) {
+    num geometryCollectionLength = geometryObject.geometries.length;
+
+    for (int geometryIndex = 0;
+        geometryIndex < geometryCollectionLength;
+        geometryIndex++) {
+      _forEachGeomInGeometryObject(
+        geometryObject.geometries[geometryIndex],
+        callback,
+        featureProperties,
+        featureBBox,
+        featureId,
+        featureIndex,
+      );
+    }
+  } else {
+    throw Exception('Unknown Geometry Type');
   }
-}
-
-void _runGeomEachCallbacks(
-    GeometryType<dynamic> currentGeometry,
-    GeomEachCallback callback,
-    int featureIndex,
-    Map<String, dynamic> featureProperties,
-    BBox? featureBBox,
-    dynamic featureId) {
-  switch (currentGeometry.type) {
-    case GeoJSONObjectTypes.point:
-    case GeoJSONObjectTypes.lineString:
-    case GeoJSONObjectTypes.multiPoint:
-    case GeoJSONObjectTypes.polygon:
-    case GeoJSONObjectTypes.multiLineString:
-    case GeoJSONObjectTypes.multiPolygon:
-      if (callback(
-            currentGeometry,
-            featureIndex,
-            featureProperties,
-            featureBBox,
-            featureId,
-          ) ==
-          false) {
-        throw _ShortCircuit();
-      }
-      break;
-    case GeoJSONObjectTypes.geometryCollection:
-      for (int j = 0;
-          j < (currentGeometry as GeometryCollection).geometries.length;
-          j++) {
-        if (callback(
-              (currentGeometry as GeometryCollection).geometries[j],
-              featureIndex,
-              featureProperties,
-              featureBBox,
-              featureId,
-            ) ==
-            false) {
-          throw _ShortCircuit();
-        }
-      }
-      break;
-    default:
-      throw Exception('Unknown Geometry Type');
-  }
-}
-
-int _getGeometryCollectionLength(GeometryObject geometryObject) {
-  return geometryObject is GeometryCollection
-      ? geometryObject.geometries.length
-      : 1;
-}
-
-GeometryType _getGeometry(GeometryObject geometryObject, int index) {
-  return geometryObject is GeometryCollection
-      ? geometryObject.geometries[index]
-      : geometryObject as GeometryType;
 }
