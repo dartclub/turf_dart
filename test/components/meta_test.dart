@@ -93,7 +93,7 @@ main() {
   });
 
   test('geomEach -- multiGeometryFeature-properties', () {
-    Map<String, dynamic> lastProperties = {};
+    Map<String, dynamic>? lastProperties = {};
     geomEach(geomCollection, (geom, i, props, bbox, id) {
       lastProperties = props;
     });
@@ -116,7 +116,7 @@ main() {
       pt,
       (GeometryObject? currentGeometry,
           int? featureIndex,
-          Map<String, dynamic> featureProperties,
+          Map<String, dynamic>? featureProperties,
           BBox? featureBBox,
           dynamic featureId) {
         expect(featureIndex, 0, reason: 'featureIndex');
@@ -176,7 +176,7 @@ main() {
       func(lines, (
         GeometryObject? currentGeometry,
         int? featureIndex,
-        Map<String, dynamic> featureProperties,
+        Map<String, dynamic>? featureProperties,
         BBox? featureBBox,
         dynamic featureId,
       ) {
@@ -189,7 +189,7 @@ main() {
       func(multiLine, (
         GeometryObject? currentGeometry,
         int? featureIndex,
-        Map<String, dynamic> featureProperties,
+        Map<String, dynamic>? featureProperties,
         BBox? featureBBox,
         dynamic featureId,
       ) {
