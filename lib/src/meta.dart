@@ -3,7 +3,7 @@ import 'geojson.dart';
 typedef GeomEachCallback = dynamic Function(
   GeometryObject? currentGeometry,
   int? featureIndex,
-  Map<String, dynamic> featureProperties,
+  Map<String, dynamic>? featureProperties,
   BBox? featureBBox,
   dynamic featureId,
 );
@@ -58,14 +58,14 @@ void _forEachGeomInFeatureCollection(
 
 void _forEachGeomInFeature(Feature<GeometryObject> feature,
     GeomEachCallback callback, int featureIndex) {
-  _forEachGeomInGeometryObject(feature.geometry!, callback, feature.properties!,
+  _forEachGeomInGeometryObject(feature.geometry, callback, feature.properties,
       feature.bbox, feature.id, featureIndex);
 }
 
 void _forEachGeomInGeometryObject(
-    GeometryObject geometryObject,
+    GeometryObject? geometryObject,
     GeomEachCallback callback,
-    Map<String, dynamic> featureProperties,
+    Map<String, dynamic>? featureProperties,
     BBox? featureBBox,
     dynamic featureId,
     int featureIndex) {
