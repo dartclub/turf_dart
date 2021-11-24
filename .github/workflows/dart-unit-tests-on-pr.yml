@@ -42,6 +42,7 @@ jobs:
           dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
 
       - name: Comment on PR with coverage
+        continue-on-error: true
         if: always()
         uses: romeovs/lcov-reporter-action@v0.2.16
         with:
