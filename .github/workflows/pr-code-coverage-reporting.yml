@@ -43,7 +43,7 @@ jobs:
 
       - name: Comment on PR with coverage
         continue-on-error: true
-        uses: romeovs/lcov-reporter-action@v0.2.16
+        uses: romeovs/lcov-reporter-action@v0.2.21
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./coverage/lcov.info
