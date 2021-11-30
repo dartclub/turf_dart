@@ -1,0 +1,58 @@
+name: Pull Request Code Coverage Reporting
+on:
+  workflow_run:
+    workflows: ["Dart Unit Tests for PRs"]
+    types: [completed]
+
+jobs:
+  coverage-reporting:
+    if: >
+      ${{ github.event.workflow_run.event == 'pull_request' &&
+          github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Print Dart SDK version
+        run: dart --version
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Download raw coverage from tests workflow
+        uses: dawidd6/action-download-artifact@v2.16.0
+        with:
+          workflow: dart-unit-tests-on-pr.yml
+          run_id: ${{ github.event.workflow_run.id }}
+          name: raw-coverage
+          path: ./coverage
+
+      - name: Convert to LCOV report
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
+
+      - name: Generate HTML coverage report
+        run: |
+          sudo apt install lcov
+          genhtml -o ./coverage/report ./coverage/lcov.info
+
+      - name: Comment on PR with coverage
+        continue-on-error: true
+        uses: romeovs/lcov-reporter-action@v0.2.21
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
+
+      - name: Archive coverage report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: |
+            ./coverage/report
+            ./coverage/lcov.info

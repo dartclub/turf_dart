@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Null-safety support
+
 ## 0.0.2+3
 
 Implements the `geomEach` meta function. [#13](https://github.com/dartclub/turf_dart/pull/13)
@@ -5,6 +9,7 @@ Implements the `geomEach` meta function. [#13](https://github.com/dartclub/turf_
 ## 0.0.2+1
 
 - initialize lists and maps empty in constructors, if not provided
+
 ## 0.0.2
 
 - normalization for coordinates (Position)

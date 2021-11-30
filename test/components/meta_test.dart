@@ -35,13 +35,13 @@ Feature<MultiLineString> multiline = Feature<MultiLineString>(
 Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
   geometry: GeometryCollection(
     geometries: [
-      pt.geometry,
-      line.geometry,
-      multiline.geometry,
+      pt.geometry!,
+      line.geometry!,
+      multiline.geometry!,
     ],
   ),
 );
-List<GeoJSONObject> featureAndCollection(Geometry geometry) {
+List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   Feature feature = Feature(
     geometry: geometry,
     properties: {
@@ -58,42 +58,42 @@ List<GeoJSONObject> featureAndCollection(Geometry geometry) {
 
 main() {
   test('geomEach -- GeometryCollection', () {
-    featureAndCollection(geomCollection.geometry)
+    featureAndCollection(geomCollection.geometry!)
         .forEach((GeoJSONObject input) {
-      List<Geometry> output = [];
+      List<GeometryObject> output = [];
       geomEach(input, (geom, i, props, bbox, id) {
-        output.add(geom);
+        output.add(geom!);
       });
-      expect(output, geomCollection.geometry.geometries);
+      expect(output, geomCollection.geometry!.geometries);
     });
   });
 
   test('geomEach -- bare-GeometryCollection', () {
-    List<Geometry> output = [];
+    List<GeometryObject> output = [];
     geomEach(geomCollection, (geom, i, props, bbox, id) {
-      output.add(geom);
+      output.add(geom!);
     });
-    expect(output, geomCollection.geometry.geometries);
+    expect(output, geomCollection.geometry!.geometries);
   });
 
   test('geomEach -- bare-pointGeometry', () {
-    List<Geometry> output = [];
-    geomEach(pt.geometry, (geom, i, props, bbox, id) {
-      output.add(geom);
+    List<GeometryObject> output = [];
+    geomEach(pt.geometry!, (geom, i, props, bbox, id) {
+      output.add(geom!);
     });
     expect(output, [pt.geometry]);
   });
 
   test('geomEach -- bare-pointFeature', () {
-    List<Geometry> output = [];
+    List<GeometryObject> output = [];
     geomEach(pt, (geom, i, props, bbox, id) {
-      output.add(geom);
+      output.add(geom!);
     });
     expect(output, [pt.geometry]);
   });
 
   test('geomEach -- multiGeometryFeature-properties', () {
-    Map<String, dynamic> lastProperties = {};
+    Map<String, dynamic>? lastProperties = {};
     geomEach(geomCollection, (geom, i, props, bbox, id) {
       lastProperties = props;
     });
@@ -114,10 +114,10 @@ main() {
     );
     geomEach(
       pt,
-      (Geometry currentGeometry,
-          int featureIndex,
-          Map<String, dynamic> featureProperties,
-          BBox featureBBox,
+      (GeometryObject? currentGeometry,
+          int? featureIndex,
+          Map<String, dynamic>? featureProperties,
+          BBox? featureBBox,
           dynamic featureId) {
         expect(featureIndex, 0, reason: 'featureIndex');
         expect(featureProperties, properties, reason: 'featureProperties');
@@ -174,10 +174,10 @@ main() {
       // FeatureCollection
       var count = 0;
       func(lines, (
-        Geometry currentGeometry,
-        int featureIndex,
-        Map<String, dynamic> featureProperties,
-        BBox featureBBox,
+        GeometryObject? currentGeometry,
+        int? featureIndex,
+        Map<String, dynamic>? featureProperties,
+        BBox? featureBBox,
         dynamic featureId,
       ) {
         count += 1;
@@ -187,10 +187,10 @@ main() {
       // Multi Geometry
       var multiCount = 0;
       func(multiLine, (
-        Geometry currentGeometry,
-        int featureIndex,
-        Map<String, dynamic> featureProperties,
-        BBox featureBBox,
+        GeometryObject? currentGeometry,
+        int? featureIndex,
+        Map<String, dynamic>? featureProperties,
+        BBox? featureBBox,
         dynamic featureId,
       ) {
         multiCount += 1;

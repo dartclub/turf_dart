@@ -1,15 +1,18 @@
-name: dart pub publish --dry-run, Publishing Preview for PRs
+name: Dart pub publish --dry-run, Publishing Preview for PRs
 on:
   pull_request:
     branches:
       - releases
 jobs:
-  build:
+  preview-publish:
     runs-on: ubuntu-latest
-    container:
-      image: google/dart:latest
+    
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
 
       - name: Print Dart SDK version
         run: dart --version
@@ -20,11 +23,13 @@ jobs:
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
       - name: Analyze project source
         run: dart analyze
-        # Run always
         if: always()
 
-      - name: Publish package (dry-run)
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs
+        if: always()
+
+      - name: Preview publish package (dry-run)
         run: dart pub publish --dry-run

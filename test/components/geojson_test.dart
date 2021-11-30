@@ -5,7 +5,7 @@ import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 
 main() {
-  group('GeoJSON Objects', () {
+  group('Coordinate Types:', () {
     test('Position', () {
       _expectArgs(Position pos) {
         expect(pos.lng, 1);
@@ -24,9 +24,13 @@ main() {
       _expectArgs(pos2);
     });
     test('Position deserialization', () {
-      expect(Position.of([1]).toList(), [1, 0, 0]);
-      expect(Position.of([1, 2]).toList(), [1, 2, 0]);
+      expect(Position.of([1, 2]).toList(), [1, 2]);
       expect(Position.of([1, 2, 3]).toList(), [1, 2, 3]);
+
+      // test assert length >= 2 && length <= 3
+      expect(() => Position.of([1]).toList(), throwsA(isA<AssertionError>()));
+      expect(() => Position.of([1, 2, 3, 4]).toList(),
+          throwsA(isA<AssertionError>()));
     });
     test('BBox', () {
       _expectArgs(BBox bbox) {
@@ -51,9 +55,33 @@ main() {
       var bbox2 = BBox.of([1, 2, 3, 4, 5, 6]);
       _expectArgs(bbox1);
       _expectArgs(bbox2);
+
+      // test assert length == 4 || length == 6
+      expect(() => BBox.of([1, 2, 3]).toList(), throwsA(isA<AssertionError>()));
+      expect(() => BBox.of([1, 2, 3, 4, 5]).toList(),
+          throwsA(isA<AssertionError>()));
+      expect(() => BBox.of([1, 2, 3, 4, 5, 6, 7]).toList(),
+          throwsA(isA<AssertionError>()));
+
+      // test 4 dimensional
+      var bbox3 = BBox.named(lng1: 1, lat1: 2, lng2: 3, lat2: 4);
+      expect(bbox3.lng1, 1);
+      expect(bbox3.lat1, 2);
+      expect(bbox3.alt1, null);
+      expect(bbox3.lng2, 3);
+      expect(bbox3.lat2, 4);
+      expect(bbox3.alt2, null);
+      expect(bbox3[0], 1);
+      expect(bbox3[1], 2);
+      expect(bbox3[2], 3);
+      expect(bbox3[3], 4);
+      expect(() => bbox3[4], throwsRangeError);
+      expect(() => bbox3[5], throwsRangeError);
+      expect(bbox3.length, 4);
+      expect(bbox3.toJson(), [1, 2, 3, 4]);
     });
   });
-  group('Longitude normalization', () {
+  group('Longitude normalization:', () {
     var rand = Random();
     _rand() => rand.nextDouble() * (360 * 2) - 360;
     test('Position.toSigned', () {
@@ -108,15 +136,74 @@ main() {
         );
       }
     });
-    test('Point', () {});
-    test('Point', () {});
-    test('MultiPoint', () {});
-    test('LineString', () {});
-    test('MultiLineString', () {});
-    test('Polygon', () {});
-    test('MultiPolygon', () {});
-    test('GeometryCollection', () {});
-    test('Feature', () {});
-    test('FeatureCollection', () {});
+  });
+
+  group('Test Geometry Types:', () {
+    test('Point', () {
+      var geoJSON = {
+        'coordinates': null,
+        'type': GeoJSONObjectTypes.point,
+      };
+      expect(() => Point.fromJson(geoJSON), throwsA(isA<TypeError>()));
+    });
+
+    var geometries = [
+      GeoJSONObjectTypes.multiPoint,
+      GeoJSONObjectTypes.lineString,
+      GeoJSONObjectTypes.multiLineString,
+      GeoJSONObjectTypes.polygon,
+      GeoJSONObjectTypes.multiPolygon,
+    ];
+
+    var collection = GeometryCollection.fromJson({
+      'type': GeoJSONObjectTypes.geometryCollection,
+      'geometries': geometries
+          .map((type) => {
+                'coordinates': null,
+                'type': type,
+              })
+          .toList(),
+    });
+    for (var i = 0; i < geometries.length; i++) {
+      test(geometries[i], () {
+        expect(geometries[i], collection.geometries[i].type);
+        expect(collection.geometries[i].coordinates,
+            isNotNull); // kind of unnecessary
+        expect(collection.geometries[i].coordinates, isA<List>());
+        expect(collection.geometries[i].coordinates, isEmpty);
+      });
+    }
+  });
+  test('GeometryCollection', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.geometryCollection,
+      'geometries': null,
+    };
+    var collection = GeometryCollection.fromJson(geoJSON);
+    expect(collection.type, GeoJSONObjectTypes.geometryCollection);
+    expect(collection.geometries, isNotNull); // kind of unnecessary
+    expect(collection.geometries, isA<List>());
+    expect(collection.geometries, isEmpty);
+  });
+  test('Feature', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.feature,
+      'geometry': null,
+    };
+    var feature = Feature.fromJson(geoJSON);
+    expect(feature.type, GeoJSONObjectTypes.feature);
+    expect(feature.id, isNull); // kind of unnecessary
+    expect(feature.geometry, isNull);
+  });
+  test('GeometryCollection', () {
+    var geoJSON = {
+      'type': GeoJSONObjectTypes.featureCollection,
+      'features': null,
+    };
+    var collection = FeatureCollection.fromJson(geoJSON);
+    expect(collection.type, GeoJSONObjectTypes.featureCollection);
+    expect(collection.features, isNotNull); // kind of unnecessary
+    expect(collection.features, isA<List>());
+    expect(collection.features, isEmpty);
   });
 }
