@@ -213,7 +213,7 @@ main() {
     expect(feature.id, isNull); // kind of unnecessary
     expect(feature.geometry, isNull);
   });
-  test('GeometryCollection', () {
+  test('FeatureCollection', () {
     var geoJSON = {
       'type': GeoJSONObjectType.featureCollection,
       'features': null,
