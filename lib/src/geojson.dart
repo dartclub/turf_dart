@@ -191,7 +191,35 @@ class Position extends CoordinateType {
 
   factory Position.fromJson(List<num> list) => Position.of(list);
 
-  // TODO implement override operators +, -, * with vector operations
+  Position operator +(Position p) => Position.of([
+        lng + p.lng,
+        lat + p.lat,
+        if (alt != null && p.alt != null) alt! + p.alt!
+      ]);
+
+  Position operator -(Position p) => Position.of([
+        lng - p.lng,
+        lat - p.lat,
+        if (alt != null && p.alt != null) alt! - p.alt!,
+      ]);
+
+  num dotProduct(Position p) =>
+      (lng * p.lng) +
+      (lat * p.lat) +
+      (alt != null && p.alt != null ? (alt! * p.alt!) : 0);
+
+  Position crossProduct(Position p) {
+    if (alt != null && p.alt != null) {
+      return Position(
+        lat * p.alt! - alt! * p.lat,
+        alt! * p.lng - lng * p.alt!,
+        lng * p.lat - lat * p.lng,
+      );
+    }
+    throw Exception('Cross product only implemented for 3 dimensions');
+  }
+
+  Position operator *(Position p) => crossProduct(p);
 
   @override
   bool operator ==(dynamic other) => other is Position

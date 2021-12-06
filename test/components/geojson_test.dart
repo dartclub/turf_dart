@@ -32,6 +32,24 @@ main() {
       expect(() => Position.of([1, 2, 3, 4]).toList(),
           throwsA(isA<AssertionError>()));
     });
+
+    test('Position vector addition', () {
+      expect(Position(1, 2, 3) + Position(1, 2, 3), Position(2, 4, 6));
+    });
+    test('Position vector subtraction', () {
+      expect(Position(1, 2, 3) - Position(1, 2, 3), Position(0, 0, 0));
+    });
+    test('Position vector dot product', () {
+      expect(Position(1, 2, 3).dotProduct(Position(1, 2, 3)),
+          (1) + (2 * 2) + (3 * 3));
+      expect(Position(1, 2).dotProduct(Position(1, 2)), (1) + (2 * 2));
+    });
+    test('Position vector cross product', () {
+      expect(Position(1, 2, 3) * Position(1, 2, 3), Position(0, 0, 0));
+      expect(Position(3, 2, 1) * Position(1, 2, 3), Position(4, -8, 4));
+      expect(() => Position(1, 2, 3) * Position(1, 2), throwsA(isException));
+    });
+
     test('BBox', () {
       _expectArgs(BBox bbox) {
         expect(bbox.lng1, 1);
