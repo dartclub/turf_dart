@@ -30,7 +30,7 @@ abstract class GeoJSONObject {
   final GeoJSONObjectType type;
   BBox? bbox;
 
-  GeoJSONObject.withType(this.type);
+  GeoJSONObject.withType(this.type, {this.bbox});
 
   Map<String, dynamic> serialize(Map<String, dynamic> map) => {
         'type': _$GeoJSONObjectTypeEnumMap[type],
@@ -287,7 +287,8 @@ class BBox extends CoordinateType {
 }
 
 abstract class GeometryObject extends GeoJSONObject {
-  GeometryObject.withType(GeoJSONObjectType type) : super.withType(type);
+  GeometryObject.withType(GeoJSONObjectType type, {BBox? bbox})
+      : super.withType(type, bbox: bbox);
 
   static GeometryObject deserialize(Map<String, dynamic> json) {
     return json['type'] == GeoJSONObjectType.geometryCollection
@@ -299,8 +300,8 @@ abstract class GeometryObject extends GeoJSONObject {
 abstract class GeometryType<T> extends GeometryObject {
   T coordinates;
 
-  GeometryType.withType(this.coordinates, GeoJSONObjectType type)
-      : super.withType(type);
+  GeometryType.withType(this.coordinates, GeoJSONObjectType type, {BBox? bbox})
+      : super.withType(type, bbox: bbox);
 
   static GeometryType deserialize(Map<String, dynamic> json) {
     switch (json['type']) {
@@ -325,11 +326,8 @@ abstract class GeometryType<T> extends GeometryObject {
 /// Point, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.2
 @JsonSerializable(explicitToJson: true)
 class Point extends GeometryType<Position> {
-  @override
-  BBox? bbox;
-
-  Point({this.bbox, required Position coordinates})
-      : super.withType(coordinates, GeoJSONObjectType.point);
+  Point({BBox? bbox, required Position coordinates})
+      : super.withType(coordinates, GeoJSONObjectType.point, bbox: bbox);
 
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
 
@@ -347,18 +345,16 @@ class Point extends GeometryType<Position> {
 /// MultiPoint, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.3
 @JsonSerializable(explicitToJson: true)
 class MultiPoint extends GeometryType<List<Position>> {
-  @override
-  BBox? bbox;
-
-  MultiPoint({this.bbox, List<Position> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectType.multiPoint);
+  MultiPoint({BBox? bbox, List<Position> coordinates = const []})
+      : super.withType(coordinates, GeoJSONObjectType.multiPoint, bbox: bbox);
 
   factory MultiPoint.fromJson(Map<String, dynamic> json) =>
       _$MultiPointFromJson(json);
 
-  MultiPoint.fromPoints({this.bbox, List<Point> points = const []})
+  MultiPoint.fromPoints({BBox? bbox, List<Point> points = const []})
       : super.withType(points.map((e) => e.coordinates).toList(),
-            GeoJSONObjectType.multiPoint);
+            GeoJSONObjectType.multiPoint,
+            bbox: bbox);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPointToJson(this));
@@ -373,18 +369,16 @@ class MultiPoint extends GeometryType<List<Position>> {
 /// LineString, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.4
 @JsonSerializable(explicitToJson: true)
 class LineString extends GeometryType<List<Position>> {
-  @override
-  BBox? bbox;
-
-  LineString({this.bbox, List<Position> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectType.lineString);
+  LineString({BBox? bbox, List<Position> coordinates = const []})
+      : super.withType(coordinates, GeoJSONObjectType.lineString, bbox: bbox);
 
   factory LineString.fromJson(Map<String, dynamic> json) =>
       _$LineStringFromJson(json);
 
-  LineString.fromPoints({this.bbox, List<Point> points = const []})
+  LineString.fromPoints({BBox? bbox, List<Point> points = const []})
       : super.withType(points.map((e) => e.coordinates).toList(),
-            GeoJSONObjectType.lineString);
+            GeoJSONObjectType.lineString,
+            bbox: bbox);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$LineStringToJson(this));
@@ -398,19 +392,18 @@ class LineString extends GeometryType<List<Position>> {
 /// MultiLineString, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.5
 @JsonSerializable(explicitToJson: true)
 class MultiLineString extends GeometryType<List<List<Position>>> {
-  @override
-  BBox? bbox;
-
-  MultiLineString({this.bbox, List<List<Position>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectType.multiLineString);
+  MultiLineString({BBox? bbox, List<List<Position>> coordinates = const []})
+      : super.withType(coordinates, GeoJSONObjectType.multiLineString,
+            bbox: bbox);
 
   factory MultiLineString.fromJson(Map<String, dynamic> json) =>
       _$MultiLineStringFromJson(json);
 
   MultiLineString.fromLineStrings(
-      {this.bbox, List<LineString> lineStrings = const []})
+      {BBox? bbox, List<LineString> lineStrings = const []})
       : super.withType(lineStrings.map((e) => e.coordinates).toList(),
-            GeoJSONObjectType.multiLineString);
+            GeoJSONObjectType.multiLineString,
+            bbox: bbox);
 
   @override
   Map<String, dynamic> toJson() =>
@@ -427,19 +420,17 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
 /// Polygon, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.6
 @JsonSerializable(explicitToJson: true)
 class Polygon extends GeometryType<List<List<Position>>> {
-  @override
-  BBox? bbox;
-
-  Polygon({this.bbox, List<List<Position>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectType.polygon);
+  Polygon({BBox? bbox, List<List<Position>> coordinates = const []})
+      : super.withType(coordinates, GeoJSONObjectType.polygon, bbox: bbox);
 
   factory Polygon.fromJson(Map<String, dynamic> json) =>
       _$PolygonFromJson(json);
 
-  Polygon.fromPoints({this.bbox, List<List<Point>> points = const []})
+  Polygon.fromPoints({BBox? bbox, List<List<Point>> points = const []})
       : super.withType(
             points.map((e) => e.map((e) => e.coordinates).toList()).toList(),
-            GeoJSONObjectType.polygon);
+            GeoJSONObjectType.polygon,
+            bbox: bbox);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$PolygonToJson(this));
@@ -455,18 +446,16 @@ class Polygon extends GeometryType<List<List<Position>>> {
 /// MultiPolygon, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.7
 @JsonSerializable(explicitToJson: true)
 class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
-  @override
-  BBox? bbox;
-
-  MultiPolygon({this.bbox, List<List<List<Position>>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectType.multiPolygon);
+  MultiPolygon({BBox? bbox, List<List<List<Position>>> coordinates = const []})
+      : super.withType(coordinates, GeoJSONObjectType.multiPolygon, bbox: bbox);
 
   factory MultiPolygon.fromJson(Map<String, dynamic> json) =>
       _$MultiPolygonFromJson(json);
 
-  MultiPolygon.fromPolygons({this.bbox, List<Polygon> polygons = const []})
+  MultiPolygon.fromPolygons({BBox? bbox, List<Polygon> polygons = const []})
       : super.withType(polygons.map((e) => e.coordinates).toList(),
-            GeoJSONObjectType.multiPolygon);
+            GeoJSONObjectType.multiPolygon,
+            bbox: bbox);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));
@@ -483,12 +472,10 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
 /// GeometryCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.8
 @JsonSerializable(explicitToJson: true, createFactory: false)
 class GeometryCollection extends GeometryObject {
-  @override
-  BBox? bbox;
   List<GeometryType> geometries;
 
-  GeometryCollection({this.bbox, this.geometries = const []})
-      : super.withType(GeoJSONObjectType.geometryCollection);
+  GeometryCollection({BBox? bbox, this.geometries = const []})
+      : super.withType(GeoJSONObjectType.geometryCollection, bbox: bbox);
 
   factory GeometryCollection.fromJson(Map<String, dynamic> json) =>
       GeometryCollection(
@@ -517,20 +504,18 @@ class GeometryCollection extends GeometryObject {
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
 class Feature<T extends GeometryObject> extends GeoJSONObject {
-  @override
-  BBox? bbox;
   dynamic id;
   Map<String, dynamic>? properties;
   T? geometry;
   Map<String, dynamic> fields;
 
   Feature({
-    this.bbox,
+    BBox? bbox,
     this.id,
     this.properties = const {},
     this.geometry,
     this.fields = const {},
-  }) : super.withType(GeoJSONObjectType.feature);
+  }) : super.withType(GeoJSONObjectType.feature, bbox: bbox);
 
   factory Feature.fromJson(Map<String, dynamic> json) => Feature(
         id: json['id'],
@@ -590,12 +575,10 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
 class FeatureCollection<T extends GeometryObject> extends GeoJSONObject {
-  @override
-  BBox? bbox;
   List<Feature<T>> features;
 
-  FeatureCollection({this.bbox, this.features = const []})
-      : super.withType(GeoJSONObjectType.featureCollection);
+  FeatureCollection({BBox? bbox, this.features = const []})
+      : super.withType(GeoJSONObjectType.featureCollection, bbox: bbox);
 
   factory FeatureCollection.fromJson(Map<String, dynamic> json) =>
       FeatureCollection(

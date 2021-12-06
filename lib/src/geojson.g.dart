@@ -16,8 +16,8 @@ Point _$PointFromJson(Map<String, dynamic> json) => Point(
     );
 
 Map<String, dynamic> _$PointToJson(Point instance) => <String, dynamic>{
-      'coordinates': instance.coordinates.toJson(),
       'bbox': instance.bbox?.toJson(),
+      'coordinates': instance.coordinates.toJson(),
     };
 
 MultiPoint _$MultiPointFromJson(Map<String, dynamic> json) => MultiPoint(
@@ -34,8 +34,8 @@ MultiPoint _$MultiPointFromJson(Map<String, dynamic> json) => MultiPoint(
 
 Map<String, dynamic> _$MultiPointToJson(MultiPoint instance) =>
     <String, dynamic>{
-      'coordinates': instance.coordinates.map((e) => e.toJson()).toList(),
       'bbox': instance.bbox?.toJson(),
+      'coordinates': instance.coordinates.map((e) => e.toJson()).toList(),
     };
 
 LineString _$LineStringFromJson(Map<String, dynamic> json) => LineString(
@@ -52,8 +52,8 @@ LineString _$LineStringFromJson(Map<String, dynamic> json) => LineString(
 
 Map<String, dynamic> _$LineStringToJson(LineString instance) =>
     <String, dynamic>{
-      'coordinates': instance.coordinates.map((e) => e.toJson()).toList(),
       'bbox': instance.bbox?.toJson(),
+      'coordinates': instance.coordinates.map((e) => e.toJson()).toList(),
     };
 
 MultiLineString _$MultiLineStringFromJson(Map<String, dynamic> json) =>
@@ -73,10 +73,10 @@ MultiLineString _$MultiLineStringFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$MultiLineStringToJson(MultiLineString instance) =>
     <String, dynamic>{
+      'bbox': instance.bbox?.toJson(),
       'coordinates': instance.coordinates
           .map((e) => e.map((e) => e.toJson()).toList())
           .toList(),
-      'bbox': instance.bbox?.toJson(),
     };
 
 Polygon _$PolygonFromJson(Map<String, dynamic> json) => Polygon(
@@ -94,10 +94,10 @@ Polygon _$PolygonFromJson(Map<String, dynamic> json) => Polygon(
     );
 
 Map<String, dynamic> _$PolygonToJson(Polygon instance) => <String, dynamic>{
+      'bbox': instance.bbox?.toJson(),
       'coordinates': instance.coordinates
           .map((e) => e.map((e) => e.toJson()).toList())
           .toList(),
-      'bbox': instance.bbox?.toJson(),
     };
 
 MultiPolygon _$MultiPolygonFromJson(Map<String, dynamic> json) => MultiPolygon(
@@ -118,10 +118,10 @@ MultiPolygon _$MultiPolygonFromJson(Map<String, dynamic> json) => MultiPolygon(
 
 Map<String, dynamic> _$MultiPolygonToJson(MultiPolygon instance) =>
     <String, dynamic>{
+      'bbox': instance.bbox?.toJson(),
       'coordinates': instance.coordinates
           .map((e) => e.map((e) => e.map((e) => e.toJson()).toList()).toList())
           .toList(),
-      'bbox': instance.bbox?.toJson(),
     };
 
 Map<String, dynamic> _$GeometryCollectionToJson(GeometryCollection instance) =>
