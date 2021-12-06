@@ -349,6 +349,9 @@ abstract class GeometryType<T> extends GeometryObject {
         throw Exception('${json['type']} is not a valid GeoJSON type');
     }
   }
+
+  @override
+  GeometryType<T> clone();
 }
 
 /// Point, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.2
@@ -489,7 +492,7 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
   Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));
 
   @override
-  GeoJSONObject clone() => MultiPolygon(
+  MultiPolygon clone() => MultiPolygon(
         coordinates: coordinates
             .map((e) => e.map((e) => e.map((e) => e.clone()).toList()).toList())
             .toList(),
@@ -523,9 +526,8 @@ class GeometryCollection extends GeometryObject {
       super.serialize(_$GeometryCollectionToJson(this));
 
   @override
-  GeoJSONObject clone() => GeometryCollection(
-        geometries:
-            geometries.map((e) => e.clone()).toList() as List<GeometryType>,
+  GeometryCollection clone() => GeometryCollection(
+        geometries: geometries.map((e) => e.clone()).toList(),
         bbox: bbox?.clone(),
       );
 }
@@ -584,6 +586,9 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
   }
 
   @override
+  bool operator ==(dynamic other) => other is Feature ? id == other.id : false;
+
+  @override
   Map<String, dynamic> toJson() => super.serialize({
         'id': id,
         'geometry': geometry!.toJson(),
@@ -596,7 +601,7 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
         geometry: geometry?.clone() as T?,
         bbox: bbox?.clone(),
         fields: Map.of(fields),
-        properties: Map.of(properties!),
+        properties: Map.of(properties ?? {}),
         id: id,
       );
 }

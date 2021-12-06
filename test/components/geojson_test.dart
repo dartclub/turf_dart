@@ -71,8 +71,10 @@ main() {
       var bbox1 =
           BBox.named(lng1: 1, lat1: 2, alt1: 3, lng2: 4, lat2: 5, alt2: 6);
       var bbox2 = BBox.of([1, 2, 3, 4, 5, 6]);
+      var bbox3 = BBox(1, 2, 3, 4, 5, 6);
       _expectArgs(bbox1);
       _expectArgs(bbox2);
+      _expectArgs(bbox3);
 
       // test assert length == 4 || length == 6
       expect(() => BBox.of([1, 2, 3]).toList(), throwsA(isA<AssertionError>()));
@@ -81,22 +83,25 @@ main() {
       expect(() => BBox.of([1, 2, 3, 4, 5, 6, 7]).toList(),
           throwsA(isA<AssertionError>()));
 
-      // test 4 dimensional
-      var bbox3 = BBox.named(lng1: 1, lat1: 2, lng2: 3, lat2: 4);
-      expect(bbox3.lng1, 1);
-      expect(bbox3.lat1, 2);
-      expect(bbox3.alt1, null);
-      expect(bbox3.lng2, 3);
-      expect(bbox3.lat2, 4);
-      expect(bbox3.alt2, null);
-      expect(bbox3[0], 1);
-      expect(bbox3[1], 2);
-      expect(bbox3[2], 3);
-      expect(bbox3[3], 4);
-      expect(() => bbox3[4], throwsRangeError);
-      expect(() => bbox3[5], throwsRangeError);
-      expect(bbox3.length, 4);
-      expect(bbox3.toJson(), [1, 2, 3, 4]);
+      // test 2 dimensional [length == 4]
+      var bbox4 = BBox.named(lng1: 1, lat1: 2, lng2: 3, lat2: 4);
+      expect(bbox4.lng1, 1);
+      expect(bbox4.lat1, 2);
+      expect(bbox4.alt1, null);
+      expect(bbox4.lng2, 3);
+      expect(bbox4.lat2, 4);
+      expect(bbox4.alt2, null);
+      expect(bbox4[0], 1);
+      expect(bbox4[1], 2);
+      expect(bbox4[2], 3);
+      expect(bbox4[3], 4);
+      expect(() => bbox4[4], throwsRangeError);
+      expect(() => bbox4[5], throwsRangeError);
+      expect(bbox4.length, 4);
+      expect(bbox4.toJson(), [1, 2, 3, 4]);
+
+      expect(bbox1.toSigned().isSigned, true);
+      expect(bbox1, bbox1.clone());
     });
   });
   group('Longitude normalization:', () {
@@ -108,6 +113,8 @@ main() {
         var zeroZero = Position(0, 0);
         var distToCoord = distanceRaw(zeroZero, coord);
         var distToNormalizedCoord = distanceRaw(zeroZero, coord.toSigned());
+
+        expect(coord.toSigned().isSigned, true);
 
         expect(
           distToCoord.toStringAsFixed(6),
@@ -163,6 +170,10 @@ main() {
         'type': GeoJSONObjectType.point,
       };
       expect(() => Point.fromJson(geoJSON), throwsA(isA<TypeError>()));
+
+      var point = Point(coordinates: Position(11, 49));
+
+      expect(point, point.clone());
     });
 
     var geometries = [
@@ -189,6 +200,11 @@ main() {
             isNotNull); // kind of unnecessary
         expect(collection.geometries[i].coordinates, isA<List>());
         expect(collection.geometries[i].coordinates, isEmpty);
+
+        var json = collection.geometries[i].toJson();
+        for (var key in ['type', 'coordinates']) {
+          expect(json.keys, contains(key));
+        }
       });
     }
   });
@@ -202,6 +218,11 @@ main() {
     expect(collection.geometries, isNotNull); // kind of unnecessary
     expect(collection.geometries, isA<List>());
     expect(collection.geometries, isEmpty);
+
+    var json = collection.toJson();
+    for (var key in ['type', 'geometries']) {
+      expect(json.keys, contains(key));
+    }
   });
   test('Feature', () {
     var geoJSON = {
@@ -212,6 +233,16 @@ main() {
     expect(feature.type, GeoJSONObjectType.feature);
     expect(feature.id, isNull); // kind of unnecessary
     expect(feature.geometry, isNull);
+
+    feature.id = 1;
+    feature.geometry = Point(coordinates: Position(11, 49));
+
+    var json = feature.toJson();
+    for (var key in ['id', 'type', 'geometry', 'properties']) {
+      expect(json.keys, contains(key));
+    }
+
+    expect(feature, feature.clone());
   });
   test('FeatureCollection', () {
     var geoJSON = {
@@ -223,5 +254,11 @@ main() {
     expect(collection.features, isNotNull); // kind of unnecessary
     expect(collection.features, isA<List>());
     expect(collection.features, isEmpty);
+
+    var json = collection.toJson();
+
+    for (var key in ['type', 'features']) {
+      expect(json.keys, contains(key));
+    }
   });
 }
