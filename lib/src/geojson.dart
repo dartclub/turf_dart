@@ -1,28 +1,39 @@
+// ignore_for_file: hash_and_equals
+
 import 'package:json_annotation/json_annotation.dart';
 part 'geojson.g.dart';
 
-// TODO convert to enum with JsonEnum serialization
-class GeoJSONObjectTypes {
-  static const String point = 'Point';
-  static const String multiPoint = 'MultiPoint';
-  static const String lineString = 'LineString';
-  static const String multiLineString = 'MultiLineString';
-  static const String polygon = 'Polygon';
-  static const String multiPolygon = 'MultiPolygon';
-  static const String geometryCollection = 'GeometryCollection';
-  static const String feature = 'Feature';
-  static const String featureCollection = 'FeatureCollection';
+@JsonEnum(alwaysCreate: true)
+enum GeoJSONObjectType {
+  @JsonValue('Point')
+  point,
+  @JsonValue('MultiPoint')
+  multiPoint,
+  @JsonValue('LineString')
+  lineString,
+  @JsonValue('MultiLineString')
+  multiLineString,
+  @JsonValue('Polygon')
+  polygon,
+  @JsonValue('MultiPolygon')
+  multiPolygon,
+  @JsonValue('GeometryCollection')
+  geometryCollection,
+  @JsonValue('Feature')
+  feature,
+  @JsonValue('FeatureCollection')
+  featureCollection,
 }
 
 abstract class GeoJSONObject {
   @JsonKey(ignore: true)
-  final String type;
+  final GeoJSONObjectType type;
   BBox? bbox;
 
   GeoJSONObject.withType(this.type);
 
   Map<String, dynamic> serialize(Map<String, dynamic> map) => {
-        'type': type,
+        'type': _$GeoJSONObjectTypeEnumMap[type],
         ...map,
       };
 
@@ -276,10 +287,10 @@ class BBox extends CoordinateType {
 }
 
 abstract class GeometryObject extends GeoJSONObject {
-  GeometryObject.withType(String type) : super.withType(type);
+  GeometryObject.withType(GeoJSONObjectType type) : super.withType(type);
 
   static GeometryObject deserialize(Map<String, dynamic> json) {
-    return json['type'] == GeoJSONObjectTypes.geometryCollection
+    return json['type'] == GeoJSONObjectType.geometryCollection
         ? GeometryCollection.fromJson(json)
         : GeometryType.deserialize(json);
   }
@@ -288,21 +299,22 @@ abstract class GeometryObject extends GeoJSONObject {
 abstract class GeometryType<T> extends GeometryObject {
   T coordinates;
 
-  GeometryType.withType(this.coordinates, String type) : super.withType(type);
+  GeometryType.withType(this.coordinates, GeoJSONObjectType type)
+      : super.withType(type);
 
   static GeometryType deserialize(Map<String, dynamic> json) {
     switch (json['type']) {
-      case GeoJSONObjectTypes.point:
+      case GeoJSONObjectType.point:
         return Point.fromJson(json);
-      case GeoJSONObjectTypes.multiPoint:
+      case GeoJSONObjectType.multiPoint:
         return MultiPoint.fromJson(json);
-      case GeoJSONObjectTypes.lineString:
+      case GeoJSONObjectType.lineString:
         return LineString.fromJson(json);
-      case GeoJSONObjectTypes.multiLineString:
+      case GeoJSONObjectType.multiLineString:
         return MultiLineString.fromJson(json);
-      case GeoJSONObjectTypes.polygon:
+      case GeoJSONObjectType.polygon:
         return Polygon.fromJson(json);
-      case GeoJSONObjectTypes.multiPolygon:
+      case GeoJSONObjectType.multiPolygon:
         return MultiPolygon.fromJson(json);
       default:
         throw Exception('${json['type']} is not a valid GeoJSON type');
@@ -317,7 +329,7 @@ class Point extends GeometryType<Position> {
   BBox? bbox;
 
   Point({this.bbox, required Position coordinates})
-      : super.withType(coordinates, GeoJSONObjectTypes.point);
+      : super.withType(coordinates, GeoJSONObjectType.point);
 
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
 
@@ -339,14 +351,14 @@ class MultiPoint extends GeometryType<List<Position>> {
   BBox? bbox;
 
   MultiPoint({this.bbox, List<Position> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectTypes.multiPoint);
+      : super.withType(coordinates, GeoJSONObjectType.multiPoint);
 
   factory MultiPoint.fromJson(Map<String, dynamic> json) =>
       _$MultiPointFromJson(json);
 
   MultiPoint.fromPoints({this.bbox, List<Point> points = const []})
       : super.withType(points.map((e) => e.coordinates).toList(),
-            GeoJSONObjectTypes.multiPoint);
+            GeoJSONObjectType.multiPoint);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPointToJson(this));
@@ -365,14 +377,14 @@ class LineString extends GeometryType<List<Position>> {
   BBox? bbox;
 
   LineString({this.bbox, List<Position> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectTypes.lineString);
+      : super.withType(coordinates, GeoJSONObjectType.lineString);
 
   factory LineString.fromJson(Map<String, dynamic> json) =>
       _$LineStringFromJson(json);
 
   LineString.fromPoints({this.bbox, List<Point> points = const []})
       : super.withType(points.map((e) => e.coordinates).toList(),
-            GeoJSONObjectTypes.lineString);
+            GeoJSONObjectType.lineString);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$LineStringToJson(this));
@@ -390,7 +402,7 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
   BBox? bbox;
 
   MultiLineString({this.bbox, List<List<Position>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectTypes.multiLineString);
+      : super.withType(coordinates, GeoJSONObjectType.multiLineString);
 
   factory MultiLineString.fromJson(Map<String, dynamic> json) =>
       _$MultiLineStringFromJson(json);
@@ -398,7 +410,7 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
   MultiLineString.fromLineStrings(
       {this.bbox, List<LineString> lineStrings = const []})
       : super.withType(lineStrings.map((e) => e.coordinates).toList(),
-            GeoJSONObjectTypes.multiLineString);
+            GeoJSONObjectType.multiLineString);
 
   @override
   Map<String, dynamic> toJson() =>
@@ -419,7 +431,7 @@ class Polygon extends GeometryType<List<List<Position>>> {
   BBox? bbox;
 
   Polygon({this.bbox, List<List<Position>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectTypes.polygon);
+      : super.withType(coordinates, GeoJSONObjectType.polygon);
 
   factory Polygon.fromJson(Map<String, dynamic> json) =>
       _$PolygonFromJson(json);
@@ -427,7 +439,7 @@ class Polygon extends GeometryType<List<List<Position>>> {
   Polygon.fromPoints({this.bbox, List<List<Point>> points = const []})
       : super.withType(
             points.map((e) => e.map((e) => e.coordinates).toList()).toList(),
-            GeoJSONObjectTypes.polygon);
+            GeoJSONObjectType.polygon);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$PolygonToJson(this));
@@ -447,14 +459,14 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
   BBox? bbox;
 
   MultiPolygon({this.bbox, List<List<List<Position>>> coordinates = const []})
-      : super.withType(coordinates, GeoJSONObjectTypes.multiPolygon);
+      : super.withType(coordinates, GeoJSONObjectType.multiPolygon);
 
   factory MultiPolygon.fromJson(Map<String, dynamic> json) =>
       _$MultiPolygonFromJson(json);
 
   MultiPolygon.fromPolygons({this.bbox, List<Polygon> polygons = const []})
       : super.withType(polygons.map((e) => e.coordinates).toList(),
-            GeoJSONObjectTypes.multiPolygon);
+            GeoJSONObjectType.multiPolygon);
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));
@@ -476,7 +488,7 @@ class GeometryCollection extends GeometryObject {
   List<GeometryType> geometries;
 
   GeometryCollection({this.bbox, this.geometries = const []})
-      : super.withType(GeoJSONObjectTypes.geometryCollection);
+      : super.withType(GeoJSONObjectType.geometryCollection);
 
   factory GeometryCollection.fromJson(Map<String, dynamic> json) =>
       GeometryCollection(
@@ -518,12 +530,13 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
     this.properties = const {},
     this.geometry,
     this.fields = const {},
-  }) : super.withType(GeoJSONObjectTypes.feature);
+  }) : super.withType(GeoJSONObjectType.feature);
 
   factory Feature.fromJson(Map<String, dynamic> json) => Feature(
         id: json['id'],
         geometry: json['geometry'] == null
             ? null
+            // ignore: prefer_void_to_null
             : GeometryObject.deserialize(json['geometry']) as Never?,
         properties: json['properties'],
         bbox: json['bbox'] == null
@@ -582,7 +595,7 @@ class FeatureCollection<T extends GeometryObject> extends GeoJSONObject {
   List<Feature<T>> features;
 
   FeatureCollection({this.bbox, this.features = const []})
-      : super.withType(GeoJSONObjectTypes.featureCollection);
+      : super.withType(GeoJSONObjectType.featureCollection);
 
   factory FeatureCollection.fromJson(Map<String, dynamic> json) =>
       FeatureCollection(

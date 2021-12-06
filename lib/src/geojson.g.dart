@@ -129,3 +129,15 @@ Map<String, dynamic> _$GeometryCollectionToJson(GeometryCollection instance) =>
       'bbox': instance.bbox?.toJson(),
       'geometries': instance.geometries.map((e) => e.toJson()).toList(),
     };
+
+const _$GeoJSONObjectTypeEnumMap = {
+  GeoJSONObjectType.point: 'Point',
+  GeoJSONObjectType.multiPoint: 'MultiPoint',
+  GeoJSONObjectType.lineString: 'LineString',
+  GeoJSONObjectType.multiLineString: 'MultiLineString',
+  GeoJSONObjectType.polygon: 'Polygon',
+  GeoJSONObjectType.multiPolygon: 'MultiPolygon',
+  GeoJSONObjectType.geometryCollection: 'GeometryCollection',
+  GeoJSONObjectType.feature: 'Feature',
+  GeoJSONObjectType.featureCollection: 'FeatureCollection',
+};

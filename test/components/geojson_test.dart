@@ -142,21 +142,21 @@ main() {
     test('Point', () {
       var geoJSON = {
         'coordinates': null,
-        'type': GeoJSONObjectTypes.point,
+        'type': GeoJSONObjectType.point,
       };
       expect(() => Point.fromJson(geoJSON), throwsA(isA<TypeError>()));
     });
 
     var geometries = [
-      GeoJSONObjectTypes.multiPoint,
-      GeoJSONObjectTypes.lineString,
-      GeoJSONObjectTypes.multiLineString,
-      GeoJSONObjectTypes.polygon,
-      GeoJSONObjectTypes.multiPolygon,
+      GeoJSONObjectType.multiPoint,
+      GeoJSONObjectType.lineString,
+      GeoJSONObjectType.multiLineString,
+      GeoJSONObjectType.polygon,
+      GeoJSONObjectType.multiPolygon,
     ];
 
     var collection = GeometryCollection.fromJson({
-      'type': GeoJSONObjectTypes.geometryCollection,
+      'type': GeoJSONObjectType.geometryCollection,
       'geometries': geometries
           .map((type) => {
                 'coordinates': null,
@@ -176,32 +176,32 @@ main() {
   });
   test('GeometryCollection', () {
     var geoJSON = {
-      'type': GeoJSONObjectTypes.geometryCollection,
+      'type': GeoJSONObjectType.geometryCollection,
       'geometries': null,
     };
     var collection = GeometryCollection.fromJson(geoJSON);
-    expect(collection.type, GeoJSONObjectTypes.geometryCollection);
+    expect(collection.type, GeoJSONObjectType.geometryCollection);
     expect(collection.geometries, isNotNull); // kind of unnecessary
     expect(collection.geometries, isA<List>());
     expect(collection.geometries, isEmpty);
   });
   test('Feature', () {
     var geoJSON = {
-      'type': GeoJSONObjectTypes.feature,
+      'type': GeoJSONObjectType.feature,
       'geometry': null,
     };
     var feature = Feature.fromJson(geoJSON);
-    expect(feature.type, GeoJSONObjectTypes.feature);
+    expect(feature.type, GeoJSONObjectType.feature);
     expect(feature.id, isNull); // kind of unnecessary
     expect(feature.geometry, isNull);
   });
   test('GeometryCollection', () {
     var geoJSON = {
-      'type': GeoJSONObjectTypes.featureCollection,
+      'type': GeoJSONObjectType.featureCollection,
       'features': null,
     };
     var collection = FeatureCollection.fromJson(geoJSON);
-    expect(collection.type, GeoJSONObjectTypes.featureCollection);
+    expect(collection.type, GeoJSONObjectType.featureCollection);
     expect(collection.features, isNotNull); // kind of unnecessary
     expect(collection.features, isA<List>());
     expect(collection.features, isEmpty);
