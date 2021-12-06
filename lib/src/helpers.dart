@@ -72,7 +72,7 @@ const areaFactors = <Unit, num>{
   Unit.yards: 1.195990046,
 };
 
-num round(value, [precision = 0]) {
+num round(num value, [num precision = 0]) {
   if (!(precision >= 0)) {
     throw Exception("precision must be a positive number");
   }

@@ -52,9 +52,7 @@ main() {
     expect(round(123.123, 1), equals(123.1));
     expect(round(123.5), equals(124));
 
-    // TODO how to test these expected throw tests
-    // t.throws(() => round(34.5, 'precision'), 'invalid precision');
-    // t.throws(() => round(34.5, -5), 'invalid precision');
+    expect(() => round(34.5, -5), throwsA(isException));
   });
 
   test('convertLength', () {
