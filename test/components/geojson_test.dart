@@ -261,4 +261,12 @@ main() {
       expect(json.keys, contains(key));
     }
   });
+
+  test('GeometryObject.deserialize enum test', () {
+    var geoJSON =
+        GeometryCollection(geometries: [Point(coordinates: Position(1, 1, 1))]);
+    var serialized = GeometryCollection.fromJson(geoJSON.toJson());
+    expect(serialized.type, GeoJSONObjectType.geometryCollection);
+    expect(serialized.geometries.first.type, GeoJSONObjectType.point);
+  });
 }

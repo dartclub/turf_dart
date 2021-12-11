@@ -1,5 +1,3 @@
-// ignore_for_file: hash_and_equals
-
 import 'package:json_annotation/json_annotation.dart';
 part 'geojson.g.dart';
 
@@ -26,7 +24,6 @@ enum GeoJSONObjectType {
 }
 
 abstract class GeoJSONObject {
-  @JsonKey(ignore: true)
   final GeoJSONObjectType type;
   BBox? bbox;
 
@@ -221,11 +218,6 @@ class Position extends CoordinateType {
 
   Position operator *(Position p) => crossProduct(p);
 
-  @override
-  bool operator ==(dynamic other) => other is Position
-      ? lat == other.lat && lng == other.lng && alt == other.alt
-      : false;
-
   num get lng => _items[0];
   num get lat => _items[1];
   num? get alt => length == 3 ? _items[2] : null;
@@ -242,6 +234,14 @@ class Position extends CoordinateType {
 
   @override
   Position clone() => Position.of(_items);
+
+  @override
+  int get hashCode => Object.hashAll(_items);
+
+  @override
+  bool operator ==(dynamic other) => other is Position
+      ? lng == other.lng && lat == other.lat && alt == other.alt
+      : false;
 }
 
 // Bounding box, as specified here https://tools.ietf.org/html/rfc7946#section-5
@@ -312,6 +312,19 @@ class BBox extends CoordinateType {
         lng1: _untilSigned(lng1, 180),
         lng2: _untilSigned(lng2, 180),
       );
+
+  @override
+  int get hashCode => Object.hashAll(_items);
+
+  @override
+  bool operator ==(Object other) => other is BBox
+      ? lng1 == other.lng1 &&
+          lat1 == other.lat1 &&
+          alt1 == other.alt1 &&
+          lng2 == other.lng2 &&
+          lat2 == other.lat2 &&
+          alt2 == other.alt2
+      : false;
 }
 
 abstract class GeometryObject extends GeoJSONObject {
@@ -319,7 +332,8 @@ abstract class GeometryObject extends GeoJSONObject {
       : super.withType(type, bbox: bbox);
 
   static GeometryObject deserialize(Map<String, dynamic> json) {
-    return json['type'] == GeoJSONObjectType.geometryCollection
+    return json['type'] == 'GeometryCollection' ||
+            json['type'] == GeoJSONObjectType.geometryCollection
         ? GeometryCollection.fromJson(json)
         : GeometryType.deserialize(json);
   }
@@ -332,7 +346,10 @@ abstract class GeometryType<T> extends GeometryObject {
       : super.withType(type, bbox: bbox);
 
   static GeometryType deserialize(Map<String, dynamic> json) {
-    switch (json['type']) {
+    final decoded = json['type'] is GeoJSONObjectType
+        ? json['type']
+        : $enumDecode(_$GeoJSONObjectTypeEnumMap, json['type']);
+    switch (decoded) {
       case GeoJSONObjectType.point:
         return Point.fromJson(json);
       case GeoJSONObjectType.multiPoint:
@@ -363,14 +380,21 @@ class Point extends GeometryType<Position> {
   factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
 
   @override
-  bool operator ==(dynamic other) =>
-      other is Point ? coordinates == other.coordinates : false;
-
-  @override
   Map<String, dynamic> toJson() => super.serialize(_$PointToJson(this));
 
   @override
   Point clone() => Point(coordinates: coordinates.clone(), bbox: bbox?.clone());
+
+  @override
+  int get hashCode => Object.hashAll([
+        type,
+        ...coordinates,
+        if (bbox != null) ...bbox!,
+      ]);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Point ? coordinates == other.coordinates : false;
 }
 
 /// MultiPoint, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.3
@@ -584,6 +608,9 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
         return fields[key];
     }
   }
+
+  @override
+  int get hashCode => Object.hash(type, id);
 
   @override
   bool operator ==(dynamic other) => other is Feature ? id == other.id : false;
