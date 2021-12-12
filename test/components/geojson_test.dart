@@ -24,6 +24,8 @@ main() {
       var pos2 = Position.of([1, 2, 3]);
       _expectArgs(pos1);
       _expectArgs(pos2);
+
+      expect(pos1, pos1.clone());
     });
     test('Position deserialization', () {
       expect(Position.of([1, 2]).toList(), [1, 2]);
@@ -264,15 +266,47 @@ main() {
     }
   });
 
-  test('GeometryObject.deserialize enum test', () {
+  test('GeoJSONObject and GeometryObject.deserialize enum test', () {
     var geoJSON =
         GeometryCollection(geometries: [Point(coordinates: Position(1, 1, 1))]);
-    GeometryObject serialized = GeometryObject.deserialize(geoJSON.toJson());
-    expect(serialized, isA<GeometryCollection>());
-    expect(serialized.type, GeoJSONObjectType.geometryCollection);
-    expect((serialized as GeometryCollection).geometries.first.type,
+
+    var collection = GeometryObject.deserialize(geoJSON.toJson());
+    expect(collection, isA<GeometryCollection>());
+    expect(collection.type, GeoJSONObjectType.geometryCollection);
+    expect((collection as GeometryCollection).geometries.first.type,
+        GeoJSONObjectType.point);
+
+    var geoJSON2 = {
+      "type": GeoJSONObjectType.geometryCollection,
+      "geometries": [
+        {
+          "type": GeoJSONObjectType.point,
+          "coordinates": [1, 1, 1]
+        }
+      ]
+    };
+
+    var collection2 = GeometryObject.deserialize(geoJSON2);
+    expect(collection2, isA<GeometryCollection>());
+    expect(collection2.type, GeoJSONObjectType.geometryCollection);
+    expect((collection2 as GeometryCollection).geometries.first.type,
+        GeoJSONObjectType.point);
+
+    var collection3 = GeoJSONObject.fromJson(geoJSON2);
+    expect(collection3, isA<GeometryCollection>());
+    expect(collection3.type, GeoJSONObjectType.geometryCollection);
+    expect((collection3 as GeometryCollection).geometries.first.type,
         GeoJSONObjectType.point);
   });
+
+// TODO implement clone tests
+  test('FeatureCollection.clone()', () {});
+  test('GeometryCollection.clone()', () {});
+  test('MultiPolygon.clone()', () {});
+  test('MultiLineString.clone()', () {});
+  test('LineString.clone()', () {});
+  test('Polygon.clone()', () {});
+  test('MultiPoint.clone()', () {});
 
   test('MultiPoint.fromPoints', () {
     var a =
