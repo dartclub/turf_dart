@@ -34,6 +34,32 @@ abstract class GeoJSONObject {
         ...map,
       };
 
+  static GeoJSONObject fromJson(Map<String, dynamic> json) {
+    GeoJSONObjectType decoded = json['type'] is GeoJSONObjectType
+        ? json['type']
+        : $enumDecode(_$GeoJSONObjectTypeEnumMap, json['type']);
+    switch (decoded) {
+      case GeoJSONObjectType.point:
+        return Point.fromJson(json);
+      case GeoJSONObjectType.multiPoint:
+        return MultiPoint.fromJson(json);
+      case GeoJSONObjectType.lineString:
+        return LineString.fromJson(json);
+      case GeoJSONObjectType.multiLineString:
+        return MultiLineString.fromJson(json);
+      case GeoJSONObjectType.polygon:
+        return Polygon.fromJson(json);
+      case GeoJSONObjectType.multiPolygon:
+        return MultiPolygon.fromJson(json);
+      case GeoJSONObjectType.geometryCollection:
+        return GeometryCollection.fromJson(json);
+      case GeoJSONObjectType.feature:
+        return Feature.fromJson(json);
+      case GeoJSONObjectType.featureCollection:
+        return FeatureCollection.fromJson(json);
+    }
+  }
+
   toJson();
 
   GeoJSONObject clone();
@@ -346,7 +372,7 @@ abstract class GeometryType<T> extends GeometryObject {
       : super.withType(type, bbox: bbox);
 
   static GeometryType deserialize(Map<String, dynamic> json) {
-    final decoded = json['type'] is GeoJSONObjectType
+    GeoJSONObjectType decoded = json['type'] is GeoJSONObjectType
         ? json['type']
         : $enumDecode(_$GeoJSONObjectTypeEnumMap, json['type']);
     switch (decoded) {
@@ -575,8 +601,7 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
         id: json['id'],
         geometry: json['geometry'] == null
             ? null
-            // ignore: prefer_void_to_null
-            : GeometryObject.deserialize(json['geometry']) as Never?,
+            : GeometryObject.deserialize(json['geometry']) as T,
         properties: json['properties'],
         bbox: json['bbox'] == null
             ? null

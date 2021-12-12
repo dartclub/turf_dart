@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:test/test.dart';
@@ -306,5 +308,21 @@ main() {
       ])
     ]);
     expect(a.coordinates.first.first.first, Position(1, 2, 3));
+  });
+
+// examples
+// copied from RFC 7946 https://datatracker.ietf.org/doc/html/rfc7946
+// copied from Wikipedia https://en.wikipedia.org/wiki/GeoJSON#Geometries
+  group('Examples from Wikipedia', () {
+    var dir = Directory('./test/components/examples');
+    for (var file in dir.listSync(recursive: true)) {
+      if (file is File) {
+        test(file.path, () {
+          var source = (file).readAsStringSync();
+          var json = jsonDecode(source);
+          GeoJSONObject.fromJson(json);
+        });
+      }
+    }
   });
 }
