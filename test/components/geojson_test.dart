@@ -265,8 +265,46 @@ main() {
   test('GeometryObject.deserialize enum test', () {
     var geoJSON =
         GeometryCollection(geometries: [Point(coordinates: Position(1, 1, 1))]);
-    var serialized = GeometryCollection.fromJson(geoJSON.toJson());
+    GeometryObject serialized = GeometryObject.deserialize(geoJSON.toJson());
+    expect(serialized, isA<GeometryCollection>());
     expect(serialized.type, GeoJSONObjectType.geometryCollection);
-    expect(serialized.geometries.first.type, GeoJSONObjectType.point);
+    expect((serialized as GeometryCollection).geometries.first.type,
+        GeoJSONObjectType.point);
+  });
+
+  test('MultiPoint.fromPoints', () {
+    var a =
+        MultiPoint.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
+    expect(a.coordinates.first, Position(1, 2, 3));
+  });
+  test('LineString.fromPoints', () {
+    var a =
+        LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
+    expect(a.coordinates.first, Position(1, 2, 3));
+  });
+  test('LineString.fromPoints', () {
+    var a =
+        LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
+    expect(a.coordinates.first, Position(1, 2, 3));
+  });
+  test('MultiLineString.fromLineStrings', () {
+    var a = MultiLineString.fromLineStrings(lineStrings: [
+      LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))])
+    ]);
+    expect(a.coordinates.first.first, Position(1, 2, 3));
+  });
+  test('Polygon.fromPoints', () {
+    var a = Polygon.fromPoints(points: [
+      [Point(coordinates: Position(1, 2, 3))]
+    ]);
+    expect(a.coordinates.first.first, Position(1, 2, 3));
+  });
+  test('MultiPolygon.fromPolygons', () {
+    var a = MultiPolygon.fromPolygons(polygons: [
+      Polygon.fromPoints(points: [
+        [Point(coordinates: Position(1, 2, 3))]
+      ])
+    ]);
+    expect(a.coordinates.first.first.first, Position(1, 2, 3));
   });
 }
