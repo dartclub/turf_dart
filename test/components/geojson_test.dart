@@ -313,8 +313,8 @@ main() {
 // examples
 // copied from RFC 7946 https://datatracker.ietf.org/doc/html/rfc7946
 // copied from Wikipedia https://en.wikipedia.org/wiki/GeoJSON#Geometries
-  group('Examples from Wikipedia', () {
-    var dir = Directory('./test/components/examples');
+  group('Example file', () {
+    var dir = Directory('./test/examples');
     for (var file in dir.listSync(recursive: true)) {
       if (file is File) {
         test(file.path, () {
