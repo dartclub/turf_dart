@@ -432,8 +432,9 @@ class MultiPoint extends GeometryType<List<Position>> {
   factory MultiPoint.fromJson(Map<String, dynamic> json) =>
       _$MultiPointFromJson(json);
 
-  MultiPoint.fromPoints({BBox? bbox, List<Point> points = const []})
-      : super.withType(points.map((e) => e.coordinates).toList(),
+  MultiPoint.fromPoints({BBox? bbox, required List<Point> points})
+      : assert(points.length >= 2),
+        super.withType(points.map((e) => e.coordinates).toList(),
             GeoJSONObjectType.multiPoint,
             bbox: bbox);
 
@@ -456,8 +457,9 @@ class LineString extends GeometryType<List<Position>> {
   factory LineString.fromJson(Map<String, dynamic> json) =>
       _$LineStringFromJson(json);
 
-  LineString.fromPoints({BBox? bbox, List<Point> points = const []})
-      : super.withType(points.map((e) => e.coordinates).toList(),
+  LineString.fromPoints({BBox? bbox, required List<Point> points})
+      : assert(points.length >= 2),
+        super.withType(points.map((e) => e.coordinates).toList(),
             GeoJSONObjectType.lineString,
             bbox: bbox);
 
@@ -481,8 +483,9 @@ class MultiLineString extends GeometryType<List<List<Position>>> {
       _$MultiLineStringFromJson(json);
 
   MultiLineString.fromLineStrings(
-      {BBox? bbox, List<LineString> lineStrings = const []})
-      : super.withType(lineStrings.map((e) => e.coordinates).toList(),
+      {BBox? bbox, required List<LineString> lineStrings})
+      : assert(lineStrings.length >= 2),
+        super.withType(lineStrings.map((e) => e.coordinates).toList(),
             GeoJSONObjectType.multiLineString,
             bbox: bbox);
 
@@ -507,8 +510,9 @@ class Polygon extends GeometryType<List<List<Position>>> {
   factory Polygon.fromJson(Map<String, dynamic> json) =>
       _$PolygonFromJson(json);
 
-  Polygon.fromPoints({BBox? bbox, List<List<Point>> points = const []})
-      : super.withType(
+  Polygon.fromPoints({BBox? bbox, required List<List<Point>> points})
+      : assert(points.expand((list) => list).length >= 3),
+        super.withType(
             points.map((e) => e.map((e) => e.coordinates).toList()).toList(),
             GeoJSONObjectType.polygon,
             bbox: bbox);
@@ -533,8 +537,9 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
   factory MultiPolygon.fromJson(Map<String, dynamic> json) =>
       _$MultiPolygonFromJson(json);
 
-  MultiPolygon.fromPolygons({BBox? bbox, List<Polygon> polygons = const []})
-      : super.withType(polygons.map((e) => e.coordinates).toList(),
+  MultiPolygon.fromPolygons({BBox? bbox, required List<Polygon> polygons})
+      : assert(polygons.length >= 2),
+        super.withType(polygons.map((e) => e.coordinates).toList(),
             GeoJSONObjectType.multiPolygon,
             bbox: bbox);
 

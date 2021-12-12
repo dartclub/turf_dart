@@ -267,16 +267,16 @@ main() {
   });
 
   test('GeoJSONObject and GeometryObject.deserialize enum test', () {
-    var geoJSON =
+    final geoJSON =
         GeometryCollection(geometries: [Point(coordinates: Position(1, 1, 1))]);
 
-    var collection = GeometryObject.deserialize(geoJSON.toJson());
+    final collection = GeometryObject.deserialize(geoJSON.toJson());
     expect(collection, isA<GeometryCollection>());
     expect(collection.type, GeoJSONObjectType.geometryCollection);
     expect((collection as GeometryCollection).geometries.first.type,
         GeoJSONObjectType.point);
 
-    var geoJSON2 = {
+    final geoJSON2 = {
       "type": GeoJSONObjectType.geometryCollection,
       "geometries": [
         {
@@ -286,62 +286,171 @@ main() {
       ]
     };
 
-    var collection2 = GeometryObject.deserialize(geoJSON2);
+    final collection2 = GeometryObject.deserialize(geoJSON2);
+
     expect(collection2, isA<GeometryCollection>());
     expect(collection2.type, GeoJSONObjectType.geometryCollection);
     expect((collection2 as GeometryCollection).geometries.first.type,
         GeoJSONObjectType.point);
 
     var collection3 = GeoJSONObject.fromJson(geoJSON2);
+
     expect(collection3, isA<GeometryCollection>());
     expect(collection3.type, GeoJSONObjectType.geometryCollection);
     expect((collection3 as GeometryCollection).geometries.first.type,
         GeoJSONObjectType.point);
+
+    var geoJSON3 = {
+      "type": GeoJSONObjectType.geometryCollection,
+      "geometries": [
+        {"type": GeoJSONObjectType.feature, "id": 1}
+      ]
+    };
+    expect(() => GeometryType.deserialize(geoJSON3), throwsA(isA<Exception>()));
   });
 
-// TODO implement clone tests
-  test('FeatureCollection.clone()', () {});
-  test('GeometryCollection.clone()', () {});
-  test('MultiPolygon.clone()', () {});
-  test('MultiLineString.clone()', () {});
-  test('LineString.clone()', () {});
-  test('Polygon.clone()', () {});
-  test('MultiPoint.clone()', () {});
+  test('.clone()', () {
+    final coll = FeatureCollection<GeometryCollection>(
+      bbox: BBox(100, 0, 101, 1),
+      features: [
+        Feature(
+            bbox: BBox(100, 0, 101, 1),
+            geometry: GeometryCollection(
+              bbox: BBox(100, 0, 101, 1),
+              geometries: [
+                LineString(
+                  bbox: BBox(100, 0, 101, 1),
+                  coordinates: [Position(100, 0), Position(101, 1)],
+                ),
+                MultiLineString.fromLineStrings(
+                  bbox: BBox(100, 0, 101, 1),
+                  lineStrings: [
+                    LineString(
+                      bbox: BBox(100, 0, 101, 1),
+                      coordinates: [Position(100, 0), Position(101, 1)],
+                    ),
+                    LineString(
+                      bbox: BBox(100, 0, 101, 1),
+                      coordinates: [Position(100, 1), Position(101, 0)],
+                    ),
+                  ],
+                ),
+                MultiPoint.fromPoints(
+                  bbox: BBox(100, 0, 101, 1),
+                  points: [
+                    Point(coordinates: Position(100, 0)),
+                    Point(coordinates: Position(100.5, 0.5)),
+                    Point(coordinates: Position(101, 1)),
+                  ],
+                ),
+                Polygon(
+                  bbox: BBox(100, 0, 101, 1),
+                  coordinates: [
+                    [
+                      Position(100, 0),
+                      Position(100, 1),
+                      Position(101, 0),
+                    ]
+                  ],
+                ),
+                MultiPolygon.fromPolygons(
+                  bbox: BBox(100, 0, 101, 1),
+                  polygons: [
+                    Polygon(coordinates: [
+                      [
+                        Position(100, 0),
+                        Position(100, 1),
+                        Position(101, 0),
+                      ]
+                    ]),
+                    Polygon(coordinates: [
+                      [
+                        Position(100, 0),
+                        Position(100, 1),
+                        Position(101, 0),
+                      ]
+                    ])
+                  ],
+                ),
+              ],
+            ),
+            id: 1,
+            properties: {"key": "val"}),
+      ],
+    );
+    final cloned = coll.clone();
+    final feat = cloned.features.first;
+    final bbox = BBox(100, 0, 101, 1);
+    expect(cloned.bbox, bbox);
+    expect(feat.id, 1);
+    expect(feat.bbox, bbox);
+    expect(feat.properties!.keys.first, "key");
+    expect(feat.properties!.values.first, "val");
+    expect(feat.geometry!, isA<GeometryCollection>());
+    final geomColl = feat.geometry!;
+    expect(geomColl.geometries.length,
+        coll.features.first.geometry!.geometries.length);
+    for (var geom in geomColl.geometries) {
+      expect(geom.bbox, isNotNull);
+      expect(geom.coordinates, isNotEmpty);
 
+      _expandRecursively(List inner) {
+        if (inner is List<Position>) {
+          return inner;
+        } else {
+          return inner.expand((el) => el is List ? _expandRecursively(el) : el);
+        }
+      }
+
+      var expanded = _expandRecursively(geom.coordinates);
+      expect(
+        expanded.first,
+        Position(100, 0),
+      );
+    }
+    // TODO refine tests
+  });
+
+  final points = [
+    Point(coordinates: Position(1, 2, 3)),
+    Point(coordinates: Position(2, 1, 3)),
+    Point(coordinates: Position(3, 2, 1)),
+  ];
   test('MultiPoint.fromPoints', () {
-    var a =
-        MultiPoint.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
+    var a = MultiPoint.fromPoints(points: points);
     expect(a.coordinates.first, Position(1, 2, 3));
+    expect(() => MultiPoint.fromPoints(points: []),
+        throwsA(isA<AssertionError>()));
   });
   test('LineString.fromPoints', () {
-    var a =
-        LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
+    var a = LineString.fromPoints(points: points);
     expect(a.coordinates.first, Position(1, 2, 3));
-  });
-  test('LineString.fromPoints', () {
-    var a =
-        LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))]);
-    expect(a.coordinates.first, Position(1, 2, 3));
+    expect(() => LineString.fromPoints(points: []),
+        throwsA(isA<AssertionError>()));
   });
   test('MultiLineString.fromLineStrings', () {
     var a = MultiLineString.fromLineStrings(lineStrings: [
-      LineString.fromPoints(points: [Point(coordinates: Position(1, 2, 3))])
+      LineString.fromPoints(points: points),
+      LineString.fromPoints(points: points)
     ]);
     expect(a.coordinates.first.first, Position(1, 2, 3));
+    expect(() => MultiLineString.fromLineStrings(lineStrings: []),
+        throwsA(isA<AssertionError>()));
   });
   test('Polygon.fromPoints', () {
-    var a = Polygon.fromPoints(points: [
-      [Point(coordinates: Position(1, 2, 3))]
-    ]);
+    var a = Polygon.fromPoints(points: [points]);
     expect(a.coordinates.first.first, Position(1, 2, 3));
+    expect(
+        () => Polygon.fromPoints(points: []), throwsA(isA<AssertionError>()));
   });
   test('MultiPolygon.fromPolygons', () {
     var a = MultiPolygon.fromPolygons(polygons: [
-      Polygon.fromPoints(points: [
-        [Point(coordinates: Position(1, 2, 3))]
-      ])
+      Polygon.fromPoints(points: [points]),
+      Polygon.fromPoints(points: [points])
     ]);
     expect(a.coordinates.first.first.first, Position(1, 2, 3));
+    expect(() => MultiPolygon.fromPolygons(polygons: []),
+        throwsA(isA<AssertionError>()));
   });
 
 // examples
