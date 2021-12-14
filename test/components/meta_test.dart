@@ -10,6 +10,11 @@ Feature<Point> pt = Feature<Point>(
     'a': 1,
   },
 );
+Feature<Point> pt2 = Feature<Point>(
+  geometry: Point.fromJson({
+    'coordinates': [1, 1],
+  }),
+);
 Feature<LineString> line = Feature<LineString>(
   geometry: LineString.fromJson({
     'coordinates': [
@@ -32,6 +37,13 @@ Feature<MultiLineString> multiline = Feature<MultiLineString>(
     ],
   }),
 );
+Feature<MultiPoint> multiPoint = Feature<MultiPoint>(
+    geometry: MultiPoint.fromJson({
+  'coordinates': [
+    [0, 0],
+    [1, 1],
+  ],
+}));
 Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
   geometry: GeometryCollection(
     geometries: [
@@ -65,6 +77,38 @@ List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   );
   return [geometry, feature, featureCollection];
 }
+
+FeatureCollection fcMixed = FeatureCollection(
+  features: [
+    Feature<Point>(
+      geometry: Point.fromJson({
+        'coordinates': [0, 0],
+      }),
+    ),
+    Feature<LineString>(
+      geometry: LineString.fromJson({
+        'coordinates': [
+          [1, 1],
+          [2, 2],
+        ]
+      }),
+    ),
+    Feature<MultiLineString>(
+      geometry: MultiLineString.fromJson({
+        'coordinates': [
+          [
+            [1, 1],
+            [0, 0],
+          ],
+          [
+            [4, 4],
+            [5, 5],
+          ],
+        ],
+      }),
+    ),
+  ],
+);
 
 main() {
   test('propEach --featureCollection', () {
@@ -268,5 +312,49 @@ main() {
       });
       expect(multiCount, 1, reason: func.toString());
     }
+  });
+
+  test('flattenEach -- MultiPoint', () {
+    featureAndCollection(multiPoint.geometry!).forEach((input) {
+      List<GeometryObject?> output = [];
+      flattenEach(input, (currentFeature, index, multiIndex) {
+        output.add(currentFeature.geometry);
+      });
+      expect(output, [pt.geometry!, pt2.geometry!]);
+    });
+  });
+
+  test('flattenEach -- Mixed FeatureCollection', () {
+    List<Feature> features = [];
+    List<int> featureIndices = [];
+    List<int> multiFeatureIndicies = [];
+    flattenEach(fcMixed, (currentFeature, index, multiIndex) {
+      features.add(currentFeature);
+      featureIndices.add(index);
+      multiFeatureIndicies.add(multiIndex);
+    });
+    expect(featureIndices, [0, 1, 2, 2]);
+    expect(multiFeatureIndicies, [0, 0, 0, 1]);
+    expect(features.length, 4);
+  });
+
+  test('flattenEach -- Point-properties', () {
+    collection(pt).forEach((input) {
+      Map<String, dynamic>? lastProperties;
+      flattenEach(input, (currentFeature, index, multiIndex) {
+        lastProperties = currentFeature.properties;
+      });
+      expect(lastProperties, pt.properties);
+    });
+  });
+
+  test('flattenEach -- multiGeometryFeature-properties', () {
+    collection(geomCollection).forEach((element) {
+      Map<String, dynamic>? lastProperties;
+      flattenEach(element, (currentFeature, index, multiIndex) {
+        lastProperties = currentFeature.properties;
+      });
+      expect(lastProperties, geomCollection.properties);
+    });
   });
 }
