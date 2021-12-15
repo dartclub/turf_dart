@@ -100,6 +100,60 @@ void _forEachGeomInGeometryObject(
   }
 }
 
+/// Callback for geomReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an initialValue is provided to the reduce method:
+///  - The previousValue argument is initialValue.
+///  - The currentValue argument is the value of the first element present in the array.
+///
+/// If an initialValue is not provided:
+///  - The previousValue argument is the value of the first element present in the array.
+///  - The currentValue argument is the value of the second element present in the array.
+typedef GeomReduceCallback<T> = T? Function(
+  T? previousValue,
+  GeometryType? currentGeometry,
+  int? featureIndex,
+  Map<String, dynamic>? featureProperties,
+  BBox? featureBBox,
+  dynamic featureId,
+);
+
+/// Reduce geometry in any GeoJSON object, similar to Array.reduce().
+T? geomReduce<T>(
+  GeoJSONObject geoJSON,
+  GeomReduceCallback<T> callback,
+  T? initialValue,
+) {
+  T? previousValue = initialValue;
+  geomEach(
+    geoJSON,
+    (
+      currentGeometry,
+      featureIndex,
+      featureProperties,
+      featureBBox,
+      featureId,
+    ) {
+      if (previousValue == null && featureIndex == 0) {
+        previousValue = currentGeometry?.clone() as T;
+      } else {
+        previousValue = callback(
+          previousValue,
+          currentGeometry,
+          featureIndex,
+          featureProperties,
+          featureBBox,
+          featureId,
+        );
+      }
+    },
+  );
+  return previousValue;
+}
+
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
     Map<String, dynamic>? currentProperties, num featureIndex);

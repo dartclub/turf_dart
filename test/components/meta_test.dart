@@ -66,6 +66,35 @@ List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   return [geometry, feature, featureCollection];
 }
 
+/// Returns a FeatureCollection with a total of 8 copies of [geometryType]
+/// in a mix of features of [geometryType], and features of geometry collections
+/// containing [geometryType]
+FeatureCollection<GeometryObject> getAsMixedFeatCollection(
+  GeometryType geometryType,
+) {
+  GeometryCollection geometryCollection = GeometryCollection(
+    geometries: [
+      geometryType,
+      geometryType,
+      geometryType,
+    ],
+  );
+  Feature geomCollectionFeature = Feature(
+    geometry: geometryCollection,
+  );
+  Feature geomFeature = Feature(
+    geometry: geometryType,
+  );
+  return FeatureCollection<GeometryObject>(
+    features: [
+      geomFeature,
+      geomCollectionFeature,
+      geomFeature,
+      geomCollectionFeature,
+    ],
+  );
+}
+
 main() {
   test('propEach --featureCollection', () {
     collection(pt).forEach((input) {
@@ -268,5 +297,91 @@ main() {
       });
       expect(multiCount, 1, reason: func.toString());
     }
+  });
+
+  test('geomReduce', () {
+    int? countReducer(
+      int? previousValue,
+      currentGeometry,
+      featureIndex,
+      featureProperties,
+      featureBBox,
+      featureId,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(geomReduce(geomCollection, countReducer, 0), 3);
+    expect(geomReduce(geomCollection, countReducer, 5), 8);
+
+    // test more complex feature collection with geoms and geomCollections
+    expect(
+      geomReduce<int>(
+        getAsMixedFeatCollection(pt.geometry!),
+        countReducer,
+        0,
+      ),
+      8,
+    );
+    expect(
+      geomReduce<int>(
+        getAsMixedFeatCollection(pt.geometry!),
+        countReducer,
+        10,
+      ),
+      18,
+    );
+  });
+
+  test('geomReduce -- no intial value', () {
+    LineString? lineGenerator(
+      LineString? previousValue,
+      GeometryType? currentGeometry,
+      int? featureIndex,
+      Map<String, dynamic>? featureProperties,
+      BBox? featureBBox,
+      dynamic featureId,
+    ) {
+      if (currentGeometry is Point) {
+        previousValue!.coordinates.add(currentGeometry.coordinates);
+      } else if (currentGeometry is LineString) {
+        previousValue!.coordinates.addAll(currentGeometry.coordinates);
+      } else if (currentGeometry is MultiLineString) {
+        for (List<Position> l in currentGeometry.coordinates) {
+          previousValue!.coordinates.addAll(l);
+        }
+      }
+      return previousValue;
+    }
+
+    FeatureCollection featureCollection = FeatureCollection(
+      features: [
+        line,
+        pt,
+        multiline,
+      ],
+    );
+
+    LineString expectedLine = LineString.fromJson({
+      'coordinates': [
+        // line
+        [0, 0],
+        [1, 1],
+        // point
+        [0, 0],
+        // multiline, line 1
+        [0, 0],
+        [1, 1],
+        // multuline, line 2
+        [3, 3],
+        [4, 4],
+      ]
+    });
+    LineString? actualLineString = geomReduce<LineString>(
+      featureCollection,
+      lineGenerator,
+      null,
+    );
+    expect(actualLineString?.toJson(), expectedLine.toJson());
   });
 }
