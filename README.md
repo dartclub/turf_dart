@@ -8,6 +8,12 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
+## Notable Design Decisions
+- Nested `GeometryCollections` (as described in
+  [RFC 7946 section 3.1.8](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8))
+  are _not supported_ which takes a slightly firmer stance than the "should
+  avoid" language in the specification
+
 ## Components
 
 ### Measurement
@@ -122,17 +128,17 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - [ ] coordAll
 - [ ] coordEach
 - [ ] coordReduce
-- [ ] featureEach
+- [x] featureEach
 - [ ] featureReduce
-- [ ] flattenEach
+- [x] flattenEach
 - [ ] flattenReduce
 - [ ] getCoord
 - [ ] getCoords
 - [ ] getGeom
 - [ ] getType
-- [ ] geomEach
+- [x] geomEach
 - [ ] geomReduce
-- [ ] propEach
+- [x] propEach
 - [ ] propReduce
 - [ ] segmentEach
 - [ ] segmentReduce
