@@ -10,8 +10,8 @@ typedef GeomEachCallback = dynamic Function(
 
 /// A simple class to manage short circuiting from *Each functions while still
 /// allowing an Exception to be thrown and raised
-class _ShortCircuit {
-  _ShortCircuit();
+class ShortCircuit {
+  ShortCircuit();
 }
 
 /// Iterate over each geometry in [geoJSON], calling [callback] on each
@@ -42,7 +42,7 @@ void geomEach(GeoJSONObject geoJSON, GeomEachCallback callback) {
     } else {
       throw Exception('Unknown Geometry Type');
     }
-  } on _ShortCircuit {
+  } on ShortCircuit {
     return;
   }
 }
@@ -78,7 +78,7 @@ void _forEachGeomInGeometryObject(
           featureId,
         ) ==
         false) {
-      throw _ShortCircuit();
+      throw ShortCircuit();
     }
   } else if (geometryObject is GeometryCollection) {
     num geometryCollectionLength = geometryObject.geometries.length;

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:turf/meta.dart';
 part 'geojson.g.dart';
 
 @JsonEnum(alwaysCreate: true)
@@ -63,6 +64,8 @@ abstract class GeoJSONObject {
   toJson();
 
   GeoJSONObject clone();
+
+  void geomEachImpl1(GeomEachCallback callback);
 }
 
 /// Coordinate types, following https://tools.ietf.org/html/rfc7946#section-4
@@ -363,10 +366,39 @@ abstract class GeometryObject extends GeoJSONObject {
         ? GeometryCollection.fromJson(json)
         : GeometryType.deserialize(json);
   }
+
+  @override
+  void geomEachImpl1(
+    GeomEachCallback callback, {
+    Map<String, dynamic>? featureProperties,
+    BBox? featureBBox,
+    dynamic featureId,
+    int? featureIndex,
+  });
 }
 
 abstract class GeometryType<T> extends GeometryObject {
   T coordinates;
+
+  @override
+  void geomEachImpl1(
+    GeomEachCallback callback, {
+    Map<String, dynamic>? featureProperties,
+    BBox? featureBBox,
+    dynamic featureId,
+    int? featureIndex,
+  }) {
+    if (callback(
+          this,
+          featureIndex,
+          featureProperties,
+          featureBBox,
+          featureId,
+        ) ==
+        false) {
+      throw ShortCircuit();
+    }
+  }
 
   GeometryType.withType(this.coordinates, GeoJSONObjectType type, {BBox? bbox})
       : super.withType(type, bbox: bbox);
@@ -585,6 +617,25 @@ class GeometryCollection extends GeometryObject {
         geometries: geometries.map((e) => e.clone()).toList(),
         bbox: bbox?.clone(),
       );
+
+  @override
+  void geomEachImpl1(
+    GeomEachCallback callback, {
+    Map<String, dynamic>? featureProperties,
+    BBox? featureBBox,
+    featureId,
+    int? featureIndex,
+  }) {
+    for (var geom in geometries) {
+      geom.geomEachImpl1(
+        callback,
+        featureProperties: featureProperties,
+        featureBBox: featureBBox,
+        featureId: featureId,
+        featureIndex: featureIndex,
+      );
+    }
+  }
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
@@ -661,6 +712,11 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
         properties: Map.of(properties ?? {}),
         id: id,
       );
+
+  @override
+  void geomEachImpl1(GeomEachCallback callback, {int? featureIndex}) {
+    geometry?.geomEachImpl1(callback);
+  }
 }
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
@@ -693,4 +749,13 @@ class FeatureCollection<T extends GeometryObject> extends GeoJSONObject {
         features: features.map((e) => e.clone()).toList(),
         bbox: bbox?.clone(),
       );
+
+  @override
+  void geomEachImpl1(GeomEachCallback callback) {
+    int featuresLength = features.length;
+    for (int featureIndex = 0; featureIndex < featuresLength; featureIndex++) {
+      features[featureIndex]
+          .geomEachImpl1(callback, featureIndex: featureIndex);
+    }
+  }
 }
