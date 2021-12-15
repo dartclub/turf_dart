@@ -191,21 +191,12 @@ void flattenEach(GeoJSONObject geoJSON, FlattenEachCallback callback) {
           currentGeomObject is Point ||
           currentGeomObject is LineString ||
           currentGeomObject is Polygon) {
-        if (callback(
-                Feature(
-                  geometry: currentGeomObject,
-                  properties: featureProperties,
-                  bbox: featureBBox,
-                  id: featureId,
-                ),
-                featureIndex ?? 0,
-                0) ==
-            false) throw _ShortCircuit();
-        return;
+        _callFlattenEachCallback(callback, currentGeomObject as GeometryType,
+            featureProperties, featureIndex, 0);
+      } else {
+        _forEachFeatureOfMultiFeature(
+            currentGeomObject, callback, featureProperties, featureIndex);
       }
-
-      _forEachFeatureOfMultiFeature(
-          currentGeomObject, callback, featureProperties, featureIndex);
     });
   } on _ShortCircuit {
     return;
