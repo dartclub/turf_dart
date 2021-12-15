@@ -127,15 +127,6 @@ main() {
     });
   });
 
-  test('propEach --breaking of iterations', () {
-    var count = 0;
-    propEach(multiline, (prop, i) {
-      count += 1;
-      return false;
-    });
-    expect(count, 1);
-  });
-
   test('featureEach --featureCollection', () {
     collection(pt).forEach((input) {
       featureEach(input, (feature, i) {
@@ -160,15 +151,6 @@ main() {
           }));
       expect(i, 0);
     });
-  });
-
-  test('featureEach --breaking of iterations', () {
-    var count = 0;
-    featureEach(multiline, (feature, i) {
-      count += 1;
-      return false;
-    });
-    expect(count, 1);
   });
 
   test('geomEach -- GeometryCollection', () {
@@ -241,7 +223,7 @@ main() {
     );
   });
 
-  test('meta -- breaking of iterations', () {
+  group('meta -- breaking of iterations', () {
     FeatureCollection<LineString> lines = FeatureCollection<LineString>(
       features: [
         Feature<LineString>(
@@ -280,38 +262,48 @@ main() {
         ]
       }),
     );
+
+    int iterationCount = 0;
+
+    void runBreakingIterationTest(dynamic func, dynamic callback) {
+      iterationCount = 0;
+      func(lines, callback);
+      expect(iterationCount, 1, reason: func.toString());
+      iterationCount = 0;
+      func(multiLine, callback);
+      expect(iterationCount, 1, reason: func.toString());
+    }
+
     // Each Iterators
     // meta.segmentEach has been purposely excluded from this list
     // TODO fill out this list will all 'each' iterators
-    for (Function func in [geomEach]) {
-      // Meta Each function should only a value of 1 after returning `false`
-      // FeatureCollection
-      var count = 0;
-      func(lines, (
-        GeometryObject? currentGeometry,
-        int? featureIndex,
-        Map<String, dynamic>? featureProperties,
-        BBox? featureBBox,
-        dynamic featureId,
-      ) {
-        count += 1;
+    test('geomEach', () {
+      runBreakingIterationTest(geomEach, (geom, i, props, bbox, id) {
+        iterationCount += 1;
         return false;
       });
-      expect(count, 1, reason: func.toString());
-      // Multi Geometry
-      var multiCount = 0;
-      func(multiLine, (
-        GeometryObject? currentGeometry,
-        int? featureIndex,
-        Map<String, dynamic>? featureProperties,
-        BBox? featureBBox,
-        dynamic featureId,
-      ) {
-        multiCount += 1;
+    });
+
+    test('flattenEach', () {
+      runBreakingIterationTest(flattenEach, (feature, i, mI) {
+        iterationCount += 1;
         return false;
       });
-      expect(multiCount, 1, reason: func.toString());
-    }
+    });
+
+    test('propEach', () {
+      runBreakingIterationTest(propEach, (prop, i) {
+        iterationCount += 1;
+        return false;
+      });
+    });
+
+    test('featureEach', () {
+      runBreakingIterationTest(featureEach, (feature, i) {
+        iterationCount += 1;
+        return false;
+      });
+    });
   });
 
   test('flattenEach -- MultiPoint', () {
