@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
+import 'package:turf/extensions.dart';
 
 Feature<Point> pt = Feature<Point>(
   geometry: Point.fromJson({
@@ -70,7 +71,7 @@ main() {
     featureAndCollection(geomCollection.geometry!)
         .forEach((GeoJSONObject input) {
       List<GeometryObject> output = [];
-      input.geomEachImpl1((geom, i, props, bbox, id) {
+      input.geomEach((geom, i, props, bbox, id) {
         output.add(geom!);
       });
       expect(output, geomCollection.geometry!.geometries);
@@ -79,7 +80,7 @@ main() {
 
   test('geomEach -- bare-GeometryCollection', () {
     List<GeometryObject> output = [];
-    geomCollection.geomEachImpl1((geom, i, props, bbox, id) {
+    geomCollection.geomEach((geom, i, props, bbox, id) {
       output.add(geom!);
     });
     expect(output, geomCollection.geometry!.geometries);
@@ -87,7 +88,7 @@ main() {
 
   test('geomEach -- bare-pointGeometry', () {
     List<GeometryObject> output = [];
-    pt.geometry!.geomEachImpl1((geom, i, props, bbox, id) {
+    pt.geometry!.geomEach((geom, i, props, bbox, id) {
       output.add(geom!);
     });
     expect(output, [pt.geometry]);
@@ -95,7 +96,7 @@ main() {
 
   test('geomEach -- bare-pointFeature', () {
     List<GeometryObject> output = [];
-    pt.geomEachImpl1((geom, i, props, bbox, id) {
+    pt.geomEach((geom, i, props, bbox, id) {
       output.add(geom!);
     });
     expect(output, [pt.geometry]);
@@ -103,7 +104,7 @@ main() {
 
   test('geomEach -- multiGeometryFeature-properties', () {
     Map<String, dynamic>? lastProperties = {};
-    geomCollection.geomEachImpl1((geom, i, props, bbox, id) {
+    geomCollection.geomEach((geom, i, props, bbox, id) {
       lastProperties = props;
     });
     expect(lastProperties, geomCollection.properties);
@@ -121,7 +122,7 @@ main() {
       bbox: bbox,
       id: id,
     );
-    pt.geomEachImpl1(
+    pt.geomEach(
       (GeometryObject? currentGeometry,
           int? featureIndex,
           Map<String, dynamic>? featureProperties,
@@ -181,7 +182,7 @@ main() {
     // Meta Each function should only a value of 1 after returning `false`
     // FeatureCollection
     var count = 0;
-    lines.geomEachImpl1((
+    lines.geomEach((
       GeometryObject? currentGeometry,
       int? featureIndex,
       Map<String, dynamic>? featureProperties,
@@ -194,7 +195,7 @@ main() {
     expect(count, 1, reason: 'FeatureCollection.geomEach');
     // Multi Geometry
     var multiCount = 0;
-    multiLine.geomEachImpl1((
+    multiLine.geomEach((
       GeometryObject? currentGeometry,
       int? featureIndex,
       Map<String, dynamic>? featureProperties,
