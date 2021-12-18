@@ -15,3 +15,4 @@ dev_dependencies:
   json_serializable: ^6.1.1
   build_runner: ^2.1.5
   analyzer: ^2.7.0
+  benchmark: ^0.3.0

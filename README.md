@@ -8,6 +8,13 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
+## Tests and Benchmarks
+Tests are run with `dart test` and benchmarks can be run with
+`dart run benchmark`
+
+Any new benchmarks must be named `*_benchmark.dart` and reside in the
+`./benchmark` folder.
+
 ## Components
 
 ### Measurement
