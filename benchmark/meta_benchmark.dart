@@ -25,6 +25,32 @@ void main() {
     features: pointFeatures,
   );
 
+  group('coordEach', () {
+    void coordEachNoopCB(
+      CoordinateType? currentCoord,
+      int? coordIndex,
+      int? featureIndex,
+      int? multiFeatureIndex,
+      int? geometryIndex,
+    ) {}
+
+    benchmark('geometry', () {
+      coordEach(pt, coordEachNoopCB);
+    });
+
+    benchmark('feature', () {
+      coordEach(featurePt, coordEachNoopCB);
+    });
+
+    benchmark('geometry collection', () {
+      coordEach(geomCollection, coordEachNoopCB);
+    });
+
+    benchmark('feature collection', () {
+      coordEach(featureCollection, coordEachNoopCB);
+    });
+  });
+
   group('geomEach', () {
     void geomEachNoopCB(
       GeometryObject? currentGeometry,
