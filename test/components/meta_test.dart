@@ -328,6 +328,10 @@ main() {
     expect(featureIndices, [0, 1, 2, 2]);
     expect(multiFeatureIndicies, [0, 0, 0, 1]);
     expect(features.length, 4);
+    expect(features[0].geometry, isA<Point>());
+    expect(features[1].geometry, isA<LineString>());
+    expect(features[2].geometry, isA<LineString>());
+    expect(features[3].geometry, isA<LineString>());
   });
 
   test('flattenEach -- Point-properties', () {
