@@ -10,7 +10,7 @@ typedef GeomEachCallback = dynamic Function(
 
 /// A simple class to manage short circuiting from *Each functions while still
 /// allowing an Exception to be thrown and raised
-class ShortCircuit {}
+class _ShortCircuit {}
 
 /// Iterate over each geometry in [geoJSON], calling [callback] on each
 /// iteration. Similar to Array.forEach()
@@ -32,35 +32,35 @@ class ShortCircuit {}
 void geomEach(GeoJSONObject geoJSON, GeomEachCallback callback) {
   try {
     if (geoJSON is FeatureCollection) {
-      forEachGeomInFeatureCollection(geoJSON, callback);
+      _forEachGeomInFeatureCollection(geoJSON, callback);
     } else if (geoJSON is Feature) {
-      forEachGeomInFeature(geoJSON, callback, 0);
+      _forEachGeomInFeature(geoJSON, callback, 0);
     } else if (geoJSON is GeometryObject) {
-      forEachGeomInGeometryObject(geoJSON, callback, {}, null, null, 0);
+      _forEachGeomInGeometryObject(geoJSON, callback, {}, null, null, 0);
     } else {
       throw Exception('Unknown Geometry Type');
     }
-  } on ShortCircuit {
+  } on _ShortCircuit {
     return;
   }
 }
 
-void forEachGeomInFeatureCollection(
+void _forEachGeomInFeatureCollection(
     FeatureCollection featureCollection, GeomEachCallback callback) {
   int featuresLength = featureCollection.features.length;
   for (int featureIndex = 0; featureIndex < featuresLength; featureIndex++) {
-    forEachGeomInFeature(
+    _forEachGeomInFeature(
         featureCollection.features[featureIndex], callback, featureIndex);
   }
 }
 
-void forEachGeomInFeature(Feature<GeometryObject> feature,
+void _forEachGeomInFeature(Feature<GeometryObject> feature,
     GeomEachCallback callback, int featureIndex) {
-  forEachGeomInGeometryObject(feature.geometry, callback, feature.properties,
+  _forEachGeomInGeometryObject(feature.geometry, callback, feature.properties,
       feature.bbox, feature.id, featureIndex);
 }
 
-void forEachGeomInGeometryObject(
+void _forEachGeomInGeometryObject(
     GeometryObject? geometryObject,
     GeomEachCallback callback,
     Map<String, dynamic>? featureProperties,
@@ -76,7 +76,7 @@ void forEachGeomInGeometryObject(
           featureId,
         ) ==
         false) {
-      throw ShortCircuit();
+      throw _ShortCircuit();
     }
   } else if (geometryObject is GeometryCollection) {
     num geometryCollectionLength = geometryObject.geometries.length;
@@ -84,7 +84,7 @@ void forEachGeomInGeometryObject(
     for (int geometryIndex = 0;
         geometryIndex < geometryCollectionLength;
         geometryIndex++) {
-      forEachGeomInGeometryObject(
+      _forEachGeomInGeometryObject(
         geometryObject.geometries[geometryIndex],
         callback,
         featureProperties,
