@@ -1,0 +1,18 @@
+{
+    "type": "GeometryCollection",
+    "bbox": [
+        100.0,
+        0.0,
+        100.0,
+        0.0
+    ],
+    "geometries": [
+        {
+            "type": "Point",
+            "coordinates": [
+                100.0,
+                0.0
+            ]
+        }
+    ]
+}

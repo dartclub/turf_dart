@@ -1,3 +1,11 @@
+## 0.0.4
+
+- Implements the `featureEach` and `propEach` meta function. [#24](https://github.com/dartclub/turf_dart/pull/24)
+- PR [#43](https://github.com/dartclub/turf_dart/pull/43):
+  - Several bugfixes with the deserialization of JSON
+  - Several new constructors
+  - Vector arithmetics operations
+
 ## 0.0.3
 
 - Null-safety support
