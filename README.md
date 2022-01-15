@@ -1,5 +1,7 @@
 # turf.dart
 
+[![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
+
 THIS PROJECT IS WORK IN PROCESS
 
 A [turf.js](https://github.com/Turfjs/turf)-like geospatial analysis library working with GeoJSON, written in pure Dart.
