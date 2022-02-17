@@ -20,7 +20,8 @@ void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
   _IndexCounter indexCounter = _IndexCounter();
   try {
-    if (geoJSON is FeatureCollection) {
+    if (geoJSON is GeometryCollection) {
+    } else if (geoJSON is FeatureCollection) {
       _forEachCoordInFeatureCollection(
           geoJSON, callback, excludeWrapCoord, indexCounter);
     } else if (geoJSON is Feature) {
