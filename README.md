@@ -129,9 +129,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### META
 - [ ] coordAll
-- [ ] coordEach
+- [x] coordEach
 - [ ] coordReduce
-- [ ] featureEach
+- [x] featureEach
 - [ ] featureReduce
 - [ ] flattenEach
 - [ ] flattenReduce
@@ -139,9 +139,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] getCoords
 - [ ] getGeom
 - [ ] getType
-- [ ] geomEach
+- [x] geomEach
 - [ ] geomReduce
-- [ ] propEach
+- [x] propEach
 - [ ] propReduce
 - [ ] segmentEach
 - [ ] segmentReduce
