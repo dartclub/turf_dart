@@ -28,7 +28,7 @@ Position getCoord(dynamic coord) {
     return coord;
   }
 
-  throw Exception("coord must be GeoJSON Point or an Array of numbers");
+  throw Exception("coord must be GeoJSON Point or Position");
 }
 
 ///
@@ -43,21 +43,24 @@ Position getCoord(dynamic coord) {
 /// var coords = turf.getCoords(poly);
 /// //= [[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]
 ///
-List getCoords<T extends GeometryType>(dynamic coords) {
+List getCoords(dynamic coords) {
   if (coords == null) {
     throw Exception("coords is required");
   }
 
-  if (coords is Feature<T> && coords.geometry != null) {
-    return coords.geometry!.coordinates;
+  if (coords is Feature && coords.geometry != null) {
+    _getCoordsForGeometry(coords.geometry!);
   }
-  if (coords is T) {
-    return coords.coordinates;
-  }
+
   if (coords is List) {
     return coords;
   }
+  return _getCoordsForGeometry(coords);
+}
 
-  throw Exception(
-      "coords must be GeoJSON Feature, Geometry Object or an Array");
+_getCoordsForGeometry(GeometryObject geom) {
+  if (geom is Point || geom is GeometryCollection) {
+    throw Exception("Type must contain a list of Positions e.g Polygon");
+  }
+  return (geom as GeometryType).coordinates;
 }
