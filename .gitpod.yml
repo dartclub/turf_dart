@@ -14,6 +14,7 @@ tasks:
       flutter build -v web
       flutter build -v appbundle
       flutter build -v apk
+      dart pub get
       
   - command: |
       # Gitpod is not able to run emulators within a worspace at this stage as
