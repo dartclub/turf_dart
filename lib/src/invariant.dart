@@ -55,15 +55,15 @@ List<dynamic> getCoords(dynamic coords) {
   }
 
   if (coords is Feature && coords.geometry != null) {
-    _getCoordsForGeometry(coords.geometry!);
+    return _getCoordsForGeometry(coords.geometry!);
   }
 
-  if (coords is GeometryType) {
-    _getCoordsForGeometry(coords.coordinates);
+  if (coords is GeometryObject) {
+    return _getCoordsForGeometry(coords);
   }
 
-    throw Exception(
-        "{Array<any>|Geometry|Feature} coords Feature, Geometry Object or an Array");
+  throw Exception(
+      "Parameter must be a List<dynamic>, Geometry, Feature. coords Feature, Geometry Object or a List");
 }
 
 _getCoordsForGeometry(GeometryObject geom) {

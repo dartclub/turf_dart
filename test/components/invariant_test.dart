@@ -23,16 +23,16 @@ main() {
     expect(() => getCoords(null), throwsA(isA<Exception>()));
     expect(
         getCoords([
-          [119.32, -8.7],
-          [119.55, -8.69],
-          [119.51, -8.54],
-          [119.32, -8.7]
+          Position.of([119.32, -8.7]),
+          Position.of([119.55, -8.69]),
+          Position.of([119.51, -8.54]),
+          Position.of([119.32, -8.7])
         ]),
         equals([
-          [119.32, -8.7],
-          [119.55, -8.69],
-          [119.51, -8.54],
-          [119.32, -8.7]
+          Position.of([119.32, -8.7]),
+          Position.of([119.55, -8.69]),
+          Position.of([119.51, -8.54]),
+          Position.of([119.32, -8.7])
         ]));
     expect(() => getCoords(feature1), throwsA(isA<Exception>()));
     expect(() => getCoords(feature1), throwsA(isA<Exception>()));
