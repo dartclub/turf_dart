@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:turf/turf.dart';
 
 ///
@@ -43,24 +45,31 @@ Position getCoord(dynamic coord) {
 /// var coords = turf.getCoords(poly);
 /// //= [[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]
 ///
-List getCoords(dynamic coords) {
+List<dynamic> getCoords(dynamic coords) {
   if (coords == null) {
     throw Exception("coords is required");
+  }
+
+  if (coords is List) {
+    return coords;
   }
 
   if (coords is Feature && coords.geometry != null) {
     _getCoordsForGeometry(coords.geometry!);
   }
 
-  if (coords is List) {
-    return coords;
+  if (coords is GeometryType) {
+    _getCoordsForGeometry(coords.coordinates);
   }
-  return _getCoordsForGeometry(coords);
+
+    throw Exception(
+        "{Array<any>|Geometry|Feature} coords Feature, Geometry Object or an Array");
 }
 
 _getCoordsForGeometry(GeometryObject geom) {
   if (geom is Point || geom is GeometryCollection) {
     throw Exception("Type must contain a list of Positions e.g Polygon");
   }
+
   return (geom as GeometryType).coordinates;
 }

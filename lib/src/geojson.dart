@@ -587,7 +587,7 @@ class GeometryCollection extends GeometryObject {
       );
 }
 
-/// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
+/// Feature, as specified here https://tools.ietf.o rg/html/rfc7946#section-3.2
 class Feature<T extends GeometryObject> extends GeoJSONObject {
   dynamic id;
   Map<String, dynamic>? properties;

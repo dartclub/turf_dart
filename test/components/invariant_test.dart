@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/invariant.dart';
+// import 'package:collection/collection.dart';
 
 main() {
   LineString line1 = LineString(coordinates: [Position(1, 2), Position(3, 4)]);
@@ -18,12 +21,23 @@ main() {
   test("invariant -- getCoords", () {
     var feature2 = Feature<LineString>(geometry: line1);
     expect(() => getCoords(null), throwsA(isA<Exception>()));
-    expect(() => getCoords(feature1), throwsA(isA<Exception>())); 
+    expect(
+        getCoords([
+          [119.32, -8.7],
+          [119.55, -8.69],
+          [119.51, -8.54],
+          [119.32, -8.7]
+        ]),
+        equals([
+          [119.32, -8.7],
+          [119.55, -8.69],
+          [119.51, -8.54],
+          [119.32, -8.7]
+        ]));
+    expect(() => getCoords(feature1), throwsA(isA<Exception>()));
+    expect(() => getCoords(feature1), throwsA(isA<Exception>()));
     var coords = getCoords(feature2);
-    expect(coords.length, feature2.geometry!.coordinates.length);
-    expect(coords.first, feature2.geometry!.coordinates.first);
-    expect(coords.last, feature2.geometry!.coordinates.last);
-
+    expect(coords, equals([Position(1, 2), Position(3, 4)]));
   });
 /*
 
