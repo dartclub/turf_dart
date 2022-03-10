@@ -1,7 +1,6 @@
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/invariant.dart';
-// import 'package:collection/collection.dart';
 
 main() {
   LineString line1 = LineString(coordinates: [Position(1, 2), Position(3, 4)]);

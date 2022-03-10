@@ -1,18 +1,13 @@
 import 'package:turf/turf.dart';
 
-///
 /// Unwraps a coordinate from a Point, Feature<Point>, and a Position.
-///
-/// @name getCoord
-/// @param {Position |Point |Feature<Point>} coord GeoJSON Point or an Array of numbers
-/// @returns Position
-///
+/// 
+/// gets [Position], [Point], and [Feature]<Point> and returns [Position].
 /// For example:
 ///
 /// ```dart
 /// var point = Point(coordinates: Position.named(lng: 10, lat: 10));
-/// Position position = getCoord(point); // Position(10, 10)
-/// ```
+/// Position position = getCoord(point); // Position(10, 10) 
 Position getCoord(dynamic coord) {
   if (coord == null) {
     throw Exception("coord is required");
@@ -31,18 +26,27 @@ Position getCoord(dynamic coord) {
   throw Exception("coord must be GeoJSON Point or Position");
 }
 
+/// Unwrap coordinates from a [Feature], [GeometryObject] or a List
+/// 
+/// Gets a List<dynamic>, [GeometryObject] or a [Feature] or a List<dynamic> and
+/// returns List<dynamic>.
+/// For example:
+/// ```dart
+/// var polygon = Polygon(coordinates: [
+///    [
+///     Position(119.32, -8.7),
+///     Position(119.55, -8.69),
+///     Position(119.51, -8.54),
+///     Position(119.32, -8.7)
+///     ]
+///  ]);
 ///
-/// Unwrap coordinates from a Feature, Geometry Object or a List
-///
-/// @name getCoords
-/// @param {List<dynamic>|Geometry|Feature} coords Feature, Geometry Object or a List
-/// @returns {List<any>} coordinates
-/// @example
-/// var poly = Polygon(coordinates: [[Position(119.32, -8.7), Position(119.55, -8.69), Position(119.51, -8.54), Position(119.32, -8.7)]]);
-///
-/// var coords = getCoords(poly);
-/// //= [[Position(119.32, -8.7), Position(119.55, -8.69), Position(119.51, -8.54), Position(119.32, -8.7)]]
-///
+/// var coords = getCoords(poly);  
+/// /* [[Position(119.32, -8.7),
+///  Position(119.55, -8.69),
+///  Position(119.51, -8.54),
+///  Position(119.32, -8.7)]] */
+/// ```
 List<dynamic> getCoords(dynamic coords) {
   if (coords == null) {
     throw Exception("coords is required");
