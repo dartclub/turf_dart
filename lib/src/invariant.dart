@@ -1,19 +1,17 @@
-import 'dart:developer';
-
 import 'package:turf/turf.dart';
 
 ///
-/// Unwrap a coordinate from a Point Feature, Geometry or a single coordinate.
+/// Unwraps a coordinate from a Point, Feature<Point>, and a Position.
 ///
 /// @name getCoord
-/// @param {Array<number>|Geometry<Point>|Feature<Point>} coord GeoJSON Point or an Array of numbers
-/// @returns {Array<number>} coordinates
+/// @param {Position |Point |Feature<Point>} coord GeoJSON Point or an Array of numbers
+/// @returns Position
 ///
 /// For example:
 ///
 /// ```dart
 /// var point = Point(coordinates: Position.named(lng: 10, lat: 10));
-/// Position position = getCoord(point); // lng: 10, lat: 10
+/// Position position = getCoord(point); // Position(10, 10)
 /// ```
 Position getCoord(dynamic coord) {
   if (coord == null) {
@@ -34,16 +32,16 @@ Position getCoord(dynamic coord) {
 }
 
 ///
-/// Unwrap coordinates from a Feature, Geometry Object or an Array
+/// Unwrap coordinates from a Feature, Geometry Object or a List
 ///
 /// @name getCoords
-/// @param {Array<any>|Geometry|Feature} coords Feature, Geometry Object or an Array
-/// @returns {Array<any>} coordinates
+/// @param {List<dynamic>|Geometry|Feature} coords Feature, Geometry Object or a List
+/// @returns {List<any>} coordinates
 /// @example
-/// var poly = turf.polygon([[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]);
+/// var poly = Polygon(coordinates: [[Position(119.32, -8.7), Position(119.55, -8.69), Position(119.51, -8.54), Position(119.32, -8.7)]]);
 ///
-/// var coords = turf.getCoords(poly);
-/// //= [[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]
+/// var coords = getCoords(poly);
+/// //= [[Position(119.32, -8.7), Position(119.55, -8.69), Position(119.51, -8.54), Position(119.32, -8.7)]]
 ///
 List<dynamic> getCoords(dynamic coords) {
   if (coords == null) {
@@ -54,7 +52,7 @@ List<dynamic> getCoords(dynamic coords) {
     return coords;
   }
 
-  if (coords is Feature && coords.geometry != null) {
+  if (coords is Feature && coords.geometry != null) {       
     return _getCoordsForGeometry(coords.geometry!);
   }
 
