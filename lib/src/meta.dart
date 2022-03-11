@@ -3,7 +3,7 @@ import 'geojson.dart';
 typedef GeomEachCallback = dynamic Function(
   GeometryObject? currentGeometry,
   int? featureIndex,
-  Map<String, dynamic>? featureProperties,
+  Map<String, dynamic>? featureProperties, // what about fields?
   BBox? featureBBox,
   dynamic featureId,
 );
@@ -102,7 +102,7 @@ void _forEachGeomInGeometryObject(
 
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
-    Map<String, dynamic>? currentProperties, num featureIndex);
+    Map<String, dynamic>? currentProperties, int featureIndex);
 
 /// Iterate over properties in any [geoJSONObject], calling [callback] on each
 /// iteration. Similar to [Iterable].forEach()
@@ -133,9 +133,36 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
   }
 }
 
+/// Callback for flattenEach
+typedef FlattenEachCallback = dynamic Function(
+    Feature currentFeature, int featureIndex, int multiFeatureIndex);
+
+/// Iterates over flattened features in any [GeoJSONObject], similar to
+/// [Iterable.forEach()].
+///
+/// Gets [FeatureCollection], [Feature], [GeometryType], [GeoJSONObject]
+/// and a [FlattenEachCallback] a method that takes (currentFeature, featureIndex, multiFeatureIndex)
+/// For example:
+///
+/// ```dart
+/// var features = turf.featureCollection([
+///     turf.point([26, 37], {foo: 'bar'}),
+///     turf.multiPoint([[40, 30], [36, 53]], {hello: 'world'})
+/// ]);
+///
+/// flattenEach(features, function (currentFeature, featureIndex, multiFeatureIndex) {
+///   //=currentFeature
+///   //=featureIndex
+///   //=multiFeatureIndex
+/// });
+/// ```
+void flattenEach(GeoJSONObject geojson, GeomEachCallback callback) {
+  geomEach(geojson, callback);
+}
+
 /// Callback for featureEach
 typedef FeatureEachCallback = dynamic Function(
-    Feature currentFeature, num featureIndex);
+    Feature currentFeature, int featureIndex);
 
 /// Iterate over features in any [GeoJSONObject], calling [callback] on each
 /// iteration. Similar to Array.forEach.
@@ -166,8 +193,6 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
   }
 }
 
-
-
 /// Callback for flattenReduce
 ///
 /// Gets [previousValue] The accumulated value previously returned in the last invocation
@@ -187,15 +212,17 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 /// *  - The currentValue argument is the value of the second element present in the array.
 /// */
 /// [Feature] currentFeature The current Feature being processed.
-/// [num] featureIndex The current index of the [Feature] being processed.
-/// [num] multiFeatureIndex The current index of the Multi-Feature being processed.
-///
-typedef FlattenReduceCallback = Function(
+/// [int] featureIndex The current index of the [Feature] being processed.
+/// [int] multiFeatureIndex The current index of the Multi-Feature being processed.
+ @TODO: //armantorkzaban // needs to be of type GeomEachCallback
+/* typedef FlattenReduceCallback = Function(
     dynamic previousValue, // or an initialValue
     Feature currentFeature,
-    num featureIndex,
-    num multiFeatureIndex);
+    int featureIndex,
+    int multiFeatureIndex);
 
+ 
+*/ 
 /// Reduce flattened features in any [GeoJSONObject], similar to [Iterable.reduce()].
 ///
 /// Gets a [FeatureCollection], [Feature],[GeometryType], [GeoJSONObject],
@@ -204,6 +231,7 @@ typedef FlattenReduceCallback = Function(
 /// returns a dynamic value that results from the reduction.
 /// For example:
 ///
+/// ```dart
 /// var features = FeatureCollection([
 ///     Feature(geometry: Point(coordiantes: Position.from([26, 37])), properties: {foo: 'bar'}),
 ///     Feature(geommetry: MultiPoint(coordinates: [Position.from([40, 30])), Position.from([36, 53], {hello: 'world'})
@@ -216,16 +244,25 @@ typedef FlattenReduceCallback = Function(
 ///   //=multiFeatureIndex
 ///   return currentFeature
 /// });
+/// ```
 ///
-Feature flattenReduce(dynamic geojson, FlattenReduceCallback callback,
+Feature flattenReduce(GeometryObject geojson, GeomEachCallback callback,
     [dynamic initialValue]) {
   var previousValue = initialValue;
-  flattenEach(geojson, (currentFeature, featureIndex, multiFeatureIndex) {
-    if (featureIndex == 0 && multiFeatureIndex == 0 && initialValue == null) {
-      previousValue = currentFeature;
+  flattenEach(geojson, (
+    GeometryObject? currentGeometry,
+    int? featureIndex,
+    Map<String, dynamic>? featureProperties, // what about fields?
+    BBox? featureBBox,
+    dynamic featureId,
+  ) {
+    if (featureIndex == 0 &&
+        // multiFeatureIndex == 0 &&
+        initialValue == null) {
+      previousValue = currentGeometry;
     } else {
-      previousValue = callback(
-          previousValue, currentFeature, featureIndex, multiFeatureIndex);
+      previousValue = callback(currentGeometry,
+          previousValue, featureIndex, null, null);
     }
   });
   return previousValue;
