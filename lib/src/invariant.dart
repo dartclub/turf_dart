@@ -1,8 +1,8 @@
 import 'package:turf/turf.dart';
 
-/// Unwraps a coordinate from a [Point], [Feature<Point>], and a [Position].
+/// Unwraps a coordinate from a Point, Feature<Point>, and a Position.
 /// 
-/// gets [Position], [Point], and [Feature<Point>] and returns [Position].
+/// gets [Position], [Point], and [Feature]<Point> and returns [Position].
 /// For example:
 ///
 /// ```dart
@@ -26,10 +26,10 @@ Position getCoord(dynamic coord) {
   throw Exception("coord must be GeoJSON Point or Position");
 }
 
-/// Unwrap coordinates from a [Feature], [GeometryObject] or a [List]
+/// Unwrap coordinates from a [Feature], [GeometryObject] or a List
 /// 
-/// Gets a [List<dynamic>], [GeometryObject] or a [Feature] or a [List<dynamic>] and
-/// returns [List<dynamic>].
+/// Gets a List<dynamic>, [GeometryObject] or a [Feature] or a List<dynamic> and
+/// returns List<dynamic>.
 /// For example:
 /// ```dart
 /// var polygon = Polygon(coordinates: [
