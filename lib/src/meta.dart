@@ -14,8 +14,8 @@ class _ShortCircuit {
   _ShortCircuit();
 }
 
-/// Iterate over each geometry in [geoJSON], calling [callback] on each
-/// iteration. Similar to Array.forEach()
+/// Iterates over each geometry in [geoJSON], calling [callback] on each
+/// iteration. Similar to Iterable.forEach()
 ///
 /// For example:
 ///
@@ -165,3 +165,4 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
     throw Exception('Unknown Feature/FeatureCollection Type');
   }
 }
+
