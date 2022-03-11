@@ -576,7 +576,7 @@ class GeometryCollection extends GeometryObject {
             const [],
       );
 
-  @override
+  @override 
   Map<String, dynamic> toJson() =>
       super.serialize(_$GeometryCollectionToJson(this));
 
