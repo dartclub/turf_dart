@@ -1,13 +1,13 @@
 import 'package:turf/turf.dart';
 
 /// Unwraps a coordinate from a [Point], [Feature<Point>], and a [Position].
-/// 
+///
 /// gets [Position], [Point], and [Feature<Point>] and returns [Position].
 /// For example:
 ///
 /// ```dart
 /// var point = Point(coordinates: Position.named(lng: 10, lat: 10));
-/// Position position = getCoord(point); // Position(10, 10) 
+/// Position position = getCoord(point); // Position(10, 10)
 Position getCoord(dynamic coord) {
   if (coord == null) {
     throw Exception("coord is required");
@@ -27,7 +27,7 @@ Position getCoord(dynamic coord) {
 }
 
 /// Unwrap coordinates from a [Feature], [GeometryObject] or a [List]
-/// 
+///
 /// Gets a [List<dynamic>], [GeometryObject] or a [Feature] or a [List<dynamic>] and
 /// returns [List<dynamic>].
 /// For example:
@@ -41,7 +41,7 @@ Position getCoord(dynamic coord) {
 ///     ]
 ///  ]);
 ///
-/// var coords = getCoords(poly);  
+/// var coords = getCoords(poly);
 /// /* [[Position(119.32, -8.7),
 ///  Position(119.55, -8.69),
 ///  Position(119.51, -8.54),
@@ -56,7 +56,7 @@ List<dynamic> getCoords(dynamic coords) {
     return coords;
   }
 
-  if (coords is Feature && coords.geometry != null) {       
+  if (coords is Feature && coords.geometry != null) {
     return _getCoordsForGeometry(coords.geometry!);
   }
 

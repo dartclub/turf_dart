@@ -165,4 +165,3 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
     throw Exception('Unknown Feature/FeatureCollection Type');
   }
 }
-
