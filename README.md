@@ -132,7 +132,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] coordAll
 - [x] [coordEach](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/coord_each.dart)
 - [ ] coordReduce
-- [ ] featureEach
+- [x] featureEach
 - [ ] featureReduce
 - [ ] flattenEach
 - [ ] flattenReduce
@@ -140,9 +140,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] getCoords
 - [ ] getGeom
 - [ ] getType
-- [ ] geomEach
+- [x] geomEach
 - [ ] geomReduce
-- [ ] propEach
+- [x] propEach
 - [ ] propReduce
 - [ ] segmentEach
 - [ ] segmentReduce
