@@ -2,7 +2,7 @@ import 'geojson.dart';
 
 typedef CoordEachCallback = dynamic Function(
   //todo: can we change this Position
-  CoordinateType? currentCoord,
+  Position? currentCoord,
   int? coordIndex,
   int? featureIndex,
   int? multiFeatureIndex,
@@ -15,7 +15,7 @@ typedef CoordEachCallback = dynamic Function(
 /// For example:
 ///
 /// ```dart
-/// // TODO add example
+/// //TODO add example
 /// ```
 void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
@@ -66,7 +66,7 @@ void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
             : 0;
 
         if (geomType == GeoJSONObjectType.point) {
-          if (callback(coords as CoordinateType, coordIndex, featureIndex,
+          if (callback(coords as Position, coordIndex, featureIndex,
                   multiFeatureIndex, geometryIndex) ==
               false) {
             throw _ShortCircuit();
@@ -326,10 +326,10 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 /// //= [Position(13,15), Position(1, 2), Position(67, 50)]
 /// @Lukas: return Position or CoordinateType?
 ///
-List<CoordinateType?> coordAll(GeoJSONObject geojson) {
-  List<CoordinateType?> coords = [];
+List<Position?> coordAll(GeoJSONObject geojson) {
+  List<Position?> coords = [];
   coordEach(geojson, (
-    CoordinateType? currentCoord,
+    Position? currentCoord,
     int? coordIndex,
     int? featureIndex,
     int? multiFeatureIndex,
