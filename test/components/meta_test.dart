@@ -170,38 +170,6 @@ List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
   return [geometry, feature, featureCollection];
 }
 
-FeatureCollection fcMixed = FeatureCollection(
-  features: [
-    Feature<Point>(
-      geometry: Point.fromJson({
-        'coordinates': [0, 0],
-      }),
-    ),
-    Feature<LineString>(
-      geometry: LineString.fromJson({
-        'coordinates': [
-          [1, 1],
-          [2, 2],
-        ]
-      }),
-    ),
-    Feature<MultiLineString>(
-      geometry: MultiLineString.fromJson({
-        'coordinates': [
-          [
-            [1, 1],
-            [0, 0],
-          ],
-          [
-            [4, 4],
-            [5, 5],
-          ],
-        ],
-      }),
-    ),
-  ],
-);
-
 main() {
   test('coordEach -- Point', () {
     featureAndCollection(pt.geometry!).forEach((input) {
