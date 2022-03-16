@@ -20,60 +20,30 @@ void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
   _IndexCounter indexCounter = _IndexCounter();
   try {
-    if (geoJSON is GeometryCollection) {
-    } else if (geoJSON is FeatureCollection) {
-      _forEachCoordInFeatureCollection(
-          geoJSON, callback, excludeWrapCoord, indexCounter);
-    } else if (geoJSON is Feature) {
-      _forEachCoordInFeature(geoJSON, callback, excludeWrapCoord, indexCounter);
-    } else if (geoJSON is GeometryObject) {
-      _forEachCoordInGeometryObject(
-          geoJSON, callback, excludeWrapCoord, indexCounter);
-    } else {
-      throw Exception('Unknown Geometry Type');
-    }
+    geomEach(
+      geoJSON,
+      (
+        GeometryType? currentGeometry,
+        int? featureIndex,
+        featureProperties,
+        featureBBox,
+        featureId,
+      ) {
+        if (currentGeometry == null) return;
+
+        indexCounter.featureIndex = featureIndex ?? 0;
+
+        _forEachCoordInGeometryObject(
+            currentGeometry, callback, excludeWrapCoord, indexCounter);
+      },
+    );
   } on _ShortCircuit {
     return;
   }
 }
 
-void _forEachCoordInGeometryCollection(GeometryCollection geometry,
-    CoordEachCallback callback, bool excludeWrapCoord) {
-  for (var j = 0; j < geometry.geometries.length; j++) {
-    try {
-      coordEach(geometry.geometries[j], callback, excludeWrapCoord);
-    } on _ShortCircuit {
-      rethrow;
-    }
-  }
-}
-
-void _forEachCoordInFeatureCollection(
-    FeatureCollection featureCollection,
-    CoordEachCallback callback,
-    bool excludeWrapCoord,
-    _IndexCounter _indexCounter) {
-  List<Feature> features = featureCollection.features;
-  for (int featureIndex = 0; featureIndex < features.length; featureIndex++) {
-    _indexCounter.featureIndex = featureIndex;
-    _forEachCoordInFeature(
-        features[featureIndex], callback, excludeWrapCoord, _indexCounter);
-  }
-}
-
-void _forEachCoordInFeature(Feature feature, CoordEachCallback callback,
-    bool excludeWrapCoord, _IndexCounter indexCounter) {
-  GeoJSONObject? geometry = feature.geometry;
-  // Handles null Geometry -- Skips this geometry
-  if (geometry == null) {
-    return;
-  }
-  _forEachCoordInGeometryObject(
-      geometry as GeometryObject, callback, excludeWrapCoord, indexCounter);
-}
-
 void _forEachCoordInGeometryObject(
-    GeometryObject geometry,
+    GeometryType geometry,
     CoordEachCallback callback,
     bool excludeWrapCoord,
     _IndexCounter indexCounter) {
@@ -84,26 +54,22 @@ void _forEachCoordInGeometryObject(
       ? 1
       : 0;
   indexCounter.multiFeatureIndex = 0;
-  if (geomType == GeoJSONObjectType.geometryCollection) {
-    _forEachCoordInGeometryCollection(
-        geometry as GeometryCollection, callback, excludeWrapCoord);
+
+  dynamic coords = geometry.coordinates as Iterable;
+  if (geomType == GeoJSONObjectType.point) {
+    _forEachCoordInPoint(coords as CoordinateType, callback, indexCounter);
+  } else if (geomType == GeoJSONObjectType.lineString ||
+      geomType == GeoJSONObjectType.multiPoint) {
+    _forEachCoordInCollection(coords, geomType, callback, indexCounter);
+  } else if (geomType == GeoJSONObjectType.polygon ||
+      geomType == GeoJSONObjectType.multiLineString) {
+    _forEachCoordInNestedCollection(
+        coords, geomType, wrapShrink, callback, indexCounter);
+  } else if (geomType == GeoJSONObjectType.multiPolygon) {
+    _forEachCoordInMultiNestedCollection(
+        coords, geomType, wrapShrink, callback, indexCounter);
   } else {
-    dynamic coords = (geometry as GeometryType).coordinates as Iterable;
-    if (geomType == GeoJSONObjectType.point) {
-      _forEachCoordInPoint(coords as CoordinateType, callback, indexCounter);
-    } else if (geomType == GeoJSONObjectType.lineString ||
-        geomType == GeoJSONObjectType.multiPoint) {
-      _forEachCoordInCollection(coords, geomType, callback, indexCounter);
-    } else if (geomType == GeoJSONObjectType.polygon ||
-        geomType == GeoJSONObjectType.multiLineString) {
-      _forEachCoordInNestedCollection(
-          coords, geomType, wrapShrink, callback, indexCounter);
-    } else if (geomType == GeoJSONObjectType.multiPolygon) {
-      _forEachCoordInMultiNestedCollection(
-          coords, geomType, wrapShrink, callback, indexCounter);
-    } else {
-      throw Exception('Unknown Geometry Type');
-    }
+    throw Exception('Unknown Geometry Type');
   }
 }
 
@@ -195,7 +161,7 @@ class _IndexCounter {
 }
 
 typedef GeomEachCallback = dynamic Function(
-  GeometryObject? currentGeometry,
+  GeometryType? currentGeometry,
   int? featureIndex,
   Map<String, dynamic>? featureProperties,
   BBox? featureBBox,
