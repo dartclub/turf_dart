@@ -142,8 +142,8 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] featureReduce
 - [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L181)
 - [ ] flattenReduce
-- [ ] getCoord
-- [ ] getCoords
+- [x] [getCoord](https://github.com/dartclub/turf_dart/blob/0c4522c7f5b71b04c06bb4d758957edab6d749fa/lib/src/invariant.dart#L11)
+- [x] [getCoords](https://github.com/dartclub/turf_dart/blob/0c4522c7f5b71b04c06bb4d758957edab6d749fa/lib/src/invariant.dart#L50)
 - [ ] getGeom
 - [ ] getType
 - [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L34)
