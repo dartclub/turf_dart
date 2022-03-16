@@ -1,5 +1,7 @@
 # turf.dart
 
+[![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
+
 THIS PROJECT IS WORK IN PROCESS
 
 A [turf.js](https://github.com/Turfjs/turf)-like geospatial analysis library working with GeoJSON, written in pure Dart.
@@ -8,11 +10,19 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
+
 ## Notable Design Decisions
 - Nested `GeometryCollections` (as described in
   [RFC 7946 section 3.1.8](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8))
   are _not supported_ which takes a slightly firmer stance than the "should
   avoid" language in the specification
+
+## Tests and Benchmarks
+Tests are run with `dart test` and benchmarks can be run with
+`dart run benchmark`
+
+Any new benchmarks must be named `*_benchmark.dart` and reside in the
+`./benchmark` folder.
 
 ## Components
 
@@ -126,7 +136,7 @@ Most of the implementation is a direct translation from [turf.js](https://github
 
 ### META
 - [ ] coordAll
-- [ ] coordEach
+- [x] coordEach
 - [ ] coordReduce
 - [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L157)
 - [ ] featureReduce
