@@ -309,3 +309,33 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
     throw Exception('Unknown Feature/FeatureCollection Type');
   }
 }
+
+/// Gets all coordinates from any [GeoJSONObject].
+/// Receives any [GeoJSONObject]
+/// Returns List<Position>
+/// For example:
+///
+/// ```dart
+/// var featureColl = FeatureCollection(features:
+/// [Feature(geometry: Point(coordinates: Position(13,15)))
+/// ,Feature(geometry: LineString(coordinates: [Position(1, 2),
+/// Position(67, 50)]))]);
+///
+/// var coords = coordAll(features);
+/// //= [Position(13,15), Position(1, 2), Position(67, 50)]
+/// @Lukas: return Position or CoordinateType?
+///
+List<CoordinateType?> coordAll(GeoJSONObject geojson) {
+  List<CoordinateType?> coords = [];
+  coordEach(geojson, (
+    CoordinateType? currentCoord,
+    int? coordIndex,
+    int? featureIndex,
+    int? multiFeatureIndex,
+    int? geometryIndex,
+  ) {
+    coords.add(currentCoord);
+    return true;
+  });
+  return coords;
+}
