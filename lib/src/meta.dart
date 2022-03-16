@@ -324,14 +324,9 @@ typedef FlattenEachCallback = dynamic Function(
 /// ```
 void flattenEach(GeoJSONObject geoJSON, FlattenEachCallback callback) {
   try {
-    geomEach(geoJSON, (currentGeomObject, featureIndex, featureProperties,
-        featureBBox, featureId) {
-      if (currentGeomObject is GeometryCollection) {
-        // turf.js code didn't really handle the GeometryCollection case
-        // TODO figure out how to support this and what the behavior is supposed
-        // to be
-        return;
-      } else if (currentGeomObject == null ||
+    geomEach(geoJSON, (GeometryType? currentGeomObject, featureIndex,
+        featureProperties, featureBBox, featureId) {
+      if (currentGeomObject == null ||
           currentGeomObject is Point ||
           currentGeomObject is LineString ||
           currentGeomObject is Polygon) {
