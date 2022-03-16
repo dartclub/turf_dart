@@ -1,6 +1,7 @@
 import 'geojson.dart';
 
 typedef CoordEachCallback = dynamic Function(
+  //todo: can we change this Position
   CoordinateType? currentCoord,
   int? coordIndex,
   int? featureIndex,
