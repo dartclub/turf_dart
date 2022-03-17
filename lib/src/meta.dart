@@ -1,5 +1,149 @@
 import 'geojson.dart';
 
+typedef CoordEachCallback = dynamic Function(
+  CoordinateType? currentCoord,
+  int? coordIndex,
+  int? featureIndex,
+  int? multiFeatureIndex,
+  int? geometryIndex,
+);
+
+///
+/// Iterate over coordinates in any [geoJSON] object, similar to Array.forEach()
+///
+/// For example:
+///
+/// ```dart
+/// // TODO add example
+/// ```
+void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
+    [bool excludeWrapCoord = false]) {
+  dynamic coords;
+  dynamic geometry;
+  int stopG;
+  GeoJSONObject? geometryMaybeCollection;
+  int wrapShrink = 0;
+  int coordIndex = 0;
+  bool isGeometryCollection;
+  bool isFeatureCollection = geoJSON is FeatureCollection;
+  bool isFeature = geoJSON is Feature;
+  int stop = isFeatureCollection ? geoJSON.features.length : 1;
+
+  try {
+    for (var featureIndex = 0; featureIndex < stop; featureIndex++) {
+      geometryMaybeCollection = isFeatureCollection
+          ? geoJSON.features[featureIndex].geometry
+          : isFeature
+              ? geoJSON.geometry
+              : geoJSON;
+
+      isGeometryCollection = geometryMaybeCollection != null
+          ? geometryMaybeCollection is GeometryCollection
+          : false;
+
+      stopG =
+          isGeometryCollection ? geometryMaybeCollection.geometries.length : 1;
+
+      for (int geomIndex = 0; geomIndex < stopG; geomIndex++) {
+        int multiFeatureIndex = 0;
+        int geometryIndex = 0;
+        geometry = isGeometryCollection
+            ? geometryMaybeCollection.geometries[geomIndex]
+            : geometryMaybeCollection;
+
+        // Handles null Geometry -- Skips this geometry
+        if (geometry == null) {
+          continue;
+        }
+        coords = geometry.coordinates as Iterable;
+        GeoJSONObjectType geomType = geometry.type;
+
+        wrapShrink = excludeWrapCoord &&
+                (geomType == GeoJSONObjectType.polygon ||
+                    geomType == GeoJSONObjectType.multiLineString)
+            ? 1
+            : 0;
+
+        if (geomType == GeoJSONObjectType.point) {
+          if (callback(coords as CoordinateType, coordIndex, featureIndex,
+                  multiFeatureIndex, geometryIndex) ==
+              false) {
+            throw _ShortCircuit();
+          }
+          coordIndex++;
+          multiFeatureIndex++;
+          break;
+        } else if (geomType == GeoJSONObjectType.lineString ||
+            geomType == GeoJSONObjectType.multiPoint) {
+          for (var j = 0; j < coords.length; j++) {
+            if (callback(coords[j], coordIndex, featureIndex, multiFeatureIndex,
+                    geometryIndex) ==
+                false) {
+              throw _ShortCircuit();
+            }
+            coordIndex++;
+            if (geomType == GeoJSONObjectType.multiPoint) {
+              multiFeatureIndex++;
+            }
+          }
+          if (geomType == GeoJSONObjectType.lineString) {
+            multiFeatureIndex++;
+          }
+        } else if (geomType == GeoJSONObjectType.polygon ||
+            geomType == GeoJSONObjectType.multiLineString) {
+          for (var j = 0; j < coords.length; j++) {
+            for (var k = 0; k < coords[j].length - wrapShrink; k++) {
+              if (callback(coords[j][k], coordIndex, featureIndex,
+                      multiFeatureIndex, geometryIndex) ==
+                  false) {
+                throw _ShortCircuit();
+              }
+              coordIndex++;
+            }
+            if (geomType == GeoJSONObjectType.multiLineString) {
+              multiFeatureIndex++;
+            }
+            if (geomType == GeoJSONObjectType.polygon) {
+              geometryIndex++;
+            }
+          }
+          if (geomType == GeoJSONObjectType.polygon) {
+            multiFeatureIndex++;
+          }
+        } else if (geomType == GeoJSONObjectType.multiPolygon) {
+          for (var j = 0; j < coords.length; j++) {
+            geometryIndex = 0;
+            for (var k = 0; k < coords[j].length; k++) {
+              for (var l = 0; l < coords[j][k].length - wrapShrink; l++) {
+                if (callback(coords[j][k][l], coordIndex, featureIndex,
+                        multiFeatureIndex, geometryIndex) ==
+                    false) {
+                  throw _ShortCircuit();
+                }
+                coordIndex++;
+              }
+              geometryIndex++;
+            }
+            multiFeatureIndex++;
+          }
+        } else if (geomType == GeoJSONObjectType.geometryCollection) {
+          for (var j = 0; j < geometry.geometries.length; j++) {
+            try {
+              coordEach(geometry.geometries[j], callback, excludeWrapCoord);
+            } on _ShortCircuit {
+              rethrow;
+            }
+          }
+        } else {
+          throw Exception('Unknown Geometry Type');
+        }
+      }
+    }
+  } on _ShortCircuit {
+    return;
+  }
+}
+
 typedef GeomEachCallback = dynamic Function(
   GeometryType? currentGeometry,
   int? featureIndex,
@@ -217,6 +361,84 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
     }
   } else {
     throw Exception('Unknown Feature/FeatureCollection Type');
+  }
+}
+
+/// Callback for flattenEach
+typedef FlattenEachCallback = dynamic Function(
+    Feature currentFeature, int featureIndex, int multiFeatureIndex);
+
+/// Iterate over flattened features in any [geoJSON] object, similar to
+/// Array.forEach, calling [callback] on each flattened feature
+
+///
+/// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {
+///   someOperationOnEachFeature(currentFeature);
+/// });
+/// ```
+void flattenEach(GeoJSONObject geoJSON, FlattenEachCallback callback) {
+  try {
+    geomEach(geoJSON, (GeometryType? currentGeomObject, featureIndex,
+        featureProperties, featureBBox, featureId) {
+      if (currentGeomObject == null ||
+          currentGeomObject is Point ||
+          currentGeomObject is LineString ||
+          currentGeomObject is Polygon) {
+        _callFlattenEachCallback(callback, currentGeomObject as GeometryType,
+            featureProperties, featureIndex, 0);
+      } else {
+        _forEachFeatureOfMultiFeature(
+            currentGeomObject, callback, featureProperties, featureIndex);
+      }
+    });
+  } on _ShortCircuit {
+    return;
+  }
+}
+
+void _forEachFeatureOfMultiFeature(
+    GeoJSONObject currentGeomObject,
+    FlattenEachCallback callback,
+    Map<String, dynamic>? featureProperties,
+    int? featureIndex) {
+  if (currentGeomObject is GeometryType) {
+    for (int multiFeatureIndex = 0;
+        multiFeatureIndex < currentGeomObject.coordinates.length;
+        multiFeatureIndex++) {
+      GeometryType geom;
+      if (currentGeomObject is MultiPoint) {
+        geom = Point(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else if (currentGeomObject is MultiLineString) {
+        geom = LineString(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else if (currentGeomObject is MultiPolygon) {
+        geom = Polygon(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else {
+        throw Exception('Unsupported Geometry type');
+      }
+      _callFlattenEachCallback(
+          callback, geom, featureProperties, featureIndex, multiFeatureIndex);
+    }
+  }
+}
+
+void _callFlattenEachCallback(
+    FlattenEachCallback callback,
+    GeometryType<dynamic> geom,
+    Map<String, dynamic>? featureProperties,
+    int? featureIndex,
+    int multiFeatureIndex) {
+  if (callback(
+          Feature(
+            geometry: geom,
+            properties: featureProperties,
+          ),
+          featureIndex ?? 0,
+          multiFeatureIndex) ==
+      false) {
+    throw _ShortCircuit();
   }
 }
 
