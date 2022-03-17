@@ -15,7 +15,7 @@ class _ShortCircuit {
 }
 
 /// Iterate over each geometry in [geoJSON], calling [callback] on each
-/// iteration. Similar to[ List.forEach()]
+/// iteration. Similar to [List.forEach()]
 ///
 /// For example:
 ///
@@ -328,6 +328,7 @@ typedef FeatureReduceCallback = dynamic Function(
 
 featureReduce(
     GeometryObject geojson, FeatureReduceCallback callback, initialValue) {
+  // todo: type of the initialValue?
   var previousValue = initialValue;
   featureEach(geojson, (currentFeature, featureIndex) {
     if (featureIndex == 0 && initialValue == null) {
