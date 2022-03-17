@@ -8,13 +8,23 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
-///
 /// Iterate over coordinates in any [geoJSON] object, similar to Array.forEach()
 ///
 /// For example:
 ///
 /// ```dart
-/// // TODO add example
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// coordEach(features, (currentCoord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) {
+///  //=currentCoord
+///  //=coordIndex
+///  //=featureIndex
+///  //=multiFeatureIndex
+///  //=geometryIndex
+/// });
 /// ```
 void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
@@ -266,6 +276,29 @@ typedef GeomReduceCallback<T> = T? Function(
 );
 
 /// Reduce geometry in any [GeoJSONObject], similar to [iterable.reduce()].
+/// Takes [FeatureCollection], [Feature] or [GeometryObject], a [GeomReduceCallback] method that takes
+/// that takes (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) and
+/// an [initialValue] Value to use as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// geomReducegeomReduce(features, (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) {
+///   //=previousValue
+///   //=currentGeometry
+///   //=featureIndex
+///   //=featureProperties
+///   //=featureBBox
+///   //=featureId
+///   return currentGeometry
+/// });
+/// ```
+
 T? geomReduce<T>(
   GeoJSONObject geoJSON,
   GeomReduceCallback<T> callback,
