@@ -68,6 +68,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] dissolve
 - [ ] intersect
 - [ ] lineOffset
+- [ ] polygonSmooth
 - [ ] simplify
 - [ ] tesselate
 - [ ] transformRotate
@@ -85,6 +86,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] polygonToLine
 
 ### MISC
+- [ ] ellipse
 - [ ] kinks
 - [ ] lineArc
 - [ ] lineChunk
@@ -99,6 +101,17 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] sector
 - [ ] shortestPath
 - [ ] unkinkPolygon
+
+### HELPER
+- [ ] featureCollection
+- [ ] feature
+- [ ] geometryCollection
+- [ ] lineString
+- [ ] multiLineString
+- [ ] multiPoint
+- [ ] multiPolygon
+- [ ] point
+- [ ] polygon
 
 ### Random
 - [ ] randomPosition
@@ -164,10 +177,12 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Booleans
 - [ ] booleanClockwise
+- [ ] booleanConcave
 - [ ] booleanContains
 - [ ] booleanCrosses
 - [ ] booleanDisjoint
 - [ ] booleanEqual
+- [ ] booleanIntersects
 - [ ] booleanOverlap
 - [ ] booleanParallel
 - [ ] booleanPointInPolygon
