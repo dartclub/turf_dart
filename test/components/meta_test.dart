@@ -677,11 +677,14 @@ main() {
       ],
     );
 
-    List<Position> results = coordAll(lines) as List<Position>;
+    List<Position?> results = coordAll(lines);
     expect(results, [
       Position.of([10, 10]),
       Position.of([50, 30]),
-      Position.of([30, 40])
+      Position.of([30, 40]),
+      Position.of([-10, -10]),
+      Position.of([-50, -30]),
+      Position.of([-30, -40]),
     ]);
   });
 }

@@ -66,8 +66,8 @@ void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
             : 0;
 
         if (geomType == GeoJSONObjectType.point) {
-          if (callback(coords as Position, coordIndex, featureIndex,
-                  multiFeatureIndex, geometryIndex) ==
+          if (callback(coords, coordIndex, featureIndex, multiFeatureIndex,
+                  geometryIndex) ==
               false) {
             throw _ShortCircuit();
           }
@@ -324,7 +324,6 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 ///
 /// var coords = coordAll(features);
 /// //= [Position(13,15), Position(1, 2), Position(67, 50)]
-/// @Lukas: return Position or CoordinateType?
 ///
 List<Position?> coordAll(GeoJSONObject geojson) {
   List<Position?> coords = [];
