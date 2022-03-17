@@ -240,7 +240,7 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 /// [featureIndex] The current index of the Feature being processed.
 ///
 typedef PropReduceCallback = dynamic Function(
-    Map<String, dynamic>? previousValue,
+    dynamic previousValue, // todo: or 'Map<String, dynamic>?'?
     Map<String, dynamic>? currentProperties,
     num featureIndex);
 
@@ -275,6 +275,65 @@ Map<String, dynamic>? propReduce(GeoJSONObject geojson,
       previousValue = currentProperties;
     } else {
       previousValue = callback(previousValue, currentProperties, featureIndex);
+    }
+  });
+  return previousValue;
+}
+
+/// Callback for featureReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an initialValue is provided to the reduce method:
+///  - The previousValue argument is initialValue.
+///  - The currentValue argument is the value of the first element present in the array.
+///
+/// If an initialValue is not provided:
+///  - The previousValue argument is the value of the first element present in the array.
+///  - The currentValue argument is the value of the second element present in the array.
+///
+/// FeatureReduceCallback
+/// [previousValue] is the accumulated value previously returned in the last invocation
+/// of the callback, or [initialValue], if supplied.
+/// currentFeature is the current [Feature] being processed.
+/// [featureIndex] is the current index of the [Feature] being processed.
+
+typedef FeatureReduceCallback = dynamic Function(
+    dynamic previousValue, // todo or Feature ?
+    Feature currentFeature,
+    num featureIndex);
+
+/// Reduce features in any GeoJSONObject, similar to [List.reduce()].
+///
+/// Takes [FeatureCollection], [Feature], or [GeometryObject],
+/// a [FeatureReduceCallback] method that takes (previousValue, currentFeature, featureIndex), and
+/// an [initialValue] Value to use as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// featureReduce(features, (previousValue, currentFeature, featureIndex) {
+///   //=previousValue
+///   //=currentFeature
+///   //=featureIndex
+///   return currentFeature
+/// });
+/// ```
+
+featureReduce(
+    GeometryObject geojson, FeatureReduceCallback callback, initialValue) {
+  var previousValue = initialValue;
+  featureEach(geojson, (currentFeature, featureIndex) {
+    if (featureIndex == 0 && initialValue == null) {
+      previousValue = currentFeature;
+    } else {
+      previousValue = callback(previousValue, currentFeature, featureIndex);
     }
   });
   return previousValue;
