@@ -10,7 +10,6 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
-
 ## Notable Design Decisions
 - Nested `GeometryCollections` (as described in
   [RFC 7946 section 3.1.8](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8))
