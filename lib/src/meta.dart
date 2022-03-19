@@ -246,7 +246,7 @@ void _forEachGeomInGeometryObject(
 
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
-    Map<String, dynamic>? currentProperties, num featureIndex);
+    Map<String, dynamic>? currentProperties, int featureIndex);
 
 /// Iterate over properties in any [geoJSON] object, calling [callback] on each
 /// iteration. Similar to Array.forEach()
@@ -279,7 +279,7 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
 
 /// Callback for featureEach
 typedef FeatureEachCallback = dynamic Function(
-    Feature currentFeature, num featureIndex);
+    Feature currentFeature, int featureIndex);
 
 /// Iterate over features in any [geoJSON] object, calling [callback] on each
 /// iteration. Similar to Array.forEach.
