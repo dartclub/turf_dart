@@ -2,6 +2,9 @@ import 'package:benchmark/benchmark.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
+import 'dart:convert';
+import 'dart:io';
+
 void main() {
   Point pt = Point.fromJson({
     'coordinates': [0, 0]
@@ -49,6 +52,17 @@ void main() {
     benchmark('feature collection', () {
       coordEach(featureCollection, coordEachNoopCB);
     });
+
+    var dir = Directory('./test/examples');
+    for (var file in dir.listSync(recursive: true)) {
+      if (file is File && file.path.endsWith('.geojson')) {
+        var source = (file).readAsStringSync();
+        var geoJSON = GeoJSONObject.fromJson(jsonDecode(source));
+        benchmark(file.path, () {
+          coordEach(geoJSON, coordEachNoopCB);
+        });
+      }
+    }
   });
 
   group('geomEach', () {

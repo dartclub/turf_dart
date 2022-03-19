@@ -174,8 +174,8 @@ class _ShortCircuit {
   _ShortCircuit();
 }
 
-/// Iterate over each geometry in [geoJSON], calling [callback] on each
-/// iteration. Similar to Array.forEach()
+/// Iterates over each geometry in [geoJSON], calling [callback] on each
+/// iteration. Similar to Iterable.forEach()
 ///
 /// For example:
 ///
@@ -323,5 +323,83 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
     }
   } else {
     throw Exception('Unknown Feature/FeatureCollection Type');
+  }
+}
+
+/// Callback for flattenEach
+typedef FlattenEachCallback = dynamic Function(
+    Feature currentFeature, int featureIndex, int multiFeatureIndex);
+
+/// Iterate over flattened features in any [geoJSON] object, similar to
+/// Array.forEach, calling [callback] on each flattened feature
+
+///
+/// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {
+///   someOperationOnEachFeature(currentFeature);
+/// });
+/// ```
+void flattenEach(GeoJSONObject geoJSON, FlattenEachCallback callback) {
+  try {
+    geomEach(geoJSON, (GeometryType? currentGeomObject, featureIndex,
+        featureProperties, featureBBox, featureId) {
+      if (currentGeomObject == null ||
+          currentGeomObject is Point ||
+          currentGeomObject is LineString ||
+          currentGeomObject is Polygon) {
+        _callFlattenEachCallback(callback, currentGeomObject as GeometryType,
+            featureProperties, featureIndex, 0);
+      } else {
+        _forEachFeatureOfMultiFeature(
+            currentGeomObject, callback, featureProperties, featureIndex);
+      }
+    });
+  } on _ShortCircuit {
+    return;
+  }
+}
+
+void _forEachFeatureOfMultiFeature(
+    GeoJSONObject currentGeomObject,
+    FlattenEachCallback callback,
+    Map<String, dynamic>? featureProperties,
+    int? featureIndex) {
+  if (currentGeomObject is GeometryType) {
+    for (int multiFeatureIndex = 0;
+        multiFeatureIndex < currentGeomObject.coordinates.length;
+        multiFeatureIndex++) {
+      GeometryType geom;
+      if (currentGeomObject is MultiPoint) {
+        geom = Point(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else if (currentGeomObject is MultiLineString) {
+        geom = LineString(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else if (currentGeomObject is MultiPolygon) {
+        geom = Polygon(
+            coordinates: currentGeomObject.coordinates[multiFeatureIndex]);
+      } else {
+        throw Exception('Unsupported Geometry type');
+      }
+      _callFlattenEachCallback(
+          callback, geom, featureProperties, featureIndex, multiFeatureIndex);
+    }
+  }
+}
+
+void _callFlattenEachCallback(
+    FlattenEachCallback callback,
+    GeometryType<dynamic> geom,
+    Map<String, dynamic>? featureProperties,
+    int? featureIndex,
+    int multiFeatureIndex) {
+  if (callback(
+          Feature(
+            geometry: geom,
+            properties: featureProperties,
+          ),
+          featureIndex ?? 0,
+          multiFeatureIndex) ==
+      false) {
+    throw _ShortCircuit();
   }
 }
