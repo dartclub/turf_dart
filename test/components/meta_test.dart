@@ -264,63 +264,63 @@ main() {
 
   test('coordEach -- MultiPolygon', () {
     List<CoordinateType?> coords = [];
-    List<int?> coordIndexes = [];
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
+    List<int?> coordIndices = [];
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
     coordEach(multiPoly, (currentCoord, coordIndex, featureIndex,
         multiFeatureIndex, geometryIndex) {
       coords.add(currentCoord);
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6, 7]);
-    expect(featureIndexes, [0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 1, 1, 1, 1]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6, 7]);
+    expect(featureIndices, [0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 1, 1, 1, 1]);
     expect(coords.length, 8);
   });
 
   test('coordEach -- FeatureCollection', () {
     List<CoordinateType?> coords = [];
-    List<int?> coordIndexes = [];
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
+    List<int?> coordIndices = [];
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
     coordEach(fcMixed, (currentCoord, coordIndex, featureIndex,
         multiFeatureIndex, geometryIndex) {
       coords.add(currentCoord);
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6]);
-    expect(featureIndexes, [0, 1, 1, 2, 2, 2, 2]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 0, 1, 1]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6]);
+    expect(featureIndices, [0, 1, 1, 2, 2, 2, 2]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 0, 1, 1]);
     expect(coords.length, 7);
   });
 
-  test('coordEach -- indexes -- PolygonWithHole', () {
-    List<int?> coordIndexes = [];
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
-    List<int?> geometryIndexes = [];
+  test('coordEach -- Indices -- PolygonWithHole', () {
+    List<int?> coordIndices = [];
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
+    List<int?> geometryIndices = [];
     coordEach(polyWithHole, (currentCoord, coordIndex, featureIndex,
         multiFeatureIndex, geometryIndex) {
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
-      geometryIndexes.add(geometryIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
+      geometryIndices.add(geometryIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(featureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(geometryIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(featureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(geometryIndices, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- Multi-Polygon with hole', () {
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
-    List<int?> geometryIndexes = [];
-    List<int?> coordIndexes = [];
+  test('coordEach -- indices -- Multi-Polygon with hole', () {
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
+    List<int?> geometryIndices = [];
+    List<int?> coordIndices = [];
 
     Feature<MultiPolygon> multiPolyWithHole = Feature<MultiPolygon>(
       geometry: MultiPolygon.fromJson({
@@ -356,22 +356,22 @@ main() {
 
     coordEach(multiPolyWithHole, (currentCoord, coordIndex, featureIndex,
         multiFeatureIndex, geometryIndex) {
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
-      geometryIndexes.add(geometryIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
+      geometryIndices.add(geometryIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
-    expect(featureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
-    expect(geometryIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+    expect(featureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    expect(geometryIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- Polygon with hole', () {
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
-    List<int?> geometryIndexes = [];
-    List<int?> coordIndexes = [];
+  test('coordEach -- Indices -- Polygon with hole', () {
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
+    List<int?> geometryIndices = [];
+    List<int?> coordIndices = [];
 
     Feature<Polygon> polygonWithHole = Feature<Polygon>(
       geometry: Polygon.fromJson({
@@ -396,22 +396,22 @@ main() {
 
     coordEach(polygonWithHole, (currentCoord, coordIndex, featureIndex,
         multiFeatureIndex, geometryIndex) {
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
-      geometryIndexes.add(geometryIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
+      geometryIndices.add(geometryIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(featureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(geometryIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(featureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(geometryIndices, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- FeatureCollection of LineString', () {
-    List<int?> featureIndexes = [];
-    List<int?> multiFeatureIndexes = [];
-    List<int?> geometryIndexes = [];
-    List<int?> coordIndexes = [];
+  test('coordEach -- Indices -- FeatureCollection of LineString', () {
+    List<int?> featureIndices = [];
+    List<int?> multiFeatureIndices = [];
+    List<int?> geometryIndices = [];
+    List<int?> coordIndices = [];
 
     FeatureCollection line = FeatureCollection(features: [
       Feature<LineString>(
@@ -440,15 +440,15 @@ main() {
 
     coordEach(line, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
         geometryIndex) {
-      coordIndexes.add(coordIndex);
-      featureIndexes.add(featureIndex);
-      multiFeatureIndexes.add(multiFeatureIndex);
-      geometryIndexes.add(geometryIndex);
+      coordIndices.add(coordIndex);
+      featureIndices.add(featureIndex);
+      multiFeatureIndices.add(multiFeatureIndex);
+      geometryIndices.add(geometryIndex);
     });
-    expect(coordIndexes, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(featureIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
-    expect(multiFeatureIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(geometryIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(coordIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(featureIndices, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
+    expect(multiFeatureIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(geometryIndices, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   });
 
   test('coordEach -- breaking of iterations - featureCollection', () {
@@ -770,7 +770,7 @@ main() {
     );
   });
 
-  test('geomReduce -- no intial value', () {
+  test('geom  -- no intial value', () {
     LineString? lineGenerator(
       LineString? previousValue,
       GeometryType? currentGeometry,

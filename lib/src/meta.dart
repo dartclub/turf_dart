@@ -8,7 +8,7 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
-/// Iterate over coordinates in any [geoJSON] object, similar to [Iterable.forEach()]
+/// Iterates over coordinates in any [geoJSON] object, similar to [Iterable.forEach()]
 ///
 /// For example:
 ///
@@ -168,7 +168,7 @@ class _ShortCircuit {
   _ShortCircuit();
 }
 
-/// Iterate over each geometry in [geoJSON], calling [callback] on each
+/// Iterates over each geometry in [geoJSON], calling [callback] on each
 /// iteration. Similar to [Iterable.forEach()]
 ///
 /// For example:
@@ -257,15 +257,15 @@ void _forEachGeomInGeometryObject(
 /// Callback for geomReduce
 ///
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an initialValue argument.
+/// on whether the reduce method has an [initialValue] argument.
 ///
 /// If an initialValue is provided to the reduce method:
-///  - The previousValue argument is initialValue.
-///  - The currentValue argument is the value of the first element present in the [List].
+///  - The [previousValue] argument is [initialValue].
+///  - The [currentValue] argument is the value of the first element present in the [List].
 ///
-/// If an initialValue is not provided:
-///  - The previousValue argument is the value of the first element present in the [List].
-///  - The currentValue argument is the value of the second element present in the [List].
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
 typedef GeomReduceCallback<T> = T? Function(
   T? previousValue,
   GeometryType? currentGeometry,
@@ -275,7 +275,8 @@ typedef GeomReduceCallback<T> = T? Function(
   dynamic featureId,
 );
 
-/// Reduce geometry in any [GeoJSONObject], similar to [iterable.reduce()].
+/// Reduces geometry in any [GeoJSONObject], similar to [iterable.reduce()].
+///
 /// Takes [FeatureCollection], [Feature] or [GeometryObject], a [GeomReduceCallback] method
 /// that takes (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) and
 /// an [initialValue] Value to use as the first argument to the first call of the callback.
@@ -288,7 +289,7 @@ typedef GeomReduceCallback<T> = T? Function(
 ///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
 /// ]);
 ///
-/// geomReducegeomReduce(features, (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) {
+/// geomReduce(features, (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) {
 ///   //=previousValue
 ///   //=currentGeometry
 ///   //=featureIndex
@@ -333,9 +334,9 @@ T? geomReduce<T>(
 
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
-    Map<String, dynamic>? currentProperties, num featureIndex);
+    Map<String, dynamic>? currentProperties, int featureIndex);
 
-/// Iterate over properties in any [geoJSON] object, calling [callback] on each
+/// Iterates over properties in any [geoJSON] object, calling [callback] on each
 /// iteration. Similar to [Iterable.forEach()]
 ///
 /// For example:
@@ -366,9 +367,9 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
 
 /// Callback for featureEach
 typedef FeatureEachCallback = dynamic Function(
-    Feature currentFeature, num featureIndex);
+    Feature currentFeature, int featureIndex);
 
-/// Iterate over features in any [geoJSON] object, calling [callback] on each
+/// Iterates over features in any [geoJSONObject], calling [callback] on each
 /// iteration. Similar to [Iterable.forEach()].
 ///
 /// For example:
@@ -401,7 +402,7 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 typedef FlattenEachCallback = dynamic Function(
     Feature currentFeature, int featureIndex, int multiFeatureIndex);
 
-/// Iterate over flattened features in any [geoJSONObject], similar to
+/// Iterates over flattened features in any [geoJSONObject], similar to
 /// [Iterate.forEach()], calling [callback] on each flattened feature
 ///```dart
 /// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {
@@ -498,7 +499,7 @@ typedef PropReduceCallback = dynamic Function(
     Map<String, dynamic>? currentProperties,
     num featureIndex);
 
-/// Reduce properties in any [GeoJSONObject] into a single value,
+/// Reduces properties in any [GeoJSONObject] into a single value,
 /// similar to how [Iterable.reduce()] works. However, in this case we lazily run
 /// the reduction, so List of all properties is unnecessary.
 ///
@@ -519,7 +520,7 @@ typedef PropReduceCallback = dynamic Function(
 ///   //=featureIndex
 ///   return currentProperties
 /// });
-/// ````
+/// ```
 
 Map<String, dynamic>? propReduce(GeoJSONObject geojson,
     PropReduceCallback callback, Map<String, dynamic>? initialValue) {
@@ -558,7 +559,7 @@ typedef FeatureReduceCallback = dynamic Function(
     Feature currentFeature,
     num featureIndex);
 
-/// Reduce features in any GeoJSONObject, similar to [List.reduce()].
+/// Reduces features in any GeoJSONObject, similar to [List.reduce()].
 ///
 /// Takes [FeatureCollection], [Feature], or [GeometryObject],
 /// a [FeatureReduceCallback] method that takes (previousValue, currentFeature, featureIndex), and
@@ -617,7 +618,7 @@ featureReduce(
 typedef Feature FlattenReduceCallback(dynamic previousValue,
     Feature currentFeature, int featureIndex, int multiFeatureIndex);
 
-/// Reduce flattened features in any [GeoJSONObject], similar to [Iterable.reduce()].
+/// Reduces flattened features in any [GeoJSONObject], similar to [Iterable.reduce()].
 /// Takes a [FeatureCollection], [Feature], or [Geometry]
 /// a [FlattenReduceCallback] method that takes (previousValue, currentFeature, featureIndex, multiFeatureIndex),
 /// an [initialValue] Value to use as the first argument to the first call of the callback.
@@ -684,10 +685,10 @@ typedef Type CoordReduceCallback(
 
 /// Reduces coordinates in any [GeoJSONObject], similar to [Iterable.reduce()]
 ///
-/// Takes [FeatureCollection], [Geometry], or a [Feature].
-/// A [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
+/// Takes [FeatureCollection], [Geometry], or a [Feature],
+/// a [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
 /// [initialValue] Value to use as the first argument to the first call of the callback,
-/// a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
+/// and a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
 /// of LinearRings that wraps the ring in its iteration.
 /// Returns the value that results from the reduction.
 /// For example:
