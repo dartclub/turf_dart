@@ -8,7 +8,7 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
-/// Iterate over coordinates in any [geoJSON] object, similar to Array.forEach()
+/// Iterate over coordinates in any [geoJSON] object, similar to [Iterable.forEach()]
 ///
 /// For example:
 ///
@@ -169,7 +169,7 @@ class _ShortCircuit {
 }
 
 /// Iterate over each geometry in [geoJSON], calling [callback] on each
-/// iteration. Similar to [List.forEach()]
+/// iteration. Similar to [Iterable.forEach()]
 ///
 /// For example:
 ///
@@ -276,7 +276,7 @@ typedef GeomReduceCallback<T> = T? Function(
 );
 
 /// Reduce geometry in any [GeoJSONObject], similar to [iterable.reduce()].
-/// Takes [FeatureCollection], [Feature] or [GeometryObject], a [GeomReduceCallback] method that takes
+/// Takes [FeatureCollection], [Feature] or [GeometryObject], a [GeomReduceCallback] method
 /// that takes (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) and
 /// an [initialValue] Value to use as the first argument to the first call of the callback.
 /// Returns the value that results from the reduction.
@@ -541,11 +541,11 @@ Map<String, dynamic>? propReduce(GeoJSONObject geojson,
 ///
 /// If an initialValue is provided to the reduce method:
 ///  - The previousValue argument is initialValue.
-///  - The currentValue argument is the value of the first element present in the array.
+///  - The currentValue argument is the value of the first element present in the List.
 ///
 /// If an initialValue is not provided:
-///  - The previousValue argument is the value of the first element present in the array.
-///  - The currentValue argument is the value of the second element present in the array.
+///  - The previousValue argument is the value of the first element present in the List.
+///  - The currentValue argument is the value of the second element present in the List.
 ///
 /// FeatureReduceCallback
 /// [previousValue] is the accumulated value previously returned in the last invocation
@@ -650,5 +650,74 @@ Feature flattenReduce(geojson, callback, initialValue) {
           previousValue, currentFeature, featureIndex, multiFeatureIndex);
     }
   });
+  return previousValue;
+}
+
+/// Callback for coordReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is initialValue.
+///  - The [currentValue] argument is the value of the first element present in the [List].
+///
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
+///
+/// Takes [previousValue], the accumulated value previously returned in the last invocation
+/// of the callback, or [initialValue], if supplied,
+/// [Position][currentCoord] The current coordinate being processed, [coordIndex]
+/// The current index of the coordinate being processed. Starts at index 0, if an
+/// initialValue is provided, and at index 1 otherwise, [featureIndex] The current
+/// index of the Feature being processed, [multiFeatureIndex], the current index
+/// of the Multi-Feature being processed., and [geometryIndex], the current index of the Geometry being processed.
+typedef Type CoordReduceCallback(
+  dynamic previousValue,
+  List<Position> currentCoord,
+  int coordIndex,
+  int featureIndex,
+  int multiFeatureIndex,
+  int geometryIndex,
+);
+
+/// Reduces coordinates in any [GeoJSONObject], similar to [Iterable.reduce()]
+///
+/// Takes [FeatureCollection], [Geometry], or a [Feature].
+/// A [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
+/// [initialValue] Value to use as the first argument to the first call of the callback,
+/// a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
+/// of LinearRings that wraps the ring in its iteration.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// coordReduce(features, (previousValue, currentCoord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) {
+///   //=previousValue
+///   //=currentCoord
+///   //=coordIndex
+///   //=featureIndex
+///   //=multiFeatureIndex
+///   //=geometryIndex
+///   return currentCoord;
+/// });
+
+coordReduce(geojson, callback, initialValue, excludeWrapCoord) {
+  var previousValue = initialValue;
+  coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
+      geometryIndex) {
+    if (coordIndex == 0 && initialValue == null) {
+      previousValue = currentCoord;
+    } else {
+      previousValue = callback(previousValue, currentCoord, coordIndex,
+          featureIndex, multiFeatureIndex, geometryIndex);
+    }
+  }, excludeWrapCoord);
   return previousValue;
 }
