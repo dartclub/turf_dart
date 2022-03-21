@@ -1,7 +1,7 @@
 import 'geojson.dart';
 
 typedef CoordEachCallback = dynamic Function(
-  CoordinateType? currentCoord,
+  Position? currentCoord,
   int? coordIndex,
   int? featureIndex,
   int? multiFeatureIndex,
@@ -9,12 +9,12 @@ typedef CoordEachCallback = dynamic Function(
 );
 
 ///
-/// Iterate over coordinates in any [geoJSON] object, similar to Array.forEach()
+/// Iterate over coordinates in any [geoJSON] object, similar to [Iterable.forEach()]
 ///
 /// For example:
 ///
 /// ```dart
-/// // TODO add example
+/// //TODO add example
 /// ```
 void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
@@ -55,9 +55,9 @@ void _forEachCoordInGeometryObject(
       : 0;
   indexCounter.multiFeatureIndex = 0;
 
-  dynamic coords = geometry.coordinates as Iterable;
+  var coords = geometry.coordinates;
   if (geomType == GeoJSONObjectType.point) {
-    _forEachCoordInPoint(coords as CoordinateType, callback, indexCounter);
+    _forEachCoordInPoint(coords, callback, indexCounter);
   } else if (geomType == GeoJSONObjectType.lineString ||
       geomType == GeoJSONObjectType.multiPoint) {
     _forEachCoordInCollection(coords, geomType, callback, indexCounter);
@@ -141,8 +141,8 @@ void _forEachCoordInCollection(coords, GeoJSONObjectType geomType,
   }
 }
 
-void _forEachCoordInPoint(CoordinateType coords, CoordEachCallback callback,
-    _IndexCounter indexCounter) {
+void _forEachCoordInPoint(
+    Position coords, CoordEachCallback callback, _IndexCounter indexCounter) {
   if (callback(coords, indexCounter.coordIndex, indexCounter.featureIndex,
           indexCounter.multiFeatureIndex, indexCounter.geometryIndex) ==
       false) {
@@ -265,7 +265,7 @@ typedef PropEachCallback = dynamic Function(
     Map<String, dynamic>? currentProperties, num featureIndex);
 
 /// Iterate over properties in any [geoJSON] object, calling [callback] on each
-/// iteration. Similar to Array.forEach()
+/// iteration. Similar to [Iterable.forEach()]
 ///
 /// For example:
 ///
@@ -298,7 +298,7 @@ typedef FeatureEachCallback = dynamic Function(
     Feature currentFeature, num featureIndex);
 
 /// Iterate over features in any [geoJSON] object, calling [callback] on each
-/// iteration. Similar to Array.forEach.
+/// iteration. Similar to [Iterable.forEach()].
 ///
 /// For example:
 ///
@@ -331,7 +331,7 @@ typedef FlattenEachCallback = dynamic Function(
     Feature currentFeature, int featureIndex, int multiFeatureIndex);
 
 /// Iterate over flattened features in any [geoJSON] object, similar to
-/// Array.forEach, calling [callback] on each flattened feature
+/// [Iterable.forEach()], calling [callback] on each flattened feature
 
 ///
 /// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {
@@ -402,4 +402,33 @@ void _callFlattenEachCallback(
       false) {
     throw _ShortCircuit();
   }
+}
+
+/// Gets all coordinates from any [GeoJSONObject].
+/// Receives any [GeoJSONObject]
+/// Returns [List<Position>]
+/// For example:
+///
+/// ```dart
+/// var featureColl = FeatureCollection(features:
+/// [Feature(geometry: Point(coordinates: Position(13,15)))
+/// ,Feature(geometry: LineString(coordinates: [Position(1, 2),
+/// Position(67, 50)]))]);
+///
+/// var coords = coordAll(features);
+/// //= [Position(13,15), Position(1, 2), Position(67, 50)]
+///
+List<Position?> coordAll(GeoJSONObject geojson) {
+  List<Position?> coords = [];
+  coordEach(geojson, (
+    Position? currentCoord,
+    int? coordIndex,
+    int? featureIndex,
+    int? multiFeatureIndex,
+    int? geometryIndex,
+  ) {
+    coords.add(currentCoord);
+    return true;
+  });
+  return coords;
 }

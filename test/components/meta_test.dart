@@ -706,4 +706,39 @@ main() {
       expect(lastProperties, geomCollection.properties);
     });
   });
+
+  test('meta -- coordAll', () {
+    FeatureCollection<LineString> lines = FeatureCollection<LineString>(
+      features: [
+        Feature<LineString>(
+          geometry: LineString.fromJson({
+            'coordinates': [
+              [10, 10],
+              [50, 30],
+              [30, 40]
+            ]
+          }),
+        ),
+        Feature<LineString>(
+          geometry: LineString.fromJson({
+            'coordinates': [
+              [-10, -10],
+              [-50, -30],
+              [-30, -40]
+            ]
+          }),
+        ),
+      ],
+    );
+
+    List<Position?> results = coordAll(lines);
+    expect(results, [
+      Position.of([10, 10]),
+      Position.of([50, 30]),
+      Position.of([30, 40]),
+      Position.of([-10, -10]),
+      Position.of([-50, -30]),
+      Position.of([-30, -40]),
+    ]);
+  });
 }
