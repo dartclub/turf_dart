@@ -55,9 +55,9 @@ void _forEachCoordInGeometryObject(
       : 0;
   indexCounter.multiFeatureIndex = 0;
 
-  dynamic coords = geometry.coordinates as Iterable;
+  var coords = geometry.coordinates;
   if (geomType == GeoJSONObjectType.point) {
-    _forEachCoordInPoint(coords as CoordinateType, callback, indexCounter);
+    _forEachCoordInPoint(coords, callback, indexCounter);
   } else if (geomType == GeoJSONObjectType.lineString ||
       geomType == GeoJSONObjectType.multiPoint) {
     _forEachCoordInCollection(coords, geomType, callback, indexCounter);
@@ -141,8 +141,8 @@ void _forEachCoordInCollection(coords, GeoJSONObjectType geomType,
   }
 }
 
-void _forEachCoordInPoint(CoordinateType coords, CoordEachCallback callback,
-    _IndexCounter indexCounter) {
+void _forEachCoordInPoint(
+    Position coords, CoordEachCallback callback, _IndexCounter indexCounter) {
   if (callback(coords, indexCounter.coordIndex, indexCounter.featureIndex,
           indexCounter.multiFeatureIndex, indexCounter.geometryIndex) ==
       false) {
