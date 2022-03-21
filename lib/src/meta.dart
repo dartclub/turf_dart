@@ -674,18 +674,18 @@ Feature flattenReduce(geojson, callback, initialValue) {
 /// initialValue is provided, and at index 1 otherwise, [featureIndex] The current
 /// index of the Feature being processed, [multiFeatureIndex], the current index
 /// of the Multi-Feature being processed., and [geometryIndex], the current index of the Geometry being processed.
-typedef Type CoordReduceCallback(
+typedef CoordReduceCallback = dynamic Function(
   dynamic previousValue,
-  List<Position> currentCoord,
-  int coordIndex,
-  int featureIndex,
-  int multiFeatureIndex,
-  int geometryIndex,
+  Position? currentCoord,
+  int? coordIndex,
+  int? featureIndex,
+  int? multiFeatureIndex,
+  int? geometryIndex,
 );
 
 /// Reduces coordinates in any [GeoJSONObject], similar to [Iterable.reduce()]
 ///
-/// Takes [FeatureCollection], [Geometry], or a [Feature],
+/// Takes [FeatureCollection], [GeometryObject], or a [Feature],
 /// a [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
 /// [initialValue] Value to use as the first argument to the first call of the callback,
 /// and a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
@@ -709,7 +709,9 @@ typedef Type CoordReduceCallback(
 ///   return currentCoord;
 /// });
 
-coordReduce(geojson, callback, initialValue, excludeWrapCoord) {
+coordReduce(
+    GeoJSONObject geojson, CoordReduceCallback callback, dynamic initialValue,
+    [bool excludeWrapCoord = false]) {
   var previousValue = initialValue;
   coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
       geometryIndex) {
