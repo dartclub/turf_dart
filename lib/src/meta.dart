@@ -639,6 +639,7 @@ typedef Feature FlattenReduceCallback(dynamic previousValue,
 /// });
 /// ```
 
+//Todo: @armantorkzaban implement tests please.
 Feature flattenReduce(geojson, callback, initialValue) {
   var previousValue = initialValue;
   flattenEach(geojson, (currentFeature, featureIndex, multiFeatureIndex) {
