@@ -641,7 +641,7 @@ typedef Feature FlattenReduceCallback(dynamic previousValue,
 /// ```
 
 //Todo: @armantorkzaban implement tests please.
-Feature flattenReduce(geojson, callback, initialValue) {
+Feature flattenReduce(geojson, FlattenReduceCallback callback, initialValue) {
   var previousValue = initialValue;
   flattenEach(geojson, (currentFeature, featureIndex, multiFeatureIndex) {
     if (featureIndex == 0 && multiFeatureIndex == 0 && initialValue == null) {
@@ -674,8 +674,8 @@ Feature flattenReduce(geojson, callback, initialValue) {
 /// initialValue is provided, and at index 1 otherwise, [featureIndex] The current
 /// index of the Feature being processed, [multiFeatureIndex], the current index
 /// of the Multi-Feature being processed., and [geometryIndex], the current index of the Geometry being processed.
-typedef CoordReduceCallback = dynamic Function(
-  dynamic previousValue,
+typedef CoordReduceCallback = Function(
+  dynamic previousValue, // todo: change to CoordType
   Position? currentCoord,
   int? coordIndex,
   int? featureIndex,
@@ -709,8 +709,7 @@ typedef CoordReduceCallback = dynamic Function(
 ///   return currentCoord;
 /// });
 
-coordReduce(
-    GeoJSONObject geojson, CoordReduceCallback callback, dynamic initialValue,
+coordReduce(GeoJSONObject geojson, CoordReduceCallback callback, initialValue,
     [bool excludeWrapCoord = false]) {
   var previousValue = initialValue;
   coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
