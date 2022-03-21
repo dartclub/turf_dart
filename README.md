@@ -135,7 +135,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] clustersKmeans
 
 ### META
-- [ ] coordAll
+- [x] coordAll
 - [x] coordEach
 - [ ] coordReduce
 - [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L157)
