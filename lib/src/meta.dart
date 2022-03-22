@@ -520,7 +520,7 @@ void _callFlattenEachCallback(
 typedef PropReduceCallback<T> = T? Function(
   T? previousValue, // todo: or 'Map<String, dynamic>?'?
   Map<String, dynamic>? currentProperties,
-  num featureIndex,
+  int featureIndex,
 );
 
 /// Reduces properties in any [GeoJSONObject] into a single value,
