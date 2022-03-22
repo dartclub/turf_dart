@@ -120,12 +120,13 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
 
 FeatureCollection fcMixed = FeatureCollection(features: [
   Feature<Point>(
-      geometry: Point.fromJson(
-        {
-          'coordinates': [0, 0],
-        },
-      ),
-      properties: {'foo': 'bar'}),
+    geometry: Point.fromJson(
+      {
+        'coordinates': [0, 0],
+      },
+    ),
+    properties: {'foo': 'bar'},
+  ),
   Feature<LineString>(
       geometry: LineString.fromJson({
         'coordinates': [
@@ -764,6 +765,30 @@ main() {
     var results =
         propReduce<Map<String, dynamic>>(fcMixed, concatPropertyValues, null);
     expect(results?['foo'], 'barbuzqux');
+  });
+
+  test('featureReduce -- with/out initialValue', () {
+    int? countReducer(
+      int? previousValue,
+      currentFeature,
+      featureIndex,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(featureReduce<int>(fcMixed, countReducer, null), 3);
+    expect(featureReduce<int>(fcMixed, countReducer, 5), 8);
+    expect(featureReduce<int>(pt, countReducer, null), 1);
+  });
+  test('flattenReduce -- with/out initialValue', () {
+    int? countReducer(int? previousValue, Feature currentFeature,
+        int featureIndex, int multiFeatureIndex) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(flattenReduce<int>(fcMixed, countReducer, null), 4);
+    expect(flattenReduce<int>(fcMixed, countReducer, 5), 9);
+    expect(flattenReduce<int>(pt, countReducer, null), 1);
   });
 
   test('geomReduce', () {

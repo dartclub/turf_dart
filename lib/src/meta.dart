@@ -586,7 +586,7 @@ T? propReduce<T>(
 typedef FeatureReduceCallback<T> = T? Function(
   T? previousValue, // todo or Feature ?
   Feature currentFeature,
-  num featureIndex,
+  int featureIndex,
 );
 
 /// Reduces features in any GeoJSONObject, similar to [Iterable.reduce].
@@ -612,11 +612,10 @@ typedef FeatureReduceCallback<T> = T? Function(
 /// ```
 
 T? featureReduce<T>(
-  GeometryObject geojson,
+  GeoJSONObject geojson,
   FeatureReduceCallback<T> callback,
   T? initialValue,
 ) {
-  // todo: type of the initialValue?
   T? previousValue = initialValue;
   featureEach(geojson, (currentFeature, featureIndex) {
     if (featureIndex == 0 && initialValue == null && currentFeature is T) {
@@ -673,7 +672,6 @@ typedef FlattenReduceCallback<T> = T? Function(T? previousValue,
 /// });
 /// ```
 
-//Todo: @armantorkzaban implement tests please.
 T? flattenReduce<T>(
   GeoJSONObject geojson,
   FlattenReduceCallback<T> callback,
