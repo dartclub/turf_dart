@@ -770,7 +770,7 @@ main() {
     );
   });
 
-  test('geom  -- no intial value', () {
+  test('geomReduce  -- no intial value and dynamic types', () {
     LineString? lineGenerator(
       LineString? previousValue,
       GeometryType? currentGeometry,
@@ -820,6 +820,33 @@ main() {
       null,
     );
     expect(actualLineString?.toJson(), expectedLine.toJson());
+
+    LineString? lineGeneratorDynamic(
+      dynamic previousValue,
+      GeometryType? currentGeometry,
+      int? featureIndex,
+      Map<String, dynamic>? featureProperties,
+      BBox? featureBBox,
+      dynamic featureId,
+    ) {
+      if (currentGeometry is Point) {
+        previousValue!.coordinates.add(currentGeometry.coordinates);
+      } else if (currentGeometry is LineString) {
+        previousValue!.coordinates.addAll(currentGeometry.coordinates);
+      } else if (currentGeometry is MultiLineString) {
+        for (List<Position> l in currentGeometry.coordinates) {
+          previousValue!.coordinates.addAll(l);
+        }
+      }
+      return previousValue;
+    }
+
+    LineString? actualDynamic = geomReduce(
+      featureCollection,
+      lineGeneratorDynamic,
+      null,
+    );
+    expect(actualDynamic?.toJson(), expectedLine.toJson());
   });
 
   test('meta -- coordAll', () {

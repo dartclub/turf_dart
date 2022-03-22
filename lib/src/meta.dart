@@ -331,14 +331,18 @@ T? geomReduce<T>(
       featureBBox,
       featureId,
     ) {
-      previousValue = callback(
-        previousValue,
-        currentGeometry,
-        featureIndex,
-        featureProperties,
-        featureBBox,
-        featureId,
-      );
+      if (previousValue == null && featureIndex == 0 && currentGeometry is T) {
+        previousValue = currentGeometry?.clone() as T;
+      } else {
+        previousValue = callback(
+          previousValue,
+          currentGeometry,
+          featureIndex,
+          featureProperties,
+          featureBBox,
+          featureId,
+        );
+      }
     },
   );
   return previousValue;
@@ -549,7 +553,11 @@ T? propReduce<T>(
 ) {
   var previousValue = initialValue;
   propEach(geojson, (currentProperties, featureIndex) {
-    previousValue = callback(previousValue, currentProperties, featureIndex);
+    if (featureIndex == 0 && initialValue == null && previousValue is T) {
+      previousValue = currentProperties as T;
+    } else {
+      previousValue = callback(previousValue, currentProperties, featureIndex);
+    }
   });
   return previousValue;
 }
@@ -609,7 +617,11 @@ T? featureReduce<T>(
   // todo: type of the initialValue?
   T? previousValue = initialValue;
   featureEach(geojson, (currentFeature, featureIndex) {
-    previousValue = callback(previousValue, currentFeature, featureIndex);
+    if (featureIndex == 0 && initialValue == null && currentFeature is T) {
+      previousValue = currentFeature as T;
+    } else {
+      previousValue = callback(previousValue, currentFeature, featureIndex);
+    }
   });
   return previousValue;
 }
@@ -667,8 +679,15 @@ T? flattenReduce<T>(
 ) {
   T? previousValue = initialValue;
   flattenEach(geojson, (currentFeature, featureIndex, multiFeatureIndex) {
-    previousValue = callback(
-        previousValue, currentFeature, featureIndex, multiFeatureIndex);
+    if (featureIndex == 0 &&
+        multiFeatureIndex == 0 &&
+        initialValue == null &&
+        currentFeature is T) {
+      previousValue = currentFeature as T;
+    } else {
+      previousValue = callback(
+          previousValue, currentFeature, featureIndex, multiFeatureIndex);
+    }
   });
   return previousValue;
 }
@@ -737,8 +756,12 @@ T? coordReduce<T>(
   var previousValue = initialValue;
   coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
       geometryIndex) {
-    previousValue = callback(previousValue, currentCoord, coordIndex,
-        featureIndex, multiFeatureIndex, geometryIndex);
+    if (coordIndex == 0 && initialValue == null && currentCoord is T) {
+      previousValue = currentCoord as T;
+    } else {
+      previousValue = callback(previousValue, currentCoord, coordIndex,
+          featureIndex, multiFeatureIndex, geometryIndex);
+    }
   }, excludeWrapCoord);
   return previousValue;
 }
