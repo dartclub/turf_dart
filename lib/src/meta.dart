@@ -554,7 +554,9 @@ T? propReduce<T>(
   var previousValue = initialValue;
   propEach(geojson, (currentProperties, featureIndex) {
     if (featureIndex == 0 && initialValue == null && previousValue is T) {
-      previousValue = currentProperties as T;
+      previousValue = currentProperties != null
+          ? Map<String, dynamic>.of(currentProperties) as T
+          : null;
     } else {
       previousValue = callback(previousValue, currentProperties, featureIndex);
     }
@@ -618,7 +620,7 @@ T? featureReduce<T>(
   T? previousValue = initialValue;
   featureEach(geojson, (currentFeature, featureIndex) {
     if (featureIndex == 0 && initialValue == null && currentFeature is T) {
-      previousValue = currentFeature as T;
+      previousValue = currentFeature.clone() as T;
     } else {
       previousValue = callback(previousValue, currentFeature, featureIndex);
     }
@@ -683,7 +685,7 @@ T? flattenReduce<T>(
         multiFeatureIndex == 0 &&
         initialValue == null &&
         currentFeature is T) {
-      previousValue = currentFeature as T;
+      previousValue = currentFeature.clone() as T;
     } else {
       previousValue = callback(
           previousValue, currentFeature, featureIndex, multiFeatureIndex);
@@ -757,7 +759,7 @@ T? coordReduce<T>(
   coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
       geometryIndex) {
     if (coordIndex == 0 && initialValue == null && currentCoord is T) {
-      previousValue = currentCoord as T;
+      previousValue = currentCoord?.clone() as T;
     } else {
       previousValue = callback(previousValue, currentCoord, coordIndex,
           featureIndex, multiFeatureIndex, geometryIndex);
