@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
@@ -118,32 +120,34 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
 
 FeatureCollection fcMixed = FeatureCollection(features: [
   Feature<Point>(
-    geometry: Point.fromJson({
-      'coordinates': [0, 0],
-    }),
-  ),
+      geometry: Point.fromJson(
+        {
+          'coordinates': [0, 0],
+        },
+      ),
+      properties: {'foo': 'bar'}),
   Feature<LineString>(
-    geometry: LineString.fromJson({
-      'coordinates': [
-        [1, 1],
-        [2, 2],
-      ]
-    }),
-  ),
-  Feature<MultiLineString>(
-    geometry: MultiLineString.fromJson({
-      'coordinates': [
-        [
+      geometry: LineString.fromJson({
+        'coordinates': [
           [1, 1],
-          [0, 0],
+          [2, 2],
+        ]
+      }),
+      properties: {'foo': 'buz'}),
+  Feature<MultiLineString>(
+      geometry: MultiLineString.fromJson({
+        'coordinates': [
+          [
+            [1, 1],
+            [0, 0],
+          ],
+          [
+            [4, 4],
+            [5, 5],
+          ],
         ],
-        [
-          [4, 4],
-          [5, 5],
-        ],
-      ],
-    }),
-  ),
+      }),
+      properties: {'foo': 'qux'}),
 ]);
 
 List<GeoJSONObject> collection(Feature feature) {
@@ -734,6 +738,32 @@ main() {
       });
       expect(lastProperties, geomCollection.properties);
     });
+  });
+
+  test('propReduce with initialValue', () {
+    String concatPropertyValues(
+      previousValue,
+      currentProperties,
+      featureIndex,
+    ) {
+      return "$previousValue ${currentProperties?.values.first}";
+    }
+
+    expect(propReduce(pt, concatPropertyValues, 'hello'), 'hello 1');
+  });
+
+  test('propReduce -- without initial value', () {
+    Map<String, dynamic>? concatPropertyValues(
+      Map<String, dynamic>? previousValue,
+      Map<String, dynamic>? currentProperties,
+      num featureIndex,
+    ) {
+      return {'foo': previousValue!['foo'] + currentProperties!['foo']};
+    }
+
+    var results =
+        propReduce<Map<String, dynamic>>(fcMixed, concatPropertyValues, null);
+    expect(results?['foo'], 'barbuzqux');
   });
 
   test('geomReduce', () {

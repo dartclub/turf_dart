@@ -548,12 +548,12 @@ typedef PropReduceCallback<T> = T? Function(
 
 T? propReduce<T>(
   GeoJSONObject geojson,
-  PropReduceCallback callback,
+  PropReduceCallback<T> callback,
   T? initialValue,
 ) {
-  var previousValue = initialValue;
+  T? previousValue = initialValue;
   propEach(geojson, (currentProperties, featureIndex) {
-    if (featureIndex == 0 && initialValue == null && previousValue is T) {
+    if (featureIndex == 0 && initialValue == null) {
       previousValue = currentProperties != null
           ? Map<String, dynamic>.of(currentProperties) as T
           : null;
@@ -613,7 +613,7 @@ typedef FeatureReduceCallback<T> = T? Function(
 
 T? featureReduce<T>(
   GeometryObject geojson,
-  FeatureReduceCallback callback,
+  FeatureReduceCallback<T> callback,
   T? initialValue,
 ) {
   // todo: type of the initialValue?
@@ -676,7 +676,7 @@ typedef FlattenReduceCallback<T> = T? Function(T? previousValue,
 //Todo: @armantorkzaban implement tests please.
 T? flattenReduce<T>(
   GeoJSONObject geojson,
-  FlattenReduceCallback callback,
+  FlattenReduceCallback<T> callback,
   T? initialValue,
 ) {
   T? previousValue = initialValue;
@@ -751,7 +751,7 @@ typedef CoordReduceCallback<T> = T? Function(
 
 T? coordReduce<T>(
   GeoJSONObject geojson,
-  CoordReduceCallback callback,
+  CoordReduceCallback<T> callback,
   T? initialValue, [
   bool excludeWrapCoord = false,
 ]) {
