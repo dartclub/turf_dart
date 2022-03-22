@@ -791,6 +791,23 @@ main() {
     expect(flattenReduce<int>(pt, countReducer, null), 1);
   });
 
+  test('coordReduce -- with/out initialValue', () {
+    int? countReducer(
+      int? previousValue,
+      Position? currentCoord,
+      int? coordIndex,
+      int? featureIndex,
+      int? multiFeatureIndex,
+      int? geometryIndex,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(coordReduce<int>(fcMixed, countReducer, null), 7);
+    expect(coordReduce<int>(fcMixed, countReducer, 5), 12);
+    expect(coordReduce<int>(pt, countReducer, null), 1);
+  });
+
   test('geomReduce', () {
     int? countReducer(
       int? previousValue,
