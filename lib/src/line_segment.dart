@@ -25,63 +25,64 @@ import 'meta.dart';
 /// //addToMap
 /// var addToMap = [polygon, segments]
 
-FeatureCollection<LineString> lineSegment(GeometryObject geoJson) {
+FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson) {
   List<Feature<LineString>> features = [];
-  if (geoJson is! LineString &&
-      geoJson is! MultiLineString &&
-      geoJson is! MultiPolygon &&
-      geoJson is! Polygon &&
-      geoJson is! Feature &&
-      geoJson is! FeatureCollection) {
+  if (geoJson is Point || geoJson is MultiPoint) {
     throw Exception('Unsupported GeoJSONObject type');
-  } else {
-    flattenEach(geoJson,
-        (Feature currentFeature, int featureIndex, int multiFeatureIndex) {
-      lineSegmentFeature(geoJson, features); //
-    });
   }
+
+  flattenEach(
+    geoJson,
+    (Feature currentFeature, int featureIndex, int multiFeatureIndex) {
+      if (currentFeature.geometry is! Point) {
+        features.addAll(lineSegmentFeature(currentFeature));
+      }
+    },
+  );
+
   return FeatureCollection(features: features);
 }
 
-createSegments(List<Position> coord, properties) {
+List<Feature<LineString>> createSegments(List<Position> coords, properties) {
   List<Feature<LineString>> segments = [];
-  coord.reduce((previousCoords, currentCoords) {
+
+  coords.reduce((previousCoords, currentCoord) {
     Feature<LineString> segment = Feature<LineString>(
-        geometry: LineString(coordinates: [previousCoords, currentCoords]),
+        geometry: LineString(coordinates: [previousCoords, currentCoord]),
         properties: properties,
         bbox: BBox.named(
             lat1: previousCoords.lat,
-            lat2: currentCoords.lat,
+            lat2: currentCoord.lat,
             lng1: previousCoords.lng,
-            lng2: currentCoords.lng));
+            lng2: currentCoord.lng));
 
     segments.add(segment);
-    return currentCoords;
+    return currentCoord;
   });
+
   return segments;
 }
 
-lineSegmentFeature(GeoJSONObject geoJson, List<Feature<LineString>> results) {
+List<Feature<LineString>> lineSegmentFeature(Feature feature) {
+  List<Feature<LineString>> results = [];
+  var geometry = feature.geometry;
   var coords = [];
-  bool isFeature = geoJson is Feature && geoJson is FeatureCollection;
-  var geometry =
-      isFeature ? geoJson.geometry : (geoJson as GeometryType).coordinates;
+
   if (geometry != null) {
-    switch (geometry.type) {
-      case GeoJSONObjectType.lineString:
-        coords.add(getCoords(geometry));
-        break;
-      default:
-        coords = getCoords(geometry);
-        break;
+    if (geometry is Polygon) {
+      coords = getCoords(geometry);
     }
+    if (geometry is LineString) {
+      coords.add(getCoords(geometry));
+    }
+
     for (List<Position> coord in coords) {
-      var segments =
-          createSegments(coord, isFeature ? geoJson.properties : null);
-      segments.forEach((segment) {
+      var segments = createSegments(coord, feature.properties);
+      for (var segment in segments) {
         segment.id = results.length;
         results.add(segment);
-      });
+      }
     }
   }
+  return results;
 }
