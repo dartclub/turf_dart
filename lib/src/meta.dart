@@ -331,7 +331,7 @@ typedef FlattenEachCallback = dynamic Function(
     Feature currentFeature, int featureIndex, int multiFeatureIndex);
 
 /// Iterate over flattened features in any [geoJSON] object, similar to
-/// [Iterable.forEach()], calling [callback] on each flattened feature
+/// [Iterable.forEach], calling [callback] on each flattened feature
 
 ///
 /// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {

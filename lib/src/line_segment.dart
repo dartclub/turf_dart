@@ -43,6 +43,7 @@ FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson) {
   return FeatureCollection(features: features);
 }
 
+/// Creates Segments from LineString coordinates
 List<Feature<LineString>> createSegments(List<Position> coords, properties) {
   List<Feature<LineString>> segments = [];
 
