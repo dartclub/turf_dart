@@ -53,7 +53,7 @@ main() {
   );
   test("lineSegment -- GeometryColletion", () {
     // Multipoint gets ignored
-    expect(() => lineSegment(multiPoint1), throwsA(isA<Exception>()));
+    expect(lineSegment(multiPoint1).features.isEmpty, true);
 
     // Feature<MultiPoint> passed to lineSegment produces and empty FeatureCollection<LineString>
     FeatureCollection<LineString> results = lineSegment(multiPoint);

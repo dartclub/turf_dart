@@ -241,7 +241,7 @@ void _forEachGeomInGeometryObject(
       throw _ShortCircuit();
     }
   } else if (geometryObject is GeometryCollection) {
-    num geometryCollectionLength = geometryObject.geometries.length;
+    int geometryCollectionLength = geometryObject.geometries.length;
 
     for (int geometryIndex = 0;
         geometryIndex < geometryCollectionLength;
@@ -262,7 +262,7 @@ void _forEachGeomInGeometryObject(
 
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
-    Map<String, dynamic>? currentProperties, num featureIndex);
+    Map<String, dynamic>? currentProperties, int featureIndex);
 
 /// Iterate over properties in any [geoJSON] object, calling [callback] on each
 /// iteration. Similar to [Iterable.forEach()]
@@ -295,7 +295,7 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
 
 /// Callback for featureEach
 typedef FeatureEachCallback = dynamic Function(
-    Feature currentFeature, num featureIndex);
+    Feature currentFeature, int featureIndex);
 
 /// Iterate over features in any [geoJSON] object, calling [callback] on each
 /// iteration. Similar to [Iterable.forEach()].
@@ -428,7 +428,6 @@ List<Position?> coordAll(GeoJSONObject geojson) {
     int? geometryIndex,
   ) {
     coords.add(currentCoord);
-    return true;
   });
   return coords;
 }
