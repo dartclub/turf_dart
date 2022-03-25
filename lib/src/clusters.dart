@@ -1,33 +1,43 @@
 import '../meta.dart';
 import '../helpers.dart';
 
-///
 /// Get Cluster
+/// Takes a [FeatureCollection<Feature]
+/// a Filter used on GeoJSON properties to get Cluster
+/// returns [FeatureCollection] Single Cluster filtered by GeoJSON Properties
+/// For example:
 ///
-/// @name getCluster
-/// @param {FeatureCollection} geojson GeoJSON Features
-/// @param {*} filter Filter used on GeoJSON properties to get Cluster
-/// @returns {FeatureCollection} Single Cluster filtered by GeoJSON Properties
-/// @example
-/// var geojson = turf.featureCollection([
-///     turf.point([0, 0], {'marker-symbol': 'circle'}),
-///     turf.point([2, 4], {'marker-symbol': 'star'}),
-///     turf.point([3, 6], {'marker-symbol': 'star'}),
-///     turf.point([5, 1], {'marker-symbol': 'square'}),
-///     turf.point([4, 2], {'marker-symbol': 'circle'})
-/// ]);
+/// ```dart
+/// var geojson = FeatureCollection<Point>(features: [
+///    Feature(
+///      geometry: Point(coordinates: Position.of([10, 10])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([20, 20])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([30, 30])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([40, 40])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///  ]);
 ///
 /// // Create a cluster using K-Means (adds `cluster` to GeoJSON properties)
-/// var clustered = turf.clustersKmeans(geojson);
+/// var clustered = clustersKmeans(geojson);
 ///
 /// // Retrieve first cluster (0)
-/// var cluster = turf.getCluster(clustered, {cluster: 0});
+/// var cluster = getCluster(clustered, {cluster: 0});
 /// //= cluster
 ///
 /// // Retrieve cluster based on custom properties
-/// turf.getCluster(clustered, {'marker-symbol': 'circle'}).length;
+/// getCluster(clustered, {'marker-symbol': 'circle'}).length;
 /// //= 2
-/// turf.getCluster(clustered, {'marker-symbol': 'square'}).length;
+/// getCluster(clustered, {'marker-symbol': 'square'}).length;
 /// //= 1
 ///
 
@@ -40,45 +50,44 @@ FeatureCollection getCluster(FeatureCollection geojson, dynamic filter) {
   return FeatureCollection(features: features);
 }
 
-/**
- * clusterEach
- *
- * @name clusterEach
- * @param {FeatureCollection} geojson GeoJSON Features
- * @param {string|number} property GeoJSON property key/value used to create clusters
- * @param {Function} callback a method that takes (cluster, clusterValue, currentIndex)
- * @returns {void}
- * @example
- * var geojson = turf.featureCollection([
- *     turf.point([0, 0]),
- *     turf.point([2, 4]),
- *     turf.point([3, 6]),
- *     turf.point([5, 1]),
- *     turf.point([4, 2])
- * ]);
- *
- * // Create a cluster using K-Means (adds `cluster` to GeoJSON properties)
- * var clustered = turf.clustersKmeans(geojson);
- *
- * // Iterate over each cluster
- * turf.clusterEach(clustered, 'cluster', function (cluster, clusterValue, currentIndex) {
- *     //= cluster
- *     //= clusterValue
- *     //= currentIndex
- * })
- *
- * // Calculate the total number of clusters
- * var total = 0
- * turf.clusterEach(clustered, 'cluster', function () {
- *     total++;
- * });
- *
- * // Create an Array of all the values retrieved from the 'cluster' property
- * var values = []
- * turf.clusterEach(clustered, 'cluster', function (cluster, clusterValue) {
- *     values.push(clusterValue);
- * });
- */
+/// clusterEach
+///
+/// @name clusterEach
+/// @param {FeatureCollection} geojson GeoJSON Features
+/// @param {string|number} property GeoJSON property key/value used to create clusters
+/// @param {Function} callback a method that takes (cluster, clusterValue, currentIndex)
+/// @returns {void}
+/// @example
+/// var geojson = featureCollection([
+///     point([0, 0]),
+///     point([2, 4]),
+///     point([3, 6]),
+///     point([5, 1]),
+///     point([4, 2])
+/// ]);
+///
+/// // Create a cluster using K-Means (adds `cluster` to GeoJSON properties)
+/// var clustered = turf.clustersKmeans(geojson);
+///
+/// // Iterate over each cluster
+/// clusterEach(clustered, 'cluster', function (cluster, clusterValue, currentIndex) {
+///     //= cluster
+///     //= clusterValue
+///     //= currentIndex
+/// })
+///
+/// // Calculate the total number of clusters
+/// var total = 0
+/// clusterEach(clustered, 'cluster', function () {
+///     total++;
+/// });
+///
+/// // Create an Array of all the values retrieved from the 'cluster' property
+/// var values = []
+/// clusterEach(clustered, 'cluster', function (cluster, clusterValue) {
+///     values.push(clusterValue);
+/// });
+///
 
 ///
 /// Callback for clusterEach
@@ -88,7 +97,6 @@ FeatureCollection getCluster(FeatureCollection geojson, dynamic filter) {
 /// @param {*} [clusterValue] Value used to create cluster being processed.
 /// @param {number} [currentIndex] The index of the current element being processed in the array.Starts at index 0
 /// @returns {void}
-///
 
 typedef ClusterEachCallback = dynamic Function(
   FeatureCollection? cluster,
@@ -116,30 +124,27 @@ void clusterEach(
   }
 }
 
-/**
- * Callback for clusterReduce
- *
- * The first time the callback function is called, the values provided as arguments depend
- * on whether the reduce method has an initialValue argument.
- *
- * If an initialValue is provided to the reduce method:
- *  - The previousValue argument is initialValue.
- *  - The currentValue argument is the value of the first element present in the array.
- *
- * If an initialValue is not provided:
- *  - The previousValue argument is the value of the first element present in the array.
- *  - The currentValue argument is the value of the second element present in the array.
- *
- * @callback clusterReduceCallback
- * @param {*} [previousValue] The accumulated value previously returned in the last invocation
- * of the callback, or initialValue, if supplied.
- * @param {FeatureCollection} [cluster] The current cluster being processed.
- * @param {*} [clusterValue] Value used to create cluster being processed.
- * @param {number} [currentIndex] The index of the current element being processed in the
- * array. Starts at index 0, if an initialValue is provided, and at index 1 otherwise.
- */
-
+/// Callback for clusterReduce
 ///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an initialValue is provided to the reduce method:
+///  - The previousValue argument is initialValue.
+///  - The currentValue argument is the value of the first element present in the array.
+///
+/// If an initialValue is not provided:
+///  - The previousValue argument is the value of the first element present in the array.
+///  - The currentValue argument is the value of the second element present in the array.
+///
+/// @callback clusterReduceCallback
+/// @param {*} [previousValue] The accumulated value previously returned in the last invocation
+/// of the callback, or initialValue, if supplied.
+/// @param {FeatureCollection} [cluster] The current cluster being processed.
+/// @param {*} [clusterValue] Value used to create cluster being processed.
+/// @param {number} [currentIndex] The index of the current element being processed in the
+/// array. Starts at index 0, if an initialValue is provided, and at index 1 otherwise.
+
 /// Reduce clusters in GeoJSON Features, similar to Array.reduce()
 ///
 /// @name clusterReduce
@@ -149,7 +154,7 @@ void clusterEach(
 /// @param {*} [initialValue] Value to use as the first argument to the first call of the callback.
 /// @returns {*} The value that results from the reduction.
 /// @example
-/// var geojson = turf.featureCollection([
+/// var geojson = featureCollection([
 ///     turf.point([0, 0]),
 ///     turf.point([2, 4]),
 ///     turf.point([3, 6]),
