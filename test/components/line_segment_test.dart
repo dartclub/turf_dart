@@ -110,4 +110,18 @@ main() {
     expect(resultCombined.features.last.id, 6);
     expect(resultCombined.features.first.id, 0);
   });
+
+  test("segmentReduce", () {
+    var total = segmentReduce(poly1, (previousValue,
+        currentSegment,
+        initialValue,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        segmentIndex) {
+      previousValue++;
+      return previousValue;
+    }, 0, combineNestedGeometries: false);
+    expect(total, 6);
+  });
 }

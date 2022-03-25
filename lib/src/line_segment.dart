@@ -32,7 +32,7 @@ FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson,
         segmentIndex) {
       features.add(currentSegment);
     },
-    combineGeometries: combineGeometries,
+    combineNestedGeometries: combineGeometries,
   );
   return FeatureCollection(features: features);
 }
@@ -50,8 +50,8 @@ typedef dynamic SegmentEachCallback(
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
 ///
 /// Takes [FeatureCollection],[Feature] or [GeometryObject] geojson any GeoJSON
-/// @param {Function} callback a method that takes (currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex)
-/// @returns {void}
+/// a [SegmentEachCallback] method that takes (currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex),
+/// and a [combineNestedGeometries] flag that connects [Polygon]'s geometries with each other.
 /// For example:
 ///
 /// ```dart
@@ -78,11 +78,15 @@ typedef dynamic SegmentEachCallback(
 /// turf.segmentEach(polygon, function () {
 ///     total++;
 /// });
+///
+///
+///
+///
 
 void segmentEach(
   GeoJSONObject geojson,
   SegmentEachCallback callback, {
-  bool combineGeometries = true,
+  bool combineNestedGeometries = true,
 }) {
   int segmentIndex = 0;
   flattenEach(
@@ -95,7 +99,7 @@ void segmentEach(
         return false;
       }
 
-      if (geometry != null && combineGeometries) {
+      if (geometry != null && combineNestedGeometries) {
         segmentIndex = _segmentEachforEachUnit(
           geometry,
           callback,
@@ -177,38 +181,55 @@ int _segmentEachforEachUnit(
 /// Callback for segmentReduce
 ///
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an initialValue argument.
+/// on whether the reduce method has an [initialValue] argument.
 ///
-/// If an initialValue is provided to the reduce method:
-///  - The previousValue argument is initialValue.
-///  - The currentValue argument is the value of the first element present in the array.
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is initialValue.
+///  - The [currentValue] argument is the value of the first element present in the array.
 ///
-/// If an initialValue is not provided:
-///  - The previousValue argument is the value of the first element present in the array.
-///  - The currentValue argument is the value of the second element present in the array.
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the array.
+///  - The [currentValue] argument is the value of the second element present in the array.
 ///
 /// SegmentReduceCallback
 /// [previousValue] The accumulated value previously returned in the last invocation
 /// of the callback, or [initialValue], if supplied.
-/// [Feature<LineString>] currentSegment The current Segment being processed.
+/// [Feature<LineString>] [currentSegment] The current Segment being processed.
 /// [featureIndex] The current index of the Feature being processed.
 /// [multiFeatureIndex] The current index of the Multi-Feature being processed.
-/// geometryIndex The current index of the Geometry being processed.
-///  segmentIndex The current index of the Segment being processed.
-///
-///
+/// [geometryIndex] The current index of the Geometry being processed.
+/// [segmentIndex] The current index of the Segment being processed.
+typedef T? SegmentReduceCallback<T>(
+  T? previousValue,
+  Feature<LineString> currentSegment,
+  T? initialValue,
+  int featureIndex,
+  int? multiFeatureIndex,
+  int? geometryIndex,
+  int segmentIndex,
+);
+
 /// Reduce 2-vertex line segment in any GeoJSON object, similar to Array.reduce()
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
 ///
-/// @param {FeatureCollection|Feature|Geometry} geojson any GeoJSON
-/// @param {Function} callback a method that takes (previousValue, currentSegment, currentIndex)
-/// @param {*} [initialValue] Value to use as the first argument to the first call of the callback.
-/// @returns {void}
-/// @example
-/// var polygon = Polygon([[[-50, 5], [-40, -10], [-50, -10], [-40, 5], [-50, 5]]]);
+/// Takes [FeatureCollection], [Feature], [GeoJSONObject], a
+/// [SegmentReduceCallback] method that takes (previousValue, currentSegment, currentIndex), an
+/// [initialValue] value to use as the first argument to the first call of the callback.
 ///
-/// // Iterates over GeoJSON by 2-vertex segments
-/// segmentReduce(polygon, function (previousSegment, currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) {
+/// Iterates over [GeoJSONObject] by 2-vertex segments
+/// For example:
+///
+/// ```dart
+/// var polygon =Polygon(coordinates: [
+///      [
+///        Position.of([0, 0]),
+///        Position.of([1, 1]),
+///       Position.of([0, 1]),
+///        Position.of([0, 0]),
+///      ],
+///    ]),
+///
+/// segmentReduce(polygon, (previousSegment, currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) {
 ///   //= previousSegment
 ///   //= currentSegment
 ///   //= featureIndex
@@ -219,24 +240,33 @@ int _segmentEachforEachUnit(
 /// });
 ///
 /// // Calculate the total number of segments
-/// var initialValue = 0
-/// var total = turf.segmentReduce(polygon, function (previousValue) {
+/// var total = segmentReduce(polygon, (previousValue) {
 ///     previousValue++;
 ///     return previousValue;
-/// }, initialValue);
-///
-segmentReduce(geojson, callback, initialValue) {
-  var previousValue = initialValue;
+/// }, 0);
+/// ```
+
+T? segmentReduce<T>(
+  GeoJSONObject geojson,
+  SegmentReduceCallback callback,
+  T? initialValue, {
+  bool combineNestedGeometries = true,
+}) {
+  T? previousValue = initialValue;
   var started = false;
-  segmentEach(geojson, (currentSegment, featureIndex, multiFeatureIndex,
-      geometryIndex, segmentIndex) {
-    if (started == false && initialValue == null) {
-      previousValue = currentSegment;
-    } else {
-      previousValue = callback(previousValue, currentSegment, featureIndex,
-          multiFeatureIndex, geometryIndex, segmentIndex);
-    }
-    started = true;
-  });
+  segmentEach(
+    geojson,
+    (currentSegment, featureIndex, multiFeatureIndex, geometryIndex,
+        segmentIndex) {
+      if (started == false && initialValue == null && initialValue is T) {
+        previousValue = currentSegment.clone() as T;
+      } else {
+        previousValue = callback(previousValue, currentSegment, initialValue,
+            featureIndex, multiFeatureIndex, geometryIndex, segmentIndex);
+      }
+      started = true;
+    },
+    combineNestedGeometries: combineNestedGeometries,
+  );
   return previousValue;
 }
