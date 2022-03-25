@@ -420,7 +420,7 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 
 /// Callback for flattenEach
 typedef FlattenEachCallback = dynamic Function(
-  Feature currentFeature,
+  Feature<GeometryType> currentFeature,
   int featureIndex,
   int multiFeatureIndex,
 );
