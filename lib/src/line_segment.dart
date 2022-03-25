@@ -42,11 +42,11 @@ typedef dynamic SegmentEachCallback(
   Feature<LineString> currentSegment,
   int featureIndex,
   int? multiFeatureIndex,
-  int geometryIndex,
+  int? geometryIndex,
   int segmentIndex,
 );
 
-/// Iterates over 2-vertex line segment in any GeoJSON object, similar to Array.forEach()
+/// Iterates over 2-vertex line segment in any GeoJSON object, similar to [Iterable.forEach]
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
 ///
 /// Takes [FeatureCollection],[Feature] or [GeometryObject] geojson any GeoJSON
@@ -82,55 +82,89 @@ typedef dynamic SegmentEachCallback(
 void segmentEach(
   GeoJSONObject geojson,
   SegmentEachCallback callback, {
-  bool combineGeometries = false,
+  bool combineGeometries = true,
 }) {
   flattenEach(
     geojson,
     (Feature<GeometryType> currentFeature, int featureIndex,
         int multiFeatureIndex) {
       var geometry = currentFeature.geometry;
-      List<List<Position>> coords = [];
 
       if (geometry is Point) {
         return false;
       }
-      if (geometry is Polygon) {
-        coords = geometry.coordinates;
-      }
-      if (geometry is LineString) {
-        coords.add(geometry.coordinates);
-      }
 
-      for (int i = 0; i < coords.length; i++) {
-        late Position previousCoord;
-        for (int j = 0; j < coords[i].length; j++) {
-          var currentCoord = coords[i][j];
-          if (j == 0) {
-            previousCoord = currentCoord;
-          } else {
-            Feature<LineString> segment = Feature<LineString>(
-              id: j - 1,
-              geometry: LineString(coordinates: [previousCoord, currentCoord]),
-              properties: Map.of(currentFeature.properties ?? {}),
-              bbox: BBox.named(
-                lat1: previousCoord.lat,
-                lat2: currentCoord.lat,
-                lng1: previousCoord.lng,
-                lng2: currentCoord.lng,
-              ),
-            );
-            callback(
-              segment,
-              featureIndex,
-              multiFeatureIndex,
-              /*geometryIndex*/ i,
-              /*segmentIndex */ j - 1,
-            );
-            previousCoord = currentCoord;
-          }
+      if (geometry != null && combineGeometries) {
+        _segmentEachforEachUnit(
+          geometry,
+          callback,
+          currentFeature.properties,
+          featureIndex,
+          multiFeatureIndex,
+        );
+      } else {
+        List<List<Position>> coords = [];
+        if (geometry is Polygon) {
+          coords = geometry.coordinates;
+        }
+        if (geometry is LineString) {
+          coords.add(geometry.coordinates);
+        }
+
+        for (int i = 0; i < coords.length; i++) {
+          var line = LineString(coordinates: coords[i]);
+
+          _segmentEachforEachUnit(
+            line,
+            callback,
+            currentFeature.properties,
+            featureIndex,
+            multiFeatureIndex,
+          );
         }
       }
     },
+  );
+}
+
+_segmentEachforEachUnit(
+  GeometryType geometry,
+  SegmentEachCallback callback,
+  Map<String, dynamic>? currentProperties,
+  int featureIndex,
+  int multiFeatureIndex,
+) {
+  coordReduce<Position>(
+    geometry,
+    (
+      previousCoord,
+      currentCoord,
+      coordIndex,
+      featureIndex2,
+      multiFeatureIndex2,
+      geometryIndex,
+    ) {
+      Feature<LineString> segment = Feature<LineString>(
+        id: coordIndex! - 1,
+        geometry: LineString(coordinates: [previousCoord!, currentCoord!]),
+        properties: Map.of(currentProperties ?? {}),
+        bbox: BBox.named(
+          lat1: previousCoord.lat,
+          lat2: currentCoord.lat,
+          lng1: previousCoord.lng,
+          lng2: currentCoord.lng,
+        ),
+      );
+      callback(
+        segment,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        coordIndex - 1,
+      );
+      return currentCoord;
+    },
+    null,
   );
 }
 

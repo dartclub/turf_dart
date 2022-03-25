@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
