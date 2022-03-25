@@ -33,11 +33,21 @@ main() {
     coordinates: [Position(1, 1), Position(2, 2), Position(3, 3)],
   );
 
+  Feature<Polygon> poly = Feature<Polygon>(
+    geometry: Polygon(coordinates: [
+      [
+        Position.of([0, 0]),
+        Position.of([1, 1]),
+        Position.of([0, 1]),
+        Position.of([0, 0]),
+      ],
+    ]),
+  );
   Feature<GeometryCollection> geomCollection1 = Feature<GeometryCollection>(
     geometry: GeometryCollection(
       geometries: [
         multiPoint1, // should throw
-        lineString
+        lineString,
       ],
     ),
   );
@@ -63,5 +73,9 @@ main() {
     // MultiLines
     var multiLineResults = lineSegment(multiline);
     expect(multiLineResults.features.length, 3);
+
+    // Polygon
+    var polygonResult = lineSegment(poly);
+    expect(polygonResult.features.length, 3);
   });
 }
