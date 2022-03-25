@@ -8,13 +8,23 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
-///
-/// Iterate over coordinates in any [geoJSON] object, similar to [Iterable.forEach()]
+/// Iterates over coordinates in any [geoJSON] object, similar to [Iterable.forEach]
 ///
 /// For example:
 ///
 /// ```dart
-/// //TODO add example
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// coordEach(features, (currentCoord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) {
+///  //=currentCoord
+///  //=coordIndex
+///  //=featureIndex
+///  //=multiFeatureIndex
+///  //=geometryIndex
+/// });
 /// ```
 void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
     [bool excludeWrapCoord = false]) {
@@ -175,7 +185,7 @@ class _ShortCircuit {
 }
 
 /// Iterates over each geometry in [geoJSON], calling [callback] on each
-/// iteration. Similar to Iterable.forEach()
+/// iteration. Similar to [Iterable.forEach]
 ///
 /// For example:
 ///
@@ -260,12 +270,92 @@ void _forEachGeomInGeometryObject(
   }
 }
 
+/// Callback for geomReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an [initialValue] argument.
+///
+/// If an initialValue is provided to the reduce method:
+///  - The [previousValue] argument is [initialValue].
+///  - The [currentValue] argument is the value of the first element present in the [List].
+///
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentGeometry] argument is the value of the second element present in the [List].
+typedef GeomReduceCallback<T> = T? Function(
+  T? previousValue,
+  GeometryType? currentGeometry,
+  int? featureIndex,
+  Map<String, dynamic>? featureProperties,
+  BBox? featureBBox,
+  dynamic featureId,
+);
+
+/// Reduces geometry in any [GeoJSONObject], similar to [Iterable.reduce].
+///
+/// Takes [FeatureCollection], [Feature] or [GeometryObject], a [GeomReduceCallback] method
+/// that takes (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) and
+/// an [initialValue] Value to use as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// geomReduce(features, (previousValue, currentGeometry, featureIndex, featureProperties, featureBBox, featureId) {
+///   //=previousValue
+///   //=currentGeometry
+///   //=featureIndex
+///   //=featureProperties
+///   //=featureBBox
+///   //=featureId
+///   return currentGeometry
+/// });
+/// ```
+
+T? geomReduce<T>(
+  GeoJSONObject geoJSON,
+  GeomReduceCallback<T> callback,
+  T? initialValue,
+) {
+  T? previousValue = initialValue;
+  geomEach(
+    geoJSON,
+    (
+      currentGeometry,
+      featureIndex,
+      featureProperties,
+      featureBBox,
+      featureId,
+    ) {
+      if (previousValue == null && featureIndex == 0 && currentGeometry is T) {
+        previousValue = currentGeometry?.clone() as T;
+      } else {
+        previousValue = callback(
+          previousValue,
+          currentGeometry,
+          featureIndex,
+          featureProperties,
+          featureBBox,
+          featureId,
+        );
+      }
+    },
+  );
+  return previousValue;
+}
+
 /// Callback for propEach
 typedef PropEachCallback = dynamic Function(
-    Map<String, dynamic>? currentProperties, int featureIndex);
+  Map<String, dynamic>? currentProperties,
+  int featureIndex,
+);
 
-/// Iterate over properties in any [geoJSON] object, calling [callback] on each
-/// iteration. Similar to [Iterable.forEach()]
+/// Iterates over properties in any [geoJSON] object, calling [callback] on each
+/// iteration. Similar to [Iterable.forEach]
 ///
 /// For example:
 ///
@@ -295,10 +385,12 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
 
 /// Callback for featureEach
 typedef FeatureEachCallback = dynamic Function(
-    Feature currentFeature, int featureIndex);
+  Feature currentFeature,
+  int featureIndex,
+);
 
-/// Iterate over features in any [geoJSON] object, calling [callback] on each
-/// iteration. Similar to [Iterable.forEach()].
+/// Iterates over features in any [geoJSONObject], calling [callback] on each
+/// iteration. Similar to [Iterable.forEach].
 ///
 /// For example:
 ///
@@ -328,15 +420,14 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 
 /// Callback for flattenEach
 typedef FlattenEachCallback = dynamic Function(
-  Feature<GeometryType> currentFeature,
+  Feature currentFeature,
   int featureIndex,
   int multiFeatureIndex,
 );
 
-/// Iterate over flattened features in any [geoJSON] object, similar to
-/// [Iterable.forEach], calling [callback] on each flattened feature
-
-///
+/// Iterates over flattened features in any [geoJSONObject], similar to
+/// [Iterate.forEach], calling [callback] on each flattened feature
+///```dart
 /// flattenEach(featureCollection, (currentFeature, featureIndex, multiFeatureIndex) {
 ///   someOperationOnEachFeature(currentFeature);
 /// });
@@ -405,6 +496,274 @@ void _callFlattenEachCallback(
       false) {
     throw _ShortCircuit();
   }
+}
+
+/// Callback for propReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an [initialValue] argument.
+///
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is initialValue.
+///  - The [currentValue] argument is the value of the first element present in the [List].
+///
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
+///
+/// propReduceCallback
+/// [previousValue] The accumulated value previously returned in the last invocation
+/// of the callback, or [initialValue], if supplied.
+/// [currentProperties] The current Properties being processed.
+/// [featureIndex] The current index of the Feature being processed.
+///
+typedef PropReduceCallback<T> = T? Function(
+  T? previousValue, // todo: or 'Map<String, dynamic>?'?
+  Map<String, dynamic>? currentProperties,
+  int featureIndex,
+);
+
+/// Reduces properties in any [GeoJSONObject] into a single value,
+/// similar to how [Iterable.reduce] works. However, in this case we lazily run
+/// the reduction, so List of all properties is unnecessary.
+///
+/// Takes any [FeatureCollection] or [Feature], a [PropReduceCallback], an [initialValue]
+/// to be used as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// propReduce(features, (previousValue, currentProperties, featureIndex) {
+///   //=previousValue
+///   //=currentProperties
+///   //=featureIndex
+///   return currentProperties
+/// });
+/// ```
+
+T? propReduce<T>(
+  GeoJSONObject geojson,
+  PropReduceCallback<T> callback,
+  T? initialValue,
+) {
+  T? previousValue = initialValue;
+  propEach(geojson, (currentProperties, featureIndex) {
+    if (featureIndex == 0 && initialValue == null) {
+      previousValue = currentProperties != null
+          ? Map<String, dynamic>.of(currentProperties) as T
+          : null;
+    } else {
+      previousValue = callback(previousValue, currentProperties, featureIndex);
+    }
+  });
+  return previousValue;
+}
+
+/// Callback for featureReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an initialValue is provided to the reduce method:
+///  - The previousValue argument is initialValue.
+///  - The currentValue argument is the value of the first element present in the List.
+///
+/// If an initialValue is not provided:
+///  - The previousValue argument is the value of the first element present in the List.
+///  - The currentValue argument is the value of the second element present in the List.
+///
+/// FeatureReduceCallback
+/// [previousValue] is the accumulated value previously returned in the last invocation
+/// of the callback, or [initialValue], if supplied.
+/// currentFeature is the current [Feature] being processed.
+/// [featureIndex] is the current index of the [Feature] being processed.
+
+typedef FeatureReduceCallback<T> = T? Function(
+  T? previousValue, // todo or Feature ?
+  Feature currentFeature,
+  int featureIndex,
+);
+
+/// Reduces features in any GeoJSONObject, similar to [Iterable.reduce].
+///
+/// Takes [FeatureCollection], [Feature], or [GeometryObject],
+/// a [FeatureReduceCallback] method that takes (previousValue, currentFeature, featureIndex), and
+/// an [initialValue] Value to use as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// featureReduce(features, (previousValue, currentFeature, featureIndex) {
+///   //=previousValue
+///   //=currentFeature
+///   //=featureIndex
+///   return currentFeature
+/// });
+/// ```
+
+T? featureReduce<T>(
+  GeoJSONObject geojson,
+  FeatureReduceCallback<T> callback,
+  T? initialValue,
+) {
+  T? previousValue = initialValue;
+  featureEach(geojson, (currentFeature, featureIndex) {
+    if (featureIndex == 0 && initialValue == null && currentFeature is T) {
+      previousValue = currentFeature.clone() as T;
+    } else {
+      previousValue = callback(previousValue, currentFeature, featureIndex);
+    }
+  });
+  return previousValue;
+}
+
+/// Callback for flattenReduce
+/// The first time the callback function is called, the values provided as
+/// arguments depend on whether the reduce method has an [initialValue] argument.
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is initialValue.
+///  - The [currentValue] argument is the value of the first element present in the
+/// [List].
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in
+/// the [List].
+///  - The [currentValue] argument is the value of the second element present in
+/// the [List].
+///
+/// flattenReduceCallback
+/// [previousValue] is the accumulated value previously returned in the
+/// last invocation of the callback, or [initialValue], if supplied.
+/// [currentFeature] is the current Feature being processed.
+/// [featureIndex] is the current index of the Feature being processed.
+/// [multiFeatureIndex] is the current index of the Multi-Feature being
+/// processed.
+typedef FlattenReduceCallback<T> = T? Function(T? previousValue,
+    Feature currentFeature, int featureIndex, int multiFeatureIndex);
+
+/// Reduces flattened features in any [GeoJSONObject], similar to [Iterable.reduce].
+/// Takes a [FeatureCollection], [Feature], or [Geometry]
+/// a [FlattenReduceCallback] method that takes (previousValue, currentFeature, featureIndex, multiFeatureIndex),
+/// an [initialValue] Value to use as the first argument to the first call of the callback.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// flattenReduce(features, (previousValue, currentFeature, featureIndex, multiFeatureIndex) {
+///   //=previousValue
+///   //=currentFeature
+///   //=featureIndex
+///   //=multiFeatureIndex
+///   return currentFeature
+/// });
+/// ```
+
+T? flattenReduce<T>(
+  GeoJSONObject geojson,
+  FlattenReduceCallback<T> callback,
+  T? initialValue,
+) {
+  T? previousValue = initialValue;
+  flattenEach(geojson, (currentFeature, featureIndex, multiFeatureIndex) {
+    if (featureIndex == 0 &&
+        multiFeatureIndex == 0 &&
+        initialValue == null &&
+        currentFeature is T) {
+      previousValue = currentFeature.clone() as T;
+    } else {
+      previousValue = callback(
+          previousValue, currentFeature, featureIndex, multiFeatureIndex);
+    }
+  });
+  return previousValue;
+}
+
+/// Callback for coordReduce
+///
+/// The first time the callback function is called, the values provided as arguments depend
+/// on whether the reduce method has an initialValue argument.
+///
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is initialValue.
+///  - The [currentValue] argument is the value of the first element present in the [List].
+///
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
+///
+/// Takes [previousValue], the accumulated value previously returned in the last invocation
+/// of the callback, or [initialValue], if supplied,
+/// [Position][currentCoord] The current coordinate being processed, [coordIndex]
+/// The current index of the coordinate being processed. Starts at index 0, if an
+/// initialValue is provided, and at index 1 otherwise, [featureIndex] The current
+/// index of the Feature being processed, [multiFeatureIndex], the current index
+/// of the Multi-Feature being processed., and [geometryIndex], the current index of the Geometry being processed.
+typedef CoordReduceCallback<T> = T? Function(
+  T? previousValue, // todo: change to CoordType
+  Position? currentCoord,
+  int? coordIndex,
+  int? featureIndex,
+  int? multiFeatureIndex,
+  int? geometryIndex,
+);
+
+/// Reduces coordinates in any [GeoJSONObject], similar to [Iterable.reduce]
+///
+/// Takes [FeatureCollection], [GeometryObject], or a [Feature],
+/// a [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
+/// [initialValue] Value to use as the first argument to the first call of the callback,
+/// and a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
+/// of LinearRings that wraps the ring in its iteration.
+/// Returns the value that results from the reduction.
+/// For example:
+///
+/// ```dart
+/// var features = FeatureCollection(features: [
+///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
+///   Feature(geometry: Point(coordinates: Position.of([36, 53])), properties: {'foo': 'bar'})
+/// ]);
+///
+/// coordReduce(features, (previousValue, currentCoord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) {
+///   //=previousValue
+///   //=currentCoord
+///   //=coordIndex
+///   //=featureIndex
+///   //=multiFeatureIndex
+///   //=geometryIndex
+///   return currentCoord;
+/// });
+
+T? coordReduce<T>(
+  GeoJSONObject geojson,
+  CoordReduceCallback<T> callback,
+  T? initialValue, [
+  bool excludeWrapCoord = false,
+]) {
+  var previousValue = initialValue;
+  coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
+      geometryIndex) {
+    if (coordIndex == 0 && initialValue == null && currentCoord is T) {
+      previousValue = currentCoord?.clone() as T;
+    } else {
+      previousValue = callback(previousValue, currentCoord, coordIndex,
+          featureIndex, multiFeatureIndex, geometryIndex);
+    }
+  }, excludeWrapCoord);
+  return previousValue;
 }
 
 /// Gets all coordinates from any [GeoJSONObject].
