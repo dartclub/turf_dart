@@ -84,6 +84,7 @@ void segmentEach(
   SegmentEachCallback callback, {
   bool combineGeometries = true,
 }) {
+  int segmentIndex = 0;
   flattenEach(
     geojson,
     (Feature<GeometryType> currentFeature, int featureIndex,
@@ -95,12 +96,13 @@ void segmentEach(
       }
 
       if (geometry != null && combineGeometries) {
-        _segmentEachforEachUnit(
+        segmentIndex = _segmentEachforEachUnit(
           geometry,
           callback,
           currentFeature.properties,
           featureIndex,
           multiFeatureIndex,
+          segmentIndex,
         );
       } else {
         List<List<Position>> coords = [];
@@ -114,12 +116,13 @@ void segmentEach(
         for (int i = 0; i < coords.length; i++) {
           var line = LineString(coordinates: coords[i]);
 
-          _segmentEachforEachUnit(
+          segmentIndex = _segmentEachforEachUnit(
             line,
             callback,
             currentFeature.properties,
             featureIndex,
             multiFeatureIndex,
+            segmentIndex,
           );
         }
       }
@@ -127,12 +130,13 @@ void segmentEach(
   );
 }
 
-_segmentEachforEachUnit(
+int _segmentEachforEachUnit(
   GeometryType geometry,
   SegmentEachCallback callback,
   Map<String, dynamic>? currentProperties,
   int featureIndex,
   int multiFeatureIndex,
+  int segmentIndex,
 ) {
   coordReduce<Position>(
     geometry,
@@ -145,7 +149,7 @@ _segmentEachforEachUnit(
       geometryIndex,
     ) {
       Feature<LineString> segment = Feature<LineString>(
-        id: coordIndex! - 1,
+        id: segmentIndex,
         geometry: LineString(coordinates: [previousCoord!, currentCoord!]),
         properties: Map.of(currentProperties ?? {}),
         bbox: BBox.named(
@@ -160,12 +164,14 @@ _segmentEachforEachUnit(
         featureIndex,
         multiFeatureIndex,
         geometryIndex,
-        coordIndex - 1,
+        segmentIndex,
       );
+      segmentIndex++;
       return currentCoord;
     },
     null,
   );
+  return segmentIndex;
 }
 
 /// Callback for segmentReduce

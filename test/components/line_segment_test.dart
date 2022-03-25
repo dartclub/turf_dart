@@ -105,5 +105,9 @@ main() {
         Position.of([0, 0]));
     expect(resultCombined.features[3].geometry!.coordinates[1],
         Position.of([0, 0]));
+    expect(resultNotCombined.features.first.id, 0);
+    expect(resultNotCombined.features.last.id, 5);
+    expect(resultCombined.features.last.id, 6);
+    expect(resultCombined.features.first.id, 0);
   });
 }
