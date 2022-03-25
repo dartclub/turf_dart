@@ -43,6 +43,23 @@ main() {
       ],
     ]),
   );
+
+  Feature<Polygon> poly1 = Feature<Polygon>(
+    geometry: Polygon(coordinates: [
+      [
+        Position.of([0, 0]),
+        Position.of([2, 2]),
+        Position.of([0, 1]),
+        Position.of([0, 0]),
+      ],
+      [
+        Position.of([0, 0]),
+        Position.of([1, 1]),
+        Position.of([0, 1]),
+        Position.of([0, 0]),
+      ],
+    ]),
+  );
   Feature<GeometryCollection> geomCollection1 = Feature<GeometryCollection>(
     geometry: GeometryCollection(
       geometries: [
@@ -77,5 +94,16 @@ main() {
     // Polygon
     var polygonResult = lineSegment(poly);
     expect(polygonResult.features.length, 3);
+  });
+
+  test("segmentEach polygon combineGeometries == true", () {
+    var resultCombined = lineSegment(poly1, combineGeometries: true);
+    var resultNotCombined = lineSegment(poly1);
+    expect(resultCombined.features.length, 7);
+    expect(resultNotCombined.features.length, 6);
+    expect(resultCombined.features[3].geometry!.coordinates.first,
+        Position.of([0, 0]));
+    expect(resultCombined.features[3].geometry!.coordinates[1],
+        Position.of([0, 0]));
   });
 }
