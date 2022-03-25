@@ -328,7 +328,10 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 
 /// Callback for flattenEach
 typedef FlattenEachCallback = dynamic Function(
-    Feature currentFeature, int featureIndex, int multiFeatureIndex);
+  Feature<GeometryType> currentFeature,
+  int featureIndex,
+  int multiFeatureIndex,
+);
 
 /// Iterate over flattened features in any [geoJSON] object, similar to
 /// [Iterable.forEach], calling [callback] on each flattened feature
@@ -393,7 +396,7 @@ void _callFlattenEachCallback(
     int? featureIndex,
     int multiFeatureIndex) {
   if (callback(
-          Feature(
+          Feature<GeometryType>(
             geometry: geom,
             properties: featureProperties,
           ),

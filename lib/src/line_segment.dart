@@ -1,8 +1,6 @@
-// TODO implement https://github.com/Turfjs/turf/blob/fcdaa939c905e6cfa80cca11a0e7cbb851ad1a47/packages/turf-meta/index.js#L886
-// TODO implement https://github.com/Turfjs/turf/blob/fcdaa939c905e6cfa80cca11a0e7cbb851ad1a47/packages/turf-meta/index.js#L1001
+import 'package:turf/meta.dart';
+
 import 'geojson.dart';
-import 'invariant.dart';
-import 'meta.dart';
 
 // export default lineSegment;
 
@@ -25,22 +23,28 @@ import 'meta.dart';
 /// //addToMap
 /// var addToMap = [polygon, segments]
 
-FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson) {
+FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson,
+    {bool combineGeometries = false}) {
   List<Feature<LineString>> features = [];
-  segmentEach(geoJson, (currentSegment, featureIndex, multiFeatureIndex,
-      geometryIndex, segmentIndex) {
-    features.add(currentSegment);
-  });
+  segmentEach(
+    geoJson,
+    (currentSegment, featureIndex, multiFeatureIndex, geometryIndex,
+        segmentIndex) {
+      features.add(currentSegment);
+    },
+    combineGeometries: combineGeometries,
+  );
   return FeatureCollection(features: features);
 }
 
 /// SegmentEachCallback
 typedef dynamic SegmentEachCallback(
-    Feature<LineString> currentSegment,
-    int featureIndex,
-    int multiFeatureIndex,
-    int? geometryIndex,
-    int segmentIndex);
+  Feature<LineString> currentSegment,
+  int featureIndex,
+  int? multiFeatureIndex,
+  int geometryIndex,
+  int segmentIndex,
+);
 
 /// Iterates over 2-vertex line segment in any GeoJSON object, similar to Array.forEach()
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
@@ -75,50 +79,59 @@ typedef dynamic SegmentEachCallback(
 ///     total++;
 /// });
 
-void segmentEach(GeoJSONObject geoJson, SegmentEachCallback callback) {
-  flattenEach(geoJson,
-      (Feature feature, int featureIndex, int multiFeatureIndex) {
-    var segmentIndex = 0;
+void segmentEach(
+  GeoJSONObject geojson,
+  SegmentEachCallback callback, {
+  bool combineGeometries = false,
+}) {
+  flattenEach(
+    geojson,
+    (Feature<GeometryType> currentFeature, int featureIndex,
+        int multiFeatureIndex) {
+      var geometry = currentFeature.geometry;
+      List<List<Position>> coords = [];
 
-    if (geoJson is Point) {
-      return false;
-    }
-    // Generate 2-vertex line segments
-    Position? previousCoord;
-    int previousFeatureIndex = 0;
-    int previousMultiIndex = 0;
-    int prevGeomIndex = 0;
-    coordEach(feature, (Position? currentCoord, int? coordIndex,
-        int? featureIndexCoord, int? multiPartIndexCoord, int? geometryIndex) {
-      // Simulating a meta.coordReduce() since `reduce` operations cannot be stopped by returning `false`
-      if (previousCoord == null ||
-          featureIndex > previousFeatureIndex ||
-          (multiPartIndexCoord ?? 0) > previousMultiIndex ||
-          (geometryIndex ?? 0) > prevGeomIndex) {
-        previousCoord = currentCoord;
-        previousFeatureIndex = featureIndex;
-        previousMultiIndex = multiPartIndexCoord ?? 0;
-        prevGeomIndex = geometryIndex ?? 0;
-        segmentIndex = 0;
+      if (geometry is Point) {
         return false;
       }
-      var currentSegment = Feature(
-          bbox: previousCoord != null
-              ? BBox.named(
-                  lat1: previousCoord!.lat,
-                  lat2: currentCoord!.lat,
-                  lng1: previousCoord!.lng,
-                  lng2: currentCoord.lng)
-              : null,
-          geometry: LineString(coordinates: [previousCoord!, currentCoord!]),
-          properties: Map<String, dynamic>.of(feature.properties ?? {}));
-      if (callback(currentSegment, featureIndex, multiFeatureIndex,
-              geometryIndex, segmentIndex) ==
-          false) return false;
-      segmentIndex++;
-      previousCoord = currentCoord;
-    });
-  });
+      if (geometry is Polygon) {
+        coords = geometry.coordinates;
+      }
+      if (geometry is LineString) {
+        coords.add(geometry.coordinates);
+      }
+
+      for (int i = 0; i < coords.length; i++) {
+        late Position previousCoord;
+        for (int j = 0; j < coords[i].length; j++) {
+          var currentCoord = coords[i][j];
+          if (j == 0) {
+            previousCoord = currentCoord;
+          } else {
+            Feature<LineString> segment = Feature<LineString>(
+              id: j - 1,
+              geometry: LineString(coordinates: [previousCoord, currentCoord]),
+              properties: Map.of(currentFeature.properties ?? {}),
+              bbox: BBox.named(
+                lat1: previousCoord.lat,
+                lat2: currentCoord.lat,
+                lng1: previousCoord.lng,
+                lng2: currentCoord.lng,
+              ),
+            );
+            callback(
+              segment,
+              featureIndex,
+              multiFeatureIndex,
+              /*geometryIndex*/ i,
+              /*segmentIndex */ j - 1,
+            );
+            previousCoord = currentCoord;
+          }
+        }
+      }
+    },
+  );
 }
 
 /// Callback for segmentReduce
