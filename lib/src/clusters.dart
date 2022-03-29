@@ -2,9 +2,8 @@ import '../meta.dart';
 import '../helpers.dart';
 
 /// Get Cluster
-/// Takes a [FeatureCollection<Feature]
-/// a Filter used on GeoJSON properties to get Cluster
-/// returns [FeatureCollection] Single Cluster filtered by GeoJSON Properties
+/// Takes a [FeatureCollection<Feature>] and a Filter used on GeoJSON properties to get Cluster.
+/// Returns [FeatureCollection] single cluster filtered by GeoJSON Properties
 /// For example:
 ///
 /// ```dart
@@ -34,12 +33,12 @@ import '../helpers.dart';
 /// var cluster = getCluster(clustered, {cluster: 0});
 /// //= cluster
 ///
-/// // Retrieve cluster based on custom properties
+/// // Retrieves cluster based on custom properties
 /// getCluster(clustered, {'marker-symbol': 'circle'}).length;
 /// //= 2
 /// getCluster(clustered, {'marker-symbol': 'square'}).length;
 /// //= 1
-///
+/// ```
 
 FeatureCollection getCluster(FeatureCollection geojson, dynamic filter) {
   // Filter Features
@@ -57,20 +56,33 @@ FeatureCollection getCluster(FeatureCollection geojson, dynamic filter) {
 /// @param {string|number} property GeoJSON property key/value used to create clusters
 /// @param {Function} callback a method that takes (cluster, clusterValue, currentIndex)
 /// @returns {void}
-/// @example
-/// var geojson = featureCollection([
-///     point([0, 0]),
-///     point([2, 4]),
-///     point([3, 6]),
-///     point([5, 1]),
-///     point([4, 2])
-/// ]);
+/// For example:
+///
+/// ```dart
+/// var geojson = FeatureCollection<Point>(features: [
+///    Feature(
+///      geometry: Point(coordinates: Position.of([10, 10])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([20, 20])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([30, 30])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///    Feature(
+///      geometry: Point(coordinates: Position.of([40, 40])),
+///      properties: {'marker-symbol': 'circle'},
+///    ),
+///  ]);
 ///
 /// // Create a cluster using K-Means (adds `cluster` to GeoJSON properties)
-/// var clustered = turf.clustersKmeans(geojson);
+/// var clustered = clustersKmeans(geojson);
 ///
-/// // Iterate over each cluster
-/// clusterEach(clustered, 'cluster', function (cluster, clusterValue, currentIndex) {
+/// // Iterates over each cluster
+/// clusterEach(clustered, 'cluster', (cluster, clusterValue, currentIndex) {
 ///     //= cluster
 ///     //= clusterValue
 ///     //= currentIndex
@@ -82,21 +94,19 @@ FeatureCollection getCluster(FeatureCollection geojson, dynamic filter) {
 ///     total++;
 /// });
 ///
-/// // Create an Array of all the values retrieved from the 'cluster' property
+/// // Create [List] of all the values retrieved from the 'cluster' property
 /// var values = []
-/// clusterEach(clustered, 'cluster', function (cluster, clusterValue) {
+/// clusterEach(clustered, 'cluster', (cluster, clusterValue) {
 ///     values.push(clusterValue);
 /// });
-///
+/// ```
 
+/// ClusterEachCallback
 ///
-/// Callback for clusterEach
-///
-/// @callback clusterEachCallback
-/// @param {FeatureCollection} [cluster] The current cluster being processed.
-/// @param {*} [clusterValue] Value used to create cluster being processed.
-/// @param {number} [currentIndex] The index of the current element being processed in the array.Starts at index 0
-/// @returns {void}
+/// Takes [FeatureCollection], the [cluster] being processed, a [clusterValue]
+/// used to create cluster being processed, and the [currentIndex], the index of
+/// current element being processed in the [List]. Starts at index 0
+/// Returns void.
 
 typedef ClusterEachCallback = dynamic Function(
   FeatureCollection? cluster,
@@ -124,18 +134,17 @@ void clusterEach(
   }
 }
 
-/// Callback for clusterReduce
-///
+/// ClusterReduceCallback
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an initialValue argument.
+/// on whether the reduce method has an [initialValue] argument.
 ///
-/// If an initialValue is provided to the reduce method:
-///  - The previousValue argument is initialValue.
-///  - The currentValue argument is the value of the first element present in the array.
+/// If an [initialValue] is provided to the reduce method:
+///  - The [previousValue] argument is [initialValue].
+///  - The [currentValue] argument is the value of the first element present in the [List].
 ///
-/// If an initialValue is not provided:
-///  - The previousValue argument is the value of the first element present in the array.
-///  - The currentValue argument is the value of the second element present in the array.
+/// If an [initialValue] is not provided:
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
 ///
 /// @callback clusterReduceCallback
 /// @param {*} [previousValue] The accumulated value previously returned in the last invocation
