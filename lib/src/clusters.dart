@@ -323,7 +323,7 @@ Map<String, dynamic> filterProperties(
   if (keys == null || keys.isEmpty) return {};
 
   Map<String, dynamic> newProperties = {};
-  for (var i = 0; i < keys!.length; i++) {
+  for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
     if (properties.containsKey(key)) {
       newProperties[key] = properties[key];

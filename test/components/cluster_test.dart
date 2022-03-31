@@ -66,26 +66,26 @@ main() {
     expect(clusters.length, 2);
   });
 
-  test("clusters.utils -- applyFilter", () {
+  test("applyFilter", () {
     expect(applyFilter(properties, ["cluster"]), isTrue);
     expect(applyFilter(properties, {"cluster": 1}), isFalse);
     expect(applyFilter(properties, {"cluster": 0}), isTrue);
     expect(applyFilter(null, {"cluster": 0}), isFalse);
   });
 
-  test("clusters.utils -- filterProperties", () {
+  test("filterProperties", () {
     expect(filterProperties(properties, ["cluster"]), equals({"cluster": 0}));
     expect(filterProperties(properties, []), equals({}));
     expect(filterProperties(properties, null), equals({}));
   });
 
-  test("clusters.utils -- propertiesContainsFilter", () {
+  test("propertiesContainsFilter", () {
     expect(propertiesContainsFilter(properties, {"cluster": 0}), isTrue);
     expect(propertiesContainsFilter(properties, {"cluster": 1}), isFalse);
     expect(propertiesContainsFilter(properties, {"bar": "foo"}), isFalse);
   });
 
-  test("clusters.utils -- propertiesContainsFilter", () {
+  test("propertiesContainsFilter", () {
     expect(
         createBins(geojson, "cluster"),
         equals({
