@@ -108,7 +108,7 @@ typedef ClusterEachCallback = dynamic Function(
 
 void clusterEach(
     FeatureCollection geojson, dynamic property, ClusterEachCallback callback) {
-  if (property != null) {
+  if (property == null) {
     throw Exception("property is required");
   }
 
@@ -217,13 +217,13 @@ T? clusterReduce<T>(
 }
 
 /// createBins
-/// Takes a [FeatureCollection] geojson, dynamic [property] values that are used
-/// to create bins.
-/// Returns a [Map<String, List<int>>] bins with Feature IDs
+/// Takes a [FeatureCollection] geojson, and dynamic [property] key whose
+/// corresponding values of the [Feature]s will be used to create bins.
+/// Returns Map<String, List<int>> bins with Feature IDs
 /// For example
 ///
 /// ```dart
-/// /// var geojson = FeatureCollection<Point>(features: [
+/// var geojson = FeatureCollection<Point>(features: [
 ///    Feature(
 ///      geometry: Point(coordinates: Position.of([10, 10])),
 ///      properties:{'cluster': 0, 'foo': 'null'},
@@ -243,9 +243,11 @@ T? clusterReduce<T>(
 ///  ]);
 /// createBins(geojson, 'cluster');
 /// //= { '0': [ 0 ], '1': [ 1, 3 ] }
+/// ```
 
-Map<String, List<int>> createBins(FeatureCollection geojson, dynamic property) {
-  Map<String, List<int>> bins = {};
+Map<dynamic, List<int>> createBins(
+    FeatureCollection geojson, dynamic property) {
+  Map<dynamic, List<int>> bins = {};
 
   featureEach(geojson, (feature, i) {
     var properties = feature.properties ?? {};
@@ -267,16 +269,22 @@ Map<String, List<int>> createBins(FeatureCollection geojson, dynamic property) {
 
 bool applyFilter(Map? properties, dynamic filter) {
   if (properties == null) return false;
-  if (filter is num || filter is String) {
+  if (filter is! List && filter is! Map && filter is! String) {
+    throw Exception("filter('s) key must be String");
+  }
+  if (filter is String) {
     return properties.containsKey(filter);
-  } else if (filter is List) {
+  }
+  if (filter is List) {
     for (var i = 0; i < filter.length; i++) {
       if (!applyFilter(properties, filter[i])) return false;
     }
     return true;
-  } else {
+  }
+  if (filter is Map) {
     return propertiesContainsFilter(properties, filter);
   }
+  return false;
 }
 
 /// Properties contains filter (does not apply deepEqual operations)
@@ -311,11 +319,11 @@ bool propertiesContainsFilter(Map properties, Map filter) {
 /// ```
 
 Map<String, dynamic> filterProperties(
-    Map<String, dynamic> properties, List<String> keys) {
-  if (keys.isEmpty) return {};
+    Map<String, dynamic> properties, List<String>? keys) {
+  if (keys == null || keys.isEmpty) return {};
 
   Map<String, dynamic> newProperties = {};
-  for (var i = 0; i < keys.length; i++) {
+  for (var i = 0; i < keys!.length; i++) {
     var key = keys[i];
     if (properties.containsKey(key)) {
       newProperties[key] = properties[key];

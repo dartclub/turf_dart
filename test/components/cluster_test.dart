@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:turf/helpers.dart';
 import 'package:test/test.dart';
 import 'package:turf/src/clusters.dart';
@@ -25,8 +27,8 @@ final geojson = FeatureCollection(features: [
 
 main() {
   test("clusters -- getCluster", () {
-    expect(getCluster(geojson, 0).features.length, 1);
-    expect(getCluster(geojson, 1).features.length, 0);
+    expect(getCluster(geojson, '0').features.length, 1);
+    expect(() => getCluster(geojson, 1), throwsA(isA<Exception>()));
     expect(getCluster(geojson, "bar").features.length, 1);
     expect(getCluster(geojson, "cluster").features.length, 3);
     expect(getCluster(geojson, {"cluster": 1}).features.length, 2);
@@ -42,7 +44,7 @@ main() {
   });
 
   test("clusters -- clusterEach", () {
-    const clusters = [];
+    List clusters = [];
     int total = 0;
     clusterEach(geojson, "cluster", (cluster, clusterValue, currentIndex) {
       total += cluster!.features.length;
@@ -53,49 +55,42 @@ main() {
     expect(clusters.length, 2);
   });
 
-/*
-test("clusters -- clusterReduce", (t) => {
-  const clusters = [];
-  const total = clusterReduce(
-    geojson,
-    "cluster",
-    (previousValue, cluster) => {
-      clusters.push(cluster);
-      return previousValue + cluster.features.length;
-    },
-    0
-  );
-  t.equal(total, 3);
-  t.equal(clusters.length, 2);
-  t.end();
-});
+  test("clusters -- clusterReduce", () {
+    List clusters = [];
+    var total = clusterReduce<int>(geojson, "cluster",
+        (previousValue, cluster, clusterValue, currentIndex) {
+      clusters.add(cluster);
+      return previousValue! + cluster!.features.length;
+    }, 0);
+    expect(total, 3);
+    expect(clusters.length, 2);
+  });
 
-test("clusters.utils -- applyFilter", (t) => {
-  t.true(applyFilter(properties, "cluster"));
-  t.true(applyFilter(properties, ["cluster"]));
-  t.false(applyFilter(properties, { cluster: 1 }));
-  t.true(applyFilter(properties, { cluster: 0 }));
-  t.false(applyFilter(undefined, { cluster: 0 }));
-  t.end();
-});
+  test("clusters.utils -- applyFilter", () {
+    expect(applyFilter(properties, ["cluster"]), isTrue);
+    expect(applyFilter(properties, {"cluster": 1}), isFalse);
+    expect(applyFilter(properties, {"cluster": 0}), isTrue);
+    expect(applyFilter(null, {"cluster": 0}), isFalse);
+  });
 
-test("clusters.utils -- filterProperties", (t) => {
-  t.deepEqual(filterProperties(properties, ["cluster"]), { cluster: 0 });
-  t.deepEqual(filterProperties(properties, []), {});
-  t.deepEqual(filterProperties(properties, undefined), {});
-  t.end();
-});
+  test("clusters.utils -- filterProperties", () {
+    expect(filterProperties(properties, ["cluster"]), equals({"cluster": 0}));
+    expect(filterProperties(properties, []), equals({}));
+    expect(filterProperties(properties, null), equals({}));
+  });
 
-test("clusters.utils -- propertiesContainsFilter", (t) => {
-  t.deepEqual(propertiesContainsFilter(properties, { cluster: 0 }), true);
-  t.deepEqual(propertiesContainsFilter(properties, { cluster: 1 }), false);
-  t.deepEqual(propertiesContainsFilter(properties, { bar: "foo" }), false);
-  t.end();
-});
+  test("clusters.utils -- propertiesContainsFilter", () {
+    expect(propertiesContainsFilter(properties, {"cluster": 0}), isTrue);
+    expect(propertiesContainsFilter(properties, {"cluster": 1}), isFalse);
+    expect(propertiesContainsFilter(properties, {"bar": "foo"}), isFalse);
+  });
 
-test("clusters.utils -- propertiesContainsFilter", (t) => {
-  t.deepEqual(createBins(geojson, "cluster"), { 0: [0], 1: [1, 2] });
-  t.end();
-});
-*/
+  test("clusters.utils -- propertiesContainsFilter", () {
+    expect(
+        createBins(geojson, "cluster"),
+        equals({
+          0: [0],
+          1: [1, 2]
+        }));
+  });
 }
