@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 
 main() {
-  Feature<MultiLineString> multiline = Feature<MultiLineString>(
+  Feature<MultiLineString> multiLine = Feature<MultiLineString>(
     geometry: MultiLineString(
       coordinates: [
         [
@@ -88,7 +88,7 @@ main() {
     expect(geomCollectionResult.features.length, 2);
 
     // MultiLines
-    var multiLineResults = lineSegment(multiline);
+    var multiLineResults = lineSegment(multiLine);
     expect(multiLineResults.features.length, 3);
 
     // Polygon
