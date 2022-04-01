@@ -185,11 +185,11 @@ int _segmentEachforEachUnit(
 ///
 /// If an [initialValue] is provided to the reduce method:
 ///  - The [previousValue] argument is initialValue.
-///  - The [currentValue] argument is the value of the first element present in the array.
+///  - The [currentValue] argument is the value of the first element present in the [List].
 ///
 /// If an [initialValue] is not provided:
-///  - The [previousValue] argument is the value of the first element present in the array.
-///  - The [currentValue] argument is the value of the second element present in the array.
+///  - The [previousValue] argument is the value of the first element present in the [List].
+///  - The [currentValue] argument is the value of the second element present in the [List].
 ///
 /// SegmentReduceCallback
 /// [previousValue] The accumulated value previously returned in the last invocation
@@ -209,7 +209,7 @@ typedef T? SegmentReduceCallback<T>(
   int segmentIndex,
 );
 
-/// Reduce 2-vertex line segment in any GeoJSON object, similar to Array.reduce()
+/// Reduce 2-vertex line segment in any GeoJSON object, similar to [Iterable.reduce]()
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
 ///
 /// Takes [FeatureCollection], [Feature], [GeoJSONObject], a
