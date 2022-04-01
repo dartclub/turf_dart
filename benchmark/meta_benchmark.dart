@@ -5,8 +5,6 @@ import 'package:turf/meta.dart';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:turf/src/clusters.dart';
-
 void main() {
   Point pt = Point(
     coordinates: Position(0, 0),
@@ -122,27 +120,5 @@ void main() {
     benchmark('feature collection', () {
       featureEach(featureCollection, featureEachNoopCB);
     });
-  });
-
-  group('cluster', () {
-    benchmark('getCluster', () {
-      getCluster(featureCollection, '0');
-    });
-
-    benchmark('clusterEach', () {
-      List clusters = [];
-      int total = 0;
-      clusterEach(featureCollection, "cluster",
-          (cluster, clusterValue, currentIndex) {
-        total += cluster!.features.length;
-        clusters.add(cluster);
-      });
-    });
-    List clusters = [];
-    clusterReduce<int>(featureCollection, "cluster",
-        (previousValue, cluster, clusterValue, currentIndex) {
-      clusters.add(cluster);
-      return previousValue! + cluster!.features.length;
-    }, 0);
   });
 }
