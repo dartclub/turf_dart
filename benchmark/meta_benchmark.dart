@@ -6,9 +6,9 @@ import 'dart:convert';
 import 'dart:io';
 
 void main() {
-  Point pt = Point.fromJson({
-    'coordinates': [0, 0]
-  });
+  Point pt = Point(
+    coordinates: Position(0, 0),
+  );
 
   Feature<Point> featurePt = Feature(geometry: pt.clone());
 
@@ -17,7 +17,8 @@ void main() {
 
   for (int i = 0; i < 1000; i++) {
     points.add(pt.clone());
-    pointFeatures.add(Feature(geometry: pt.clone()));
+    pointFeatures
+        .add(Feature(geometry: pt.clone(), properties: {"cluster": 0}));
   }
 
   GeometryCollection geomCollection = GeometryCollection(

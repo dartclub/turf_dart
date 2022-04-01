@@ -516,7 +516,6 @@ void _callFlattenEachCallback(
 /// of the callback, or [initialValue], if supplied.
 /// [currentProperties] The current Properties being processed.
 /// [featureIndex] The current index of the Feature being processed.
-///
 typedef PropReduceCallback<T> = T? Function(
   T? previousValue, // todo: or 'Map<String, dynamic>?'?
   Map<String, dynamic>? currentProperties,
@@ -779,7 +778,6 @@ T? coordReduce<T>(
 ///
 /// var coords = coordAll(features);
 /// //= [Position(13,15), Position(1, 2), Position(67, 50)]
-///
 List<Position?> coordAll(GeoJSONObject geojson) {
   List<Position?> coords = [];
   coordEach(geojson, (
