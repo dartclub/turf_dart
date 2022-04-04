@@ -1,8 +1,8 @@
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
-BBox bbox(GeoJSONObject geoJson, {Map<String, dynamic>? options}) {
-  if (geoJson.bbox != null && options != null && true != options['recompute']) {
+BBox bbox(GeoJSONObject geoJson, {bool recompute = false}) {
+  if (geoJson.bbox != null && !recompute) {
     return geoJson.bbox!;
   }
 
