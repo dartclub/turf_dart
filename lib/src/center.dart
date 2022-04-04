@@ -1,5 +1,5 @@
 import 'package:turf/helpers.dart';
 
-List<double> center(BBox bBox) {
-  return [(bBox.lat1 + bBox.lat2) / 2, (bBox.lng1 + bBox.lng2) / 2];
+Position center(BBox bBox) {
+  return Position.named(lat: (bBox.lat1 + bBox.lat2) / 2, lng: (bBox.lng1 + bBox.lng2) / 2);
 }

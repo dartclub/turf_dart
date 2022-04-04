@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
-List<List<double>> decodePolyline(String polyline, {int precision = 5}) {
+import 'package:turf/helpers.dart';
+
+List<Position> decodePolyline(String polyline, {int precision = 5}) {
   var index = 0, lat = 0, lng = 0, shift = 0, result = 0, byte, factor = math.pow(10, precision);
   int latitudeChange;
   int longitudeChange;
-  List<List<double>> coordinates = [];
+  List<Position> coordinates = [];
 
   while (index < polyline.length) {
     byte = null;
@@ -29,7 +31,7 @@ List<List<double>> decodePolyline(String polyline, {int precision = 5}) {
     lat += latitudeChange;
     lng += longitudeChange;
 
-    coordinates.add([(lat / factor).toDouble(), (lng / factor).toDouble()]);
+    coordinates.add(Position.named(lng: (lng / factor).toDouble(), lat: (lat / factor).toDouble()));
   }
 
   return coordinates;
