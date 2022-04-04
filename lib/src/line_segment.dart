@@ -249,7 +249,7 @@ typedef T? SegmentReduceCallback<T>(
 
 T? segmentReduce<T>(
   GeoJSONObject geojson,
-  SegmentReduceCallback callback,
+  SegmentReduceCallback<T> callback,
   T? initialValue, {
   bool combineNestedGeometries = true,
 }) {

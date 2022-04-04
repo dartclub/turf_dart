@@ -112,14 +112,16 @@ main() {
   });
 
   test("segmentReduce", () {
-    var total = segmentReduce(poly1, (previousValue,
+    var total = segmentReduce<int>(poly1, (previousValue,
         currentSegment,
         initialValue,
         featureIndex,
         multiFeatureIndex,
         geometryIndex,
         segmentIndex) {
-      previousValue++;
+      if (previousValue != null) {
+        previousValue++;
+      }
       return previousValue;
     }, 0, combineNestedGeometries: false);
     expect(total, 6);

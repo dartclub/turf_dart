@@ -79,9 +79,16 @@ void main() {
       lineSegment(collection);
     });
     benchmark('segmentReduce', () {
-      segmentReduce(collection, (previousValue, currentSegment, initialValue,
-          featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) {
-        previousValue++;
+      segmentReduce<int>(collection, (previousValue,
+          currentSegment,
+          initialValue,
+          featureIndex,
+          multiFeatureIndex,
+          geometryIndex,
+          segmentIndex) {
+        if (previousValue != null) {
+          previousValue++;
+        }
         return previousValue;
       }, 0, combineNestedGeometries: false);
     });
