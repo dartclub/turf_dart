@@ -10,17 +10,17 @@ BBox bbox(GeoJSONObject geoJson, {Map<String, dynamic>? options}) {
 
   coordEach(geoJson, (Position? currentCoord, _, __, ___, ____) {
     if (currentCoord != null) {
-      if (result[0] > currentCoord.lat) {
-        result[0] = currentCoord.lat.toDouble();
-      }
       if (result[1] > currentCoord.lng.toDouble()) {
         result[1] = currentCoord.lng.toDouble();
       }
-      if (result[2] < currentCoord.lat) {
-        result[2] = currentCoord.lat.toDouble();
+      if (result[0] > currentCoord.lat) {
+        result[0] = currentCoord.lat.toDouble();
       }
       if (result[3] < currentCoord.lng) {
         result[3] = currentCoord.lng.toDouble();
+      }
+      if (result[2] < currentCoord.lat) {
+        result[2] = currentCoord.lat.toDouble();
       }
     }
   });
