@@ -251,7 +251,7 @@ void _forEachGeomInGeometryObject(
       throw _ShortCircuit();
     }
   } else if (geometryObject is GeometryCollection) {
-    num geometryCollectionLength = geometryObject.geometries.length;
+    int geometryCollectionLength = geometryObject.geometries.length;
 
     for (int geometryIndex = 0;
         geometryIndex < geometryCollectionLength;
@@ -420,7 +420,7 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 
 /// Callback for flattenEach
 typedef FlattenEachCallback = dynamic Function(
-  Feature currentFeature,
+  Feature<GeometryType> currentFeature,
   int featureIndex,
   int multiFeatureIndex,
 );
@@ -487,7 +487,7 @@ void _callFlattenEachCallback(
     int? featureIndex,
     int multiFeatureIndex) {
   if (callback(
-          Feature(
+          Feature<GeometryType>(
             geometry: geom,
             properties: featureProperties,
           ),
@@ -788,7 +788,6 @@ List<Position?> coordAll(GeoJSONObject geojson) {
     int? geometryIndex,
   ) {
     coords.add(currentCoord);
-    return true;
   });
   return coords;
 }
