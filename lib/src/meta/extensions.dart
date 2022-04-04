@@ -18,6 +18,10 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     meta.coordEach(this, callback);
   }
 
+  List<Position?> coordAll() {
+    return meta.coordAll(this);
+  }
+
   void flattenEach(meta.FlattenEachCallback callback) {
     meta.flattenEach(this, callback);
   }
@@ -30,5 +34,9 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
 extension FeatureCollectionMetaExtension on FeatureCollection {
   void clusterEach(dynamic property, meta.ClusterEachCallback callback) {
     meta.clusterEach(this, property, callback);
+  }
+
+  FeatureCollection getCluster(dynamic filter) {
+    return meta.getCluster(this, filter);
   }
 }
