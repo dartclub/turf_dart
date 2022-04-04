@@ -7,7 +7,11 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   }
 
   T? geomReduce<T>(meta.GeomReduceCallback<T> callback, T? initialValue) {
-    meta.geomReduce<T>(this, callback, initialValue);
+    meta.geomReduce<T>(
+      this,
+      callback,
+      initialValue,
+    );
   }
 
   void propEach(meta.PropEachCallback callback) {
@@ -15,7 +19,6 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   }
 
   T? propReduce<T>(
-    GeoJSONObject geojson,
     meta.PropReduceCallback<T> callback,
     T? initialValue,
   ) {
@@ -31,7 +34,6 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   }
 
   T? featureReduce<T>(
-    GeoJSONObject geojson,
     meta.FeatureReduceCallback<T> callback,
     T? initialValue,
   ) {
@@ -68,7 +70,6 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   }
 
   T? flattenReduce<T>(
-    GeoJSONObject geojson,
     meta.FlattenReduceCallback<T> callback,
     T? initialValue,
   ) {
@@ -98,7 +99,10 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
 }
 
 extension FeatureCollectionMetaExtension on FeatureCollection {
-  void clusterEach(dynamic property, meta.ClusterEachCallback callback) {
+  void clusterEach(
+    dynamic property,
+    meta.ClusterEachCallback callback,
+  ) {
     meta.clusterEach(this, property, callback);
   }
 
