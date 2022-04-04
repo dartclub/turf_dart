@@ -1,5 +1,5 @@
-import '../meta.dart';
-import '../helpers.dart';
+import 'package:turf/helpers.dart';
+import 'package:turf/src/meta/feature.dart';
 
 /// Get Cluster
 /// Takes a [FeatureCollection<Feature>] and a [dynamic] [filter] used on GeoJSON properties

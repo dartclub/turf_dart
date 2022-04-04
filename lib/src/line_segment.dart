@@ -1,4 +1,5 @@
-import 'package:turf/meta.dart';
+import 'package:turf/src/meta/coord.dart';
+import 'package:turf/src/meta/flatten.dart';
 
 import 'geojson.dart';
 
