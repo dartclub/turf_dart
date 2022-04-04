@@ -1,6 +1,10 @@
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
-import 'package:turf/meta.dart';
+import 'package:turf/src/meta/coord.dart';
+import 'package:turf/src/meta/feature.dart';
+import 'package:turf/src/meta/flatten.dart';
+import 'package:turf/src/meta/geom.dart';
+import 'package:turf/src/meta/prop.dart';
 
 Feature<Point> pt = Feature<Point>(
   geometry: Point.fromJson({
@@ -9,6 +13,12 @@ Feature<Point> pt = Feature<Point>(
   properties: {
     'a': 1,
   },
+);
+
+Feature<Point> pt2 = Feature<Point>(
+  geometry: Point.fromJson({
+    'coordinates': [1, 1],
+  }),
 );
 
 Feature<LineString> line = Feature<LineString>(
@@ -69,6 +79,14 @@ Feature<MultiLineString> multiline = Feature<MultiLineString>(
   }),
 );
 
+Feature<MultiPoint> multiPoint = Feature<MultiPoint>(
+    geometry: MultiPoint.fromJson({
+  'coordinates': [
+    [0, 0],
+    [1, 1],
+  ],
+}));
+
 Feature<MultiPolygon> multiPoly = Feature<MultiPolygon>(
   geometry: MultiPolygon.fromJson({
     'coordinates': [
@@ -104,32 +122,35 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
 
 FeatureCollection fcMixed = FeatureCollection(features: [
   Feature<Point>(
-    geometry: Point.fromJson({
-      'coordinates': [0, 0],
-    }),
+    geometry: Point.fromJson(
+      {
+        'coordinates': [0, 0],
+      },
+    ),
+    properties: {'foo': 'bar'},
   ),
   Feature<LineString>(
-    geometry: LineString.fromJson({
-      'coordinates': [
-        [1, 1],
-        [2, 2],
-      ]
-    }),
-  ),
-  Feature<MultiLineString>(
-    geometry: MultiLineString.fromJson({
-      'coordinates': [
-        [
+      geometry: LineString.fromJson({
+        'coordinates': [
           [1, 1],
-          [0, 0],
+          [2, 2],
+        ]
+      }),
+      properties: {'foo': 'buz'}),
+  Feature<MultiLineString>(
+      geometry: MultiLineString.fromJson({
+        'coordinates': [
+          [
+            [1, 1],
+            [0, 0],
+          ],
+          [
+            [4, 4],
+            [5, 5],
+          ],
         ],
-        [
-          [4, 4],
-          [5, 5],
-        ],
-      ],
-    }),
-  ),
+      }),
+      properties: {'foo': 'qux'}),
 ]);
 
 List<GeoJSONObject> collection(Feature feature) {
@@ -154,6 +175,35 @@ List<GeoJSONObject> featureAndCollection(GeometryObject geometry) {
     ],
   );
   return [geometry, feature, featureCollection];
+}
+
+/// Returns a FeatureCollection with a total of 8 copies of [geometryType]
+/// in a mix of features of [geometryType], and features of geometry collections
+/// containing [geometryType]
+FeatureCollection<GeometryObject> getAsMixedFeatCollection(
+  GeometryType geometryType,
+) {
+  GeometryCollection geometryCollection = GeometryCollection(
+    geometries: [
+      geometryType,
+      geometryType,
+      geometryType,
+    ],
+  );
+  Feature geomCollectionFeature = Feature(
+    geometry: geometryCollection,
+  );
+  Feature geomFeature = Feature(
+    geometry: geometryType,
+  );
+  return FeatureCollection<GeometryObject>(
+    features: [
+      geomFeature,
+      geomCollectionFeature,
+      geomFeature,
+      geomCollectionFeature,
+    ],
+  );
 }
 
 main() {
@@ -255,7 +305,7 @@ main() {
     expect(coords.length, 7);
   });
 
-  test('coordEach -- indexes -- PolygonWithHole', () {
+  test('coordEach -- Indexes -- PolygonWithHole', () {
     List<int?> coordIndexes = [];
     List<int?> featureIndexes = [];
     List<int?> multiFeatureIndexes = [];
@@ -273,7 +323,7 @@ main() {
     expect(geometryIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- Multi-Polygon with hole', () {
+  test('coordEach -- Indexes -- Multi-Polygon with hole', () {
     List<int?> featureIndexes = [];
     List<int?> multiFeatureIndexes = [];
     List<int?> geometryIndexes = [];
@@ -324,7 +374,7 @@ main() {
     expect(geometryIndexes, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- Polygon with hole', () {
+  test('coordEach -- Indexes -- Polygon with hole', () {
     List<int?> featureIndexes = [];
     List<int?> multiFeatureIndexes = [];
     List<int?> geometryIndexes = [];
@@ -364,7 +414,7 @@ main() {
     expect(geometryIndexes, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
   });
 
-  test('coordEach -- indexes -- FeatureCollection of LineString', () {
+  test('coordEach -- Indexes -- FeatureCollection of LineString', () {
     List<int?> featureIndexes = [];
     List<int?> multiFeatureIndexes = [];
     List<int?> geometryIndexes = [];
@@ -466,15 +516,6 @@ main() {
     });
   });
 
-  test('propEach --breaking of iterations', () {
-    var count = 0;
-    propEach(multiline, (prop, i) {
-      count += 1;
-      return false;
-    });
-    expect(count, 1);
-  });
-
   test('featureEach --featureCollection', () {
     collection(pt).forEach((input) {
       featureEach(input, (feature, i) {
@@ -499,15 +540,6 @@ main() {
           }));
       expect(i, 0);
     });
-  });
-
-  test('featureEach --breaking of iterations', () {
-    var count = 0;
-    featureEach(multiline, (feature, i) {
-      count += 1;
-      return false;
-    });
-    expect(count, 1);
   });
 
   test('geomEach -- GeometryCollection', () {
@@ -580,7 +612,7 @@ main() {
     );
   });
 
-  test('meta -- breaking of iterations', () {
+  group('meta -- breaking of iterations', () {
     FeatureCollection<LineString> lines = FeatureCollection<LineString>(
       features: [
         Feature<LineString>(
@@ -619,37 +651,310 @@ main() {
         ]
       }),
     );
+
+    int iterationCount = 0;
+
+    void runBreakingIterationTest(dynamic func, dynamic callback) {
+      iterationCount = 0;
+      func(lines, callback);
+      expect(iterationCount, 1, reason: func.toString());
+      iterationCount = 0;
+      func(multiLine, callback);
+      expect(iterationCount, 1, reason: func.toString());
+    }
+
     // Each Iterators
     // meta.segmentEach has been purposely excluded from this list
     // TODO fill out this list will all 'each' iterators
-    for (Function func in [geomEach]) {
-      // Meta Each function should only a value of 1 after returning `false`
-      // FeatureCollection
-      var count = 0;
-      func(lines, (
-        GeometryObject? currentGeometry,
-        int? featureIndex,
-        Map<String, dynamic>? featureProperties,
-        BBox? featureBBox,
-        dynamic featureId,
-      ) {
-        count += 1;
+    test('geomEach', () {
+      runBreakingIterationTest(geomEach, (geom, i, props, bbox, id) {
+        iterationCount += 1;
         return false;
       });
-      expect(count, 1, reason: func.toString());
-      // Multi Geometry
-      var multiCount = 0;
-      func(multiLine, (
-        GeometryObject? currentGeometry,
-        int? featureIndex,
-        Map<String, dynamic>? featureProperties,
-        BBox? featureBBox,
-        dynamic featureId,
-      ) {
-        multiCount += 1;
+    });
+
+    test('flattenEach', () {
+      runBreakingIterationTest(flattenEach, (feature, i, mI) {
+        iterationCount += 1;
         return false;
       });
-      expect(multiCount, 1, reason: func.toString());
+    });
+
+    test('propEach', () {
+      runBreakingIterationTest(propEach, (prop, i) {
+        iterationCount += 1;
+        return false;
+      });
+    });
+
+    test('featureEach', () {
+      runBreakingIterationTest(featureEach, (feature, i) {
+        iterationCount += 1;
+        return false;
+      });
+    });
+  });
+
+  test('flattenEach -- MultiPoint', () {
+    featureAndCollection(multiPoint.geometry!).forEach((input) {
+      List<GeometryObject?> output = [];
+      flattenEach(input, (currentFeature, index, multiIndex) {
+        output.add(currentFeature.geometry);
+      });
+      expect(output, [pt.geometry!, pt2.geometry!]);
+    });
+  });
+
+  test('flattenEach -- Mixed FeatureCollection', () {
+    List<Feature> features = [];
+    List<int> featureIndexes = [];
+    List<int> multiFeatureIndicies = [];
+    flattenEach(fcMixed, (currentFeature, index, multiIndex) {
+      features.add(currentFeature);
+      featureIndexes.add(index);
+      multiFeatureIndicies.add(multiIndex);
+    });
+    expect(featureIndexes, [0, 1, 2, 2]);
+    expect(multiFeatureIndicies, [0, 0, 0, 1]);
+    expect(features.length, 4);
+    expect(features[0].geometry, isA<Point>());
+    expect(features[1].geometry, isA<LineString>());
+    expect(features[2].geometry, isA<LineString>());
+    expect(features[3].geometry, isA<LineString>());
+  });
+
+  test('flattenEach -- Point-properties', () {
+    collection(pt).forEach((input) {
+      Map<String, dynamic>? lastProperties;
+      flattenEach(input, (currentFeature, index, multiIndex) {
+        lastProperties = currentFeature.properties;
+      });
+      expect(lastProperties, pt.properties);
+    });
+  });
+
+  test('flattenEach -- multiGeometryFeature-properties', () {
+    collection(geomCollection).forEach((element) {
+      Map<String, dynamic>? lastProperties;
+      flattenEach(element, (currentFeature, index, multiIndex) {
+        lastProperties = currentFeature.properties;
+      });
+      expect(lastProperties, geomCollection.properties);
+    });
+  });
+
+  test('propReduce with initialValue', () {
+    String concatPropertyValues(
+      previousValue,
+      currentProperties,
+      featureIndex,
+    ) {
+      return "$previousValue ${currentProperties?.values.first}";
     }
+
+    expect(propReduce(pt, concatPropertyValues, 'hello'), 'hello 1');
+  });
+
+  test('propReduce -- without initial value', () {
+    Map<String, dynamic>? concatPropertyValues(
+      Map<String, dynamic>? previousValue,
+      Map<String, dynamic>? currentProperties,
+      num featureIndex,
+    ) {
+      return {'foo': previousValue!['foo'] + currentProperties!['foo']};
+    }
+
+    var results =
+        propReduce<Map<String, dynamic>>(fcMixed, concatPropertyValues, null);
+    expect(results?['foo'], 'barbuzqux');
+  });
+
+  test('featureReduce -- with/out initialValue', () {
+    int? countReducer(
+      int? previousValue,
+      currentFeature,
+      featureIndex,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(featureReduce<int>(fcMixed, countReducer, null), 3);
+    expect(featureReduce<int>(fcMixed, countReducer, 5), 8);
+    expect(featureReduce<int>(pt, countReducer, null), 1);
+  });
+  test('flattenReduce -- with/out initialValue', () {
+    int? countReducer(int? previousValue, Feature currentFeature,
+        int featureIndex, int multiFeatureIndex) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(flattenReduce<int>(fcMixed, countReducer, null), 4);
+    expect(flattenReduce<int>(fcMixed, countReducer, 5), 9);
+    expect(flattenReduce<int>(pt, countReducer, null), 1);
+  });
+
+  test('coordReduce -- with/out initialValue', () {
+    int? countReducer(
+      int? previousValue,
+      Position? currentCoord,
+      int? coordIndex,
+      int? featureIndex,
+      int? multiFeatureIndex,
+      int? geometryIndex,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(coordReduce<int>(fcMixed, countReducer, null), 7);
+    expect(coordReduce<int>(fcMixed, countReducer, 5), 12);
+    expect(coordReduce<int>(pt, countReducer, null), 1);
+  });
+
+  test('geomReduce', () {
+    int? countReducer(
+      int? previousValue,
+      currentGeometry,
+      featureIndex,
+      featureProperties,
+      featureBBox,
+      featureId,
+    ) {
+      return (previousValue ?? 0) + 1;
+    }
+
+    expect(geomReduce(geomCollection, countReducer, 0), 3);
+    expect(geomReduce(geomCollection, countReducer, 5), 8);
+
+    // test more complex feature collection with geoms and geomCollections
+    expect(
+      geomReduce<int>(
+        getAsMixedFeatCollection(pt.geometry!),
+        countReducer,
+        0,
+      ),
+      8,
+    );
+    expect(
+      geomReduce<int>(
+        getAsMixedFeatCollection(pt.geometry!),
+        countReducer,
+        10,
+      ),
+      18,
+    );
+  });
+
+  test('geomReduce  -- no intial value and dynamic types', () {
+    LineString? lineGenerator(
+      LineString? previousValue,
+      GeometryType? currentGeometry,
+      int? featureIndex,
+      Map<String, dynamic>? featureProperties,
+      BBox? featureBBox,
+      dynamic featureId,
+    ) {
+      if (currentGeometry is Point) {
+        previousValue!.coordinates.add(currentGeometry.coordinates);
+      } else if (currentGeometry is LineString) {
+        previousValue!.coordinates.addAll(currentGeometry.coordinates);
+      } else if (currentGeometry is MultiLineString) {
+        for (List<Position> l in currentGeometry.coordinates) {
+          previousValue!.coordinates.addAll(l);
+        }
+      }
+      return previousValue;
+    }
+
+    FeatureCollection featureCollection = FeatureCollection(
+      features: [
+        line,
+        pt,
+        multiline,
+      ],
+    );
+
+    LineString expectedLine = LineString.fromJson({
+      'coordinates': [
+        // line
+        [0, 0],
+        [1, 1],
+        // point
+        [0, 0],
+        // multiline, line 1
+        [0, 0],
+        [1, 1],
+        // multuline, line 2
+        [3, 3],
+        [4, 4],
+      ]
+    });
+    LineString? actualLineString = geomReduce<LineString>(
+      featureCollection,
+      lineGenerator,
+      null,
+    );
+    expect(actualLineString?.toJson(), expectedLine.toJson());
+
+    LineString? lineGeneratorDynamic(
+      dynamic previousValue,
+      GeometryType? currentGeometry,
+      int? featureIndex,
+      Map<String, dynamic>? featureProperties,
+      BBox? featureBBox,
+      dynamic featureId,
+    ) {
+      if (currentGeometry is Point) {
+        previousValue!.coordinates.add(currentGeometry.coordinates);
+      } else if (currentGeometry is LineString) {
+        previousValue!.coordinates.addAll(currentGeometry.coordinates);
+      } else if (currentGeometry is MultiLineString) {
+        for (List<Position> l in currentGeometry.coordinates) {
+          previousValue!.coordinates.addAll(l);
+        }
+      }
+      return previousValue;
+    }
+
+    LineString? actualDynamic = geomReduce(
+      featureCollection,
+      lineGeneratorDynamic,
+      null,
+    );
+    expect(actualDynamic?.toJson(), expectedLine.toJson());
+  });
+
+  test('meta -- coordAll', () {
+    FeatureCollection<LineString> lines = FeatureCollection<LineString>(
+      features: [
+        Feature<LineString>(
+          geometry: LineString.fromJson({
+            'coordinates': [
+              [10, 10],
+              [50, 30],
+              [30, 40]
+            ]
+          }),
+        ),
+        Feature<LineString>(
+          geometry: LineString.fromJson({
+            'coordinates': [
+              [-10, -10],
+              [-50, -30],
+              [-30, -40]
+            ]
+          }),
+        ),
+      ],
+    );
+
+    List<Position?> results = coordAll(lines);
+    expect(results, [
+      Position.of([10, 10]),
+      Position.of([50, 30]),
+      Position.of([30, 40]),
+      Position.of([-10, -10]),
+      Position.of([-50, -30]),
+      Position.of([-30, -40]),
+    ]);
   });
 }
