@@ -1,9 +1,13 @@
 import 'package:benchmark/benchmark.dart';
 import 'package:turf/helpers.dart';
-import 'package:turf/meta.dart';
 
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:turf/src/meta/coord.dart';
+import 'package:turf/src/meta/feature.dart';
+import 'package:turf/src/meta/geom.dart';
+import 'package:turf/src/meta/prop.dart';
 
 void main() {
   Point pt = Point(

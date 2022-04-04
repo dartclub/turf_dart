@@ -1,6 +1,6 @@
 import 'package:benchmark/benchmark.dart';
 import 'package:turf/helpers.dart';
-import 'package:turf/src/clusters.dart';
+import 'package:turf/src/meta/cluster.dart';
 
 void main() {
   Point pt = Point(

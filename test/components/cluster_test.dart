@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:turf/helpers.dart';
 import 'package:test/test.dart';
-import 'package:turf/src/clusters.dart';
+import 'package:turf/src/meta/cluster.dart';
 
 final properties = {"foo": "bar", "cluster": 0};
 final geojson = FeatureCollection(features: [
