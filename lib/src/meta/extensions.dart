@@ -13,4 +13,22 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   void featureEach(meta.FeatureEachCallback callback) {
     meta.featureEach(this, callback);
   }
+
+  void coordEach(meta.CoordEachCallback callback) {
+    meta.coordEach(this, callback);
+  }
+
+  void flattenEach(meta.FlattenEachCallback callback) {
+    meta.flattenEach(this, callback);
+  }
+
+  void segmentEach(meta.SegmentEachCallback callback) {
+    meta.segmentEach(this, callback);
+  }
+}
+
+extension FeatureCollectionMetaExtension on FeatureCollection {
+  void clusterEach(dynamic property, meta.ClusterEachCallback callback) {
+    meta.clusterEach(this, property, callback);
+  }
 }
