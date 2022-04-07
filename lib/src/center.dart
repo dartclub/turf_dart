@@ -11,5 +11,5 @@ Feature<Point> center<P>(GeoJSONObject geoJSON, Map<String, dynamic> options) {
   final x = (ext[0]! + ext[2]!) / 2;
   final y = (ext[1]! + ext[3]!) / 2;
 
-  return point(Position.named(lat: y, lng: x), options['properties'], options: options);
+  return point(Position.named(lat: y, lng: x), properties: options['properties'], options: options);
 }
