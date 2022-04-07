@@ -1,8 +1,5 @@
 import 'dart:math';
 
-import 'package:turf/helpers.dart';
-import 'package:turf/src/geojson.dart';
-
 enum Unit {
   meters,
   millimeters,
@@ -150,76 +147,4 @@ num convertArea(num area, [originalUnit = Unit.meters, finalUnit = Unit.kilomete
   }
 
   return (area / startFactor) * finalFactor;
-}
-
-/// Creates a {@link Point} {@link Feature} from a Position.
-///
-/// @name point
-/// @param {Array<number>} coordinates longitude, latitude position (each in decimal degrees)
-/// @param {Object} [properties={}] an Object of key-value pairs to add as properties
-/// @param {Object} [options={}] Optional Parameters
-/// @param {Array<number>} [options.bbox] Bounding Box Array [west, south, east, north] associated with the Feature
-/// @param {string|number} [options.id] Identifier associated with the Feature
-/// @returns {Feature<Point>} a Point feature
-/// @example
-/// var point = turf.point([-75.343, 39.984]);
-///
-/// //=point
-Feature<Point> point(Position? coordinates, {Map<String, dynamic>? properties, Map<String, dynamic>? options}) {
-  assert(coordinates != null);
-
-  final point = Point(coordinates: coordinates!);
-
-  return feature(point, options: options, properties: properties);
-}
-
-/// Wraps a GeoJSON {@link Geometry} in a GeoJSON {@link Feature}.
-///
-/// @name feature
-/// @param {Geometry} geometry input geometry
-/// @param {Object} [properties={}] an Object of key-value pairs to add as properties
-/// @param {Object} [options={}] Optional Parameters
-/// @param {Array<number>} [options.bbox] Bounding Box Array [west, south, east, north] associated with the Feature
-/// @param {string|number} [options.id] Identifier associated with the Feature
-/// @returns {Feature} a GeoJSON Feature
-/// @example
-/// var geometry = {
-///   "type": "Point",
-///   "coordinates": [110, 50]
-/// };
-///
-/// var feature = turf.feature(geometry);
-///
-/// //=feature
-Feature<G> feature<G extends GeometryObject>(G geom, {Map<String, dynamic>? properties, Map<String, dynamic>? options}) {
-  return Feature(
-    geometry: geom,
-    properties: properties,
-    id: (options?.containsKey('id') ?? false) ? options!['id'] : null,
-    bbox: (options?.containsKey('bbox') ?? false) ? options!['bbox'] : null,
-  );
-}
-
-Feature<LineString> lineString(List<Position> coordinates, {Map<String, dynamic>? properties, Map<String, dynamic>? options}) {
-  return feature(LineString(coordinates: coordinates), options: options);
-}
-
-FeatureCollection<LineString> lineStrings(List<List<Position>> coordinates, {Map<String, dynamic>? options}) {
-  return featureCollection(coordinates.map((coords) => lineString(coords)).toList(), options: options);
-}
-
-Feature<MultiLineString> multiLineString(List<List<Position>> coordinates, {Map<String, dynamic>? options}) {
-  return feature(MultiLineString(coordinates: coordinates), options: options);
-}
-
-FeatureCollection<G> featureCollection<G extends GeometryObject>(List<Feature<G>> features, {Map<String, dynamic>? options}) {
-  return FeatureCollection(features: features, bbox: (options?.containsKey('bbox') ?? false) ? options!['bbox'] : null);
-}
-
-Feature<Polygon> polygon<G extends GeometryObject>(List<List<Position>> coordinates, {Map<String, dynamic>? options}) {
-  return feature(Polygon(coordinates: coordinates), options: options);
-}
-
-Feature<MultiPolygon> multiPolygon<G extends GeometryObject>(List<List<List<Position>>> coordinates, {Map<String, dynamic>? options}) {
-  return feature(MultiPolygon(coordinates: coordinates), options: options);
 }

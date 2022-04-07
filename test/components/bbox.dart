@@ -3,14 +3,16 @@ import 'package:turf/bbox.dart';
 import 'package:turf/helpers.dart';
 
 main() {
-  final pt = point(Position.named(lat: 102.0, lng: 0.5));
-  final line = lineString([
+  final pt = Feature<Point>(geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)));
+  final line = Feature<LineString>(
+      geometry: LineString(coordinates: [
     Position.named(lat: 102.0, lng: -10.0),
     Position.named(lat: 103.0, lng: 1.0),
     Position.named(lat: 104.0, lng: 0.0),
     Position.named(lat: 130.0, lng: 4.0),
-  ]);
-  final poly = polygon([
+  ]));
+  final poly = Feature<Polygon>(
+      geometry: Polygon(coordinates: [
     [
       Position.named(lat: 101.0, lng: 0.0),
       Position.named(lat: 101.0, lng: 1.0),
@@ -18,8 +20,9 @@ main() {
       Position.named(lat: 100.0, lng: 0.0),
       Position.named(lat: 101.0, lng: 0.0),
     ],
-  ]);
-  final multiLine = multiLineString([
+  ]));
+  final multiLine = Feature<MultiLineString>(
+      geometry: MultiLineString(coordinates: [
     [
       Position.named(lat: 100.0, lng: 0.0),
       Position.named(lat: 101.0, lng: 1.0),
@@ -28,8 +31,9 @@ main() {
       Position.named(lat: 102.0, lng: 2.0),
       Position.named(lat: 103.0, lng: 3.0),
     ],
-  ]);
-  final multiPoly = multiPolygon([
+  ]));
+  final multiPoly = Feature<MultiPolygon>(
+      geometry: MultiPolygon(coordinates: [
     [
       [
         Position.named(lat: 102.0, lng: 2.0),
@@ -55,8 +59,8 @@ main() {
         Position.named(lat: 100.2, lng: 0.2),
       ],
     ],
-  ]);
-  final fc = featureCollection(<Feature>[pt, line, poly, multiLine, multiPoly]);
+  ]));
+  final fc = FeatureCollection(features: [pt, line, poly, multiLine, multiPoly]);
 
   test("bbox", () {
     // FeatureCollection
@@ -83,7 +87,10 @@ main() {
     final multiPolyBBox = bbox(multiPoly);
     expect(multiPolyBBox, equals([0, 100, 3, 103]), reason: "multiPolygon");
 
-    final pt2 = point(pt.geometry!.coordinates, options: {'bbox': bbox(point(Position.named(lat: 0, lng: 0)))});
+    final pt2 = Feature<Point>(
+      geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)),
+      bbox: bbox(Feature<Point>(geometry: Point(coordinates: Position.named(lat: 0, lng: 0)))),
+    );
     expect(bbox(pt2), equals([0, 0, 0, 0]), reason: "uses built-in bbox by default");
     expect(bbox(pt2, recompute: true), [0.5, 102, 0.5, 102], reason: "recomputes bbox with recompute option");
   });
