@@ -1,6 +1,8 @@
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
+/// Calculates the bounding box for any [geoJson] object, including [FeatureCollection].
+/// Uses geojson.[bbox] if available and options.[recompute] is not set.
 BBox bbox(GeoJSONObject geoJson, {bool recompute = false}) {
   if (geoJson.bbox != null && !recompute) {
     return geoJson.bbox!;
