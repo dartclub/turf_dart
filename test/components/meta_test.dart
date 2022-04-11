@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
@@ -663,7 +661,7 @@ main() {
 
     // Each Iterators
     // meta.segmentEach has been purposely excluded from this list
-    // TODO fill out this list will all 'each' iterators
+    // TODO fill out this list with all 'each' iterators
     test('geomEach', () {
       runBreakingIterationTest(geomEach, (geom, i, props, bbox, id) {
         iterationCount += 1;
