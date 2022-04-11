@@ -93,7 +93,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] lineChunk
 - [ ] lineIntersect
 - [ ] lineOverlap
-- [ ] lineSegment
+- [x] lineSegment
 - [ ] lineSlice
 - [ ] lineSliceAlong
 - [ ] lineSplit
@@ -140,21 +140,19 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 ### META
 - [x] coordAll
 - [x] coordEach
-- [ ] coordReduce
+- [x] coordReduce
 - [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L157)
-- [ ] featureReduce
+- [x] featureReduce
 - [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L181)
-- [ ] flattenReduce
-- [ ] getCoord
-- [ ] getCoords
-- [ ] getGeom
-- [ ] getType
+- [x] flattenReduce
+- [x] getCoord
+- [x] getCoords
 - [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L34)
-- [ ] geomReduce
+- [x] geomReduce
 - [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L124)
-- [ ] propReduce
-- [ ] segmentEach
-- [ ] segmentReduce
+- [x] propReduce
+- [x] segmentEach
+- [x] segmentReduce
 - [ ] getCluster
 - [ ] clusterEach
 - [ ] clusterReduce

@@ -1,6 +1,10 @@
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
-import 'package:turf/meta.dart';
+import 'package:turf/src/meta/coord.dart';
+import 'package:turf/src/meta/feature.dart';
+import 'package:turf/src/meta/flatten.dart';
+import 'package:turf/src/meta/geom.dart';
+import 'package:turf/src/meta/prop.dart';
 
 Feature<Point> pt = Feature<Point>(
   geometry: Point.fromJson({
