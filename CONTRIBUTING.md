@@ -37,6 +37,6 @@ To put it simply, be kind to each other.
 ## Documentation
 We follow [Effective Dart](https://dart.dev/guides/language/effective-dart/documentation) guidelines for documentation.
 
-After going through the [Implementation Process](#implementation-process) mentione the made changes in [README.md](https://github.com/dartclub/turf_dart/blob/main/README.md)
+After going through the [Implementation Process](#implementation-process), please mention the made changes in [README.md](https://github.com/dartclub/turf_dart/blob/main/README.md)
 
-In order to add to this very documentation develop contributing.me in [documentation branch](https://github.com/dartclub/turf_dart/tree/documentation)
+In order to add to this very documentation, please develop CONTRIBUTING.md in [documentation branch](https://github.com/dartclub/turf_dart/tree/documentation)
