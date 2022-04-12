@@ -102,17 +102,6 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] shortestPath
 - [ ] unkinkPolygon
 
-### HELPER
-- [ ] featureCollection
-- [ ] feature
-- [ ] geometryCollection
-- [ ] lineString
-- [ ] multiLineString
-- [ ] multiPoint
-- [ ] multiPolygon
-- [ ] point
-- [ ] polygon
-
 ### Random
 - [ ] randomPosition
 - [ ] randomPoint
