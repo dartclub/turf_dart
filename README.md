@@ -61,7 +61,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] bezierSpline
 - [ ] buffer
 - [ ] circle
-- [ ] clone
+- [x] clone - implemented as a member function of each [GeoJSONObject]
 - [ ] concave
 - [ ] convex
 - [ ] difference
@@ -92,7 +92,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] lineChunk
 - [ ] lineIntersect
 - [ ] lineOverlap
-- [ ] lineSegment
+- [x] [lineSegment](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
 - [ ] lineSlice
 - [ ] lineSliceAlong
 - [ ] lineSplit
@@ -137,32 +137,25 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] clustersKmeans
 
 ### META
-- [ ] coordAll
-- [x] coordEach
-- [ ] coordReduce
-- [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L157)
-- [ ] featureReduce
-- [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L181)
-- [ ] flattenReduce
-- [x] [getCoord](https://github.com/dartclub/turf_dart/blob/0c4522c7f5b71b04c06bb4d758957edab6d749fa/lib/src/invariant.dart#L11)
-- [x] [getCoords](https://github.com/dartclub/turf_dart/blob/0c4522c7f5b71b04c06bb4d758957edab6d749fa/lib/src/invariant.dart#L50)
-- [ ] getGeom
-- [ ] getType
-- [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L34)
-- [ ] geomReduce
-- [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L124)
-- [ ] propReduce
-- [ ] segmentEach
-- [ ] segmentReduce
-- [ ] getCluster
-- [ ] clusterEach
-- [ ] clusterReduce
 
-### Assertions
-- [ ] collectionOf
-- [ ] containsNumber
-- [ ] geojsonType
-- [ ] featureOf
+- [x] [coordAll](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [coordEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [coordReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
+- [x] [featureReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
+- [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
+- [x] [flattenReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
+- [x] [getCoord](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [getCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
+- [x] [geomReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
+- [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
+- [x] [propReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
+- [x] [segmentEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
+- [x] [segmentReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
+- [x] [getCluster](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
+- [x] [clusterEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
+- [x] [clusterReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
 
 ### Booleans
 - [ ] booleanClockwise
@@ -179,13 +172,13 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] booleanWithin
 
 ### Unit Conversion
-- [x] [bearingToAzimuth](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L103)
-- [x] [convertArea](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L132)
-- [x] [convertLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L121)
-- [x] [degreesToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L116)
-- [x] [lengthToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L91)
-- [x] [lengthToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L99)
-- [x] [radiansToLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L83)
-- [x] [radiansToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart#L111)
+- [x] [bearingToAzimuth](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [convertArea](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [convertLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [degreesToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [lengthToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [lengthToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [radiansToLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [radiansToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
 - [ ] toMercator
 - [ ] toWgs84
