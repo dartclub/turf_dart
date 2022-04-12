@@ -388,6 +388,9 @@ abstract class GeometryType<T> extends GeometryObject {
         return Polygon.fromJson(json);
       case GeoJSONObjectType.multiPolygon:
         return MultiPolygon.fromJson(json);
+      case GeoJSONObjectType.geometryCollection:
+        throw Exception(
+            'This implementation does not support nested GeometryCollections');
       default:
         throw Exception('${json['type']} is not a valid GeoJSON type');
     }
