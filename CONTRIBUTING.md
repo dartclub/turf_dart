@@ -25,9 +25,11 @@ To put it simply, be kind to each other.
 - Create a _draft Pull request_, mention in it the associated issues
 - **Implement**
   - Document everything [properly](#documentation)
-  - **Write tests** 
-  - **Get benchmarks**
-- commit
+  - **Write [tests](https://dart.dev/guides/testing)**―Keep an eye on [Turfjs'](https://github.com/Turfjs/turf) implementation
+    - run the the test: ```dart test test/components/XXX.dart```
+  - **Write [benchmarks](https://pub.dev/packages/benchmark)**―have a look at our [implementation](https://github.com/dartclub/turf_dart/tree/main/benchmark)
+    - run the benchmark: ```pub run benchmark```
+- Commit
 - Convert to real Pull request _ready for review_
 - Code review / mention a reviewer from [contributors list](https://github.com/dartclub/turf_dart/graphs/contributors) 
 
