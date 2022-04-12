@@ -10,9 +10,6 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
-## GeoJSON Object Model
-
-![polymorphism](https://user-images.githubusercontent.com/10634693/159876354-f9da2f37-02b3-4546-b32a-c0f82c372272.png)
 
 ## Notable Design Decisions
 - Nested `GeometryCollections` (as described in
@@ -71,6 +68,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] dissolve
 - [ ] intersect
 - [ ] lineOffset
+- [ ] polygonSmooth
 - [ ] simplify
 - [ ] tesselate
 - [ ] transformRotate
@@ -88,12 +86,13 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] polygonToLine
 
 ### MISC
+- [ ] ellipse
 - [ ] kinks
 - [ ] lineArc
 - [ ] lineChunk
 - [ ] lineIntersect
 - [ ] lineOverlap
-- [x] lineSegment
+- [ ] lineSegment
 - [ ] lineSlice
 - [ ] lineSliceAlong
 - [ ] lineSplit
@@ -138,24 +137,25 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] clustersKmeans
 
 ### META
-- [x] coordAll
-- [x] coordEach
-- [x] coordReduce
-- [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L157)
-- [x] featureReduce
-- [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L181)
-- [x] flattenReduce
-- [x] getCoord
-- [x] getCoords
-- [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L34)
-- [x] geomReduce
-- [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta.dart#L124)
-- [x] propReduce
-- [x] segmentEach
-- [x] segmentReduce
-- [ ] getCluster
-- [ ] clusterEach
-- [ ] clusterReduce
+
+- [x] [coordAll](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [coordEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [coordReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
+- [x] [featureReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
+- [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
+- [x] [flattenReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
+- [x] [getCoord](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [getCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
+- [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
+- [x] [geomReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
+- [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
+- [x] [propReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
+- [x] [segmentEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
+- [x] [segmentReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
+- [x] [getCluster](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
+- [x] [clusterEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
+- [x] [clusterReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
 
 ### Assertions
 - [ ] collectionOf
@@ -165,10 +165,12 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Booleans
 - [ ] booleanClockwise
+- [ ] booleanConcave
 - [ ] booleanContains
 - [ ] booleanCrosses
 - [ ] booleanDisjoint
 - [ ] booleanEqual
+- [ ] booleanIntersects
 - [ ] booleanOverlap
 - [ ] booleanParallel
 - [ ] booleanPointInPolygon
