@@ -1,3 +1,9 @@
+## 0.0.5
+
+- Implements *all* meta functions and`lineSegment` 
+- Adds a lot of documentation
+- Several bug and type fixes
+
 ## 0.0.4
 
 - Implements the `featureEach` and `propEach` meta function. [#24](https://github.com/dartclub/turf_dart/pull/24)
