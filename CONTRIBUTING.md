@@ -6,6 +6,7 @@ Here is how cooperation works perfectly at [Turf Dart](https://github.com/dartcl
 #### Table of Contents
   - [Code of Conduct](#code-of-conduct)
   - [Get started](#get-started)
+  - [Structure of modules](#structure-of-modules)
   - [Implementation Process](#implementation-process)
   - [Documentation](#documentation)
 
@@ -18,7 +19,52 @@ To put it simply, be kind to each other.
 - Clone the repository: ```git clone git@github.com:dartclub/turf_dart.git```
 - Navigate to project's folder in terminal & get its dependencies:  ```Dart pub get```
 - Go through [Implementation Process](#implementation-process)
+- Import the library in your code and use it. For example:
+```dart
+import 'package:turf/helpers.dart';
+import 'package:turf/src/line_segment.dart';
 
+  Feature<Polygon> poly = Feature<Polygon>(
+    geometry: Polygon(coordinates: [
+      [
+        Position.of([0, 0]),
+        Position.of([2, 2]),
+        Position.of([0, 1]),
+        Position.of([0, 0]),
+      ],
+      [
+        Position.of([0, 0]),
+        Position.of([1, 1]),
+        Position.of([0, 1]),
+        Position.of([0, 0]),
+      ],
+    ]),
+  );
+
+var total = segmentReduce<int>(poly, (previousValue,
+        currentSegment,
+        initialValue,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        segmentIndex) {
+      if (previousValue != null) {
+        previousValue++;
+      }
+      return previousValue;
+    }, 0, combineNestedGeometries: false);
+// total.length ==  6
+```
+## Structure of modules
+```
+TURF_DART/lib/<MODULE NAME>.dart // public facing API, exports the implementation
+         │   │
+         │   └───src/<MODULE NAME>.dart // the implementation
+         │ 
+         └───benchmark/<MODULE NAME>_benchmark.dart
+         │
+         └───test/components/<MODULE NAME>_test.dart // all the related tests
+```
 ## Implementation process
 - Check the Backlog/Issues for similar issues
 - Create a new branch _feature-_ from _main_
@@ -27,6 +73,7 @@ To put it simply, be kind to each other.
   - Document everything [properly](#documentation)
   - **Write [tests](https://dart.dev/guides/testing)**―Keep an eye on [Turfjs'](https://github.com/Turfjs/turf) implementation
     - run the the test: ```dart test test/components/XXX.dart```
+    - if you are importing tests from [Turfjs'](https://github.com/Turfjs/turf) please make sure you refactor it so it conforms with Dart syntax.
   - **Write [benchmarks](https://pub.dev/packages/benchmark)**―have a look at our [implementation](https://github.com/dartclub/turf_dart/tree/main/benchmark)
     - run the benchmark: ```pub run benchmark```
 - Commit
