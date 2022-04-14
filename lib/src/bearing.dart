@@ -3,6 +3,9 @@ import 'dart:math';
 import 'geojson.dart';
 import 'helpers.dart';
 
+// http://en.wikipedia.org/wiki/Haversine_formula
+// http://www.movable-type.co.uk/scripts/latlong.html
+
 num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
   // Reverse calculation
   if (calcFinal == true) {
@@ -19,6 +22,22 @@ num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
   return radiansToDegrees(atan2(a, b));
 }
 
+/// Takes two [Point]s and finds the geographic bearing between them,
+/// i.e. the angle measured in degrees from the north line (0 degrees)
+/// For example:
+///
+/// ```dart
+/// var point1 = Point(coordinates: Position(-75.343, 39.984));
+/// var point2 = Point(coordinates: Position((-75.543, 39.123));
+///
+/// var bearing = bearing(point1, point2);
+/// //addToMap
+/// var addToMap = [point1, point2]
+/// point1.properties['marker-color'] = '#f00'
+/// point2.properties['marker-color'] = '#0f0'
+/// point1.properties.bearing = bearing
+/// ```
+
 num bearing(Point start, Point end, {bool calcFinal = false}) =>
     bearingRaw(start.coordinates, end.coordinates, calcFinal: calcFinal);
 
@@ -28,5 +47,6 @@ num calculateFinalBearingRaw(Position start, Position end) {
   return reverseBearing.remainder(360);
 }
 
+/// Calculates Final Bearing
 num calculateFinalBearing(Point start, Point end) =>
     calculateFinalBearingRaw(start.coordinates, end.coordinates);

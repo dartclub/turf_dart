@@ -665,7 +665,6 @@ main() {
 
     // Each Iterators
     // meta.segmentEach has been purposely excluded from this list
-    // TODO fill out this list with all 'each' iterators
     test('geomEach', () {
       runBreakingIterationTest(geomEach, (geom, i, props, bbox, id) {
         iterationCount += 1;
