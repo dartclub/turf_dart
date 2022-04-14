@@ -309,107 +309,111 @@ main() {
     expect(() => GeometryType.deserialize(geoJSON3), throwsA(isA<Exception>()));
   });
 
-  test('.clone()', () {
-    final coll = FeatureCollection<GeometryCollection>(
-      bbox: BBox(100, 0, 101, 1),
-      features: [
-        Feature(
-            bbox: BBox(100, 0, 101, 1),
-            geometry: GeometryCollection(
+  test(
+    '.clone()',
+    () {
+      final coll = FeatureCollection<GeometryCollection>(
+        bbox: BBox(100, 0, 101, 1),
+        features: [
+          Feature(
               bbox: BBox(100, 0, 101, 1),
-              geometries: [
-                LineString(
-                  bbox: BBox(100, 0, 101, 1),
-                  coordinates: [Position(100, 0), Position(101, 1)],
-                ),
-                MultiLineString.fromLineStrings(
-                  bbox: BBox(100, 0, 101, 1),
-                  lineStrings: [
-                    LineString(
-                      bbox: BBox(100, 0, 101, 1),
-                      coordinates: [Position(100, 0), Position(101, 1)],
-                    ),
-                    LineString(
-                      bbox: BBox(100, 0, 101, 1),
-                      coordinates: [Position(100, 1), Position(101, 0)],
-                    ),
-                  ],
-                ),
-                MultiPoint.fromPoints(
-                  bbox: BBox(100, 0, 101, 1),
-                  points: [
-                    Point(coordinates: Position(100, 0)),
-                    Point(coordinates: Position(100.5, 0.5)),
-                    Point(coordinates: Position(101, 1)),
-                  ],
-                ),
-                Polygon(
-                  bbox: BBox(100, 0, 101, 1),
-                  coordinates: [
-                    [
-                      Position(100, 0),
-                      Position(100, 1),
-                      Position(101, 0),
-                    ]
-                  ],
-                ),
-                MultiPolygon.fromPolygons(
-                  bbox: BBox(100, 0, 101, 1),
-                  polygons: [
-                    Polygon(coordinates: [
+              geometry: GeometryCollection(
+                bbox: BBox(100, 0, 101, 1),
+                geometries: [
+                  LineString(
+                    bbox: BBox(100, 0, 101, 1),
+                    coordinates: [Position(100, 0), Position(101, 1)],
+                  ),
+                  MultiLineString.fromLineStrings(
+                    bbox: BBox(100, 0, 101, 1),
+                    lineStrings: [
+                      LineString(
+                        bbox: BBox(100, 0, 101, 1),
+                        coordinates: [Position(100, 0), Position(101, 1)],
+                      ),
+                      LineString(
+                        bbox: BBox(100, 0, 101, 1),
+                        coordinates: [Position(100, 1), Position(101, 0)],
+                      ),
+                    ],
+                  ),
+                  MultiPoint.fromPoints(
+                    bbox: BBox(100, 0, 101, 1),
+                    points: [
+                      Point(coordinates: Position(100, 0)),
+                      Point(coordinates: Position(100.5, 0.5)),
+                      Point(coordinates: Position(101, 1)),
+                    ],
+                  ),
+                  Polygon(
+                    bbox: BBox(100, 0, 101, 1),
+                    coordinates: [
                       [
                         Position(100, 0),
                         Position(100, 1),
                         Position(101, 0),
                       ]
-                    ]),
-                    Polygon(coordinates: [
-                      [
-                        Position(100, 0),
-                        Position(100, 1),
-                        Position(101, 0),
-                      ]
-                    ])
-                  ],
-                ),
-              ],
-            ),
-            id: 1,
-            properties: {"key": "val"}),
-      ],
-    );
-    final cloned = coll.clone();
-    final feat = cloned.features.first;
-    final bbox = BBox(100, 0, 101, 1);
-    expect(cloned.bbox, bbox);
-    expect(feat.id, 1);
-    expect(feat.bbox, bbox);
-    expect(feat.properties!.keys.first, "key");
-    expect(feat.properties!.values.first, "val");
-    expect(feat.geometry!, isA<GeometryCollection>());
-    final geomColl = feat.geometry!;
-    expect(geomColl.geometries.length,
-        coll.features.first.geometry!.geometries.length);
-    for (var geom in geomColl.geometries) {
-      expect(geom.bbox, isNotNull);
-      expect(geom.coordinates, isNotEmpty);
-
-      _expandRecursively(List inner) {
-        if (inner is List<Position>) {
-          return inner;
-        } else {
-          return inner.expand((el) => el is List ? _expandRecursively(el) : el);
-        }
-      }
-
-      var expanded = _expandRecursively(geom.coordinates);
-      expect(
-        expanded.first,
-        Position(100, 0),
+                    ],
+                  ),
+                  MultiPolygon.fromPolygons(
+                    bbox: BBox(100, 0, 101, 1),
+                    polygons: [
+                      Polygon(coordinates: [
+                        [
+                          Position(100, 0),
+                          Position(100, 1),
+                          Position(101, 0),
+                        ]
+                      ]),
+                      Polygon(coordinates: [
+                        [
+                          Position(100, 0),
+                          Position(100, 1),
+                          Position(101, 0),
+                        ]
+                      ])
+                    ],
+                  ),
+                ],
+              ),
+              id: 1,
+              properties: {"key": "val"}),
+        ],
       );
-    }
-    // TODO refine tests
-  });
+      final cloned = coll.clone();
+      final feat = cloned.features.first;
+      final bbox = BBox(100, 0, 101, 1);
+      expect(cloned.bbox, bbox);
+      expect(feat.id, 1);
+      expect(feat.bbox, bbox);
+      expect(feat.properties!.keys.first, "key");
+      expect(feat.properties!.values.first, "val");
+      expect(feat.geometry!, isA<GeometryCollection>());
+      final geomColl = feat.geometry!;
+      expect(geomColl.geometries.length,
+          coll.features.first.geometry!.geometries.length);
+      for (var geom in geomColl.geometries) {
+        expect(geom.bbox, isNotNull);
+        expect(geom.coordinates, isNotEmpty);
+
+        _expandRecursively(List inner) {
+          if (inner is List<Position>) {
+            return inner;
+          } else {
+            return inner
+                .expand((el) => el is List ? _expandRecursively(el) : el);
+          }
+        }
+
+        var expanded = _expandRecursively(geom.coordinates);
+        expect(
+          expanded.first,
+          Position(100, 0),
+        );
+      }
+      // TODO refine tests
+    },
+  );
 
   final points = [
     Point(coordinates: Position(1, 2, 3)),

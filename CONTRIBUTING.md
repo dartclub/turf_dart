@@ -27,16 +27,16 @@ import 'package:turf/src/line_segment.dart';
   Feature<Polygon> poly = Feature<Polygon>(
     geometry: Polygon(coordinates: [
       [
-        Position.of([0, 0]),
-        Position.of([2, 2]),
-        Position.of([0, 1]),
-        Position.of([0, 0]),
+        Position(0, 0),
+        Position(2, 2),
+        Position(0, 1),
+        Position(0, 0),
       ],
       [
-        Position.of([0, 0]),
-        Position.of([1, 1]),
-        Position.of([0, 1]),
-        Position.of([0, 0]),
+        Position(0, 0),
+        Position(1, 1),
+        Position(0, 1),
+        Position(0, 0),
       ],
     ]),
   );
