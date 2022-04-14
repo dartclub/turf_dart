@@ -71,9 +71,9 @@ TURF_DART/lib/<MODULE NAME>.dart // public facing API, exports the implementatio
 - Create a _draft Pull request_, mention in it the associated issues
 - **Implement**
   - Document everything [properly](#documentation)
+  - If you are importing tests, comments etc. from [Turfjs](https://github.com/Turfjs/turf), please make sure you refactor it so it conforms with Dart syntax.
   - **Write [tests](https://dart.dev/guides/testing)**―Keep an eye on [Turfjs'](https://github.com/Turfjs/turf) implementation
     - run the the test: ```dart test test/components/XXX.dart```
-    - if you are importing tests from [Turfjs'](https://github.com/Turfjs/turf) please make sure you refactor it so it conforms with Dart syntax.
   - **Write [benchmarks](https://pub.dev/packages/benchmark)**―have a look at our [implementation](https://github.com/dartclub/turf_dart/tree/main/benchmark)
     - run the benchmark: ```pub run benchmark```
 - Commit
