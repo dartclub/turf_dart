@@ -7,7 +7,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
   }
 
   T? geomReduce<T>(meta.GeomReduceCallback<T> callback, T? initialValue) {
-    meta.geomReduce<T>(
+    return meta.geomReduce<T>(
       this,
       callback,
       initialValue,
@@ -22,7 +22,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     meta.PropReduceCallback<T> callback,
     T? initialValue,
   ) {
-    meta.propReduce<T>(
+    return meta.propReduce<T>(
       this,
       callback,
       initialValue,
@@ -37,7 +37,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     meta.FeatureReduceCallback<T> callback,
     T? initialValue,
   ) {
-    meta.featureReduce<T>(
+    return meta.featureReduce<T>(
       this,
       callback,
       initialValue,
@@ -53,7 +53,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     T? initialValue, [
     bool excludeWrapCoord = false,
   ]) {
-    meta.coordReduce<T>(
+    return meta.coordReduce<T>(
       this,
       callback,
       initialValue,
@@ -73,7 +73,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     meta.FlattenReduceCallback<T> callback,
     T? initialValue,
   ) {
-    meta.flattenReduce<T>(
+    return meta.flattenReduce<T>(
       this,
       callback,
       initialValue,
@@ -89,7 +89,7 @@ extension GeoJSONObjectMetaExtension on GeoJSONObject {
     T? initialValue, {
     bool combineNestedGeometries = true,
   }) {
-    meta.segmentReduce<T>(
+    return meta.segmentReduce<T>(
       this,
       callback,
       initialValue,
@@ -115,7 +115,7 @@ extension FeatureCollectionMetaExtension on FeatureCollection {
     meta.ClusterReduceCallback<T> callback,
     dynamic initialValue,
   ) {
-    meta.clusterReduce<T>(
+    return meta.clusterReduce<T>(
       this,
       property,
       callback,

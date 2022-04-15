@@ -7,107 +7,96 @@ import 'package:turf/src/meta/geom.dart';
 import 'package:turf/src/meta/prop.dart';
 
 Feature<Point> pt = Feature<Point>(
-  geometry: Point.fromJson({
-    'coordinates': [0, 0],
-  }),
+  geometry: Point(coordinates: Position(0, 0)),
   properties: {
     'a': 1,
   },
 );
 
 Feature<Point> pt2 = Feature<Point>(
-  geometry: Point.fromJson({
-    'coordinates': [1, 1],
-  }),
+  geometry: Point(coordinates: Position(1, 1)),
 );
 
 Feature<LineString> line = Feature<LineString>(
-  geometry: LineString.fromJson({
-    'coordinates': [
-      [0, 0],
-      [1, 1],
-    ]
-  }),
+  geometry: LineString(coordinates: [
+    Position(0, 0),
+    Position(1, 1),
+  ]),
 );
 
 Feature<Polygon> poly = Feature<Polygon>(
-  geometry: Polygon.fromJson({
-    'coordinates': [
-      [
-        [0, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ],
-    ]
-  }),
+  geometry: Polygon(coordinates: [
+    [
+      Position(0, 0),
+      Position(1, 1),
+      Position(0, 1),
+      Position(0, 0),
+    ],
+  ]),
 );
 
 Feature<Polygon> polyWithHole = Feature<Polygon>(
-  geometry: Polygon.fromJson({
-    'coordinates': [
-      [
-        [100.0, 0.0],
-        [101.0, 0.0],
-        [101.0, 1.0],
-        [100.0, 1.0],
-        [100.0, 0.0],
-      ],
-      [
-        [100.2, 0.2],
-        [100.8, 0.2],
-        [100.8, 0.8],
-        [100.2, 0.8],
-        [100.2, 0.2],
-      ],
-    ]
-  }),
+  geometry: Polygon(coordinates: [
+    [
+      Position(100.0, 0.0),
+      Position(101.0, 0.0),
+      Position(101.0, 1.0),
+      Position(100.0, 1.0),
+      Position(100.0, 0.0),
+    ],
+    [
+      Position(100.2, 0.2),
+      Position(100.8, 0.2),
+      Position(100.8, 0.8),
+      Position(100.2, 0.8),
+      Position(100.2, 0.2),
+    ],
+  ]),
 );
 
 Feature<MultiLineString> multiline = Feature<MultiLineString>(
-  geometry: MultiLineString.fromJson({
-    'coordinates': [
+  geometry: MultiLineString(
+    coordinates: [
       [
-        [0, 0],
-        [1, 1],
+        Position(0, 0),
+        Position(1, 1),
       ],
       [
-        [3, 3],
-        [4, 4],
+        Position(3, 3),
+        Position(4, 4),
       ],
     ],
-  }),
+  ),
 );
 
 Feature<MultiPoint> multiPoint = Feature<MultiPoint>(
-    geometry: MultiPoint.fromJson({
-  'coordinates': [
-    [0, 0],
-    [1, 1],
-  ],
-}));
+  geometry: MultiPoint(
+    coordinates: [
+      Position(0, 0),
+      Position(1, 1),
+    ],
+  ),
+);
 
 Feature<MultiPolygon> multiPoly = Feature<MultiPolygon>(
-  geometry: MultiPolygon.fromJson({
-    'coordinates': [
+  geometry: MultiPolygon(coordinates: [
+    [
       [
-        [
-          [0, 0],
-          [1, 1],
-          [0, 1],
-          [0, 0],
-        ],
+        Position(0, 0),
+        Position(1, 1),
+        Position(0, 1),
+        Position(0, 0),
       ],
+    ],
+    [
       [
-        [
-          [3, 3],
-          [2, 2],
-          [1, 2],
-          [3, 3],
-        ],
+        Position(3, 3),
+        Position(2, 2),
+        Position(1, 2),
+        Position(3, 3),
       ],
-    ]
-  }),
+    ],
+  ]),
 );
 
 Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
@@ -120,38 +109,36 @@ Feature<GeometryCollection> geomCollection = Feature<GeometryCollection>(
   ),
 );
 
-FeatureCollection fcMixed = FeatureCollection(features: [
-  Feature<Point>(
-    geometry: Point.fromJson(
-      {
-        'coordinates': [0, 0],
-      },
+FeatureCollection fcMixed = FeatureCollection(
+  features: [
+    Feature<Point>(
+      geometry: Point(
+        coordinates: Position(0, 0),
+      ),
+      properties: {'foo': 'bar'},
     ),
-    properties: {'foo': 'bar'},
-  ),
-  Feature<LineString>(
-      geometry: LineString.fromJson({
-        'coordinates': [
-          [1, 1],
-          [2, 2],
-        ]
-      }),
-      properties: {'foo': 'buz'}),
-  Feature<MultiLineString>(
-      geometry: MultiLineString.fromJson({
-        'coordinates': [
-          [
-            [1, 1],
-            [0, 0],
+    Feature<LineString>(
+        geometry: LineString(coordinates: [
+          Position(1, 1),
+          Position(2, 2),
+        ]),
+        properties: {'foo': 'buz'}),
+    Feature<MultiLineString>(
+        geometry: MultiLineString(
+          coordinates: [
+            [
+              Position(0, 0),
+              Position(1, 1),
+            ],
+            [
+              Position(4, 4),
+              Position(5, 5),
+            ],
           ],
-          [
-            [4, 4],
-            [5, 5],
-          ],
-        ],
-      }),
-      properties: {'foo': 'qux'}),
-]);
+        ),
+        properties: {'foo': 'qux'}),
+  ],
+);
 
 List<GeoJSONObject> collection(Feature feature) {
   FeatureCollection featureCollection = FeatureCollection(
@@ -665,7 +652,6 @@ main() {
 
     // Each Iterators
     // meta.segmentEach has been purposely excluded from this list
-    // TODO fill out this list will all 'each' iterators
     test('geomEach', () {
       runBreakingIterationTest(geomEach, (geom, i, props, bbox, id) {
         iterationCount += 1;

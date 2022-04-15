@@ -26,11 +26,12 @@ Position getCoord(dynamic coord) {
   throw Exception("coord must be GeoJSON Point or Position");
 }
 
-/// Unwrap coordinates from a [Feature], [GeometryObject] or a [List]
+/// Unwraps coordinates from a [Feature], [GeometryObject] or a [List]
 ///
 /// Gets a [List<dynamic>], [GeometryObject] or a [Feature] or a [List<dynamic>] and
 /// returns [List<dynamic>].
 /// For example:
+///
 /// ```dart
 /// var polygon = Polygon(coordinates: [
 ///    [
