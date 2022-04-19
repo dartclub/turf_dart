@@ -14,6 +14,7 @@ Most of the implementation is a direct translation from [turf.js](https://github
 - Get the [Dart tools](https://dart.dev/tools)
 - Install the library with `dart pub add turf`
 - Import the library in your code and use it. For example:
+
 ```dart
 import 'package:turf/helpers.dart';
 import 'package:turf/src/line_segment.dart';
@@ -48,8 +49,9 @@ main() {
     0,
     combineNestedGeometries: false,
   );
+  print(total);
+  // total ==  6
 }
-// total.length ==  6
 ```
 
 ## GeoJSON Object Model
