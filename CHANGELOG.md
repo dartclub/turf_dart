@@ -1,3 +1,10 @@
+## 0.0.6
+
+- This is solely a quality release, without new functionality:
+- Documentation: improves pub.dev scores, raised documentation coverage, fixed typos
+- Return type fixes for the the meta extensions
+
+
 ## 0.0.5
 
 - Implements *all* meta functions and`lineSegment` 
