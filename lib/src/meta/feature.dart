@@ -8,7 +8,6 @@ typedef FeatureEachCallback = dynamic Function(
 
 /// Iterates over features in any [geoJSONObject], calling [callback] on each
 /// iteration. Similar to [Iterable.forEach].
-///
 /// For example:
 ///
 /// ```dart
