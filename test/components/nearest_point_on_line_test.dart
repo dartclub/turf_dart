@@ -296,7 +296,7 @@ main() {
 
     expect(line, 1);
     expect(localIndex, 7);
-    expect(globalIndex, 15);
+    expect(globalIndex, 16);
     expect(distance.toStringAsFixed(6), '0.420164');
   });
 }
