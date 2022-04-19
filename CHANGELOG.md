@@ -1,3 +1,7 @@
+## 0.0.6+2
+- Added code examples
+- Fixed segment * callbacks
+
 ## 0.0.6
 
 - This is solely a quality release, without new functionality:
