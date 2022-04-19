@@ -145,8 +145,8 @@ _Nearest _nearestPointOnLine(
     length += sectionLength;
   }
 
-  // A `LineString` is guaranteed to have at least two points and thus a
-  // nearest point has to exist.
+  /// A `LineString` is guaranteed to have at least two points and thus a
+  /// nearest point has to exist.
 
   return nearest!;
 }
@@ -181,6 +181,22 @@ _NearestMulti? _nearestPointOnMultiLine(
   return nearest;
 }
 
+/// Takes a [Point] and a [LineString] and calculates the closest Point on the [LineString].
+/// ```dart
+/// var line = LineString(
+///   coordinates: [
+///     Position.of([-77.031669, 38.878605]),
+///     Position.of([-77.029609, 38.881946]),
+///     Position.of([-77.020339, 38.884084]),
+///     Position.of([-77.025661, 38.885821]),
+///     Position.of([-77.021884, 38.889563]),
+///     Position.of([-77.019824, 38.892368)]
+/// ]);
+/// var pt = Point(coordinates: Position(lat: -77.037076, lng: 38.884017));
+///
+/// var snapped = nearestPointOnLine(line, pt, Unit.miles);
+/// ```
+///
 Feature<Point> nearestPointOnLine(
   LineString line,
   Point point, [
@@ -189,6 +205,7 @@ Feature<Point> nearestPointOnLine(
   return _nearestPointOnLine(line, point, unit).toFeature();
 }
 
+/// Takes a [Point] and a [MultiLineString] and calculates the closest Point on the [MultiLineString].
 Feature<Point>? nearestPointOnMultiLine(
   MultiLineString lines,
   Point point, [
