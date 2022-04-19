@@ -27,10 +27,8 @@ void main() {
 
     benchmark('clusterEach', () {
       List clusters = [];
-      int total = 0;
       clusterEach(featureCollection, "cluster",
           (cluster, clusterValue, currentIndex) {
-        total += cluster!.features.length;
         clusters.add(cluster);
       });
     });

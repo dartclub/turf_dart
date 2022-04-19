@@ -3,8 +3,6 @@ import 'package:turf/src/meta/flatten.dart';
 
 import 'geojson.dart';
 
-// export default lineSegment;
-
 /// Creates a [FeatureCollection] of 2-vertex [LineString] segments from a
 /// [LineString] or [MultiLineString] or [Polygon] and [MultiPolygon]
 /// Returns [FeatureCollection<LineString>] 2-vertex line segments
@@ -39,7 +37,7 @@ FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson,
 }
 
 /// SegmentEachCallback
-typedef dynamic SegmentEachCallback(
+typedef SegmentEachCallback = dynamic Function(
   Feature<LineString> currentSegment,
   int featureIndex,
   int? multiFeatureIndex,
@@ -200,7 +198,7 @@ int _segmentEachforEachUnit(
 /// [multiFeatureIndex] The current index of the Multi-Feature being processed.
 /// [geometryIndex] The current index of the Geometry being processed.
 /// [segmentIndex] The current index of the Segment being processed.
-typedef T? SegmentReduceCallback<T>(
+typedef SegmentReduceCallback<T> = T? Function(
   T? previousValue,
   Feature<LineString> currentSegment,
   T? initialValue,
@@ -210,7 +208,7 @@ typedef T? SegmentReduceCallback<T>(
   int segmentIndex,
 );
 
-/// Reduce 2-vertex line segment in any GeoJSON object, similar to [Iterable.reduce]()
+/// Reduces 2-vertex line segment in any GeoJSON object, similar to [Iterable.reduce]()
 /// (Multi)Point geometries do not contain segments therefore they are ignored during this operation.
 ///
 /// Takes [FeatureCollection], [Feature], [GeoJSONObject], a

@@ -1,3 +1,24 @@
+## 0.0.6+3
+
+- Rename examples file
+## 0.0.6+2
+
+- Added code examples
+- Fixed segment * callbacks
+
+## 0.0.6
+
+- This is solely a quality release, without new functionality:
+- Documentation: improves pub.dev scores, raised documentation coverage, fixed typos
+- Return type fixes for the the meta extensions
+
+
+## 0.0.5
+
+- Implements *all* meta functions and`lineSegment` 
+- Adds a lot of documentation
+- Several bug and type fixes
+
 ## 0.0.4
 
 - Implements the `featureEach` and `propEach` meta function. [#24](https://github.com/dartclub/turf_dart/pull/24)
