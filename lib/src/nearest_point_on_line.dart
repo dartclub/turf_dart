@@ -164,18 +164,19 @@ _NearestMulti? _nearestPointOnMultiLine(
     final line = LineString(coordinates: lines.coordinates[i]);
 
     final candidate = _nearestPointOnLine(line, point);
-    globalIndex += candidate.index;
 
     if (nearest == null || candidate.distance < nearest.distance) {
       nearest = _NearestMulti(
         point: candidate.point,
         distance: candidate.distance,
-        index: globalIndex,
+        index: globalIndex + candidate.index,
         localIndex: candidate.index,
         location: candidate.location,
         line: i,
       );
     }
+
+    globalIndex += line.coordinates.length;
   }
 
   return nearest;
