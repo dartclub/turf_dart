@@ -1,1 +1,5 @@
 include: package:dartclub_lint/dart.yaml
+
+analyzer:
+  errors:
+    prefer_generic_function_type_aliases: error
