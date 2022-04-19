@@ -290,11 +290,13 @@ main() {
     expect(snapped!.geometry, target);
 
     final line = snapped.properties!['line'] as int;
-    final index = snapped.properties!['index'] as int;
+    final localIndex = snapped.properties!['localIndex'] as int;
+    final globalIndex = snapped.properties!['index'] as int;
     final distance = snapped.properties!['dist'] as num;
 
     expect(line, 1);
-    expect(index, 7);
+    expect(localIndex, 7);
+    expect(globalIndex, 15);
     expect(distance.toStringAsFixed(6), '0.420164');
   });
 }

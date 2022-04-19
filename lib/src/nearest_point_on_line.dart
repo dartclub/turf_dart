@@ -34,11 +34,13 @@ class _Nearest {
 
 class _NearestMulti extends _Nearest {
   final int line;
+  final int localIndex;
 
   _NearestMulti({
     required Point point,
     required num distance,
     required int index,
+    required this.localIndex,
     required num location,
     required this.line,
   }) : super(
@@ -56,6 +58,7 @@ class _NearestMulti extends _Nearest {
         'dist': super.distance,
         'line': line,
         'index': super.index,
+        'localIndex': localIndex,
         'location': super.location,
       },
     );
@@ -155,16 +158,20 @@ _NearestMulti? _nearestPointOnMultiLine(
 ]) {
   _NearestMulti? nearest;
 
+  var globalIndex = 0;
+
   for (var i = 0; i < lines.coordinates.length; ++i) {
     final line = LineString(coordinates: lines.coordinates[i]);
 
     final candidate = _nearestPointOnLine(line, point);
+    globalIndex += candidate.index;
 
     if (nearest == null || candidate.distance < nearest.distance) {
       nearest = _NearestMulti(
         point: candidate.point,
         distance: candidate.distance,
-        index: candidate.index,
+        index: globalIndex,
+        localIndex: candidate.index,
         location: candidate.location,
         line: i,
       );
