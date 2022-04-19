@@ -48,8 +48,9 @@ main() {
     0,
     combineNestedGeometries: false,
   );
+  print(total);
+  // total ==  6
 }
-// total.length ==  6
 ```
 
 ## GeoJSON Object Model

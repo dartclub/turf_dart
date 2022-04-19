@@ -1,4 +1,8 @@
+## 0.0.6+3
+
+- Rename examples file
 ## 0.0.6+2
+
 - Added code examples
 - Fixed segment * callbacks
 
