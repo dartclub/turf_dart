@@ -10,3 +10,4 @@ export 'src/helpers.dart';
 export 'src/midpoint.dart';
 export 'src/nearest_point.dart';
 export 'src/polyline.dart';
+export 'src/nearest_point_on_line.dart';

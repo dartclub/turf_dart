@@ -144,7 +144,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] lineSliceAlong
 - [ ] lineSplit
 - [ ] mask
-- [ ] nearestPointOnLine
+- [x] [nearestPointOnLine](https://github.com/dartclub/turf_dart/blob/master/lib/nearest_point_on_line.dart)
 - [ ] sector
 - [ ] shortestPath
 - [ ] unkinkPolygon
