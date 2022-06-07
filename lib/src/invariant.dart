@@ -96,9 +96,9 @@ _getCoordsForGeometry(GeometryObject geom) {
  * //={"type": "Point", "coordinates": [110, 40]}
  */
 
-getGeom(GeoJSONObjectType geojson) {
+getGeom(GeoJSONObject geojson) {
   if (geojson is Feature) {
-    return (geojson as Feature).geometry;
+    return (geojson).geometry;
   }
   return geojson;
 }
