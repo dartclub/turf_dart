@@ -76,3 +76,29 @@ _getCoordsForGeometry(GeometryObject geom) {
 
   return (geom as GeometryType).coordinates;
 }
+
+/**
+ * Get Geometry from Feature or Geometry Object
+ *
+ * @param {Feature|Geometry} geojson GeoJSON Feature or Geometry Object
+ * @returns {Geometry|null} GeoJSON Geometry Object
+ * @throws {Error} if geojson is not a Feature or Geometry Object
+ * @example
+ * var point = {
+ *   "type": "Feature",
+ *   "properties": {},
+ *   "geometry": {
+ *     "type": "Point",
+ *     "coordinates": [110, 40]
+ *   }
+ * }
+ * var geom = turf.getGeom(point)
+ * //={"type": "Point", "coordinates": [110, 40]}
+ */
+
+getGeom(GeoJSONObjectType geojson) {
+  if (geojson is Feature) {
+    return (geojson as Feature).geometry;
+  }
+  return geojson;
+}
