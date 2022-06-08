@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import '../../helpers.dart';
 import '../invariant.dart';
+import 'boolean_point_in_polygon.dart';
 /** 
  * Boolean-Crosses returns True if the intersection results in a geometry whose dimension is one less than
  * the maximum dimension of the two source geometries and the intersection set is interior to
@@ -22,7 +21,7 @@ import '../invariant.dart';
  * //=true
  */
 
-bool booleanCrosses(GeoJSONObjectType feature1, GeoJSONObjectType feature2) {
+bool booleanCrosses(GeometryObject feature1, GeometryObject feature2) {
   var geom1 = getGeom(feature1);
   var geom2 = getGeom(feature2);
   var type1 = geom1.type;
@@ -149,12 +148,12 @@ doesMultiPointCrossPoly(MultiPoint multiPoint, Polygon polygon) {
  * @returns {boolean} true/false
  */
 
-isPointOnLineSegment(List<num> lineSegmentStart, List<num> lineSegmentEnd,
-    List<num> pt, bool incEnd) {
-  var dxc = pt[0] - lineSegmentStart[0];
-  var dyc = pt[1] - lineSegmentStart[1];
-  var dxl = lineSegmentEnd[0] - lineSegmentStart[0];
-  var dyl = lineSegmentEnd[1] - lineSegmentStart[1];
+isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
+    Position pt, bool incEnd) {
+  var dxc = pt[0]! - lineSegmentStart[0]!;
+  var dyc = pt[1]! - lineSegmentStart[1]!;
+  var dxl = lineSegmentEnd[0]! - lineSegmentStart[0]!;
+  var dyl = lineSegmentEnd[1]! - lineSegmentStart[1]!;
   var cross = dxc * dyl - dyc * dxl;
   if (cross != 0) {
     return false;
@@ -162,21 +161,21 @@ isPointOnLineSegment(List<num> lineSegmentStart, List<num> lineSegmentEnd,
   if (incEnd) {
     if ((dxl).abs() >= (dyl).abs()) {
       return dxl > 0
-          ? lineSegmentStart[0] <= pt[0] && pt[0] <= lineSegmentEnd[0]
-          : lineSegmentEnd[0] <= pt[0] && pt[0] <= lineSegmentStart[0];
+          ? lineSegmentStart[0]! <= pt[0]! && pt[0]! <= lineSegmentEnd[0]!
+          : lineSegmentEnd[0]! <= pt[0]! && pt[0]! <= lineSegmentStart[0]!;
     }
     return dyl > 0
-        ? lineSegmentStart[1] <= pt[1] && pt[1] <= lineSegmentEnd[1]
-        : lineSegmentEnd[1] <= pt[1] && pt[1] <= lineSegmentStart[1];
+        ? lineSegmentStart[1]! <= pt[1]! && pt[1]! <= lineSegmentEnd[1]!
+        : lineSegmentEnd[1]! <= pt[1]! && pt[1]! <= lineSegmentStart[1]!;
   } else {
     if ((dxl).abs() >= (dyl).abs()) {
       return dxl > 0
-          ? lineSegmentStart[0] < pt[0] && pt[0] < lineSegmentEnd[0]
-          : lineSegmentEnd[0] < pt[0] && pt[0] < lineSegmentStart[0];
+          ? lineSegmentStart[0]! < pt[0]! && pt[0]! < lineSegmentEnd[0]!
+          : lineSegmentEnd[0]! < pt[0]! && pt[0]! < lineSegmentStart[0]!;
     }
     return dyl > 0
-        ? lineSegmentStart[1] < pt[1] && pt[1] < lineSegmentEnd[1]
-        : lineSegmentEnd[1] < pt[1] && pt[1] < lineSegmentStart[1];
+        ? lineSegmentStart[1]! < pt[1]! && pt[1]! < lineSegmentEnd[1]!
+        : lineSegmentEnd[1]! < pt[1]! && pt[1]! < lineSegmentStart[1]!;
   }
 }
 
