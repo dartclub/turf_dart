@@ -20,6 +20,7 @@ To put it simply, be kind to each other.
 - Clone the repository: ```git clone git@github.com:dartclub/turf_dart.git```
 - Navigate to project's folder in terminal & get its dependencies:  ```dart pub get```
 - Go through [Implementation Process](#implementation-process)
+<<<<<<< HEAD
 - Import the library in your code and use it. For example:
 ```dart
 import 'package:turf/helpers.dart';
@@ -56,6 +57,9 @@ var total = segmentReduce<int>(poly, (previousValue,
     }, 0, combineNestedGeometries: false);
 // total.length ==  6
 ```
+=======
+
+>>>>>>> main
 ## Structure of modules
 ```
 TURF_DART/lib/<MODULE NAME>.dart // public facing API, exports the implementation
