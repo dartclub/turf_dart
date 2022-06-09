@@ -62,7 +62,7 @@ booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     case Polygon:
       switch (type2) {
         case Point:
-          return booleanPointInPolygon(geom2, geom1, {ignoreBoundary: true});
+          return booleanPointInPolygon(geom2, geom1, ignoreBoundary: true);
         case LineString:
           return isLineInPoly(geom1, geom2);
         case Polygon:
@@ -109,10 +109,11 @@ isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
 isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
   var haveFoundInteriorPoint = false;
   for (var coord in multiPoint.coordinates) {
-    if (isPointOnLine(coord, lineString, {ignoreEndVertices: true})) {
+    if (isPointOnLine(lineString, Point(coordinates: coord),
+        ignoreEndVertices: true)) {
       haveFoundInteriorPoint = true;
     }
-    if (!isPointOnLine(coord, lineString)) {
+    if (!isPointOnLine(lineString, Point(coordinates: coord))) {
       return false;
     }
   }
@@ -124,7 +125,8 @@ isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
 
 isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
   for (var coord in multiPoint.coordinates) {
-    if (!booleanPointInPolygon(coord, polygon, {ignoreBoundary: true})) {
+    if (!booleanPointInPolygon(coord, Feature(geometry: polygon),
+        ignoreBoundary: true)) {
       return false;
     }
   }
@@ -135,19 +137,17 @@ isLineOnLine(LineString lineString1, LineString lineString2) {
   var haveFoundInteriorPoint = false;
   for (var coords in lineString2.coordinates) {
     if (isPointOnLine(
-        {type: Point, coordinates: coords},
-        lineString1,
-        {
-          ignoreEndVertices: true,
-        })) {
+      lineString1,
+      Point(coordinates: coords),
+      ignoreEndVertices: true,
+    )) {
       haveFoundInteriorPoint = true;
     }
     if (!isPointOnLine(
-        {type: Point, coordinates: coords},
-        lineString1,
-        {
-          ignoreEndVertices: false,
-        })) {
+      lineString1,
+      Point(coordinates: coords),
+      ignoreEndVertices: false,
+    )) {
       return false;
     }
   }
@@ -167,11 +167,10 @@ isLineInPoly(Polygon polygon, LineString linestring) {
     var midPoint =
         getMidpoint(linestring.coordinates[i], linestring.coordinates[i + 1]);
     if (booleanPointInPolygon(
-        {type: Point, coordinates: midPoint},
-        polygon,
-        {
-          ignoreBoundary: true,
-        })) {
+      Position.of(midPoint),
+      Feature(geometry: polygon),
+      ignoreBoundary: true,
+    )) {
       output = true;
       break;
     }
@@ -188,7 +187,7 @@ isLineInPoly(Polygon polygon, LineString linestring) {
  * @param {Geometry|Feature<Polygon>} feature2 Polygon2
  * @returns {boolean} true/false
  */
-isPolyInPoly(GeoJSONObjectType feature1, GeoJSONObjectType feature2) {
+isPolyInPoly(GeoJSONObject feature1, GeoJSONObjectType feature2) {
   // Handle Nulls
   if (feature1.runtimeType == Feature &&
       (feature1 as Feature).geometry == null) {
@@ -205,10 +204,10 @@ isPolyInPoly(GeoJSONObjectType feature1, GeoJSONObjectType feature2) {
     return false;
   }
 
-  var coords = getGeom(feature2).coordinates;
+  var coords = (feature2 as Feature<GeometryType>).geometry!.coordinates;
   for (var ring in coords) {
     for (var coord in ring) {
-      if (!booleanPointInPolygon(coord, feature1)) {
+      if (!booleanPointInPolygon(coord, feature1 as Feature)) {
         return false;
       }
     }
@@ -240,12 +239,12 @@ doBBoxOverlap(BBox bbox1, BBox bbox2) {
  * @param {Position} pair2 point [x,y]
  * @returns {boolean} true/false if coord pairs match
  */
-compareCoords(List<num> pair1, List<num> pair2) {
+compareCoords(Position pair1, Position pair2) {
   return pair1[0] == pair2[0] && pair1[1] == pair2[1];
 }
 
-getMidpoint(List<num> pair1, List<num> pair2) {
-  return [(pair1[0] + pair2[0]) / 2, (pair1[1] + pair2[1]) / 2];
+getMidpoint(Position pair1, Position pair2) {
+  return [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2];
 }
 
 /*
