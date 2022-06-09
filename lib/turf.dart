@@ -7,3 +7,4 @@ export 'src/geojson.dart';
 export 'src/midpoint.dart';
 export 'src/helpers.dart';
 export 'src/nearest_point.dart';
+export 'src/nearest_point_on_line.dart';
