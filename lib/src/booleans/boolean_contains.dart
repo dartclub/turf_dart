@@ -1,5 +1,7 @@
 import '../../helpers.dart';
 import '../invariant.dart';
+import 'boolean_disjoint.dart';
+import 'boolean_point_in_polygon.dart';
 
 /**
  * Boolean-contains returns True if the second geometry is completely contained by the first geometry.
@@ -18,7 +20,7 @@ import '../invariant.dart';
  * turf.booleanContains(line, point);
  * //=true
  */
-booleanContains(GeoJSONObjectType feature1, GeoJSONObjectType feature2) {
+booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
   var geom1 = getGeom(feature1);
   var geom2 = getGeom(feature2);
   var type1 = geom1.runtimeType;
@@ -48,7 +50,7 @@ booleanContains(GeoJSONObjectType feature1, GeoJSONObjectType feature2) {
     case LineString:
       switch (type2) {
         case Point:
-          return isPointOnLine(geom2, geom1, {ignoreEndVertices: true});
+          return isPointOnLine(geom2, geom1, ignoreEndVertices: true);
         case LineString:
           return isLineOnLine(geom1, geom2);
         case MultiPoint:

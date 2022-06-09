@@ -1,12 +1,9 @@
-import { Feature, Geometry, MultiPoint } from "geojson";
-import { segmentEach } from "@turf/meta";
-import { getGeom } from "@turf/invariant";
-import lineOverlap from "@turf/line-overlap";
-import lineIntersect from "@turf/line-intersect";
-import 
+
 import '../../helpers.dart';
 import '../../line_segment.dart';
-import '../invariant.dart';GeojsonEquality from "geojson-equality";
+import '../invariant.dart';
+import '../line_intersect.dart';
+GeojsonEquality from "geojson-equality";
 
 /**
  * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
@@ -52,8 +49,8 @@ import '../invariant.dart';GeojsonEquality from "geojson-equality";
   if (type1 == Point) throw Exception("Point geometry not supported");
 
   // features must be not equal
-  const equality = new GeojsonEquality({ precision: 6 });
-  if (equality.compare(feature1 as any, feature2 as any)) return false;
+  const equality =  GeojsonEquality({ precision: 6 });
+  if (equality.compare(feature1, feature2)) return false;
 
   var overlap = 0;
 
@@ -96,7 +93,7 @@ import '../invariant.dart';GeojsonEquality from "geojson-equality";
    multiFeatureIndex,
    geometryIndex,
   segmentIndex,) {
-          if (lineIntersect(segment1, segment2).features.length) overlap++;
+          if (lineIntersect(segment1, segment2).features.isNotEmpty) overlap++;
         });
       });
       break;

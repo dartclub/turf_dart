@@ -1,5 +1,7 @@
 import '../../helpers.dart';
 import '../../meta.dart';
+import '../line_intersect.dart';
+import 'boolean_point_in_polygon.dart';
 
 /**
  * Boolean-disjoint returns (TRUE) if the intersection of the two geometries is an empty set.
@@ -45,7 +47,7 @@ disjoint(GeometryType geom1, GeometryType geom2) {
         case LineString:
           return !isPointOnLine(geom2 as LineString, geom1 as Point);
         case Polygon:
-          return !booleanPointInPolygon(geom1, geom2);
+          return !booleanPointInPolygon((geom1 as Point).coordinates, geom2);
       }
       /* istanbul ignore next */
       break;
@@ -63,7 +65,7 @@ disjoint(GeometryType geom1, GeometryType geom2) {
     case Polygon:
       switch (geom2.runtimeType) {
         case Point:
-          return !booleanPointInPolygon(geom2, geom1);
+          return !booleanPointInPolygon((geom2 as Point).coordinates, geom1);
         case LineString:
           return !isLineInPoly(geom1 as Polygon, geom2 as LineString);
         case Polygon:
@@ -86,7 +88,7 @@ isPointOnLine(LineString lineString, Point pt) {
 
 isLineOnLine(LineString lineString1, LineString lineString2) {
   var doLinesIntersect = lineIntersect(lineString1, lineString2);
-  if (doLinesIntersect.features.length > 0) {
+  if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;
@@ -98,8 +100,8 @@ isLineInPoly(Polygon polygon, LineString lineString) {
       return true;
     }
   }
-  const doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon));
-  if (doLinesIntersect.features.length > 0) {
+  var doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon));
+  if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;
@@ -126,7 +128,7 @@ isPolyInPoly(Polygon feature1, Polygon feature2) {
       return true;
     }
   }
-  const doLinesIntersect =
+  var doLinesIntersect =
       lineIntersect(polygonToLine(feature1), polygonToLine(feature2));
   if (doLinesIntersect.features.length > 0) {
     return true;
@@ -134,29 +136,26 @@ isPolyInPoly(Polygon feature1, Polygon feature2) {
   return false;
 }
 
-isPointOnLineSegment(Point lineSegmentStart, Point lineSegmentEnd, Point pt) {
-  var dxc = pt.coordinates[0]! - lineSegmentStart.coordinates[0]!;
-  var dyc = pt.coordinates[1]! - lineSegmentStart.coordinates[1]!;
-  var dxl = lineSegmentEnd.coordinates[0]! - lineSegmentStart.coordinates[0]!;
-  var dyl = lineSegmentEnd.coordinates[1]! - lineSegmentStart.coordinates[1]!;
+isPointOnLineSegment(
+    Position lineSegmentStart, Position lineSegmentEnd, Position pt) {
+  var dxc = pt[0]! - lineSegmentStart[0]!;
+  var dyc = pt[1]! - lineSegmentStart[1]!;
+  var dxl = lineSegmentEnd[0]! - lineSegmentStart[0]!;
+  var dyl = lineSegmentEnd[1]! - lineSegmentStart[1]!;
   var cross = dxc * dyl - dyc * dxl;
   if (cross != 0) {
     return false;
   }
   if ((dxl).abs() >= (dyl).abs()) {
     if (dxl > 0) {
-      return lineSegmentStart.coordinates[0]! <= pt.coordinates[0]! &&
-          pt.coordinates[0]! <= lineSegmentEnd.coordinates[0]!;
+      return lineSegmentStart[0]! <= pt[0]! && pt[0]! <= lineSegmentEnd[0]!;
     } else {
-      return lineSegmentEnd.coordinates[0]! <= pt.coordinates[0]! &&
-          pt.coordinates[0]! <= lineSegmentStart.coordinates[0]!;
+      return lineSegmentEnd[0]! <= pt[0]! && pt[0]! <= lineSegmentStart[0]!;
     }
   } else if (dyl > 0) {
-    return lineSegmentStart.coordinates[1]! <= pt.coordinates[1]! &&
-        pt.coordinates[1]! <= lineSegmentEnd.coordinates[1]!;
+    return lineSegmentStart[1]! <= pt[1]! && pt[1]! <= lineSegmentEnd[1]!;
   } else {
-    return lineSegmentEnd.coordinates[1]! <= pt.coordinates[1]! &&
-        pt.coordinates[1]! <= lineSegmentStart.coordinates[1]!;
+    return lineSegmentEnd[1]! <= pt[1]! && pt[1]! <= lineSegmentStart[1]!;
   }
 }
 

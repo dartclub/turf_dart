@@ -1,5 +1,6 @@
 import '../../helpers.dart';
 import '../../line_segment.dart';
+import '../clean_coords.dart';
 
 /**
  * Boolean-Parallel returns True if each segment of `line1` is parallel to the correspondent segment of `line2`
@@ -59,8 +60,9 @@ getType(GeoJSONObject geojson, String name) {
   if ((geojson as Feature).geometry != null) {
     return geojson.geometry.runtimeType;
   }
-  if (geojson.runtimeType is GeometryType)
-    return geojson.type; // if GeoJSON geometry
+  if (geojson.runtimeType is GeometryType) {
+    return geojson.type;
+  } // if GeoJSON geometry
   throw Exception("Invalid GeoJSON object for $name");
 }
 
