@@ -106,12 +106,14 @@ isMultiPointOnLine(MultiPoint multiPoint, LineString lineString) {
   var foundInsidePoint = false;
 
   for (var i = 0; i < multiPoint.coordinates.length; i++) {
-    if (!booleanPointOnLine(multiPoint.coordinates[i], lineString)) {
+    if (!booleanPointOnLine(
+        Point(coordinates: multiPoint.coordinates[i]), lineString)) {
       return false;
     }
     if (!foundInsidePoint) {
       foundInsidePoint = booleanPointOnLine(
-          multiPoint.coordinates[i], lineString, {ignoreEndVertices: true});
+          Point(coordinates: multiPoint.coordinates[i]), lineString,
+          ignoreEndVertices: true);
     }
   }
   return foundInsidePoint;
@@ -128,9 +130,11 @@ isMultiPointInPoly(MultiPoint multiPoint, Polygon polygon) {
       break;
     }
     if (!oneInside) {
-      isInside = booleanPointInPolygon(multiPoint.coordinates[i], polygon, {
+      isInside = booleanPointInPolygon(
+        multiPoint.coordinates[i],
+        polygon,
         ignoreBoundary: true,
-      });
+      );
     }
   }
   return output && isInside;
@@ -138,7 +142,8 @@ isMultiPointInPoly(MultiPoint multiPoint, Polygon polygon) {
 
 isLineOnLine(LineString lineString1, LineString lineString2) {
   for (var i = 0; i < lineString1.coordinates.length; i++) {
-    if (!booleanPointOnLine(lineString1.coordinates[i], lineString2)) {
+    if (!booleanPointOnLine(
+        Point(coordinates: lineString1.coordinates[i]), lineString2)) {
       return false;
     }
   }
@@ -159,14 +164,17 @@ isLineInPoly(LineString linestring, Polygon polygon) {
     }
     if (!foundInsidePoint) {
       foundInsidePoint = booleanPointInPolygon(
-          linestring.coordinates[i], polygon, {ignoreBoundary: true});
+          linestring.coordinates[i], polygon,
+          ignoreBoundary: true);
     }
     if (!foundInsidePoint) {
       var midpoint =
           getMidpoint(linestring.coordinates[i], linestring.coordinates[i + 1]);
-      foundInsidePoint = booleanPointInPolygon(midpoint, polygon, {
+      foundInsidePoint = booleanPointInPolygon(
+        midpoint,
+        polygon,
         ignoreBoundary: true,
-      });
+      );
     }
   }
   return foundInsidePoint;

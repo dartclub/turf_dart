@@ -2,6 +2,7 @@ import '../../helpers.dart';
 import '../../line_segment.dart';
 import '../invariant.dart';
 import '../line_intersect.dart';
+import '../line_overlap.dart';
 
 /**
  * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry

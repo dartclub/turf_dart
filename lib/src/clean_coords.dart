@@ -48,9 +48,9 @@ import 'invariant.dart';
       });
       break;
     case MultiPolygon:
-      getCoords(geojson).forEach( (polygons: any) {
-        var polyPoints: Position[] = [];
-        polygons.forEach( (ring: Position[]) {
+      getCoords(geojson).forEach( (polygons) {
+        var polyPoints = <Position>[];
+        polygons.forEach( (List<Position> ring) {
           polyPoints.add(cleanLine(ring, type));
         });
         newCoords.add(polyPoints);
@@ -59,7 +59,7 @@ import 'invariant.dart';
     case Point:
       return geojson;
     case MultiPoint:
-      var existing: Record<string, true> = {};
+      var Record<string, true> existing:  = {};
       getCoords(geojson).forEach( (coord: any) {
         var key = coord.join("-");
         if (!Object.prototype.hasOwnProperty.call(existing, key)) {
@@ -69,7 +69,7 @@ import 'invariant.dart';
       });
       break;
     default:
-      throw new Error(type + " geometry not supported");
+      throw Exception(type + " geometry not supported");
   }
 
   // Support input mutation
