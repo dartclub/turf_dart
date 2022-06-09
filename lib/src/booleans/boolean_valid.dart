@@ -1,5 +1,6 @@
 import '../../helpers.dart';
 import '../invariant.dart';
+import '../line_intersect.dart';
 import 'boolean_crosses.dart';
 import 'boolean_disjoint.dart';
 
