@@ -28,7 +28,8 @@ import '../invariant.dart';
  * turf.booleanPointInPolygon(pt, poly);
  * //= true
  */
-booleanPointInPolygon(Position point, Feature polygon, {bool? ignoreBoundary}) {
+booleanPointInPolygon(Position point, GeoJSONObject polygon,
+    {bool? ignoreBoundary}) {
   var pt = getCoord(point);
   var geom = getGeom(polygon);
   var type = geom.type;

@@ -1,9 +1,7 @@
-
 import '../../helpers.dart';
 import '../../line_segment.dart';
 import '../invariant.dart';
 import '../line_intersect.dart';
-GeojsonEquality from "geojson-equality";
 
 /**
  * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
@@ -26,30 +24,25 @@ GeojsonEquality from "geojson-equality";
  * turf.booleanOverlap(poly2, poly3)
  * //=false
  */
- booleanOverlap(
-  GeometryObject feature1,
-  GeometryObject feature2
-) {
+booleanOverlap(GeometryObject feature1, GeometryObject feature2) {
   var geom1 = getGeom(feature1);
   var geom2 = getGeom(feature2);
   var type1 = geom1.type;
   var type2 = geom2.type;
 
-  if (
-    (type1 == MultiPoint && type2 != MultiPoint) ||
-    ((type1 == LineString || type1 == MultiLineString) &&
-      type2 != LineString &&
-      type2 != MultiLineString) ||
-    ((type1 == Polygon || type1 == MultiPolygon) &&
-      type2 != Polygon &&
-      type2 != MultiPolygon)
-  ) {
+  if ((type1 == MultiPoint && type2 != MultiPoint) ||
+      ((type1 == LineString || type1 == MultiLineString) &&
+          type2 != LineString &&
+          type2 != MultiLineString) ||
+      ((type1 == Polygon || type1 == MultiPolygon) &&
+          type2 != Polygon &&
+          type2 != MultiPolygon)) {
     throw Exception("features must be of the same type");
   }
   if (type1 == Point) throw Exception("Point geometry not supported");
 
   // features must be not equal
-  const equality =  GeojsonEquality({ precision: 6 });
+  const equality = GeojsonEquality({precision: 6});
   if (equality.compare(feature1, feature2)) return false;
 
   var overlap = 0;
@@ -69,15 +62,20 @@ GeojsonEquality from "geojson-equality";
 
     case LineString:
     case MultiLineString:
-      segmentEach(feature1, (segment1,
-  featureIndex,
-   multiFeatureIndex,
-   geometryIndex,
-  segmentIndex,)  {
-        segmentEach(feature2, (segment2,  featureIndex,
-   multiFeatureIndex,
-   geometryIndex,
-  segmentIndex,)  {
+      segmentEach(feature1, (
+        segment1,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        segmentIndex,
+      ) {
+        segmentEach(feature2, (
+          segment2,
+          featureIndex,
+          multiFeatureIndex,
+          geometryIndex,
+          segmentIndex,
+        ) {
           if (lineOverlap(segment1, segment2).features.length) overlap++;
         });
       });
@@ -85,14 +83,20 @@ GeojsonEquality from "geojson-equality";
 
     case Polygon:
     case MultiPolygon:
-      segmentEach(feature1, (segment1, featureIndex,
-   multiFeatureIndex,
-   geometryIndex,
-  segmentIndex,) {
-        segmentEach(feature2, (segment2,  featureIndex,
-   multiFeatureIndex,
-   geometryIndex,
-  segmentIndex,) {
+      segmentEach(feature1, (
+        segment1,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        segmentIndex,
+      ) {
+        segmentEach(feature2, (
+          segment2,
+          featureIndex,
+          multiFeatureIndex,
+          geometryIndex,
+          segmentIndex,
+        ) {
           if (lineIntersect(segment1, segment2).features.isNotEmpty) overlap++;
         });
       });

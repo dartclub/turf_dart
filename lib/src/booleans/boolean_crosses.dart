@@ -1,5 +1,6 @@
 import '../../helpers.dart';
 import '../invariant.dart';
+import '../line_intersect.dart';
 import 'boolean_point_in_polygon.dart';
 /** 
  * Boolean-Crosses returns True if the intersection results in a geometry whose dimension is one less than
@@ -88,9 +89,9 @@ doMultiPointAndLineStringCross(MultiPoint multiPoint, LineString lineString) {
   return foundIntPoint && foundExtPoint;
 }
 
-doLineStringsCross(LineString lineString, LineString lineString) {
+doLineStringsCross(LineString lineString1, LineString lineString2) {
   var doLinesIntersect = lineIntersect(lineString1, lineString2);
-  if (doLinesIntersect.features.length > 0) {
+  if (doLinesIntersect.features.isNotEmpty) {
     for (var i = 0; i < lineString1.coordinates.length - 1; i++) {
       for (var i2 = 0; i2 < lineString2.coordinates.length - 1; i2++) {
         var incEndVertices = true;
@@ -112,8 +113,8 @@ doLineStringsCross(LineString lineString, LineString lineString) {
 
 doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
   const LineString line = polygonToLine(polygon);
-  const doLinesIntersect = lineIntersect(lineString, line);
-  if (doLinesIntersect.features.length > 0) {
+  var doLinesIntersect = lineIntersect(lineString, line);
+  if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;
@@ -124,8 +125,7 @@ doesMultiPointCrossPoly(MultiPoint multiPoint, Polygon polygon) {
   var foundExtPoint = false;
   var pointLength = multiPoint.coordinates.length;
   for (var i = 0; i < pointLength && (!foundIntPoint || !foundExtPoint); i++) {
-    if (booleanPointInPolygon(
-        Point(coordinates: multiPoint.coordinates[i]), polygon)) {
+    if (booleanPointInPolygon(multiPoint.coordinates[i], polygon)) {
       foundIntPoint = true;
     } else {
       foundExtPoint = true;

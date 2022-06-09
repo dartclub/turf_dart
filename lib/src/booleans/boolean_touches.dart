@@ -88,8 +88,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
             for (var ii = 0; ii < geom2.coordinates.length; ii++) {
               if (!foundTouchingPoint) {
                 if (isPointOnLineEnd(Point(coordinates: geom1.coordinates[i]),
-                    LineString(coordinates: geom2.coordinates[ii])))
+                    LineString(coordinates: geom2.coordinates[ii]))) {
                   foundTouchingPoint = true;
+                }
               }
               if (booleanPointOnLine(Point(coordinates: geom1.coordinates[i]),
                   LineString(coordinates: geom2.coordinates[ii]),
@@ -108,8 +109,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom1.coordinates[i]), geom2,
+            if (booleanPointInPolygon(geom1.coordinates[i], geom2,
                 ignoreBoundary: true)) {
               return false;
             }
@@ -128,8 +128,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom1.coordinates[i]),
+              if (booleanPointInPolygon(geom1.coordinates[i],
                   Polygon(coordinates: geom2.coordinates[ii]),
                   ignoreBoundary: true)) {
                 return false;
@@ -148,13 +147,11 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           var foundTouchingPoint = false;
           for (var i = 0; i < geom2.coordinates.length; i++) {
             if (!foundTouchingPoint) {
-              if (isPointOnLineEnd(
-                  Point(coordinates: geom2.coordinates[i]), geom1)) {
+              if (isPointOnLineEnd(geom2.coordinates[i], geom1)) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointOnLine(
-                Point(coordinates: geom2.coordinates[i]), geom1,
+            if (booleanPointOnLine(geom2.coordinates[i], geom1,
                 ignoreEndVertices: true)) {
               return false;
             }
@@ -212,8 +209,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom1.coordinates[i]), geom2,
+            if (booleanPointInPolygon(geom1.coordinates[i], geom2,
                 ignoreBoundary: true)) {
               return false;
             }
@@ -233,8 +229,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                 }
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom1.coordinates[i]), geom2,
+            if (booleanPointInPolygon(geom1.coordinates[i], geom2,
                 ignoreBoundary: true)) {
               return false;
             }
@@ -336,8 +331,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom1.coordinates[i][ii]), geom2,
+              if (booleanPointInPolygon(geom1.coordinates[i][ii], geom2,
                   ignoreBoundary: true)) {
                 return false;
               }
@@ -360,8 +354,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                     foundTouchingPoint = true;
                   }
                 }
-                if (booleanPointInPolygon(
-                    Point(coordinates: geom1.coordinates[ii][iii]),
+                if (booleanPointInPolygon(geom1.coordinates[ii][iii],
                     Polygon(coordinates: [geom2.coordinates[0][i]]),
                     ignoreBoundary: true)) {
                   return false;
@@ -390,13 +383,12 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           var foundTouchingPoint = false;
           for (var i = 0; i < geom2.coordinates.length; i++) {
             if (!foundTouchingPoint) {
-              if (booleanPointOnLine(Point(coordinates: geom2.coordinates[i]),
+              if (booleanPointOnLine(geom2.coordinates[i],
                   LineString(coordinates: geom1.coordinates[0]))) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom2.coordinates[i]), geom1,
+            if (booleanPointInPolygon(geom2.coordinates[i], geom1,
                 ignoreBoundary: true)) return false;
           }
           return foundTouchingPoint;
@@ -404,13 +396,12 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           var foundTouchingPoint = false;
           for (var i = 0; i < geom2.coordinates.length; i++) {
             if (!foundTouchingPoint) {
-              if (booleanPointOnLine(Point(coordinates: geom2.coordinates[i]),
+              if (booleanPointOnLine(geom2.coordinates[i],
                   LineString(coordinates: geom1.coordinates[0]))) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom2.coordinates[i]), geom1,
+            if (booleanPointInPolygon(geom2.coordinates[i], geom1,
                 ignoreBoundary: true)) {
               return false;
             }
@@ -421,14 +412,12 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           for (var i = 0; i < geom2.coordinates.length; i++) {
             for (var ii = 0; ii < geom2.coordinates[i].length; ii++) {
               if (!foundTouchingPoint) {
-                if (booleanPointOnLine(
-                    Point(coordinates: geom2.coordinates[i][ii]),
+                if (booleanPointOnLine(geom2.coordinates[i][ii],
                     LineString(coordinates: geom1.coordinates[0]))) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom2.coordinates[i][ii]), geom1,
+              if (booleanPointInPolygon(geom2.coordinates[i][ii], geom1,
                   ignoreBoundary: true)) {
                 return false;
               }
@@ -445,8 +434,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                 foundTouchingPoint = true;
               }
             }
-            if (booleanPointInPolygon(
-                Point(coordinates: geom1.coordinates[0][i]), geom2,
+            if (booleanPointInPolygon(geom1.coordinates[0][i], geom2,
                 ignoreBoundary: true)) {
               return false;
             }
@@ -463,8 +451,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom1.coordinates[0][ii]),
+              if (booleanPointInPolygon(geom1.coordinates[0][ii],
                   Polygon(coordinates: geom2.coordinates[0][i]),
                   ignoreBoundary: true)) {
                 return false;
@@ -499,8 +486,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom2.coordinates[ii]),
+              if (booleanPointInPolygon(geom2.coordinates[ii],
                   Polygon(coordinates: geom1.coordinates[0][i]),
                   ignoreBoundary: true)) {
                 return false;
@@ -519,8 +505,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom2.coordinates[ii]),
+              if (booleanPointInPolygon(geom2.coordinates[ii],
                   Polygon(coordinates: geom1.coordinates[0][i]),
                   ignoreBoundary: true)) {
                 return false;
@@ -544,8 +529,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                     foundTouchingPoint = true;
                   }
                 }
-                if (booleanPointInPolygon(
-                    Point(coordinates: geom2.coordinates[ii][iii]),
+                if (booleanPointInPolygon(geom2.coordinates[ii][iii],
                     Polygon(coordinates: [geom1.coordinates[i][0]]),
                     ignoreBoundary: true)) {
                   return false;
@@ -566,8 +550,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                   foundTouchingPoint = true;
                 }
               }
-              if (booleanPointInPolygon(
-                  Point(coordinates: geom1.coordinates[0][i][ii]), geom2,
+              if (booleanPointInPolygon(geom1.coordinates[0][i][ii], geom2,
                   ignoreBoundary: true)) {
                 return false;
               }
@@ -590,10 +573,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
                     foundTouchingPoint = true;
                   }
                 }
-                if (booleanPointInPolygon(
-                    Point(
-                      coordinates: geom1.coordinates[0][i][iii],
-                    ),
+                if (booleanPointInPolygon(geom1.coordinates[0][i][iii],
                     Polygon(coordinates: geom2.coordinates[0][ii]),
                     ignoreBoundary: true)) {
                   return false;

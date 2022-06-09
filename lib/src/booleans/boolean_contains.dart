@@ -125,8 +125,7 @@ isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
 
 isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
   for (var coord in multiPoint.coordinates) {
-    if (!booleanPointInPolygon(coord, Feature(geometry: polygon),
-        ignoreBoundary: true)) {
+    if (!booleanPointInPolygon(coord, polygon, ignoreBoundary: true)) {
       return false;
     }
   }
@@ -168,7 +167,7 @@ isLineInPoly(Polygon polygon, LineString linestring) {
         getMidpoint(linestring.coordinates[i], linestring.coordinates[i + 1]);
     if (booleanPointInPolygon(
       Position.of(midPoint),
-      Feature(geometry: polygon),
+      polygon,
       ignoreBoundary: true,
     )) {
       output = true;
