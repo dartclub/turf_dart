@@ -1,3 +1,7 @@
+import 'package:turf/helpers.dart';
+
+import '../helpers.dart';
+import 'invariant.dart';
 
 /**
  * Converts a {@link Polygon} to {@link LineString|(Multi)LineString} or {@link MultiPolygon} to a
@@ -16,83 +20,59 @@
  * //addToMap
  * var addToMap = [line];
  */
-export default function <
-  G extends Polygon | MultiPolygon,
-  P = GeoJsonProperties
->(
-  poly: Feature<G, P> | G,
-  options: { properties?: any } = {}
-):
-  | Feature<LineString | MultiLineString, P>
-  | FeatureCollection<LineString | MultiLineString, P> {
-  const geom: any = getGeom(poly);
-  if (!options.properties && poly.type === "Feature") {
-    options.properties = poly.properties;
+
+polygonToLine(GeoJSONObject poly, {Map<String, dynamic>? properties}) {
+  var geom = getGeom(poly);
+  if (properties == null && poly is Feature) {
+    properties = poly.properties;
   }
   switch (geom.type) {
-    case "Polygon":
-      return polygonToLine(geom, options);
-    case "MultiPolygon":
-      return multiPolygonToLine(geom, options);
+    case Polygon:
+      return _polygonToLine(geom, properties: properties);
+    case MultiPolygon:
+      return _multiPolygonToLine(geom, properties: properties);
     default:
-      throw new Error("invalid poly");
+      throw Exception("invalid poly");
   }
 }
 
-/**
- * @private
- */
-export function polygonToLine<G extends Polygon, P = GeoJsonProperties>(
-  poly: Feature<G, P> | G,
-  options: { properties?: any } = {}
-): Feature<LineString | MultiLineString, P> {
-  const geom = getGeom(poly);
-  const coords: any[] = geom.coordinates;
-  const properties: any = options.properties
-    ? options.properties
-    : poly.type === "Feature"
-    ? poly.properties
-    : {};
+_polygonToLine<G extends Polygon>(GeoJSONObject poly,
+    {Map<String, dynamic>? properties}) {
+  GeometryType geom = getGeom(poly);
+  var coords = geom.coordinates;
+  properties = properties != null
+      ? (poly is Feature)
+          ? poly.properties
+          : {}
+      : properties;
 
-  return coordsToLine(coords, properties);
+  return _coordsToLine(coords, properties!);
 }
 
-/**
- * @private
- */
-export function multiPolygonToLine<
-  G extends MultiPolygon,
-  P = GeoJsonProperties
->(
-  multiPoly: Feature<G, P> | G,
-  options: { properties?: P } = {}
-): FeatureCollection<LineString | MultiLineString, P> {
-  const geom = getGeom(multiPoly);
-  const coords: any[] = geom.coordinates;
-  const properties: any = options.properties
-    ? options.properties
-    : multiPoly.type === "Feature"
-    ? multiPoly.properties
-    : {};
+_multiPolygonToLine(GeoJSONObject multiPoly,
+    {Map<String, dynamic>? properties}) {
+  var geom = getGeom(multiPoly);
+  var coords = geom.coordinates;
+  properties = properties != null
+      ? (multiPoly is Feature)
+          ? multiPoly.properties
+          : {}
+      : properties;
 
-  const lines: Array<Feature<LineString | MultiLineString, P>> = [];
-  coords.forEach((coord) => {
-    lines.push(coordsToLine(coord, properties));
+  const lines = <Feature<GeometryObject>>[];
+  coords.forEach((coord) {
+    lines.add(_coordsToLine(coord, properties!));
   });
-  return featureCollection(lines);
+  return FeatureCollection(features: lines);
 }
 
-/**
- * @private
- */
-export function coordsToLine<P = GeoJsonProperties>(
-  coords: number[][][],
-  properties: P
-): Feature<LineString | MultiLineString, P> {
+_coordsToLine(List<List<Position>> coords, Map<String, dynamic> properties) {
   if (coords.length > 1) {
-    return multiLineString(coords, properties);
+    return Feature(
+        properties: properties, geometry: MultiLineString(coordinates: coords));
   }
-  return lineString(coords[0], properties);
+  return Feature(
+      geometry: LineString(coordinates: coords[0]), properties: properties);
 }
 
 /**

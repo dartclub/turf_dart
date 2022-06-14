@@ -59,14 +59,14 @@ bool booleanPointOnLine(Point pt, LineString line,
  * If true which end to ignore.
  * @returns {boolean} true/false
  */
-bool isPointOnLineSegment(Point lineSegmentStart, Point lineSegmentEnd,
+bool isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
     Position pt, dynamic excludeBoundary, num? epsilon) {
   var x = pt[0]!;
   var y = pt[1]!;
-  var x1 = lineSegmentStart.coordinates[0];
-  var y1 = lineSegmentStart.coordinates[1];
-  var x2 = lineSegmentEnd.coordinates[0];
-  var y2 = lineSegmentEnd.coordinates[1];
+  var x1 = lineSegmentStart[0];
+  var y1 = lineSegmentStart[1];
+  var x2 = lineSegmentEnd[0];
+  var y2 = lineSegmentEnd[1];
   var dxc = pt[0]! - x1!;
   var dyc = pt[1]! - y1!;
   var dxl = x2! - x1;

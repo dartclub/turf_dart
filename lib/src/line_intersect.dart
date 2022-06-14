@@ -52,7 +52,7 @@ FeatureCollection<Point>  lineIntersect(
     features.add(Feature(geometry: line2 as GeometryObject));
   }
 
-  const intersections = findIntersections(
+  var intersections = findIntersections(
     FeatureCollection(features: features),
     ignoreSelfIntersections
   );
