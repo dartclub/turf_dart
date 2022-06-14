@@ -1,6 +1,7 @@
 import '../../helpers.dart';
 import '../../meta.dart';
 import '../line_intersect.dart';
+import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
 
 /**
