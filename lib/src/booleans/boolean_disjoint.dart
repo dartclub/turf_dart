@@ -131,7 +131,7 @@ isPolyInPoly(Polygon feature1, Polygon feature2) {
   }
   var doLinesIntersect =
       lineIntersect(polygonToLine(feature1), polygonToLine(feature2));
-  if (doLinesIntersect.features.length > 0) {
+  if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;

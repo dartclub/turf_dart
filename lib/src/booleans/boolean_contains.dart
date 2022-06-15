@@ -1,7 +1,9 @@
+import 'package:turf/src/booleans/boolean_disjoint.dart';
+
 import '../../helpers.dart';
 import '../invariant.dart';
-import 'boolean_disjoint.dart';
 import 'boolean_point_in_polygon.dart';
+import 'boolean_point_on_line.dart';
 
 /**
  * Boolean-contains returns True if the second geometry is completely contained by the first geometry.
@@ -50,7 +52,7 @@ booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     case LineString:
       switch (type2) {
         case Point:
-          return isPointOnLine(geom2, geom1, ignoreEndVertices: true);
+          return booleanPointOnLine(geom2, geom1, ignoreEndVertices: true);
         case LineString:
           return isLineOnLine(geom1, geom2);
         case MultiPoint:
@@ -109,11 +111,11 @@ isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
 isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
   var haveFoundInteriorPoint = false;
   for (var coord in multiPoint.coordinates) {
-    if (isPointOnLine(lineString, Point(coordinates: coord),
+    if (booleanPointOnLine(Point(coordinates: coord), lineString,
         ignoreEndVertices: true)) {
       haveFoundInteriorPoint = true;
     }
-    if (!isPointOnLine(lineString, Point(coordinates: coord))) {
+    if (!booleanPointOnLine(Point(coordinates: coord), lineString)) {
       return false;
     }
   }
@@ -135,16 +137,16 @@ isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
 isLineOnLine(LineString lineString1, LineString lineString2) {
   var haveFoundInteriorPoint = false;
   for (var coords in lineString2.coordinates) {
-    if (isPointOnLine(
-      lineString1,
+    if (booleanPointOnLine(
       Point(coordinates: coords),
+      lineString1,
       ignoreEndVertices: true,
     )) {
       haveFoundInteriorPoint = true;
     }
-    if (!isPointOnLine(
-      lineString1,
+    if (!booleanPointOnLine(
       Point(coordinates: coords),
+      lineString1,
       ignoreEndVertices: false,
     )) {
       return false;

@@ -27,44 +27,44 @@ bool booleanWithin(GeoJSONObject feature1, GeoJSONObject feature2) {
   var type2 = geom2.type;
 
   switch (type1) {
-    case "Point":
+    case Point:
       switch (type2) {
-        case "MultiPoint":
+        case MultiPoint:
           return isPointInMultiPoint(geom1, geom2);
-        case "LineString":
+        case LineString:
           return booleanPointOnLine(geom1, geom2, ignoreEndVertices: true);
-        case "Polygon":
-        case "MultiPolygon":
+        case Polygon:
+        case MultiPolygon:
           return booleanPointInPolygon(geom1, geom2, ignoreBoundary: true);
         default:
           throw Exception("feature2 " + type2 + " geometry not supported");
       }
-    case "MultiPoint":
+    case MultiPoint:
       switch (type2) {
-        case "MultiPoint":
+        case MultiPoint:
           return isMultiPointInMultiPoint(geom1, geom2);
-        case "LineString":
+        case LineString:
           return isMultiPointOnLine(geom1, geom2);
-        case "Polygon":
-        case "MultiPolygon":
+        case Polygon:
+        case MultiPolygon:
           return isMultiPointInPoly(geom1, geom2);
         default:
           throw Exception("feature2 " + type2 + " geometry not supported");
       }
-    case "LineString":
+    case LineString:
       switch (type2) {
-        case "LineString":
+        case LineString:
           return isLineOnLine(geom1, geom2);
-        case "Polygon":
-        case "MultiPolygon":
+        case Polygon:
+        case MultiPolygon:
           return isLineInPoly(geom1, geom2);
         default:
           throw Exception("feature2 " + type2 + " geometry not supported");
       }
-    case "Polygon":
+    case Polygon:
       switch (type2) {
-        case "Polygon":
-        case "MultiPolygon":
+        case Polygon:
+        case MultiPolygon:
           return isPolyInPoly(geom1, geom2);
         default:
           throw Exception("feature2 " + type2 + " geometry not supported");
