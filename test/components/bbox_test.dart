@@ -3,7 +3,8 @@ import 'package:turf/bbox.dart';
 import 'package:turf/helpers.dart';
 
 main() {
-  final pt = Feature<Point>(geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)));
+  final pt = Feature<Point>(
+      geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)));
   final line = Feature<LineString>(
       geometry: LineString(coordinates: [
     Position.named(lat: 102.0, lng: -10.0),
@@ -60,7 +61,8 @@ main() {
       ],
     ],
   ]));
-  final fc = FeatureCollection(features: [pt, line, poly, multiLine, multiPoly]);
+  final fc =
+      FeatureCollection(features: [pt, line, poly, multiLine, multiPoly]);
 
   test("bbox", () {
     // FeatureCollection
@@ -89,9 +91,12 @@ main() {
 
     final pt2 = Feature<Point>(
       geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)),
-      bbox: bbox(Feature<Point>(geometry: Point(coordinates: Position.named(lat: 0, lng: 0)))),
+      bbox: bbox(Feature<Point>(
+          geometry: Point(coordinates: Position.named(lat: 0, lng: 0)))),
     );
-    expect(bbox(pt2), equals([0, 0, 0, 0]), reason: "uses built-in bbox by default");
-    expect(bbox(pt2, recompute: true), [0.5, 102, 0.5, 102], reason: "recomputes bbox with recompute option");
+    expect(bbox(pt2), equals([0, 0, 0, 0]),
+        reason: "uses built-in bbox by default");
+    expect(bbox(pt2, recompute: true), [0.5, 102, 0.5, 102],
+        reason: "recomputes bbox with recompute option");
   });
 }

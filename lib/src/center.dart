@@ -1,16 +1,21 @@
-import 'package:turf/bbox.dart';
+import 'package:turf/bbox.dart' as t;
 import 'package:turf/helpers.dart';
 
-/// Takes a [Feature]/[FeatureCollection] and returns the absolute center point of all features.
-Feature<Point> center<P>(GeoJSONObject geoJSON, {Map<String, dynamic>? options}) {
-  final ext = bbox(geoJSON);
+/// Takes a [Feature] or a [FeatureCollection] and returns the absolute center point of all feature(s).
+Feature<Point> center<P>(
+  GeoJSONObject geoJSON, {
+  dynamic id,
+  BBox? bbox,
+  Map<String, dynamic>? properties,
+}) {
+  final ext = t.bbox(geoJSON);
   final x = (ext[0]! + ext[2]!) / 2;
   final y = (ext[1]! + ext[3]!) / 2;
 
   return Feature<Point>(
-    id: options?['id'],
-    bbox: options?['bbox'],
-    properties: options?['properties'],
+    id: id,
+    bbox: bbox,
+    properties: properties,
     geometry: Point(coordinates: Position.named(lat: y, lng: x)),
   );
 }
