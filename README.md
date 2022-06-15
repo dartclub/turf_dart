@@ -125,7 +125,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Feature Conversion
 - [ ] combine
-- [ ] explode
+- [x] explode
 - [ ] flatten
 - [ ] lineToPolygon
 - [ ] polygonize
