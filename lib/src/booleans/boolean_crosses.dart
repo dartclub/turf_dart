@@ -1,6 +1,7 @@
 import '../../helpers.dart';
 import '../invariant.dart';
 import '../line_intersect.dart';
+import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
 /** 
  * Boolean-Crosses returns True if the intersection results in a geometry whose dimension is one less than
@@ -112,7 +113,7 @@ doLineStringsCross(LineString lineString1, LineString lineString2) {
 }
 
 doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
-  const LineString line = polygonToLine(polygon);
+  LineString line = polygonToLine(polygon);
   var doLinesIntersect = lineIntersect(lineString, line);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
