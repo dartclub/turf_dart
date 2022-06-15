@@ -125,7 +125,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Feature Conversion
 - [ ] combine
-- [x] explode
+- [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
 - [ ] flatten
 - [ ] lineToPolygon
 - [ ] polygonize
