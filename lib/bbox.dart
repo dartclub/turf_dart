@@ -1,3 +1,3 @@
 library turf_bbox;
 
-export 'src/bbox.dart';
+export "src/bbox.dart";
