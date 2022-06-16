@@ -76,7 +76,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] along
 - [ ] area
 - [ ] bbox
-- [ ] bboxPolygon
+- [x] [bboxPolygon] (https://github.com/dartclub/turf_dart/blob/main/lib/bbox_polygon.dart)
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/bearing.dart)
 - [ ] center
 - [ ] centerOfMass
