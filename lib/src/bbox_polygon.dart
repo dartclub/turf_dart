@@ -7,7 +7,8 @@ import '../helpers.dart';
 /// //addToMap
 /// var addToMap = [poly]
 /// ```
-Feature<Polygon> bboxPolygon(BBox bbox, {properties, id}) {
+Feature<Polygon> bboxPolygon(BBox bbox,
+    {Map<String, dynamic> properties = const {}, dynamic id}) {
   var west = bbox[0]!;
   var south = bbox[1]!;
   var east = bbox[2]!;
@@ -24,6 +25,8 @@ Feature<Polygon> bboxPolygon(BBox bbox, {properties, id}) {
   var lowRight = [east, south];
 
   return Feature(
+    properties: properties,
+    id: id,
     geometry: Polygon(
       coordinates: [
         [
