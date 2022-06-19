@@ -1,6 +1,6 @@
-import '../helpers.dart';
+import 'package:turf/helpers.dart';
 
-/// Takes a bbox and returns an equivalent [Feature<Polygon>].
+/// Takes a [Bbox] and returns an equivalent [Feature<Polygon>].
 /// ```dart
 /// var bbox = Bbox(0, 0, 10, 10);
 /// var poly = bboxPolygon(bbox);
@@ -15,8 +15,7 @@ Feature<Polygon> bboxPolygon(BBox bbox,
   var north = bbox[3]!;
 
   if (bbox.length == 6) {
-    throw Exception(
-        "@turf/bbox-polygon does not support BBox with 6 positions");
+    throw Exception("turf/bbox-polygon does not support BBox with 6 positions");
   }
 
   var lowLeft = [west, south];
@@ -25,6 +24,7 @@ Feature<Polygon> bboxPolygon(BBox bbox,
   var lowRight = [east, south];
 
   return Feature(
+    bbox: bbox.clone(),
     properties: properties,
     id: id,
     geometry: Polygon(

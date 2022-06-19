@@ -8,7 +8,7 @@ main() {
     "bbox-polygon",
     () {
       var poly = bboxPolygon(Bbox(0, 0, 10, 10));
-      expect((poly.geometry is Polygon), equals(true));
+      expect(poly.geometry is Polygon, true);
     },
   );
 
@@ -18,11 +18,11 @@ main() {
       var poly = bboxPolygon(Bbox(0, 0, 10, 10));
       var coordinates = poly.geometry!.coordinates;
 
-      expect((coordinates[0].length == 5), equals(true));
+      expect(coordinates[0].length == 5, true);
       expect(coordinates[0][0][0] == coordinates[0][coordinates.length - 1][0],
-          equals(true));
+          true);
       expect(coordinates[0][0][1] == coordinates[0][coordinates.length - 1][1],
-          equals(true));
+          true);
     },
   );
 
