@@ -1,6 +1,5 @@
-import 'package:turf/src/booleans/boolean_disjoint.dart';
+import 'package:turf/turf.dart';
 
-import '../../helpers.dart';
 import '../invariant.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
@@ -159,8 +158,8 @@ isLineInPoly(Polygon polygon, LineString linestring) {
   var output = false;
   var i = 0;
 
-  const polyBbox = calcBbox(polygon);
-  const lineBbox = calcBbox(linestring);
+  var polyBbox = bbox(polygon);
+  var lineBbox = bbox(linestring);
   if (!doBBoxOverlap(polyBbox, lineBbox)) {
     return false;
   }
@@ -188,19 +187,17 @@ isLineInPoly(Polygon polygon, LineString linestring) {
  * @param {Geometry|Feature<Polygon>} feature2 Polygon2
  * @returns {boolean} true/false
  */
-isPolyInPoly(GeoJSONObject feature1, GeoJSONObjectType feature2) {
+isPolyInPoly(GeoJSONObject feature1, GeoJSONObject feature2) {
   // Handle Nulls
-  if (feature1.runtimeType == Feature &&
-      (feature1 as Feature).geometry == null) {
+  if (feature1 is Feature && feature1.geometry == null) {
     return false;
   }
-  if (feature2.runtimeType == Feature &&
-      (feature2 as Feature).geometry == null) {
+  if (feature2 is Feature && feature2.geometry == null) {
     return false;
   }
 
-  const poly1Bbox = calcBbox(feature1);
-  const poly2Bbox = calcBbox(feature2);
+  var poly1Bbox = bbox(feature1);
+  var poly2Bbox = bbox(feature2);
   if (!doBBoxOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }

@@ -63,23 +63,33 @@ booleanOverlap(GeometryObject feature1, GeometryObject feature2) {
 
     case LineString:
     case MultiLineString:
-      segmentEach(feature1, (
-        segment1,
-        featureIndex,
-        multiFeatureIndex,
-        geometryIndex,
-        segmentIndex,
-      ) {
-        segmentEach(feature2, (
-          segment2,
+      segmentEach(
+        feature1,
+        (
+          segment1,
           featureIndex,
           multiFeatureIndex,
           geometryIndex,
           segmentIndex,
         ) {
-          if (lineOverlap(segment1, segment2).features.length) overlap++;
-        });
-      });
+          segmentEach(
+            feature2,
+            (
+              segment2,
+              featureIndex,
+              multiFeatureIndex,
+              geometryIndex,
+              segmentIndex,
+            ) {
+              if (lineOverlap(line1: segment1, line2: segment2)
+                  .features
+                  .length) {
+                overlap++;
+              }
+            },
+          );
+        },
+      );
       break;
 
     case Polygon:
