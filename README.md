@@ -76,9 +76,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] along
 - [ ] area
 - [ ] bbox
-- [ ] bboxPolygon
+- [x] [bboxPolygon] (https://github.com/dartclub/turf_dart/blob/main/lib/bbox_polygon.dart)
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/bearing.dart)
-- [ ] center
+- [ ] [center](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/center.dart)
 - [ ] centerOfMass
 - [ ] centroid
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/destination.dart)
@@ -122,6 +122,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] transformScale
 - [ ] union
 - [ ] voronoi
+- [x] [polyLineDecode](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/polyline.dart)
 
 ### Feature Conversion
 - [ ] combine
