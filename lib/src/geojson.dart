@@ -282,16 +282,16 @@ class BBox extends CoordinateType {
   BBox(
     num lng1,
     num lat1,
-    num alt1,
+    num lat2,
     num lng2, [
-    num? lat2,
+    num? alt1,
     num? alt2,
   ]) : super([
           lng1,
           lat1,
-          alt1,
           lng2,
-          if (lat2 != null) lat2,
+          lat2,
+          if (alt1 != null) alt1,
           if (alt2 != null) alt2,
         ]);
 
@@ -335,13 +335,19 @@ class BBox extends CoordinateType {
   BBox copyWith({
     num? lng1,
     num? lat1,
+    num? alt1,
     num? lng2,
     num? lat2,
-    num? alt1,
     num? alt2,
   }) =>
-      BBox(lng1 ?? this.lng1, lat1 ?? this.lat1, lng2 ?? this.lng2,
-          lat2 ?? this.lat2, alt1 ?? this.alt1, alt2 ?? this.alt2);
+      BBox(
+        lng1 ?? this.lng1,
+        lat1 ?? this.lat1,
+        alt1 ?? this.alt1!,
+        lng2 ?? this.lng2,
+        lat2 ?? this.lat2,
+        alt2 ?? this.alt2!,
+      );
 
   @override
   BBox clone() => BBox.of(_items);
