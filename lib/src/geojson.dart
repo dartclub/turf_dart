@@ -337,13 +337,11 @@ class BBox extends CoordinateType {
     num? lat1,
     num? lng2,
     num? lat2,
+    num? alt1,
+    num? alt2,
   }) =>
-      BBox(
-        lng1 ?? this.lng1,
-        lat1 ?? this.lat1,
-        lng2 ?? this.lng2,
-        lat2 ?? this.lat2,
-      );
+      BBox(lng1 ?? this.lng1, lat1 ?? this.lat1, lng2 ?? this.lng2,
+          lat2 ?? this.lat2, alt1 ?? this.alt1, alt2 ?? this.alt2);
 
   @override
   BBox clone() => BBox.of(_items);
