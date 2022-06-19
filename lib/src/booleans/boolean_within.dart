@@ -1,3 +1,5 @@
+import 'package:turf/bbox.dart';
+
 import '../../helpers.dart';
 import '../invariant.dart';
 import 'boolean_point_in_polygon.dart';
@@ -151,8 +153,8 @@ isLineOnLine(LineString lineString1, LineString lineString2) {
 }
 
 isLineInPoly(LineString linestring, Polygon polygon) {
-  var polyBbox = calcBbox(polygon);
-  var lineBbox = calcBbox(linestring);
+  var polyBbox = bbox(polygon);
+  var lineBbox = bbox(linestring);
   if (!doBBoxOverlap(polyBbox, lineBbox)) {
     return false;
   }
@@ -190,8 +192,8 @@ isLineInPoly(LineString linestring, Polygon polygon) {
  * @returns {boolean} true/false
  */
 isPolyInPoly(Polygon geometry1, GeometryObject geometry2) {
-  var poly1Bbox = calcBbox(geometry1);
-  var poly2Bbox = calcBbox(geometry2);
+  var poly1Bbox = bbox(geometry1);
+  var poly2Bbox = bbox(geometry2);
   if (!doBBoxOverlap(poly2Bbox, poly1Bbox)) {
     return false;
   }
