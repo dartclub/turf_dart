@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:turf/meta.dart';
+import 'package:turf/src/bbox_polygon.dart';
 import 'package:turf/turf.dart';
 
 main() {
