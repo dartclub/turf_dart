@@ -6,7 +6,7 @@ main() {
   test(
     "bbox-polygon",
     () {
-      var poly = bboxPolygon(Bbox(0, 0, 10, 10));
+      var poly = bboxPolygon(BBox(0, 0, 10, 10));
       expect(poly.geometry is Polygon, true);
     },
   );
@@ -14,7 +14,7 @@ main() {
   test(
     "bbox-polygon -- valid geojson",
     () {
-      var poly = bboxPolygon(Bbox(0, 0, 10, 10));
+      var poly = bboxPolygon(BBox(0, 0, 10, 10));
       var coordinates = poly.geometry!.coordinates;
 
       expect(coordinates[0].length == 5, true);
@@ -28,7 +28,7 @@ main() {
   test(
     "bbox-polygon -- Error handling",
     () {
-      expect(() => bboxPolygon(Bbox(-110, 70, 5000, 50, 60, 3000)),
+      expect(() => bboxPolygon(BBox(-110, 70, 5000, 50, 60, 3000)),
           throwsA(isA<Exception>()));
     },
   );
@@ -38,7 +38,7 @@ main() {
     () {
       var id = 123;
       var properties = {"foo": "bar"};
-      var bbox = Bbox(0, 0, 10, 10);
+      var bbox = BBox(0, 0, 10, 10);
       var poly = bboxPolygon(bbox, properties: properties, id: id);
 
       expect(poly.properties, equals(properties));
@@ -50,7 +50,7 @@ main() {
   test(
     "bbox-polygon -- assert bbox",
     () {
-      var bbox = Bbox(0, 0, 10, 10);
+      var bbox = BBox(0, 0, 10, 10);
       var poly = bboxPolygon(bbox);
       expect(poly.bbox, equals(bbox));
     },
