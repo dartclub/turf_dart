@@ -1,52 +1,81 @@
+import 'dart:convert';
+import 'dart:io';
 
-// import 'package:test/test.dart';
+import 'package:test/test.dart';
+import 'package:turf/meta.dart';
+import 'package:turf/turf.dart';
 
-// main(){
-// test("turf-center", () {
-//   glob
-//     .sync(path.join(__dirname, "test", "in", "*.geojson"))
-//     .forEach((filepath) => {
-//       const geojson = load.sync(filepath);
-//       const options = geojson.options || {};
-//       options.properties = { "marker-symbol": "star", "marker-color": "#F00" };
-//       const centered = center(geojson, options);
+main() {
+  group(
+    'explode in == out',
+    () {
+      var inDir = Directory('./test/examples/center/in');
+      for (var file in inDir.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          test(
+            file.path,
+            () {
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              Map<String, dynamic> properties = {
+                "marker-symbol": "star",
+                "marker-color": "#F00"
+              };
+              var inCenter = center(inGeom, properties: properties);
+              var featureCollection = FeatureCollection()
+                ..features.add(inCenter);
 
-//       // Display Results
-//       const results = featureCollection([centered]);
-//       featureEach(geojson, (feature) => results.features.push(feature));
-//       const extent = bboxPolygon(bbox(geojson));
-//       extent.properties = {
-//         stroke: "#00F",
-//         "stroke-width": 1,
-//         "fill-opacity": 0,
-//       };
-//       coordEach(extent, (coord) =>
-//         results.features.push(
-//           lineString([coord, centered.geometry.coordinates], {
-//             stroke: "#00F",
-//             "stroke-width": 1,
-//           })
-//         )
-//       );
-//       results.features.push(extent);
+              featureEach(inGeom,
+                  (feature, index) => featureCollection.features.add(feature));
+              var extent = bboxPolygon(bbox(inGeom));
+              extent.properties = {
+                "stroke": "#00F",
+                "stroke-width": 1,
+                "fill-opacity": 0,
+              };
+              coordEach(
+                extent,
+                (
+                  currentCoord,
+                  coordIndex,
+                  featureIndex,
+                  multiFeatureIndex,
+                  geometryIndex,
+                ) =>
+                    featureCollection.features.add(
+                  Feature(
+                    geometry: LineString(coordinates: [
+                      currentCoord!,
+                      inCenter.geometry!.coordinates
+                    ]),
+                    properties: {
+                      'stroke': "#00F",
+                      "stroke-width": 1,
+                    },
+                  ),
+                ),
+              );
+              featureCollection.features.add(extent);
+              var outPath = './' +
+                  file.uri.pathSegments
+                      .sublist(0, file.uri.pathSegments.length - 2)
+                      .join('/') +
+                  '/out/${file.uri.pathSegments.last}';
+              var outSource = File(outPath).readAsStringSync();
+              var outCenter =
+                  FeatureCollection<Point>.fromJson(jsonDecode(outSource));
 
-//       const out = filepath.replace(
-//         path.join("test", "in"),
-//         path.join("test", "out")
-//       );
-//       if (process.env.REGEN) write.sync(out, results);
-//       t.deepEqual(results, load.sync(out), path.parse(filepath).name);
-//     });
-//   t.end();
-// });
-
-// test("turf-center -- properties", (t) => {
-//   const line = lineString([
-//     [0, 0],
-//     [1, 1],
-//   ]);
-//   const pt = center(line, { properties: { foo: "bar" } });
-//   t.equal(pt.properties.foo, "bar", "translate properties");
-//   t.end();
-// });}
-
+              for (var i = 0; i < featureCollection.features.length; i++) {
+                var input = featureCollection.features[i];
+                var output = outCenter.features[i];
+                expect(input.id, output.id);
+                expect(input.properties, equals(output.properties));
+                expect(input.geometry, output.geometry);
+              }
+            },
+          );
+        }
+      }
+    },
+  );
+}
