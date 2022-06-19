@@ -8,7 +8,7 @@ import 'package:turf/turf.dart';
 
 main() {
   group(
-    'explode in == out',
+    'center in == out',
     () {
       var inDir = Directory('./test/examples/center/in');
       for (var file in inDir.listSync(recursive: true)) {
@@ -22,12 +22,12 @@ main() {
                 "marker-symbol": "star",
                 "marker-color": "#F00"
               };
-              var inCenter = center(inGeom, properties: properties);
-              var featureCollection = FeatureCollection()
-                ..features.add(inCenter);
-
-              featureEach(inGeom,
-                  (feature, index) => featureCollection.features.add(feature));
+              Feature<Point> inCenter = center(inGeom, properties: properties);
+              FeatureCollection featureCollection =
+                  FeatureCollection(features: [])..features.add(inCenter);
+              featureEach(inGeom, (feature, index) {
+                featureCollection.features.add(feature);
+              });
               var extent = bboxPolygon(bbox(inGeom));
               extent.properties = {
                 "stroke": "#00F",
@@ -57,21 +57,22 @@ main() {
                 ),
               );
               featureCollection.features.add(extent);
+
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)
                       .join('/') +
                   '/out/${file.uri.pathSegments.last}';
-              var outSource = File(outPath).readAsStringSync();
-              var outCenter =
-                  FeatureCollection<Point>.fromJson(jsonDecode(outSource));
 
+              var outSource = File(outPath).readAsStringSync();
+
+              var outGeom = FeatureCollection.fromJson(jsonDecode(outSource));
               for (var i = 0; i < featureCollection.features.length; i++) {
                 var input = featureCollection.features[i];
-                var output = outCenter.features[i];
+                var output = outGeom.features[i];
                 expect(input.id, output.id);
                 expect(input.properties, equals(output.properties));
-                expect(input.geometry, output.geometry);
+                expect(input.geometry!.type, output.geometry!.type);
               }
             },
           );
