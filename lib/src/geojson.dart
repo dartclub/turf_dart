@@ -68,9 +68,13 @@ abstract class GeoJSONObject {
 
 /// Coordinate types, following https://tools.ietf.org/html/rfc7946#section-4
 abstract class CoordinateType implements Iterable<num> {
+  final bool isSigned;
   final List<num> _items;
 
-  CoordinateType(List<num> list) : _items = List.of(list, growable: false);
+  CoordinateType(
+    List<num> list,
+    this.isSigned,
+  ) : _items = List.of(list, growable: false);
 
   @override
   num get first => _items.first;
@@ -180,7 +184,7 @@ abstract class CoordinateType implements Iterable<num> {
 
   CoordinateType toSigned();
 
-  bool get isSigned;
+  CoordinateType toUnsigned();
 
   _untilSigned(val, limit) {
     if (val > limit) {
