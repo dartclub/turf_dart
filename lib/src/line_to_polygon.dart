@@ -1,5 +1,6 @@
 import 'package:turf/bbox.dart';
 import 'package:turf/helpers.dart';
+import 'package:turf/meta.dart';
 import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/feature.dart';
 
@@ -22,6 +23,31 @@ lineToPolygon(
   bool orderCoords = true,
   bool mutate = false,
 }) {
+  print(lines);
+  if (lines is FeatureCollection) {
+    bool onlyLineString = true;
+    featureEach(lines, (currentFeature, index) {
+      return onlyLineString = currentFeature is LineString;
+    });
+    if (onlyLineString) {
+      lines = lines as FeatureCollection<LineString>;
+    } else {
+      throw Exception(
+          "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
+    }
+  }
+  if (lines is Feature) {
+    if (lines.geometry is LineString) {
+      lines = lines as Feature<LineString>;
+    }
+  }
+  if (lines is! Feature<LineString> ||
+      lines is! LineString ||
+      lines is! FeatureCollection<LineString>) {
+    throw Exception(
+        "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
+  }
+
   if (!mutate) {
     lines = lines.clone();
   }
@@ -29,10 +55,11 @@ lineToPolygon(
   if (lines is FeatureCollection) {
     List<List<List<Position>>> coords = [];
     featureEach(
-        lines,
-        ((line, featureIndex) => coords.add(getCoords(lineStringToPolygon(
-                line, autoComplete, orderCoords, properties: {}))
-            as List<List<Position>>)));
+      lines,
+      ((line, featureIndex) => coords.add(getCoords(lineStringToPolygon(
+              line, autoComplete, orderCoords, properties: {}))
+          as List<List<Position>>)),
+    );
     return Feature(
         geometry: MultiPolygon(coordinates: coords), properties: properties);
   } else {

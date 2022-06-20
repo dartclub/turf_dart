@@ -4,51 +4,76 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/line_to_polygon.dart';
+import 'package:turf/src/meta/feature.dart';
 
 void main() {
- var inDir = Directory('./test/examples/lineToPolygon/in');
+  group(
+    'line_to_polygon:',
+    () {
+      var inDir = Directory('./test/examples/lineToPolygon/in');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
-test( file.path, () {
-   var inSource = file.readAsStringSync();
-    var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
-    var properties = (inGeom is Feature)? inGeom.properties ?? { "stroke": "#F0F", "stroke-width": 6 }:{ "stroke": "#F0F", "stroke-width": 6 };
-    var results = lineToPolygon(inGeom, 
-      properties: properties,
-    );
+          test(file.path, () {
+            var inSource = file.readAsStringSync();
+            var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+            var properties = (inGeom is Feature)
+                ? inGeom.properties ?? {"stroke": "#F0F", "stroke-width": 6}
+                : {"stroke": "#F0F", "stroke-width": 6};
+            if (inGeom is FeatureCollection) {
+              bool onlyLineString = true;
+              featureEach(inGeom, (currentFeature, index) {
+                return onlyLineString = currentFeature is LineString;
+              });
+              if (onlyLineString) {
+                inGeom = inGeom as FeatureCollection<LineString>;
+              } else {
+                throw Exception(
+                    "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
+              }
+            }
+            //print(inGeom);
+            var results = lineToPolygon(
+              inGeom,
+              properties: properties,
+            );
 
-              var outPath = './' +
-                  file.uri.pathSegments
-                      .sublist(0, file.uri.pathSegments.length - 2)
-                      .join('/') +
-                  '/out/${file.uri.pathSegments.last}';
+            var outPath = './' +
+                file.uri.pathSegments
+                    .sublist(0, file.uri.pathSegments.length - 2)
+                    .join('/') +
+                '/out/${file.uri.pathSegments.last}';
 
-              var outSource = File(outPath).readAsStringSync();
+            var outSource = File(outPath).readAsStringSync();
 
-    expect(inGeom, equals(outSource));
-  }
-  // Handle Errors
-test('Handles Errors', (){
-
-  
-  expect(() => lineToPolygon(point([10, 5])),);
-  t.throws(() => lineToPolygon(lineString([])), "throws - empty coordinates");
-  t.assert(
-    lineToPolygon(
-      lineString([
-        [10, 5],
-        [20, 10],
-        [30, 20],
-      ]),
-      { autocomplete: false }
-    ),
-    "is valid - autoComplete=false"
+            expect(results, equals(outSource));
+          });
+        }
+        test(
+          'Handles Errors',
+          () {
+            // expect(
+            //     () => lineToPolygon(Point(coordinates: Position.of([10, 5]))),
+            //     throwsA(isA<Exception>()));
+            // expect(() => lineToPolygon(LineString(coordinates: [])),
+            //     throwsA(isA<Exception>()));
+            // TODO: what is the outcome?
+            // expect(
+            //   lineToPolygon(
+            //     LineString(coordinates:[
+            //       Position.of([10, 5]),
+            //       Position.of([20, 10]),
+            //       Position.of([30, 20]),
+            //     ]),
+            //      autoComplete: false
+            //   ),
+            //   "is valid - autoComplete=false"
+            // );
+          },
+        );
+      }
+    },
   );
-  });
-  
-  t.end();
-})
-;}
+}
 
 /*
 const fs = require("fs");
