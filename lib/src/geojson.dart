@@ -278,13 +278,26 @@ class Position extends CoordinateType {
 /// Please make sure, you arrange your parameters like this:
 /// Longitude 1, Latitude 1, Altitude 1 (optional), Longitude 2, Latitude 2, Altitude 2 (optional)
 /// You can either specify 4 or 6 parameters
+/// If you are using the default constructor with two dimensional positions (lng + lat only), please use the constructor like this:
+/// `BBox(lng1, lat1, lng2, lat2);`
 class BBox extends CoordinateType {
   BBox(
+    /// longitude 1
     num lng1,
+
+    /// latitude 1
     num lat1,
+
+    /// longitude 2 for 2 dim. positions; altitude 1 for 3 dim. positions
     num alt1,
+
+    /// latitude 2 for 2 dim. positions; longitude 2 for 3 dim. positions
     num lng2, [
+
+    /// latitude 2 for 3 dim. positions
     num? lat2,
+
+    /// altitude 2 for 3 dim. positions
     num? alt2,
   ]) : super([
           lng1,
@@ -335,14 +348,18 @@ class BBox extends CoordinateType {
   BBox copyWith({
     num? lng1,
     num? lat1,
-    num? lng2,
+    num? alt1,
     num? lat2,
+    num? lng2,
+    num? alt2,
   }) =>
-      BBox(
-        lng1 ?? this.lng1,
-        lat1 ?? this.lat1,
-        lng2 ?? this.lng2,
-        lat2 ?? this.lat2,
+      BBox.named(
+        lng1: lng1 ?? this.lng1,
+        lat1: lat1 ?? this.lat1,
+        alt1: alt1 ?? this.alt1,
+        lng2: lng2 ?? this.lng2,
+        lat2: lat2 ?? this.lat2,
+        alt2: alt2 ?? this.alt2,
       );
 
   @override
