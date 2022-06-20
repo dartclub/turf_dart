@@ -288,9 +288,9 @@ class BBox extends CoordinateType {
   BBox(
     num lng1,
     num lat1,
-    num lng2,
-    num lat2, [
-    num? alt1,
+    num alt1,
+    num lng2, [
+    num? lat2,
     num? alt2,
   ]) : super([
           lng1,
@@ -349,9 +349,9 @@ class BBox extends CoordinateType {
       BBox(
         lng1 ?? this.lng1,
         lat1 ?? this.lat1,
+        alt1 ?? this.alt1,
         lng2 ?? this.lng2,
         lat2 ?? this.lat2,
-        alt1 ?? this.alt1,
         alt2 ?? this.alt2,
       );
 
