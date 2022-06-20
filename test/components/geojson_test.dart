@@ -75,7 +75,7 @@ main() {
       var bbox1 =
           BBox.named(lng1: 1, lat1: 2, alt1: 3, lng2: 4, lat2: 5, alt2: 6);
       var bbox2 = BBox.of([1, 2, 3, 4, 5, 6]);
-      var bbox3 = BBox(1, 2, 4, 5, 3, 6);
+      var bbox3 = BBox(1, 2, 3, 4, 5, 6);
       _expectArgs(bbox1);
       _expectArgs(bbox2);
       _expectArgs(bbox3);
