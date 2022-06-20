@@ -278,12 +278,18 @@ class Position extends CoordinateType {
 /// Please make sure, you arrange your parameters like this:
 /// Longitude 1, Latitude 1, Altitude 1 (optional), Longitude 2, Latitude 2, Altitude 2 (optional)
 /// You can either specify 4 or 6 parameters
+/// If you are using the default constructor you should use the following order:
+/// lng1, lat1, lng2,lat2, alt1, alt2
+/// And if you are using other constructors the order is as follows:
+/// lng1, lat1, alt1, lat2, lng2, alt2
+/// please note that the limitation in Dart's optional paramater positioning in
+/// constructor signature prevents us from placing alt1 at 3rd and alt2 at 6th place.
 class BBox extends CoordinateType {
   BBox(
     num lng1,
     num lat1,
-    num lat2,
-    num lng2, [
+    num lng2,
+    num lat2, [
     num? alt1,
     num? alt2,
   ]) : super([
@@ -343,8 +349,8 @@ class BBox extends CoordinateType {
       BBox(
         lng1 ?? this.lng1,
         lat1 ?? this.lat1,
-        lat2 ?? this.lat2,
         lng2 ?? this.lng2,
+        lat2 ?? this.lat2,
         alt1 ?? this.alt1,
         alt2 ?? this.alt2,
       );
