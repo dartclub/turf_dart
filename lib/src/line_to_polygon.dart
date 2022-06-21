@@ -2,9 +2,8 @@ import 'package:turf/bbox.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 import 'package:turf/src/invariant.dart';
-import 'package:turf/src/meta/feature.dart';
 
-/// Converts [MultiLineString](s) to [Polygon](s).
+/// Converts [LineString]s & [MultiLineString](s) to [Polygon](s).
 /// Takes an optional bool autoComplete=true that auto complete [Linestring]s (matches first & last coordinates)
 /// Takes an optional orderCoords=true that sorts [Linestring]s to place outer ring at the first position of the coordinates
 /// Takes an optional mutate=false that mutates the original [Linestring] using autoComplete (matches first & last coordinates)
@@ -16,38 +15,57 @@ import 'package:turf/src/meta/feature.dart';
 /// //addToMap
 /// var addToMap = [polygon];
 /// ```
-lineToPolygon(
+Feature lineToPolygon(
   GeoJSONObject lines, {
   Map<String, dynamic>? properties,
   bool autoComplete = true,
   bool orderCoords = true,
   bool mutate = false,
 }) {
-  print(lines);
+  Exception exc = Exception(
+      """allowed types are Feature<LineString||MultiLineString>, LineString,
+         MultiLineString, FeatureCollection<LineString || MultiLineString>""");
   if (lines is FeatureCollection) {
-    bool onlyLineString = true;
-    featureEach(lines, (currentFeature, index) {
-      return onlyLineString = currentFeature is LineString;
-    });
-    if (onlyLineString) {
-      lines = lines as FeatureCollection<LineString>;
-    } else {
-      throw Exception(
-          "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
-    }
-  }
-  if (lines is Feature) {
-    if (lines.geometry is LineString) {
-      lines = lines as Feature<LineString>;
-    }
-  }
-  if (lines is! Feature<LineString> ||
-      lines is! LineString ||
-      lines is! FeatureCollection<LineString>) {
-    throw Exception(
-        "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
-  }
+    bool isEitherMultiLineStringOrLineString = true;
 
+    if (isEitherMultiLineStringOrLineString) {
+      List<List<Position>> list = [];
+      geomEach(
+        lines,
+        (
+          GeometryType? currentGeometry,
+          int? featureIndex,
+          Map<String, dynamic>? featureProperties,
+          BBox? featureBBox,
+          dynamic featureId,
+        ) {
+          if (currentGeometry is LineString) {
+            list.add(currentGeometry.coordinates);
+          } else {
+            list = [...list, ...currentGeometry?.coordinates];
+          }
+        },
+      );
+
+      lines = FeatureCollection<MultiLineString>(features: [])
+        ..features.add(Feature(geometry: MultiLineString(coordinates: list)));
+    }
+  } else if (lines is Feature) {
+    if (lines.geometry is LineString) {
+      lines = Feature<LineString>(geometry: lines.geometry as LineString);
+    } else if (lines.geometry is MultiLineString) {
+      lines =
+          Feature<MultiLineString>(geometry: lines.geometry as MultiLineString);
+    } else {
+      throw exc;
+    }
+  } else if (lines is LineString) {
+    lines = Feature<LineString>(geometry: lines);
+  } else if (lines is MultiLineString) {
+    lines = Feature<MultiLineString>(geometry: lines);
+  } else {
+    throw exc;
+  }
   if (!mutate) {
     lines = lines.clone();
   }
@@ -76,8 +94,10 @@ Feature<Polygon> lineStringToPolygon(
     {Map<String, dynamic>? properties}) {
   properties = properties ?? (line is Feature ? line.properties ?? {} : {});
   var geom = line is LineString ? line : (line as Feature).geometry;
-  List<dynamic> coords = geom is LineString
-      ? geom.coordinates
+  List<dynamic> coords = (geom is LineString || geom is MultiLineString)
+      ? (geom is LineString)
+          ? geom.coordinates
+          : (geom as MultiLineString).coordinates
       : ((geom as Feature).geometry as GeometryType).coordinates;
 
   if (coords.isEmpty) throw Exception("line must contain coordinates");
@@ -141,7 +161,6 @@ num _calculateArea(BBox bbox) {
   var north = bbox[3];
   return (west! - east!).abs() * (south! - north!).abs();
 }
-
 
 /**
  * import {

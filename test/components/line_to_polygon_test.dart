@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/line_to_polygon.dart';
-import 'package:turf/src/meta/feature.dart';
 
 void main() {
   group(
@@ -19,18 +18,6 @@ void main() {
             var properties = (inGeom is Feature)
                 ? inGeom.properties ?? {"stroke": "#F0F", "stroke-width": 6}
                 : {"stroke": "#F0F", "stroke-width": 6};
-            if (inGeom is FeatureCollection) {
-              bool onlyLineString = true;
-              featureEach(inGeom, (currentFeature, index) {
-                return onlyLineString = currentFeature is LineString;
-              });
-              if (onlyLineString) {
-                inGeom = inGeom as FeatureCollection<LineString>;
-              } else {
-                throw Exception(
-                    "allowed types are Feature<LineString>, LineString, FeatureCollection<LineString>");
-              }
-            }
             //print(inGeom);
             var results = lineToPolygon(
               inGeom,
@@ -44,30 +31,37 @@ void main() {
                 '/out/${file.uri.pathSegments.last}';
 
             var outSource = File(outPath).readAsStringSync();
+            var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
 
-            expect(results, equals(outSource));
+            if (outGeom is Feature) {
+              if (outGeom.geometry is Polygon) {
+                outGeom =
+                    Feature<Polygon>(geometry: outGeom.geometry as Polygon);
+              } else {
+                outGeom = Feature<MultiPolygon>(
+                    geometry: outGeom.geometry as MultiPolygon);
+              }
+            }
+            expect(results, equals(outGeom));
           });
         }
         test(
           'Handles Errors',
           () {
-            // expect(
-            //     () => lineToPolygon(Point(coordinates: Position.of([10, 5]))),
-            //     throwsA(isA<Exception>()));
-            // expect(() => lineToPolygon(LineString(coordinates: [])),
-            //     throwsA(isA<Exception>()));
-            // TODO: what is the outcome?
-            // expect(
-            //   lineToPolygon(
-            //     LineString(coordinates:[
-            //       Position.of([10, 5]),
-            //       Position.of([20, 10]),
-            //       Position.of([30, 20]),
-            //     ]),
-            //      autoComplete: false
-            //   ),
-            //   "is valid - autoComplete=false"
-            // );
+            expect(
+                () => lineToPolygon(Point(coordinates: Position.of([10, 5]))),
+                throwsA(isA<Exception>()));
+            expect(() => lineToPolygon(LineString(coordinates: [])),
+                throwsA(isA<Exception>()));
+            expect(
+                lineToPolygon(
+                    LineString(coordinates: [
+                      Position.of([10, 5]),
+                      Position.of([20, 10]),
+                      Position.of([30, 20]),
+                    ]),
+                    autoComplete: false) is Feature<Polygon>,
+                true);
           },
         );
       }
@@ -97,9 +91,9 @@ let fixtures = fs.readdirSync(directories.in).map((filename) => {
     geojson: load.sync(directories.in + filename),
   };
 });
-// fixtures = fixtures.filter(fixture => fixture.name === 'multi-linestrings-with-holes');
+// fixtures = fixtures.filter(fixture => fixture.name === 'multi-outGeomtrings-with-holes');
 
-test("turf-linestring-to-polygon", (t) => {
+test("turf-outGeomtring-to-polygon", (t) => {
   for (const { name, filename, geojson } of fixtures) {
     const originalInput = clone(geojson);
     let { autoComplete, properties, orderCoords } = geojson.properties || {};
