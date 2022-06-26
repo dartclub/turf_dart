@@ -1,75 +1,75 @@
 import 'package:turf/turf.dart';
 
-import '../invariant.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 
-/**
- * Boolean-contains returns True if the second geometry is completely contained by the first geometry.
- * The interiors of both geometries must intersect and, the interior and boundary of the secondary (geometry b)
- * must not intersect the exterior of the primary (geometry a).
- * Boolean-contains returns the exact opposite result of the `@turf/boolean-within`.
- *
- * @name booleanContains
- * @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
- * @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
- * @returns {boolean} true/false
- * @example
- * var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
- * var point = turf.point([1, 2]);
- *
- * turf.booleanContains(line, point);
- * //=true
- */
+/// Boolean-contains returns True if the second geometry is completely contained by the first geometry.
+/// The interiors of both geometries must intersect and, the interior and boundary of the secondary (geometry b)
+/// must not intersect the exterior of the primary (geometry a).
+/// Boolean-contains returns the exact opposite result of the `@turf/boolean-within`.
+/// @name booleanContains
+/// @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
+/// @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
+/// @returns {boolean} true/false
+/// example:
+/// ```dart
+/// var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
+/// var point = turf.point([1, 2]);
+/// turf.booleanContains(line, point);
+/// //=true
+/// ```
 booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var geom1 = getGeom(feature1);
-  var geom2 = getGeom(feature2);
-  var type1 = geom1.runtimeType;
-  var type2 = geom2.runtimeType;
-  var coords1 = geom1.coordinates;
-  var coords2 = geom2.coordinates;
+  var geom1 = feature1 is Feature ? feature1.geometry : feature1;
+  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
+  var type1 = geom1!.type;
+  var type2 = geom2!.type;
+  var coords1 = (geom1 as GeometryType).coordinates;
+  var coords2 = (geom2 as GeometryType).coordinates;
 
   switch (type1) {
-    case Point:
+    case GeoJSONObjectType.point:
       switch (type2) {
-        case Point:
+        case GeoJSONObjectType.point:
           return compareCoords(coords1, coords2);
         default:
           throw UnsupportedError(
               "{feature2   $type2   geometry not supported}");
       }
-    case MultiPoint:
+    case GeoJSONObjectType.multiPoint:
       switch (type2) {
-        case Point:
-          return isPointInMultiPoint(geom1, geom2);
-        case MultiPoint:
-          return isMultiPointInMultiPoint(geom1, geom2);
+        case GeoJSONObjectType.point:
+          return isPointInMultiPoint(geom1 as MultiPoint, geom2 as Point);
+        case GeoJSONObjectType.multiPoint:
+          return isMultiPointInMultiPoint(
+              geom1 as MultiPoint, geom2 as MultiPoint);
         default:
           throw UnsupportedError(
               "{feature2   $type2   geometry not supported}");
       }
-    case LineString:
+    case GeoJSONObjectType.lineString:
       switch (type2) {
-        case Point:
-          return booleanPointOnLine(geom2, geom1, ignoreEndVertices: true);
-        case LineString:
-          return isLineOnLine(geom1, geom2);
-        case MultiPoint:
-          return isMultiPointOnLine(geom1, geom2);
+        case GeoJSONObjectType.point:
+          return booleanPointOnLine(geom2 as Point, geom1 as LineString,
+              ignoreEndVertices: true);
+        case GeoJSONObjectType.lineString:
+          return isLineOnLine(geom1 as LineString, geom2 as LineString);
+        case GeoJSONObjectType.multiPoint:
+          return isMultiPointOnLine(geom1 as LineString, geom2 as MultiPoint);
         default:
           throw UnsupportedError(
               "{feature2   $type2   geometry not supported}");
       }
-    case Polygon:
+    case GeoJSONObjectType.polygon:
       switch (type2) {
-        case Point:
-          return booleanPointInPolygon(geom2, geom1, ignoreBoundary: true);
-        case LineString:
-          return isLineInPoly(geom1, geom2);
-        case Polygon:
+        case GeoJSONObjectType.point:
+          return booleanPointInPolygon((geom2 as Point).coordinates, geom1,
+              ignoreBoundary: true);
+        case GeoJSONObjectType.lineString:
+          return isLineInPoly(geom1 as Polygon, geom2 as LineString);
+        case GeoJSONObjectType.polygon:
           return isPolyInPoly(geom1, geom2);
-        case MultiPoint:
-          return isMultiPointInPoly(geom1, geom2);
+        case GeoJSONObjectType.multiPoint:
+          return isMultiPointInPoly(geom1 as Polygon, geom2 as MultiPoint);
         default:
           throw UnsupportedError(
               "{feature2   $type2   geometry not supported}");
