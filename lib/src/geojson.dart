@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'geojson.g.dart';
 
 @JsonEnum(alwaysCreate: true)
@@ -180,6 +181,7 @@ abstract class CoordinateType implements Iterable<num> {
   CoordinateType toSigned();
 
   bool get isSigned;
+
   _untilSigned(val, limit) {
     if (val > limit) {
       return _untilSigned(val - 360, limit);
@@ -245,7 +247,9 @@ class Position extends CoordinateType {
   Position operator *(Position p) => crossProduct(p);
 
   num get lng => _items[0];
+
   num get lat => _items[1];
+
   num? get alt => length == 3 ? _items[2] : null;
 
   @override
@@ -274,13 +278,26 @@ class Position extends CoordinateType {
 /// Please make sure, you arrange your parameters like this:
 /// Longitude 1, Latitude 1, Altitude 1 (optional), Longitude 2, Latitude 2, Altitude 2 (optional)
 /// You can either specify 4 or 6 parameters
+/// If you are using the default constructor with two dimensional positions (lng + lat only), please use the constructor like this:
+/// `BBox(lng1, lat1, lng2, lat2);`
 class BBox extends CoordinateType {
   BBox(
+    /// longitude 1
     num lng1,
+
+    /// latitude 1
     num lat1,
+
+    /// longitude 2 for 2 dim. positions; altitude 1 for 3 dim. positions
     num alt1,
+
+    /// latitude 2 for 2 dim. positions; longitude 2 for 3 dim. positions
     num lng2, [
+
+    /// latitude 2 for 3 dim. positions
     num? lat2,
+
+    /// altitude 2 for 3 dim. positions
     num? alt2,
   ]) : super([
           lng1,
@@ -317,11 +334,33 @@ class BBox extends CoordinateType {
   bool get _is3D => length == 6;
 
   num get lng1 => _items[0];
+
   num get lat1 => _items[1];
+
   num? get alt1 => _is3D ? _items[2] : null;
+
   num get lng2 => _items[_is3D ? 3 : 2];
+
   num get lat2 => _items[_is3D ? 4 : 3];
+
   num? get alt2 => _is3D ? _items[5] : null;
+
+  BBox copyWith({
+    num? lng1,
+    num? lat1,
+    num? alt1,
+    num? lat2,
+    num? lng2,
+    num? alt2,
+  }) =>
+      BBox.named(
+        lng1: lng1 ?? this.lng1,
+        lat1: lat1 ?? this.lat1,
+        alt1: alt1 ?? this.alt1,
+        lng2: lng2 ?? this.lng2,
+        lat2: lat2 ?? this.lat2,
+        alt2: alt2 ?? this.alt2,
+      );
 
   @override
   BBox clone() => BBox.of(_items);
