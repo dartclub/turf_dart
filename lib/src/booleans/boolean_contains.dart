@@ -114,10 +114,7 @@ bool isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
       return false;
     }
   }
-  if (haveFoundInteriorPoint) {
-    return true;
-  }
-  return false;
+  return haveFoundInteriorPoint;
 }
 
 bool isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {

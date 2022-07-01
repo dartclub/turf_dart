@@ -1,63 +1,35 @@
-import 'dart:math';
+const glob = require("glob");
+const path = require("path");
+const test = require("tape");
+const load = require("load-json-file");
+const pointOnLine = require("./index").default;
 
-import 'package:test/test.dart';
-import 'package:turf/helpers.dart';
-import 'package:turf/src/booleans/boolean_point_on_line.dart';
+test("turf-boolean-point-on-line", (t) => {
+  // True Fixtures
+  glob
+    .sync(path.join(__dirname, "test", "true", "**", "*.geojson"))
+    .forEach((filepath) => {
+      const name = path.parse(filepath).name;
+      const geojson = load.sync(filepath);
+      const options = geojson.properties;
+      const feature1 = geojson.features[0];
+      const feature2 = geojson.features[1];
+      const result = pointOnLine(feature1, feature2, options);
 
-main() {
+      t.true(result, "[true] " + name);
+    });
   // False Fixtures
-  test(
-    "turf-boolean-point-on-line",
-    () {
-      var featureCollection = FeatureCollection(
-        features: [
-          Feature<Point>(
-              properties: {},
-              geometry: Point(
-                  coordinates:
-                      Position.of([-75.25737143565107, 39.99673377198139]))),
-          Feature(
-            properties: {},
-            geometry: LineString(
-              coordinates: [
-                Position.of([-75.2580499870244, 40.00180204907801]),
-                Position.of([-75.25676601413157, 39.992211720827044]),
-              ],
-            ),
-          )
-        ],
-      );
+  glob
+    .sync(path.join(__dirname, "test", "false", "**", "*.geojson"))
+    .forEach((filepath) => {
+      const name = path.parse(filepath).name;
+      const geojson = load.sync(filepath);
+      const options = geojson.properties;
+      const feature1 = geojson.features[0];
+      const feature2 = geojson.features[1];
+      const result = pointOnLine(feature1, feature2, options);
 
-      var options = {"epsilon": 10e-18};
-
-      var feature1 = featureCollection.features[0].geometry;
-      var feature2 = featureCollection.features[1].geometry;
-      expect(
-          booleanPointOnLine(feature1 as Point, feature2 as LineString,
-              epsilon: options["epsilon"]),
-          equals(false));
-      // True Fixtures
-      var featureCollection1 = FeatureCollection(features: [
-        Feature(
-            properties: {}, geometry: Point(coordinates: Position.of([2, 2]))),
-        Feature(
-          properties: {},
-          geometry: LineString(
-            coordinates: [
-              Position.of([0, 0]),
-              Position.of([3, 3]),
-              Position.of([38.3203125, 5.965753671065536])
-            ],
-          ),
-        )
-      ]);
-
-      feature1 = featureCollection1.features[0].geometry;
-      feature2 = featureCollection1.features[1].geometry;
-      expect(
-          booleanPointOnLine(feature1 as Point, feature2 as LineString,
-              epsilon: options["epsilon"]),
-          equals(true));
-    },
-  );
-}
+      t.false(result, "[false] " + name);
+    });
+  t.end();
+});

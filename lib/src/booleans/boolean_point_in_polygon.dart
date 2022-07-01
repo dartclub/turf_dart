@@ -6,12 +6,12 @@ import 'package:pip/pip.dart';
 import '../../helpers.dart';
 import '../invariant.dart';
 
-/// Takes a {@link Point} and a {@link Polygon} or {@link MultiPolygon} and
-/// determines if the [Point] resides inside the [Polygon]. The polygon can be
-/// convex or concave. The function accounts for holes. By taking a
-/// [Feature<Polygon>]|[Feature<MultiPolygon>].[ignoreBoundary=false] should be
-/// set True if polygon boundary should be ignored when determining if the point
-/// is inside the polygon otherwise false.
+/// Takes a [Point] and a [Polygon] or [MultiPolygon]and determines if the
+/// [Point] resides inside the [Polygon]. The polygon can be convex or concave.
+/// The function accounts for holes. By taking a [Feature<Polygon>] or a
+/// [Feature<MultiPolygon>]. [ignoreBoundary=false] should be set [true] if polygon's
+/// boundary should be ignored when determining if the [Point] is inside the
+/// [Polygon] otherwise false.
 /// example:
 /// ```dart
 /// var pt = Point(coordinates: Position([-77, 44]));
@@ -26,7 +26,7 @@ import '../invariant.dart';
 /// //= true
 /// ```
 bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
-    {bool? ignoreBoundary}) {
+    {bool ignoreBoundary = false}) {
   var geom = getGeom(polygon);
   var type = geom.type;
   var bbox = polygon.bbox;
@@ -45,7 +45,7 @@ bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
     var polyResult =
         pip(Point(coordinates: point), Polygon(coordinates: polys[i]));
     if (polyResult == 0) {
-      return ignoreBoundary == null ? false : true;
+      return ignoreBoundary ? false : true;
     } else if (polyResult) {
       result = true;
     }

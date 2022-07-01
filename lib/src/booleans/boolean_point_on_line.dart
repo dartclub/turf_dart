@@ -20,27 +20,23 @@ import '../invariant.dart';
  * //=true
  */
 bool booleanPointOnLine(Point pt, LineString line,
-    {bool? ignoreEndVertices, num? epsilon}) {
-  // Normalize inputs
-  var ptCoords = getCoord(pt);
-  var lineCoords = getCoords(line);
-
+    {bool ignoreEndVertices = false, num? epsilon}) {
   // Main
-  for (var i = 0; i < lineCoords.length - 1; i++) {
+  for (var i = 0; i < line.coordinates.length - 1; i++) {
     dynamic ignoreBoundary = false;
-    if (ignoreEndVertices != null && ignoreEndVertices) {
+    if (ignoreEndVertices && ignoreEndVertices) {
       if (i == 0) {
         ignoreBoundary = "start";
       }
-      if (i == lineCoords.length - 2) {
+      if (i == line.coordinates.length - 2) {
         ignoreBoundary = "end";
       }
-      if (i == 0 && i + 1 == lineCoords.length - 1) {
+      if (i == 0 && i + 1 == line.coordinates.length - 1) {
         ignoreBoundary = "both";
       }
     }
-    if (isPointOnLineSegment(
-        lineCoords[i], lineCoords[i + 1], ptCoords, ignoreBoundary, epsilon)) {
+    if (isPointOnLineSegment(line.coordinates[i], line.coordinates[i + 1],
+        pt.coordinates, ignoreBoundary, epsilon)) {
       return true;
     }
   }
