@@ -9,7 +9,7 @@ main() {
   group(
     'contains',
     () {
-      var inDir = Directory('./test/examples/boolean_contains/test/true');
+      var inDir = Directory('./test/examples/booleans/contains/test/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
           test(
@@ -27,7 +27,7 @@ main() {
         }
       }
 
-      var inDir1 = Directory('./test/examples/boolean_contains/test/false');
+      var inDir1 = Directory('./test/examples/booleans/contains/test/false');
       for (var file in inDir1.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
           test(

@@ -1,59 +1,50 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_crosses.dart';
 
 main() {
-  test("turf-boolean-crosses", () {
-    // True Fixtures
-    var featureCollection = FeatureCollection(features: [
-      Feature(
-          properties: {},
-          geometry: MultiPoint(coordinates: [
-            Position.of([3, 3]),
-            Position.of([1, 1])
-          ])),
-      Feature(
-          properties: {},
-          geometry: Polygon(coordinates: [
-            [
-              Position.of([0, 2]),
-              Position.of([2, 2]),
-              Position.of([2, 0]),
-              Position.of([0, 0]),
-              Position.of([0, 2])
-            ]
-          ]))
-    ]);
+  group(
+    'boolean_crosses',
+    () {
+      var inDir = Directory('./test/examples/booleans/crosses/true');
+      for (var file in inDir.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          test(
+            file.path,
+            () {
+              // True Fixtures
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
 
-    var feature1 = featureCollection.features[0];
-    var feature2 = featureCollection.features[1];
-    expect(
-        booleanCrosses(feature1.geometry!, feature2.geometry!), equals(true));
-
-    // False Fixtures
-    var featureCollection1 = FeatureCollection(features: [
-      Feature(
-          properties: {},
-          geometry: MultiPoint(coordinates: [
-            Position.of([3, 3]),
-            Position.of([1, 1])
-          ])),
-      Feature(
-          properties: {},
-          geometry: Polygon(coordinates: [
-            [
-              Position.of([0, 2]),
-              Position.of([2, 2]),
-              Position.of([2, 0]),
-              Position.of([0, 0]),
-              Position.of([0, 2])
-            ]
-          ]))
-    ]);
-
-    feature1 = featureCollection1.features[0];
-    feature2 = featureCollection1.features[1];
-    expect(
-        booleanCrosses(feature1.geometry!, feature2.geometry!), equals(false));
-  });
+              expect(
+                  booleanCrosses(feature1.geometry!, feature2.geometry!), true);
+            },
+          );
+        }
+      }
+      // False Fixtures
+      var inDir1 = Directory('./test/examples/booleans/crosses/false');
+      for (var file in inDir1.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          test(
+            file.path,
+            () {
+              // True Fixtures
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
+              expect(booleanCrosses(feature1.geometry!, feature2.geometry!),
+                  false);
+            },
+          );
+        }
+      }
+    },
+  );
 }

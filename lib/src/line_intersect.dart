@@ -1,24 +1,22 @@
 
 import '../helpers.dart';
 
-/**
- * Takes any LineString or Polygon GeoJSON and returns the intersecting point(s).
- *
- * @name lineIntersect
- * @param {GeoJSON} line1 any LineString or Polygon
- * @param {GeoJSON} line2 any LineString or Polygon
- * @param {Object} [options={}] Optional parameters
- * @param {boolean} [options.removeDuplicates=true] remove duplicate intersections
- * @param {boolean} [options.ignoreSelfIntersections=false] ignores self-intersections on input features
- * @returns {FeatureCollection<Point>} point(s) that intersect both
- * @example
- * var line1 = turf.lineString([[126, -11], [129, -21]]);
- * var line2 = turf.lineString([[123, -18], [131, -14]]);
- * var intersects = turf.lineIntersect(line1, line2);
- *
- * //addToMap
- * var addToMap = [line1, line2, intersects]
- */
+
+/// Takes any LineString or Polygon GeoJSON and returns the intersecting point(s).
+/// @name lineIntersect
+/// @param {GeoJSON} line1 any LineString or Polygon
+/// @param {GeoJSON} line2 any LineString or Polygon
+/// @param {Object} [options={}] Optional parameters
+/// @param {boolean} [options.removeDuplicates=true] remove duplicate intersections
+/// @param {boolean} [options.ignoreSelfIntersections=false] ignores self-intersections on input features
+/// @returns {FeatureCollection<Point>} point(s) that intersect both
+/// @example
+/// var line1 = turf.lineString([[126, -11], [129, -21]]);
+/// var line2 = turf.lineString([[123, -18], [131, -14]]);
+/// var intersects = turf.lineIntersect(line1, line2);
+/// //addToMap
+/// var addToMap = [line1, line2, intersects]
+
 FeatureCollection<Point>  lineIntersect(
   GeoJSONObject line1,
  GeoJSONObject line2,

@@ -1,35 +1,59 @@
-const glob = require("glob");
-const path = require("path");
-const test = require("tape");
-const load = require("load-json-file");
-const pointOnLine = require("./index").default;
+import 'dart:convert';
+import 'dart:io';
 
-test("turf-boolean-point-on-line", (t) => {
-  // True Fixtures
-  glob
-    .sync(path.join(__dirname, "test", "true", "**", "*.geojson"))
-    .forEach((filepath) => {
-      const name = path.parse(filepath).name;
-      const geojson = load.sync(filepath);
-      const options = geojson.properties;
-      const feature1 = geojson.features[0];
-      const feature2 = geojson.features[1];
-      const result = pointOnLine(feature1, feature2, options);
+import 'package:test/test.dart';
+import 'package:turf/helpers.dart';
+import 'package:turf/src/booleans/boolean_point_on_line.dart';
 
-      t.true(result, "[true] " + name);
-    });
-  // False Fixtures
-  glob
-    .sync(path.join(__dirname, "test", "false", "**", "*.geojson"))
-    .forEach((filepath) => {
-      const name = path.parse(filepath).name;
-      const geojson = load.sync(filepath);
-      const options = geojson.properties;
-      const feature1 = geojson.features[0];
-      const feature2 = geojson.features[1];
-      const result = pointOnLine(feature1, feature2, options);
+main() {
+  group(
+    'pointOnLine',
+    () {
+      var inDir = Directory('./test/examples/booleans/point_on_line/true');
+      for (var file in inDir.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          test(
+            file.path,
+            () {
+              // True Fixtures
+              var inSource = file.readAsStringSync();
+              dynamic json = jsonDecode(inSource);
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              Map<String, dynamic>? properties = json['properties'];
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
+              var result = booleanPointOnLine(
+                  feature1.geometry as Point, feature2.geometry as LineString,
+                  epsilon: properties?['epsilon'],
+                  ignoreEndVertices: properties?['ignoreEndVertices'] ?? false);
+              expect(result, true);
+            },
+          );
+        }
+      }
+      // False Fixtures
+      var inDir1 = Directory('./test/examples/booleans/point_on_line/false');
+      for (var file in inDir1.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          test(
+            file.path,
+            () {
+              var inSource = file.readAsStringSync();
+              dynamic json = jsonDecode(inSource);
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              Map<String, dynamic>? properties = json['properties'];
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
+              var result = booleanPointOnLine(
+                  feature1.geometry as Point, feature2.geometry as LineString,
+                  epsilon: properties?['epsilon'],
+                  ignoreEndVertices: properties?['ignoreEndVertices'] ?? false);
 
-      t.false(result, "[false] " + name);
-    });
-  t.end();
-});
+              expect(result, false);
+            },
+          );
+        }
+      }
+    },
+  );
+}

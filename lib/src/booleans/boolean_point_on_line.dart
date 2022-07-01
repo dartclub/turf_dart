@@ -1,30 +1,26 @@
 import 'package:turf/helpers.dart';
 
-import '../invariant.dart';
-
-/**
- * Returns true if a point is on a line. Accepts a optional parameter to ignore the
- * start and end vertices of the linestring.
- *
- * @name booleanPointOnLine
- * @param {Coord} pt GeoJSON Point
- * @param {Feature<LineString>} line GeoJSON LineString
- * @param {Object} [options={}] Optional parameters
- * @param {boolean} [options.ignoreEndVertices=false] whether to ignore the start and end vertices.
- * @param {number} [options.epsilon] Fractional number to compare with the cross product result. Useful for dealing with floating points such as lng/lat points
- * @returns {boolean} true/false
- * @example
- * var pt = turf.point([0, 0]);
- * var line = turf.lineString([[-1, -1],[1, 1],[1.5, 2.2]]);
- * var isPointOnLine = turf.booleanPointOnLine(pt, line);
- * //=true
- */
+/// Returns true if a point is on a line. Accepts an optional parameter to ignore the
+/// start and end vertices of the [Linestring].
+/// The [ignoreEndVertices=false] controls whether to ignore the start and end vertices.
+/// [epsilon] is the Fractional number to compare with the cross product result.
+/// It's useful for dealing with floating points such as lng/lat points
+/// example:
+/// ```dart
+/// var pt = Point(coordinates:Position.of([0, 0]));
+/// var line = LineString(coordinates: [
+///   Position.of([-1, -1]),
+///   Position.of([1, 1]),
+///   Position.of([1.5, 2.2]),
+/// ]);
+/// var isPointOnLine = booleanPointOnLine(pt, line);
+/// //=true
+/// ```
 bool booleanPointOnLine(Point pt, LineString line,
     {bool ignoreEndVertices = false, num? epsilon}) {
-  // Main
   for (var i = 0; i < line.coordinates.length - 1; i++) {
     dynamic ignoreBoundary = false;
-    if (ignoreEndVertices && ignoreEndVertices) {
+    if (ignoreEndVertices) {
       if (i == 0) {
         ignoreBoundary = "start";
       }
@@ -35,7 +31,7 @@ bool booleanPointOnLine(Point pt, LineString line,
         ignoreBoundary = "both";
       }
     }
-    if (isPointOnLineSegment(line.coordinates[i], line.coordinates[i + 1],
+    if (_isPointOnLineSegment(line.coordinates[i], line.coordinates[i + 1],
         pt.coordinates, ignoreBoundary, epsilon)) {
       return true;
     }
@@ -45,17 +41,11 @@ bool booleanPointOnLine(Point pt, LineString line,
 
 // See http://stackoverflow.com/a/4833823/1979085
 // See https://stackoverflow.com/a/328122/1048847
-/**
- * @private
- * @param {Position} lineSegmentStart coord pair of start of line
- * @param {Position} lineSegmentEnd coord pair of end of line
- * @param {Position} pt coord pair of point to check
- * @param {boolean|string} excludeBoundary whether the point is allowed to fall on the line ends.
- * @param {number} epsilon Fractional number to compare with the cross product result. Useful for dealing with floating points such as lng/lat points
- * If true which end to ignore.
- * @returns {boolean} true/false
- */
-bool isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
+/// [pt] is the coord pair of the [Point] to check.
+/// [excludeBoundary] controls whether the point is allowed to fall on the line ends.
+/// [epsilon] is the Fractional number to compare with the cross product result.
+/// Useful for dealing with floating points such as lng/lat points.
+bool _isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
     Position pt, dynamic excludeBoundary, num? epsilon) {
   var x = pt[0]!;
   var y = pt[1]!;
@@ -75,7 +65,7 @@ bool isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
   } else if (cross != 0) {
     return false;
   }
-  if (excludeBoundary != null) {
+  if (excludeBoundary is bool && !excludeBoundary) {
     if ((dxl).abs() >= (dyl).abs()) {
       return dxl > 0 ? x1 <= x && x <= x2 : x2 <= x && x <= x1;
     }
@@ -98,7 +88,6 @@ bool isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
   }
   return false;
 }
-
 
 /**
  * import { Feature, LineString } from "geojson";
