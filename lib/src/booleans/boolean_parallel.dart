@@ -22,7 +22,6 @@ bool booleanParallel(GeoJSONObject line1, GeoJSONObject line2) {
   }
   FeatureCollection<LineString> segments1 = lineSegment(cleanCoords(line1));
   FeatureCollection<LineString> segments2 = lineSegment(cleanCoords(line2));
-
   for (var i = 0; i < segments1.features.length; i++) {
     var segment1 = segments1.features[i].geometry!.coordinates;
     var seg2i = segments2.features.elementAt(i);
@@ -49,7 +48,7 @@ GeoJSONObjectType _getType(GeoJSONObject geojson, String name) {
   if ((geojson as Feature).geometry != null) {
     return geojson.geometry!.type;
   }
-  if (geojson.runtimeType is GeometryType) {
+  if (geojson is GeometryType) {
     return geojson.type;
   } // if GeoJSON geometry
   throw Exception("Invalid GeoJSON object for $name");

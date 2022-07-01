@@ -1,3 +1,5 @@
+import 'package:geojson_equality/geojson_equality.dart';
+
 import '../../helpers.dart';
 import '../../line_segment.dart';
 import '../invariant.dart';
@@ -43,7 +45,7 @@ booleanOverlap(GeometryObject feature1, GeometryObject feature2) {
   if (type1 == Point) throw Exception("Point geometry not supported");
 
   // features must be not equal
-  const equality = GeojsonEquality({precision: 6});
+  var equality = Equality(precision: 6);
   if (equality.compare(feature1, feature2)) return false;
 
   var overlap = 0;

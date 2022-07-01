@@ -79,7 +79,7 @@ bool isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
   } else if (cross != 0) {
     return false;
   }
-  if (!excludeBoundary) {
+  if (excludeBoundary != null) {
     if ((dxl).abs() >= (dyl).abs()) {
       return dxl > 0 ? x1 <= x && x <= x2 : x2 <= x && x <= x1;
     }

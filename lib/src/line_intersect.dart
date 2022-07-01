@@ -28,14 +28,14 @@ FeatureCollection<Point>  lineIntersect(
   }
 ){
   var features= <Feature>[];
-  if (line1.runtimeType == FeatureCollection)
+  if (line1 is FeatureCollection)
 {    features = features..addAll((line1 as FeatureCollection).features);
 }  else if (line1 is Feature) {features.add(line1);}
   else if (
-    line1.runtimeType == LineString ||
-    line1.runtimeType == Polygon ||
-    line1.runtimeType == MultiLineString ||
-    line1.runtimeType == MultiPolygon
+    line1 is LineString ||
+    line1 is Polygon ||
+    line1 is MultiLineString ||
+    line1 is MultiPolygon
   ) {
     features.add(Feature(geometry: line1 as GeometryObject));
   }

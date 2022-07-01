@@ -40,36 +40,36 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
  * @returns {boolean} true/false
  */
 disjoint(GeometryType geom1, GeometryType geom2) {
-  switch (geom1.runtimeType) {
-    case Point:
-      switch (geom2.runtimeType) {
-        case Point:
+  switch (geom1.type) {
+    case GeoJSONObjectType.point:
+      switch (geom2.type) {
+        case GeoJSONObjectType.point:
           return !compareCoords(geom1.coordinates, geom2.coordinates);
-        case LineString:
+        case GeoJSONObjectType.lineString:
           return !isPointOnLine(geom2 as LineString, geom1 as Point);
-        case Polygon:
+        case GeoJSONObjectType.polygon:
           return !booleanPointInPolygon((geom1 as Point).coordinates, geom2);
       }
       /* istanbul ignore next */
       break;
-    case LineString:
-      switch (geom2.runtimeType) {
-        case Point:
+    case GeoJSONObjectType.lineString:
+      switch (geom2.type) {
+        case GeoJSONObjectType.point:
           return !isPointOnLine(geom1 as LineString, geom2 as Point);
-        case LineString:
+        case GeoJSONObjectType.lineString:
           return !isLineOnLine(geom1 as LineString, geom2 as LineString);
-        case Polygon:
+        case GeoJSONObjectType.polygon:
           return !isLineInPoly(geom2 as Polygon, geom1 as LineString);
       }
       /* istanbul ignore next */
       break;
-    case Polygon:
-      switch (geom2.runtimeType) {
-        case Point:
+    case GeoJSONObjectType.polygon:
+      switch (geom2.type) {
+        case GeoJSONObjectType.point:
           return !booleanPointInPolygon((geom2 as Point).coordinates, geom1);
-        case LineString:
+        case GeoJSONObjectType.lineString:
           return !isLineInPoly(geom1 as Polygon, geom2 as LineString);
-        case Polygon:
+        case GeoJSONObjectType.polygon:
           return !isPolyInPoly(geom2 as Polygon, geom1 as Polygon);
       }
   }

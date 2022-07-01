@@ -5,24 +5,21 @@
 import '../helpers.dart';
 import 'invariant.dart';
 
-/**
- * Removes redundant coordinates from any GeoJSON Geometry.
- *
- * @name cleanCoords
- * @param {Geometry|Feature} geojson Feature or Geometry
- * @param {Object} [options={}] Optional parameters
- * @param {boolean} [options.mutate=false] allows GeoJSON input to be mutated
- * @returns {Geometry|Feature} the cleaned input Feature/Geometry
- * @example
- * var line = turf.lineString([[0, 0], [0, 2], [0, 5], [0, 8], [0, 8], [0, 10]]);
- * var multiPoint = turf.multiPoint([[0, 0], [0, 0], [2, 2]]);
- *
- * turf.cleanCoords(line).geometry.coordinates;
- * //= [[0, 0], [0, 10]]
- *
- * turf.cleanCoords(multiPoint).geometry.coordinates;
- * //= [[0, 0], [2, 2]]
- */
+
+/// Removes redundant coordinates from any GeoJSON Geometry.
+/// @name cleanCoords
+/// @param {Geometry|Feature} geojson Feature or Geometry
+/// @param {Object} [options={}] Optional parameters
+/// @param {boolean} [options.mutate=false] allows GeoJSON input to be mutated
+/// @returns {Geometry|Feature} the cleaned input Feature/Geometry
+/// @example
+/// var line = turf.lineString([[0, 0], [0, 2], [0, 5], [0, 8], [0, 8], [0, 10]]);
+/// var multiPoint = turf.multiPoint([[0, 0], [0, 0], [2, 2]]);
+/// turf.cleanCoords(line).geometry.coordinates;
+/// //= [[0, 0], [0, 10]]
+/// turf.cleanCoords(multiPoint).geometry.coordinates;
+/// //= [[0, 0], [2, 2]]
+
  cleanCoords(
   GeoJSONObject geojson,
   {
@@ -32,22 +29,22 @@ import 'invariant.dart';
   // // Backwards compatible with v4.0
   // var mutate = typeof options == "object" ? options.mutate : options;
   // if (!geojson) throw Exception("geojson is required");
-  var type = (geojson.runtimeType);
+  var type = (geojson.type);
 
   // Store new "clean" points in this Array
   var newCoords = [];
 
   switch (type) {
-    case LineString:
+    case GeoJSONObjectType.lineString:
       newCoords = cleanLine(geojson as LineString, type);
       break;
-    case MultiLineString:
-    case Polygon:
+    case GeoJSONObjectType.multiLineString:
+    case GeoJSONObjectType.polygon:
       getCoords(geojson).forEach( (line) {
         newCoords.add(cleanLine(line, type));
       });
       break;
-    case MultiPolygon:
+    case GeoJSONObjectType.multiPolygon:
       getCoords(geojson).forEach( (polygons) {
         var polyPoints = <Position>[];
         polygons.forEach( (List<Position> ring) {
@@ -56,9 +53,9 @@ import 'invariant.dart';
         newCoords.add(polyPoints);
       });
       break;
-    case Point:
+    case GeoJSONObjectType.point:
       return geojson;
-    case MultiPoint:
+    case GeoJSONObjectType.multiPoint:
       var Record<string, true> existing:  = {};
       getCoords(geojson).forEach( (coord: any) {
         var key = coord.join("-");
@@ -74,13 +71,13 @@ import 'invariant.dart';
 
   // Support input mutation
   if (geojson.coordinates) {
-    if (mutate == true) {
+    if (mutate) {
       geojson.coordinates = newCoords;
       return geojson;
     }
     return { type: type, coordinates: newCoords };
   } else {
-    if (mutate == true) {
+    if (mutate) {
       geojson.geometry.coordinates = newCoords;
       return geojson;
     }

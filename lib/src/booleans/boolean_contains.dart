@@ -3,19 +3,16 @@ import 'package:turf/turf.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 
-/// Boolean-contains returns True if the second geometry is completely contained by the first geometry.
-/// The interiors of both geometries must intersect and, the interior and boundary of the secondary (geometry b)
-/// must not intersect the exterior of the primary (geometry a).
-/// Boolean-contains returns the exact opposite result of the `@turf/boolean-within`.
-/// @name booleanContains
-/// @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
-/// @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
-/// @returns {boolean} true/false
+/// Boolean-contains returns True if the second geometry is completely contained
+/// by the first geometry.
+/// The interiors of both geometries must intersect and, the interior and
+/// boundary of the secondary must not intersect the exterior of the primary.
+/// Boolean-contains returns the exact opposite result of the `turf/boolean-within`.
 /// example:
 /// ```dart
-/// var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
-/// var point = turf.point([1, 2]);
-/// turf.booleanContains(line, point);
+/// var line = LineString(coordinates: [Position.of([1, 1]), Position.of([1, 2]), Position.of([1, 3]), Position.of([1, 4])]);
+/// var point = Point(cooridantes:Position.of([1, 2]));
+/// booleanContains(line, point);
 /// //=true
 /// ```
 booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
@@ -25,7 +22,6 @@ booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
   var type2 = geom2!.type;
   var coords1 = (geom1 as GeometryType).coordinates;
   var coords2 = (geom2 as GeometryType).coordinates;
-
   switch (type1) {
     case GeoJSONObjectType.point:
       switch (type2) {
@@ -79,7 +75,7 @@ booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
   }
 }
 
-isPointInMultiPoint(MultiPoint multiPoint, Point pt) {
+bool isPointInMultiPoint(MultiPoint multiPoint, Point pt) {
   int i;
   var output = false;
   for (i = 0; i < multiPoint.coordinates.length; i++) {
@@ -91,7 +87,7 @@ isPointInMultiPoint(MultiPoint multiPoint, Point pt) {
   return output;
 }
 
-isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
+bool isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
   for (var coord2 in multiPoint2.coordinates) {
     var matchFound = false;
     for (var coord1 in multiPoint1.coordinates) {
@@ -107,7 +103,7 @@ isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
   return true;
 }
 
-isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
+bool isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
   var haveFoundInteriorPoint = false;
   for (var coord in multiPoint.coordinates) {
     if (booleanPointOnLine(Point(coordinates: coord), lineString,
@@ -124,7 +120,7 @@ isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
   return false;
 }
 
-isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
+bool isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
   for (var coord in multiPoint.coordinates) {
     if (!booleanPointInPolygon(coord, polygon, ignoreBoundary: true)) {
       return false;
@@ -133,7 +129,7 @@ isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
   return true;
 }
 
-isLineOnLine(LineString lineString1, LineString lineString2) {
+bool isLineOnLine(LineString lineString1, LineString lineString2) {
   var haveFoundInteriorPoint = false;
   for (var coords in lineString2.coordinates) {
     if (booleanPointOnLine(
@@ -154,7 +150,7 @@ isLineOnLine(LineString lineString1, LineString lineString2) {
   return haveFoundInteriorPoint;
 }
 
-isLineInPoly(Polygon polygon, LineString linestring) {
+bool isLineInPoly(Polygon polygon, LineString linestring) {
   var output = false;
   var i = 0;
 
@@ -167,7 +163,7 @@ isLineInPoly(Polygon polygon, LineString linestring) {
     var midPoint =
         getMidpoint(linestring.coordinates[i], linestring.coordinates[i + 1]);
     if (booleanPointInPolygon(
-      Position.of(midPoint),
+      midPoint,
       polygon,
       ignoreBoundary: true,
     )) {
@@ -178,34 +174,18 @@ isLineInPoly(Polygon polygon, LineString linestring) {
   return output;
 }
 
-/**
- * Is Polygon2 in Polygon1
- * Only takes into account outer rings
- *
- * @private
- * @param {Geometry|Feature<Polygon>} feature1 Polygon1
- * @param {Geometry|Feature<Polygon>} feature2 Polygon2
- * @returns {boolean} true/false
- */
-isPolyInPoly(GeoJSONObject feature1, GeoJSONObject feature2) {
-  // Handle Nulls
-  if (feature1 is Feature && feature1.geometry == null) {
-    return false;
-  }
-  if (feature2 is Feature && feature2.geometry == null) {
-    return false;
-  }
-
-  var poly1Bbox = bbox(feature1);
-  var poly2Bbox = bbox(feature2);
+/// Is Polygon2 in Polygon1
+/// Only takes into account outer rings
+bool isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
+  var poly1Bbox = bbox(geom1);
+  var poly2Bbox = bbox(geom2);
   if (!doBBoxOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
-  var coords = (feature2 as Feature<GeometryType>).geometry!.coordinates;
-  for (var ring in coords) {
+  for (var ring in (geom2 as GeometryType).coordinates) {
     for (var coord in ring) {
-      if (!booleanPointInPolygon(coord, feature1 as Feature)) {
+      if (!booleanPointInPolygon(coord, geom1)) {
         return false;
       }
     }
@@ -229,20 +209,13 @@ doBBoxOverlap(BBox bbox1, BBox bbox2) {
   return true;
 }
 
-/**
- * compareCoords
- *
- * @private
- * @param {Position} pair1 point [x,y]
- * @param {Position} pair2 point [x,y]
- * @returns {boolean} true/false if coord pairs match
- */
-compareCoords(Position pair1, Position pair2) {
+bool compareCoords(Position pair1, Position pair2) {
   return pair1[0] == pair2[0] && pair1[1] == pair2[1];
 }
 
-getMidpoint(Position pair1, Position pair2) {
-  return [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2];
+Position getMidpoint(Position pair1, Position pair2) {
+  return Position.of(
+      [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2]);
 }
 
 /*

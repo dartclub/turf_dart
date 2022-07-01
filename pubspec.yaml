@@ -2,13 +2,19 @@ name: turf
 description: A turf.js-like geospatial analysis library working with GeoJSON, written in pure Dart.
 version: 0.0.6+3
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 homepage: https://github.com/dartclub/turf_dart
 repository: https://github.com/dartclub/turf_dart
+publish_to: none
 
 dependencies:
   json_annotation: ^4.4.0
-
+  geojson_equality:
+    git:
+      url: https://github.com/dartclub/turf_equality.git
+  pip:
+    git:
+      url: https://github.com/dartclub/point_in_polygon.git
 dev_dependencies:
   dartclub_lint: ^0.4.2
   test: ^1.19.3
