@@ -4,8 +4,7 @@ import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
 
-/**
- * Boolean-disjoint returns (TRUE) if the intersection of the two geometries is an empty set.
+ Boolean-disjoint returns (TRUE) if the intersection of the two geometries is an empty set.
  *
  * @name booleanDisjoint
  * @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry

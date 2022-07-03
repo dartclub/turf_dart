@@ -2,20 +2,17 @@ import '../../helpers.dart';
 import '../../meta.dart';
 import 'boolean_disjoint.dart';
 
-/**
- * Boolean-intersects returns (TRUE) two geometries intersect.
- *
- * @name booleanIntersects
- * @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
- * @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
- * @returns {boolean} true/false
- * @example
- * var point = turf.point([2, 2]);
- * var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
- *
- * turf.booleanIntersects(line, point);
- * //=true
- */
+
+Boolean-intersects returns (TRUE) two geometries intersect.
+/// @name booleanIntersects
+/// @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
+/// @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
+/// @returns {boolean} true/false
+/// @example
+/// var point = turf.point([2, 2]);
+/// var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
+/// turf.booleanIntersects(line, point);
+//=true
 booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2) {
   var bool = false;
   flattenEach(feature1, (flatten1, featureIndex, multiFeatureIndex) {

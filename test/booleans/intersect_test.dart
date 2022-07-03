@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_intersect.dart';
 
-main() {
+// main() {
   var featureCollection = FeatureCollection(features: [
     Feature(
         properties: {"fill": "#ff0000"},

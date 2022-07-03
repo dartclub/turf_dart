@@ -61,8 +61,8 @@ bool _inBBox(Position pt, BBox bbox) {
       bbox[3]! >= pt[1]!);
 }
 
-/**
- * import pip from "point-in-polygon-hao";
+
+import pip from "point-in-polygon-hao";
 import {
   BBox,
   Feature,

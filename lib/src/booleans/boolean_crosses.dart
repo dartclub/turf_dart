@@ -3,8 +3,9 @@ import '../invariant.dart';
 import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
-/** 
- * Boolean-Crosses returns True if the intersection results in a geometry whose dimension is one less than
+
+
+Boolean-Crosses returns True if the intersection results in a geometry whose dimension is one less than
  * the maximum dimension of the two source geometries and the intersection set is interior to
  * both source geometries.
  *

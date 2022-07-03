@@ -89,8 +89,7 @@ bool _isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
   return false;
 }
 
-/**
- * import { Feature, LineString } from "geojson";
+import { Feature, LineString } from "geojson";
 import { Coord } from "@turf/helpers";
 import { getCoord, getCoords } from "@turf/invariant";
 

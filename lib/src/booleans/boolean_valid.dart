@@ -4,8 +4,7 @@ import '../line_intersect.dart';
 import 'boolean_crosses.dart';
 import 'boolean_disjoint.dart';
 
-/**
- * booleanValid checks if the geometry is a valid according to the OGC Simple Feature Specification.
+booleanValid checks if the geometry is a valid according to the OGC Simple Feature Specification.
  *
  * @name booleanValid
  * @param {Geometry|Feature<any>} feature GeoJSON Feature or Geometry
