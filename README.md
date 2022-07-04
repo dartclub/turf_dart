@@ -89,7 +89,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] pointOnFeature
 - [ ] polygonTangents
 - [ ] pointToLineDistance
-- [ ] rhumbBearing
+- [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
 - [ ] rhumbDestination
 - [ ] rhumbDistance
 - [ ] square
