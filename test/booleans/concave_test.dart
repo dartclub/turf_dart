@@ -21,7 +21,7 @@ main() {
               dynamic json = jsonDecode(inSource);
               var inGeom = GeoJSONObject.fromJson(json);
               var feature = (inGeom as FeatureCollection).features[0];
-              expect(booleanConcave(feature), true);
+              expect(booleanConcave(feature.geometry as Polygon), true);
             },
           );
         }
@@ -38,7 +38,7 @@ main() {
               dynamic json = jsonDecode(inSource);
               var inGeom = GeoJSONObject.fromJson(json);
               var feature = (inGeom as FeatureCollection).features[0];
-              expect(booleanConcave(feature), false);
+              expect(booleanConcave(feature.geometry as Polygon), false);
             },
           );
         }
