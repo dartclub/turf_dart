@@ -611,7 +611,6 @@ compareCoords(Position pair1, Position pair2) {
   return pair1[0] == pair2[0] && pair1[1] == pair2[1];
 }
 
-
 /** import { Feature, Geometry, LineString(Point } from "geojson";
 import booleanPointOnLine from "@turf/boolean-point-on-line";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";

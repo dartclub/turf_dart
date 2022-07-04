@@ -6,7 +6,7 @@ import 'package:pip/pip.dart';
 import '../../helpers.dart';
 import '../invariant.dart';
 
-/// Takes a [Point] and a [Polygon] or [MultiPolygon]and determines if the
+/// Takes a [Point], and a [Polygon] or [MultiPolygon]and determines if the
 /// [Point] resides inside the [Polygon]. The polygon can be convex or concave.
 /// The function accounts for holes. By taking a [Feature<Polygon>] or a
 /// [Feature<MultiPolygon>]. [ignoreBoundary=false] should be set [true] if polygon's
@@ -27,21 +27,37 @@ import '../invariant.dart';
 /// ```
 bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
     {bool ignoreBoundary = false}) {
-  var geom = getGeom(polygon);
-  var type = geom.type;
-  var bbox = polygon.bbox;
-  var polys = geom.coordinates;
+  GeometryType? geom;
+  List<List<List<Position>>>? polys;
+  BBox? bbox = polygon.bbox;
+
+  Exception exception = Exception('${polygon.type} is not supported');
+
+  if (polygon is Feature) {
+    if (polygon.geometry is Polygon || polygon.geometry is MultiPolygon) {
+      return booleanPointInPolygon(point, polygon.geometry!);
+    } else {
+      throw exception;
+    }
+  } else if (polygon is GeometryType) {
+    if (polygon is Polygon && polygon.coordinates.isNotEmpty) {
+      geom = polygon;
+      polys = [geom.coordinates];
+    } else if (polygon is MultiPolygon && polygon.coordinates.isNotEmpty) {
+      geom = polygon;
+      polys = geom.coordinates;
+    }
+  } else {
+    throw exception;
+  }
 
   // Quick elimination if point is not inside bbox
   if (bbox != null && !_inBBox(point, bbox)) {
     return false;
   }
 
-  if (type == GeoJSONObjectType.polygon) {
-    polys = [polys];
-  }
   var result = false;
-  for (var i = 0; i < polys.length; ++i) {
+  for (var i = 0; i < polys!.length; ++i) {
     var polyResult =
         pip(Point(coordinates: point), Polygon(coordinates: polys[i]));
     if (polyResult == 0) {
@@ -60,99 +76,3 @@ bool _inBBox(Position pt, BBox bbox) {
       bbox[2]! >= pt[0]! &&
       bbox[3]! >= pt[1]!);
 }
-
-
-import pip from "point-in-polygon-hao";
-import {
-  BBox,
-  Feature,
-  MultiPolygon,
-  Polygon,
-  GeoJsonProperties,
-} from "geojson";
-import { Coord } from "@turf/helpers";
-import { getCoord, getGeom } from "@turf/invariant";
-
-// http://en.wikipedia.org/wiki/Even%E2%80%93odd_rule
-// modified from: https://github.com/substack/point-in-polygon/blob/master/index.js
-// which was modified from http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-/**
- * Takes a {@link Point} and a {@link Polygon} or {@link MultiPolygon} and determines if the point
- * resides inside the polygon. The polygon can be convex or concave. The function accounts for holes.
- *
- * @name booleanPointInPolygon
- * @param {Coord} point input point
- * @param {Feature<Polygon|MultiPolygon>} polygon input polygon or multipolygon
- * @param {Object} [options={}] Optional parameters
- * @param {boolean} [options.ignoreBoundary=false] True if polygon boundary should be ignored when determining if
- * the point is inside the polygon otherwise false.
- * @returns {boolean} `true` if the Point is inside the Polygon; `false` if the Point is not inside the Polygon
- * @example
- * var pt = turf.point([-77, 44]);
- * var poly = turf.polygon([[
- *   [-81, 41],
- *   [-81, 47],
- *   [-72, 47],
- *   [-72, 41],
- *   [-81, 41]
- * ]]);
- *
- * turf.booleanPointInPolygon(pt, poly);
- * //= true
- */
-export default function booleanPointInPolygon<
-  G extends Polygon | MultiPolygon,
-  P = GeoJsonProperties
->(
-  point: Coord,
-  polygon: Feature<G, P> | G,
-  options: {
-    ignoreBoundary?: boolean;
-  } = {}
-) {
-  // validation
-  if (!point) {
-    throw new Error("point is required");
-  }
-  if (!polygon) {
-    throw new Error("polygon is required");
-  }
-
-  const pt = getCoord(point);
-  const geom = getGeom(polygon);
-  const type = geom.type;
-  const bbox = polygon.bbox;
-  let polys: any[] = geom.coordinates;
-
-  // Quick elimination if point is not inside bbox
-  if (bbox && inBBox(pt, bbox) === false) {
-    return false;
-  }
-
-  if (type === "Polygon") {
-    polys = [polys];
-  }
-  let result = false;
-  for (var i = 0; i < polys.length; ++i) {
-    const polyResult = pip(pt, polys[i]);
-    if (polyResult === 0) return options.ignoreBoundary ? false : true;
-    else if (polyResult) result = true;
-  }
-
-  return result;
-}
-
-/**
- * inBBox
- *
- * @private
- * @param {Position} pt point [x,y]
- * @param {BBox} bbox BBox [west, south, east, north]
- * @returns {boolean} true/false if point is inside BBox
- */
-function inBBox(pt: number[], bbox: BBox) {
-  return (
-    bbox[0] <= pt[0] && bbox[1] <= pt[1] && bbox[2] >= pt[0] && bbox[3] >= pt[1]
-  );
-}
- */

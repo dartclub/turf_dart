@@ -237,8 +237,6 @@ getMidpoint(Position pair1, Position pair2) {
   return [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2];
 }
 
-
-
 /*
 import {
   BBox,
