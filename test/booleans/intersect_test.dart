@@ -74,17 +74,20 @@ import 'package:turf/src/booleans/boolean_intersect.dart';
           ]
         ]))
   ]);
-  test("turf-boolean-intersects", () {
-    // True Fixtures
+  test(
+    "turf-boolean-intersects",
+    () {
+      // True Fixtures
 
-    var feature1 = featureCollection.features[0];
-    var feature2 = featureCollection.features[1];
+      var feature1 = featureCollection.features[0];
+      var feature2 = featureCollection.features[1];
 
-    expect(booleanIntersects(feature1, feature2), equals(true));
+      expect(booleanIntersects(feature1, feature2), equals(true));
 
-    // False Fixtures
-    var feature3 = featureCollection1.features[0];
-    var feature4 = featureCollection1.features[1];
-    expect(booleanIntersects(feature3, feature4), equals(false));
-  });
+      // False Fixtures
+      var feature3 = featureCollection1.features[0];
+      var feature4 = featureCollection1.features[1];
+      expect(booleanIntersects(feature3, feature4), equals(false));
+    },
+  );
 }
