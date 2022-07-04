@@ -3,7 +3,7 @@ import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 import 'package:turf/src/invariant.dart';
 
-/// Converts [LineString]s & [MultiLineString](s) to [Polygon](s).
+/// Converts [LineString]s & [MultiLineString](s) to [Polygon] or [MultiPolygon].
 /// Takes an optional bool autoComplete=true that auto complete [Linestring]s (matches first & last coordinates)
 /// Takes an optional orderCoords=true that sorts [Linestring]s to place outer ring at the first position of the coordinates
 /// Takes an optional mutate=false that mutates the original [Linestring] using autoComplete (matches first & last coordinates)
@@ -133,24 +133,26 @@ Feature<Polygon> lineStringToPolygon(
     List<List<Position>> multiCoords = [];
     num largestArea = 0;
 
-    line.coordinates.forEach((coord) {
-      if (autoComplete) {
-        coord = _autoCompleteCoords(coord);
-      }
+    line.coordinates.forEach(
+      (coord) {
+        if (autoComplete) {
+          coord = _autoCompleteCoords(coord);
+        }
 
-      // Largest LineString to be placed in the first position of the coordinates array
-      if (orderCoords) {
-        var area = _calculateArea(bbox(LineString(coordinates: coord)));
-        if (area > largestArea) {
-          multiCoords.insert(0, coord);
-          largestArea = area;
+        // Largest LineString to be placed in the first position of the coordinates array
+        if (orderCoords) {
+          var area = _calculateArea(bbox(LineString(coordinates: coord)));
+          if (area > largestArea) {
+            multiCoords.insert(0, coord);
+            largestArea = area;
+          } else {
+            multiCoords.add(coord);
+          }
         } else {
           multiCoords.add(coord);
         }
-      } else {
-        multiCoords.add(coord);
-      }
-    });
+      },
+    );
     return Feature(
         geometry: Polygon(coordinates: multiCoords), properties: properties);
   } else {

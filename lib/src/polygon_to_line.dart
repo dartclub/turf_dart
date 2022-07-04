@@ -19,37 +19,32 @@ import '../helpers.dart';
 /// //addToMap
 /// var addToMap = [line];
 /// ```
-polygonToLine(GeoJSONObject poly, {Map<String, dynamic>? properties}) {
+dynamic polygonToLine(GeoJSONObject poly, {Map<String, dynamic>? properties}) {
   var geom = poly is Feature ? poly.geometry : poly;
 
-  (poly is Feature)
-      ? properties = poly.properties
-      : properties = <String, dynamic>{};
+  properties =
+      properties ?? ((poly is Feature) ? poly.properties : <String, dynamic>{});
 
   if (geom is Polygon) {
-    return _polygonToLine(poly, properties: properties);
+    return _polygonToLine(geom, properties: properties);
   } else if (geom is MultiPolygon) {
-    return _multiPolygonToLine(poly, properties: properties);
+    return _multiPolygonToLine(geom, properties: properties);
   } else {
     throw Exception("invalid poly");
   }
 }
 
-Feature _polygonToLine(GeoJSONObject poly, {Map<String, dynamic>? properties}) {
-  var geom = poly is Feature ? poly.geometry : poly;
-  var coords = (geom as GeometryType).coordinates;
-  properties =
-      properties ?? (poly is Feature ? poly.properties : <String, dynamic>{});
+Feature _polygonToLine(Polygon geom, {Map<String, dynamic>? properties}) {
+  var coords = geom.coordinates;
+  properties = properties ?? <String, dynamic>{};
 
   return _coordsToLine(coords, properties);
 }
 
-FeatureCollection _multiPolygonToLine(GeoJSONObject multiPoly,
+FeatureCollection _multiPolygonToLine(MultiPolygon geom,
     {Map<String, dynamic>? properties}) {
-  var geom = multiPoly is Feature ? multiPoly.geometry : multiPoly;
-  var coords = (geom as GeometryType).coordinates;
-  properties = properties ??
-      (multiPoly is Feature ? multiPoly.properties : <String, dynamic>{});
+  var coords = geom.coordinates;
+  properties = properties ?? <String, dynamic>{};
 
   var lines = <Feature>[];
   coords.forEach((coord) => {lines.add(_coordsToLine(coord, properties))});
