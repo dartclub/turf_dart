@@ -19,7 +19,8 @@ import '../helpers.dart';
 /// //addToMap
 /// var addToMap = [line];
 /// ```
-dynamic polygonToLine(GeoJSONObject poly, {Map<String, dynamic>? properties}) {
+GeoJSONObject polygonToLine(GeoJSONObject poly,
+    {Map<String, dynamic>? properties}) {
   var geom = poly is Feature ? poly.geometry : poly;
 
   properties =
