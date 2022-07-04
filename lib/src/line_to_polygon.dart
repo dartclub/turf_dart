@@ -108,30 +108,32 @@ Feature lineToPolygon(
 /// Takes an optional orderCoords=true that sorts linestrings to place outer
 /// ring at the first position of the coordinates.
 Feature<Polygon> lineStringToPolygon(
-    GeoJSONObject line, bool autoComplete, bool orderCoords,
-    {Map<String, dynamic>? properties}) {
+  GeoJSONObject line,
+  bool autoComplete,
+  bool orderCoords, {
+  Map<String, dynamic>? properties,
+}) {
   properties = properties ?? (line is Feature ? line.properties ?? {} : {});
-  var geom = line is LineString ? line : (line as Feature).geometry;
-  List<dynamic> coords = (geom is LineString || geom is MultiLineString)
-      ? (geom is LineString)
-          ? geom.coordinates
-          : (geom as MultiLineString).coordinates
-      : ((geom as Feature).geometry as GeometryType).coordinates;
 
-  if (coords.isEmpty) throw Exception("line must contain coordinates");
+  if (line is Feature && line.geometry != null) {
+    return lineStringToPolygon(line.geometry!, autoComplete, orderCoords);
+  }
 
-  if (geom is LineString) {
-    if (autoComplete) {
-      coords = _autoCompleteCoords(coords as List<Position>);
-    }
+  if (line is GeometryType && line.coordinates.isEmpty) {
+    throw Exception("line must contain coordinates");
+  }
+
+  if (line is LineString) {
+    var coords =
+        autoComplete ? _autoCompleteCoords(line.coordinates) : line.coordinates;
+
     return Feature(
-        geometry: Polygon(coordinates: [coords as List<Position>]),
-        properties: properties);
-  } else if (geom is MultiLineString) {
+        geometry: Polygon(coordinates: [coords]), properties: properties);
+  } else if (line is MultiLineString) {
     List<List<Position>> multiCoords = [];
     num largestArea = 0;
 
-    (coords as List<List<Position>>).forEach((coord) {
+    line.coordinates.forEach((coord) {
       if (autoComplete) {
         coord = _autoCompleteCoords(coord);
       }
@@ -152,23 +154,17 @@ Feature<Polygon> lineStringToPolygon(
     return Feature(
         geometry: Polygon(coordinates: multiCoords), properties: properties);
   } else {
-    throw Exception(
-        "geometry type  ${(geom as GeoJSONObject).type}  is not supported");
+    throw Exception("Geometry type  ${line.type}  is not supported");
   }
 }
 
 /// Auto Completes Coords - matches first & last coordinates
 List<Position> _autoCompleteCoords(List<Position> coords) {
-  var first = coords[0];
-  var x1 = first[0];
-  var y1 = first[1];
-  var last = coords[coords.length - 1];
-  var x2 = last[0];
-  var y2 = last[1];
-  if (x1 != x2 || y1 != y2) {
-    coords.add(first);
+  var newCoords = coords.map((c) => c.clone()).toList();
+  if (newCoords.first != newCoords.last) {
+    newCoords.add(newCoords.first.clone());
   }
-  return coords;
+  return newCoords;
 }
 
 /// Quick calculates approximate area (used to sort)
