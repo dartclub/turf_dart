@@ -15,7 +15,7 @@ import 'boolean_point_on_line.dart';
 /// booleanContains(line, point);
 /// //=true
 /// ```
-booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
+bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
   var geom1 = feature1 is Feature ? feature1.geometry : feature1;
   var geom2 = feature2 is Feature ? feature2.geometry : feature2;
 
@@ -180,7 +180,7 @@ bool isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   return true;
 }
 
-doBBoxOverlap(BBox bbox1, BBox bbox2) {
+bool doBBoxOverlap(BBox bbox1, BBox bbox2) {
   if (bbox1[0]! > bbox2[0]!) {
     return false;
   }
