@@ -77,6 +77,7 @@ _getCoordsForGeometry(GeometryObject geom) {
   return (geom as GeometryType).coordinates;
 }
 
+// TODO
 /// Get Geometry or Geometries from [Feature] or [GeometryType]
 /// Returns [List<GeometryType>] in case geojson is a [GeometryCollection] and a
 /// [GeometryType] if geojson is a simple [GeometryType].

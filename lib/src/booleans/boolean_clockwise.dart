@@ -1,70 +1,36 @@
 import 'package:turf/src/invariant.dart';
 
-/**
- * Takes a ring and return true or false whether or not the ring is clockwise or counter-clockwise.
- *
- * @name booleanClockwise
- * @param {Feature<LineString>|LineString|Array<Array<number>>} line to be evaluated
- * @returns {boolean} true/false
- * @example
- * var clockwiseRing = turf.lineString([[0,0],[1,1],[1,0],[0,0]]);
- * var counterClockwiseRing = turf.lineString([[0,0],[1,0],[1,1],[0,0]]);
- *
- * turf.booleanClockwise(clockwiseRing)
- * //=true
- * turf.booleanClockwise(counterClockwiseRing)
- * //=false
- */
+import '../../helpers.dart';
 
+/// Takes a ring and return true or false whether or not the ring is clockwise or counter-clockwise.
+/// Takes a [Feature<LineString>]or [LineString] or a [List<Position>] to be evaluated
+/// example:
+/// ```dart
+/// var clockwiseRing = LineString(coordinates: [Position.of([0,0]),Position.of([1,1]),Position.of([1,0]),Position.of([0,0])]);
+/// var counterClockwiseRing = LineString(coordinates: [Position.of([0,0]),Position.of([1,0]),Position.of([1,1]),Position.of([0,0])]);
+///
+/// booleanClockwise(clockwiseRing)
+/// //=true
+/// booleanClockwise(counterClockwiseRing)
+/// //=false
+/// ```
 bool booleanClockwise(dynamic line) {
+  if (line is List) {
+    if (line is! List<Position>) {
+      throw UnsupportedError(" type ${line.runtimeType} is not supperted");
+    }
+  }
   var ring = getCoords(line);
   num sum = 0;
-  var i = 1;
-  var prev;
-  var cur;
+  int i = 1;
+  Position prev;
+  Position? cur;
 
   while (i < ring.length) {
     prev = cur ?? ring[0];
     cur = ring[i];
-    sum += (cur[0] - prev[0]) * (cur[1] + prev[1]);
+    sum += (cur![0]! - prev[0]!) * (cur[1]! + prev[1]!);
     i++;
   }
   return sum > 0;
 }
-
-
-// import { Feature, LineString, Position } from "geojson";
-// import { getCoords } from "@turf/invariant";
-
-// /**
-//  * Takes a ring and return true or false whether or not the ring is clockwise or counter-clockwise.
-//  *
-//  * @name booleanClockwise
-//  * @param {Feature<LineString>|LineString|Array<Array<number>>} line to be evaluated
-//  * @returns {boolean} true/false
-//  * @example
-//  * var clockwiseRing = turf.lineString([[0,0],[1,1],[1,0],[0,0]]);
-//  * var counterClockwiseRing = turf.lineString([[0,0],[1,0],[1,1],[0,0]]);
-//  *
-//  * turf.booleanClockwise(clockwiseRing)
-//  * //=true
-//  * turf.booleanClockwise(counterClockwiseRing)
-//  * //=false
-//  */
-// export default function booleanClockwise(
-//   line: Feature<LineString> | LineString | Position[]
-// ): boolean {
-//   const ring = getCoords(line);
-//   let sum = 0;
-//   let i = 1;
-//   let prev;
-//   let cur;
-
-//   while (i < ring.length) {
-//     prev = cur || ring[0];
-//     cur = ring[i];
-//     sum += (cur[0] - prev[0]) * (cur[1] + prev[1]);
-//     i++;
-//   }
-//   return sum > 0;
-// }

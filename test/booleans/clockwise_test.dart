@@ -9,6 +9,25 @@ main() {
   group(
     'clockwise',
     () {
+      test('', () {
+        var list = <Position>[
+          Position.of([10, 10]),
+          Position.of([11, 10]),
+          Position.of([12, 10]),
+          Position.of([13, 10]),
+        ];
+        expect(booleanClockwise(list), true);
+      });
+
+      test('', () {
+        var list = [
+          [10, 10],
+          [11, 10],
+          [12, 10],
+          [13, 10],
+        ];
+        expect(() => booleanClockwise(list), throwsA(isA<UnsupportedError>()));
+      });
       var inDir = Directory('./test/examples/booleans/clockwise/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {

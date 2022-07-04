@@ -1,21 +1,17 @@
-/**
- * Takes any LineString or Polygon and returns the overlapping lines between both features.
- *
- * @name lineOverlap
- * @param {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} line1 any LineString or Polygon
- * @param {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} line2 any LineString or Polygon
- * @param {Object} [options={}] Optional parameters
- * @param {number} [options.tolerance=0] Tolerance distance to match overlapping line segments (in kilometers)
- * @returns {FeatureCollection<LineString>} lines(s) that are overlapping between both features
- * @example
- * var line1 = turf.lineString([[115, -35], [125, -30], [135, -30], [145, -35]]);
- * var line2 = turf.lineString([[115, -25], [125, -30], [135, -30], [145, -25]]);
- *
- * var overlapping = turf.lineOverlap(line1, line2);
- *
- * //addToMap
- * var addToMap = [line1, line2, overlapping]
- */
+
+/// Takes any LineString or Polygon and returns the overlapping lines between both features.
+/// @name lineOverlap
+/// @param {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} line1 any LineString or Polygon
+/// @param {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} line2 any LineString or Polygon
+/// @param {Object} [options={}] Optional parameters
+/// @param {number} [options.tolerance=0] Tolerance distance to match overlapping line segments (in kilometers)
+/// @returns {FeatureCollection<LineString>} lines(s) that are overlapping between both features
+/// @example
+/// var line1 = turf.lineString([[115, -35], [125, -30], [135, -30], [145, -35]]);
+/// var line2 = turf.lineString([[115, -25], [125, -30], [135, -30], [145, -25]]);
+/// var overlapping = turf.lineOverlap(line1, line2);
+/// //addToMap
+/// var addToMap = [line1, line2, overlapping]
  lineOverlap<
   G1 extends LineString | MultiLineString | Polygon | MultiPolygon,
   G2 extends LineString | MultiLineString | Polygon | MultiPolygon
@@ -56,7 +52,7 @@
 
     // Iterate over each segments which falls within the same bounds
     featureEach(tree.search(segment), function (match) {
-      if (doesOverlaps === false) {
+      if (doesOverlaps == false) {
         var coordsSegment = getCoords(segment).sort();
         var coordsMatch: any = getCoords(match).sort();
 
@@ -70,7 +66,7 @@
           } else overlapSegment = segment;
           // Match segments which don't share nodes (Issue #901)
         } else if (
-          tolerance === 0
+          tolerance == 0
             ? booleanPointOnLine(coordsSegment[0], match) &&
               booleanPointOnLine(coordsSegment[1], match)
             : nearestPointOnLine(match, coordsSegment[0]).properties.dist! <=
@@ -84,7 +80,7 @@
               concatSegment(overlapSegment, segment) || overlapSegment;
           } else overlapSegment = segment;
         } else if (
-          tolerance === 0
+          tolerance == 0
             ? booleanPointOnLine(coordsMatch[0], segment) &&
               booleanPointOnLine(coordsMatch[1], segment)
             : nearestPointOnLine(segment, coordsMatch[0]).properties.dist! <=
@@ -122,15 +118,12 @@
   return featureCollection(features);
 }
 
-/**
- * Concat Segment
- *
- * @private
- * @param {Feature<LineString>} line LineString
- * @param {Feature<LineString>} segment 2-vertex LineString
- * @returns {Feature<LineString>} concat linestring
- */
-function concatSegment(
+/// Concat Segment
+/// /// @private
+/// @param {Feature<LineString>} line LineString
+/// @param {Feature<LineString>} segment 2-vertex LineString
+/// @returns {Feature<LineString>} concat linestring
+concatSegment(
   line: Feature<LineString>,
   segment: Feature<LineString>
 ) {
