@@ -19,7 +19,6 @@ import 'invariant.dart';
 /// //= [[0, 0], [0, 10]]
 /// turf.cleanCoords(multiPoint).geometry.coordinates;
 /// //= [[0, 0], [2, 2]]
-
  cleanCoords(
   GeoJSONObject geojson,
   {
