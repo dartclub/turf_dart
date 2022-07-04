@@ -51,9 +51,16 @@ Feature lineToPolygon(
         dynamic featureId,
       ) {
         if (currentGeometry is LineString) {
-          list.add(currentGeometry.coordinates);
+          list.add(currentGeometry.coordinates.map((e) => e.clone()).toList());
+        } else if (currentGeometry is MultiLineString) {
+          list = [
+            ...list,
+            ...currentGeometry.coordinates
+                .map((e) => e.map((p) => p.clone()).toList())
+                .toList()
+          ];
         } else {
-          list = [...list, ...currentGeometry?.coordinates];
+          throw Exception("$currentGeometry type is not supperted");
         }
       },
     );
