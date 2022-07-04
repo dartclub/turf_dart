@@ -1,71 +1,61 @@
-
-
 // To-Do => Improve Typescript GeoJSON handling
+
+import 'package:turf/src/booleans/boolean_overlap.dart';
 
 import '../helpers.dart';
 import 'invariant.dart';
 
-
 /// Removes redundant coordinates from any GeoJSON Geometry.
-/// @name cleanCoords
-/// @param {Geometry|Feature} geojson Feature or Geometry
-/// @param {Object} [options={}] Optional parameters
-/// @param {boolean} [options.mutate=false] allows GeoJSON input to be mutated
-/// @returns {Geometry|Feature} the cleaned input Feature/Geometry
-/// @example
-/// var line = turf.lineString([[0, 0], [0, 2], [0, 5], [0, 8], [0, 8], [0, 10]]);
-/// var multiPoint = turf.multiPoint([[0, 0], [0, 0], [2, 2]]);
-/// turf.cleanCoords(line).geometry.coordinates;
+/// Takes geojson Feature or Geometry
+/// [options.mutate=false] allows GeoJSON input to be mutated
+/// Returnsthe cleaned input Feature/Geometry
+/// example:
+/// ```dart
+/// var line = LineString(coordinates:[Position.of([0, 0]), Position.of([0, 2]), Position.of([0, 5]), Position.of([0, 8]), Position.of([0, 8]), Position.of([0, 10])]);
+/// var multiPoint = MultiPoint(coordinates:[Position.of([0, 0]), Position.of([0, 0]), Position.of([2, 2])]);
+/// cleanCoords(line).geometry.coordinates;
 /// //= [[0, 0], [0, 10]]
-/// turf.cleanCoords(multiPoint).geometry.coordinates;
+/// cleanCoords(multiPoint).geometry.coordinates;
 /// //= [[0, 0], [2, 2]]
- cleanCoords(
-  GeoJSONObject geojson,
-  {
-    bool mutate,
-  } 
-) {
-  // // Backwards compatible with v4.0
-  // var mutate = typeof options == "object" ? options.mutate : options;
-  // if (!geojson) throw Exception("geojson is required");
-  var type = (geojson.type);
-
-  // Store new "clean" points in this Array
+cleanCoords(
+  GeoJSONObject geojson, {
+  bool mutate = false,
+}) {
+  // Store new "clean" points in this List
   var newCoords = [];
 
-  switch (type) {
-    case GeoJSONObjectType.lineString:
-      newCoords = cleanLine(geojson as LineString, type);
-      break;
-    case GeoJSONObjectType.multiLineString:
-    case GeoJSONObjectType.polygon:
-      getCoords(geojson).forEach( (line) {
-        newCoords.add(cleanLine(line, type));
+  if (geojson is LineString) {
+    newCoords = _cleanLine(geojson);
+  } else if (geojson is MultiLineString || geojson is Polygon) {
+    getCoords(geojson).forEach(
+      (geojson) {
+        newCoords.add(_cleanLine(geojson));
+      },
+    );
+  } else if (geojson is MultiPolygon) {
+    getCoords(geojson).forEach((polygons) {
+      var polyPoints = <Position>[];
+      polygons.forEach((List<Position> ring) {
+        polyPoints.add(_cleanLine(ring));
       });
-      break;
-    case GeoJSONObjectType.multiPolygon:
-      getCoords(geojson).forEach( (polygons) {
-        var polyPoints = <Position>[];
-        polygons.forEach( (List<Position> ring) {
-          polyPoints.add(cleanLine(ring, type));
-        });
-        newCoords.add(polyPoints);
-      });
-      break;
-    case GeoJSONObjectType.point:
-      return geojson;
-    case GeoJSONObjectType.multiPoint:
-      var Record<string, true> existing:  = {};
-      getCoords(geojson).forEach( (coord: any) {
+      newCoords.add(polyPoints);
+    });
+  } else if (geojson is Point) {
+    return geojson;
+  } else if (geojson is MultiPoint) {
+    Map<String, bool> existing = {};
+
+    getCoords(geojson).forEach(
+      (coord) {
         var key = coord.join("-");
         if (!Object.prototype.hasOwnProperty.call(existing, key)) {
           newCoords.add(coord);
           existing[key] = true;
         }
-      });
-      break;
-    default:
-      throw Exception(type + " geometry not supported");
+      },
+    );
+  } else {
+    throw Exception("$geojson is not supported");
   }
 
   // Support input mutation
@@ -74,80 +64,63 @@ import 'invariant.dart';
       geojson.coordinates = newCoords;
       return geojson;
     }
-    return { type: type, coordinates: newCoords };
+    return {type: type, coordinates: newCoords};
   } else {
     if (mutate) {
       geojson.geometry.coordinates = newCoords;
       return geojson;
     }
-    return feature({ type: type, coordinates: newCoords }, geojson.properties, {
-      bbox: geojson.bbox,
-      id: geojson.id,
-    });
+    return feature(
+        {type: type, coordinates: newCoords},
+        geojson.properties,
+        {
+          bbox: geojson.bbox,
+          id: geojson.id,
+        });
   }
 }
 
-/**
- * Clean Coords
- *
- * @private
- * @param {Array<number>|LineString} line Line
- * @param {string} type Type of geometry
- * @returns {Array<number>} Cleaned coordinates
- */
- cleanLine(dynamic line, GeoJSONObjectType type) {
-  var points = getCoords(line);
+List<dynamic> _cleanLine(List<Position> coords) {
+  var points = getCoords(coords);
   // handle "clean" segment
-  if (points.length == 2 && !equals(points[0], points[1])) return points;
+  if (points.length == 2 && !equals(points[0], points[1])) {
+    return points;
+  }
 
   var newPoints = [];
-  var secondToLast = points.length - 1;
-  var newPointsLength = newPoints.length;
+  int secondToLast = points.length - 1;
+  int newPointsLength = newPoints.length;
 
   newPoints.add(points[0]);
-  for (var i = 1; i < secondToLast; i++) {
+  for (int i = 1; i < secondToLast; i++) {
     var prevAddedPoint = newPoints[newPoints.length - 1];
-    if (
-      points[i][0] == prevAddedPoint[0] &&
-      points[i][1] == prevAddedPoint[1]
-    )
-{      continue;
-}    else {
+    if (points[i] == prevAddedPoint) {
+      continue;
+    } else {
       newPoints.add(points[i]);
       newPointsLength = newPoints.length;
       if (newPointsLength > 2) {
-        if (
-          isPointOnLineSegment(
-            newPoints[newPointsLength - 3],
-            newPoints[newPointsLength - 1],
-            newPoints[newPointsLength - 2]
-          )
-        )
-{          newPoints.removeAt(newPoints.length - 2);
-}      }
+        if (isPointOnLineSegment(newPoints[newPointsLength - 3],
+            newPoints[newPointsLength - 1], newPoints[newPointsLength - 2])) {
+          newPoints.removeAt(newPoints.length - 2);
+        }
+      }
     }
   }
   newPoints.add(points[points.length - 1]);
   newPointsLength = newPoints.length;
 
   // (Multi)Polygons must have at least 4 points, but a closed LineString with only 3 points is acceptable
-  if (
-    (type is Polygon || type is MultiPolygon) &&
-    equals(points[0], points[points.length - 1]) &&
-    newPointsLength < 4
-  ) {
+  if ((geojson is Polygon || geojson is MultiPolygon) &&
+      equals(points[0], points[points.length - 1]) &&
+      newPointsLength < 4) {
     throw Exception("invalid polygon");
   }
 
-  if (
-    isPointOnLineSegment(
-      newPoints[newPointsLength - 3],
-      newPoints[newPointsLength - 1],
-      newPoints[newPointsLength - 2]
-    )
-  )
-{    newPoints.removeAt(newPoints.length - 2);
-}
+  if (isPointOnLineSegment(newPoints[newPointsLength - 3],
+      newPoints[newPointsLength - 1], newPoints[newPointsLength - 2])) {
+    newPoints.removeAt(newPoints.length - 2);
+  }
   return newPoints;
 }
 
@@ -159,7 +132,7 @@ import 'invariant.dart';
  * @param {Position} pt2 point
  * @returns {boolean} true if they are equals
  */
- equals(Position pt1 , Position pt2 ) {
+equals(Position pt1, Position pt2) {
   return pt1[0] == pt2[0] && pt1[1] == pt2[1];
 }
 
@@ -173,13 +146,10 @@ import 'invariant.dart';
  * @param {Position} point coord pair of point to check
  * @returns {boolean} true/false
  */
- isPointOnLineSegment(Position start , Position end , Position point ) {
-  var x = point[0],
-    y = point[1];
-  var startX = start[0],
-    startY = start[1];
-  var endX = end[0],
-    endY = end[1];
+isPointOnLineSegment(Position start, Position end, Position point) {
+  var x = point[0], y = point[1];
+  var startX = start[0], startY = start[1];
+  var endX = end[0], endY = end[1];
 
   var dxc = x! - startX!;
   var dyc = y! - startY!;
@@ -187,10 +157,13 @@ import 'invariant.dart';
   var dyl = endY! - startY;
   var cross = dxc * dyl - dyc * dxl;
 
-  if (cross != 0){ return false;}
-  else if ((dxl).abs() >= (dyl).abs())
-{    return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
-}  else {return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;}
+  if (cross != 0) {
+    return false;
+  } else if ((dxl).abs() >= (dyl).abs()) {
+    return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
+  } else {
+    return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
+  }
 }
 
 /**
