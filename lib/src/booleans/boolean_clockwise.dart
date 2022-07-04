@@ -17,7 +17,7 @@ import '../../helpers.dart';
 bool booleanClockwise(dynamic line) {
   if (line is List) {
     if (line is! List<Position>) {
-      throw UnsupportedError(" type ${line.runtimeType} is not supperted");
+      throw UnsupportedError(" type $line is not supperted");
     }
   }
   var ring = getCoords(line);
