@@ -18,7 +18,7 @@ import '../meta.dart';
 /// //=truncated.geometry.coordinates => [70.469, 58.111]
 /// //addToMap
 /// var addToMap = [truncated];
-GeoJSONObject truncat(
+GeoJSONObject truncate(
   GeoJSONObject geojson, {
   int precision = 6,
   int coordinates = 3,
@@ -28,12 +28,13 @@ GeoJSONObject truncat(
   // if (mutate === false || mutate === undefined)
   //   geojson = JSON.parse(JSON.stringify(geojson));
 
-  var factor = pow(10, precision);
+  // Todo @lukas-h should we add this option?
+  var newGeom = geojson.clone();
 
   // Truncate Coordinates
-  if (coordAll(geojson).isNotEmpty) {
+  if (coordAll(newGeom).isNotEmpty) {
     coordEach(
-      geojson,
+      newGeom,
       (
         Position? currentCoord,
         int? coordIndex,
@@ -41,10 +42,10 @@ GeoJSONObject truncat(
         int? multiFeatureIndex,
         int? geometryIndex,
       ) {
-        currentCoord = _truncateCoords(currentCoord!, factor, coordinates);
+        currentCoord = _truncateCoords(currentCoord!, precision, coordinates);
       },
     );
-    return geojson;
+    return newGeom;
   } else {
     throw Exception("geojson has no coordinates");
   }
@@ -53,8 +54,8 @@ GeoJSONObject truncat(
 /// Truncate Coordinates - Mutates coordinates in place
 /// [factor] is the rounding factor for coordinate decimal precision
 /// @param {number} coordinates maximum number of coordinates (primarly used to remove z coordinates)
-/// Returns [List] mutated coordinates
-_truncateCoords(Position coord, num factor, int coordinates) {
+/// Returns mutated coordinates
+Position _truncateCoords(Position coord, num factor, int coordinates) {
   // Remove extra coordinates (usually elevation coordinates and more)
   List<num> list = [];
   list.addAll([coord.lat, coord.lng]);
@@ -68,7 +69,8 @@ _truncateCoords(Position coord, num factor, int coordinates) {
 
   // Truncate coordinate decimals
   for (var i = 0; i < list.length; i++) {
-    list[i] = round(list[i] * factor) / factor;
+    print(round(list[i], factor));
+    list[i] = round(list[i], factor);
   }
   return Position.of(list);
 }
