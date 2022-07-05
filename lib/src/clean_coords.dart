@@ -1,7 +1,5 @@
 // To-Do => Improve Typescript GeoJSON handling
 
-import 'package:turf/src/booleans/boolean_overlap.dart';
-
 import '../helpers.dart';
 import 'invariant.dart';
 
@@ -23,71 +21,71 @@ cleanCoords(
 }) {
   // Store new "clean" points in this List
   var newCoords = [];
-
-  if (geojson is LineString) {
-    newCoords = _cleanLine(geojson);
-  } else if (geojson is MultiLineString || geojson is Polygon) {
-    getCoords(geojson).forEach(
-      (geojson) {
-        newCoords.add(_cleanLine(geojson));
+  var geom = geojson is Feature ? geojson.geometry : geojson;
+  if (geom is LineString) {
+    newCoords = _cleanLine(geom.coordinates, geojson);
+  } else if (geom is MultiLineString || geom is Polygon) {
+    (getCoords(geom) as List<List<Position>>).forEach(
+      (List<Position> coord) {
+        newCoords.add(_cleanLine(coord, geojson));
       },
     );
-  } else if (geojson is MultiPolygon) {
-    getCoords(geojson).forEach((polygons) {
+  } else if (geom is MultiPolygon) {
+    (getCoords(geom) as List<List<List<Position>>>)
+        .forEach((List<List<Position>> polygonCoords) {
       var polyPoints = <Position>[];
-      polygons.forEach((List<Position> ring) {
-        polyPoints.add(_cleanLine(ring));
+      polygonCoords.forEach((List<Position> ring) {
+        polyPoints = _cleanLine(ring, geojson) as List<Position>;
       });
       newCoords.add(polyPoints);
     });
-  } else if (geojson is Point) {
-    return geojson;
-  } else if (geojson is MultiPoint) {
-    Map<String, bool> existing = {};
-
-    getCoords(geojson).forEach(
-      (coord) {
-        var key = coord.join("-");
-        if (!Object.prototype.hasOwnProperty.call(existing, key)) {
-          newCoords.add(coord);
-          existing[key] = true;
+  } else if (geom is Point) {
+    return geom;
+  } else if (geom is MultiPoint) {
+    Set set = <String>{};
+    var list = getCoords(geom).length as List<Position>;
+    list.forEach(
+      (element) {
+        if (!set.contains([element.alt, element.lat, element.lng].join('-'))) {
+          newCoords.add(element.clone());
         }
+        set.add([element.alt, element.lat, element.lng].join('-'));
       },
     );
   } else {
-    throw Exception("$geojson is not supported");
+    throw Exception("$geom is not supported");
   }
 
   // Support input mutation
-  if (geojson.coordinates) {
+  if (geojson is GeometryType) {
     if (mutate) {
       geojson.coordinates = newCoords;
       return geojson;
     }
-    return {type: type, coordinates: newCoords};
-  } else {
+    geojson.coordinates = newCoords;
+    return geojson;
+  } else if (geojson is Feature) {
     if (mutate) {
-      geojson.geometry.coordinates = newCoords;
+      (geojson.geometry as GeometryType).coordinates = newCoords;
       return geojson;
     }
-    return feature(
-        {type: type, coordinates: newCoords},
-        geojson.properties,
-        {
-          bbox: geojson.bbox,
-          id: geojson.id,
-        });
+    return Feature(
+      geometry: (geom as GeometryType)..coordinates = newCoords,
+      properties: geojson.properties,
+      bbox: geojson.bbox,
+      id: geojson.id,
+    );
   }
 }
 
-List<dynamic> _cleanLine(List<Position> coords) {
-  var points = getCoords(coords);
+List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
+  var points = getCoords(coords) as List<Position>;
   // handle "clean" segment
   if (points.length == 2 && !equals(points[0], points[1])) {
     return points;
   }
 
-  var newPoints = [];
+  var newPoints = <Position>[];
   int secondToLast = points.length - 1;
   int newPointsLength = newPoints.length;
 
@@ -124,28 +122,16 @@ List<dynamic> _cleanLine(List<Position> coords) {
   return newPoints;
 }
 
-/**
- * Compares two points and returns if they are equals
- *
- * @private
- * @param {Position} pt1 point
- * @param {Position} pt2 point
- * @returns {boolean} true if they are equals
- */
+/// Compares two points and returns if they are equals
 equals(Position pt1, Position pt2) {
   return pt1[0] == pt2[0] && pt1[1] == pt2[1];
 }
 
-/**
- * Returns if `point` is on the segment between `start` and `end`.
- * Borrowed from `@turf/boolean-point-on-line` to speed up the evaluation (instead of using the module as dependency)
- *
- * @private
- * @param {Position} start coord pair of start of line
- * @param {Position} end coord pair of end of line
- * @param {Position} point coord pair of point to check
- * @returns {boolean} true/false
- */
+/// Returns if `point` is on the segment between `start` and `end`.
+/// Borrowed from `@turf/boolean-point-on-line` to speed up the evaluation (instead of using the module as dependency)
+/// [start] is the coord pair of start of line
+/// [end] is the coord pair of end of line
+/// [point] is the coord pair of point to check
 isPointOnLineSegment(Position start, Position end, Position point) {
   var x = point[0], y = point[1];
   var startX = start[0], startY = start[1];
