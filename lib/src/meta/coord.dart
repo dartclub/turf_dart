@@ -10,10 +10,8 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
-/// Iterates over coordinates in any [geoJSON] object, similar to [Iterable.forEach]
-///
-/// For example:
-///
+/// Iterates over coordinates in any [geoJSONObject], similar to [Iterable.forEach]
+/// example:
 /// ```dart
 /// var features = FeatureCollection(features: [
 ///   Feature(geometry: Point(coordinates: Position.of([26, 37])), properties: {'foo': 'bar'}),
