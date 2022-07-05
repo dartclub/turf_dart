@@ -1,30 +1,15 @@
-const fs = require("fs");
-const test = require("tape");
-const path = require("path");
-const load = require("load-json-file");
-const truncate = require("@turf/truncate").default;
-const {
-  point,
-  multiPoint,
-  lineString,
-  multiPolygon,
-  polygon,
-} = require("@turf/helpers");
-const write = require("write-json-file");
-const cleanCoords = require("./index").default;
+import 'dart:io';
+import 'package:test/test.dart';
 
-const directories = {
-  in: path.join(__dirname, "test", "in") + path.sep,
-  out: path.join(__dirname, "test", "out") + path.sep,
-};
+main() {
+  group('cleanCoords', () {
+    var inDir = Directory('./test/examples/cleanCoords/in');
+    var outDir = Directory('./test/examples/cleanCoords/out');
+  });
 
-const fixtures = fs.readdirSync(directories.in).map((filename) => {
-  return {
-    filename,
-    name: path.parse(filename).name,
-    geojson: load.sync(directories.in + filename),
-  };
-});
+  /**
+   * 
+   * 
 
 test("turf-clean-coords", (t) => {
   fixtures.forEach((fixture) => {
@@ -147,3 +132,5 @@ test("turf-clean-coords -- prevent input mutation", (t) => {
   t.deepEqual(multiPolyBefore, multiPoly, "multiPolygon should NOT be mutated");
   t.end();
 });
+   */
+}
