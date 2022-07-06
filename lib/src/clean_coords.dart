@@ -1,21 +1,19 @@
-// To-Do => Improve Typescript GeoJSON handling
-
 import '../helpers.dart';
 import 'invariant.dart';
 
-/// Removes redundant coordinates from any GeoJSON Geometry.
-/// Takes geojson Feature or Geometry
-/// [options.mutate=false] allows GeoJSON input to be mutated
-/// Returnsthe cleaned input Feature/Geometry
+/// Removes redundant coordinates from any GeometryType.
+/// Takes a [Feature] or [GeometryType]
+/// [mutate] allows GeoJSON input to be mutated
+/// Returns the cleaned input Feature/Geometry
 /// example:
 /// ```dart
 /// var line = LineString(coordinates:[Position.of([0, 0]), Position.of([0, 2]), Position.of([0, 5]), Position.of([0, 8]), Position.of([0, 8]), Position.of([0, 10])]);
 /// var multiPoint = MultiPoint(coordinates:[Position.of([0, 0]), Position.of([0, 0]), Position.of([2, 2])]);
 /// cleanCoords(line).geometry.coordinates;
-/// //= [[0, 0], [0, 10]]
+/// //= [Position.of([0, 0]), Position.of([0, 10])]
 /// cleanCoords(multiPoint).geometry.coordinates;
-/// //= [[0, 0], [2, 2]]
-cleanCoords(
+/// //= [Position.of([0, 0]), Position.of([2, 2])]
+GeoJSONObject cleanCoords(
   GeoJSONObject geojson, {
   bool mutate = false,
 }) {
@@ -62,7 +60,7 @@ cleanCoords(
       geojson.coordinates = newCoords;
       return geojson;
     }
-    geojson.coordinates = newCoords;
+    geojson = geojson.clone()..coordinates = newCoords;
     return geojson;
   } else if (geojson is Feature) {
     if (mutate) {
@@ -75,13 +73,15 @@ cleanCoords(
       bbox: geojson.bbox,
       id: geojson.id,
     );
+  } else {
+    throw Exception('$geojson is not a supported type');
   }
 }
 
 List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
   var points = getCoords(coords) as List<Position>;
   // handle "clean" segment
-  if (points.length == 2 && !equals(points[0], points[1])) {
+  if (points.length == 2 && points[0] != points[1]) {
     return points;
   }
 
@@ -110,7 +110,7 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
 
   // (Multi)Polygons must have at least 4 points, but a closed LineString with only 3 points is acceptable
   if ((geojson is Polygon || geojson is MultiPolygon) &&
-      equals(points[0], points[points.length - 1]) &&
+      points[0] == points[points.length - 1] &&
       newPointsLength < 4) {
     throw Exception("invalid polygon");
   }
@@ -122,17 +122,12 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
   return newPoints;
 }
 
-/// Compares two points and returns if they are equals
-equals(Position pt1, Position pt2) {
-  return pt1[0] == pt2[0] && pt1[1] == pt2[1];
-}
-
-/// Returns if `point` is on the segment between `start` and `end`.
-/// Borrowed from `@turf/boolean-point-on-line` to speed up the evaluation (instead of using the module as dependency)
-/// [start] is the coord pair of start of line
-/// [end] is the coord pair of end of line
-/// [point] is the coord pair of point to check
-isPointOnLineSegment(Position start, Position end, Position point) {
+/// Returns if [point] is on the segment between [start] and [end].
+/// Borrowed from `booleanPointOnLine` to speed up the evaluation (instead of
+/// using the module as dependency).
+/// [start] is the coord pair of start of line, [end] is the coord pair of end
+/// of line, and [point] is the coord pair of point to check.
+bool isPointOnLineSegment(Position start, Position end, Position point) {
   var x = point[0], y = point[1];
   var startX = start[0], startY = start[1];
   var endX = end[0], endY = end[1];
