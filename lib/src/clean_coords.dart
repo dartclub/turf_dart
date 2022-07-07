@@ -62,30 +62,38 @@ Feature cleanCoords(
   if (geojson is GeometryType) {
     return Feature(geometry: geom);
   } else if (geojson is Feature) {
-    return geojson;
+    if (mutate) {
+      return geojson;
+    } else {
+      return Feature(
+        geometry: geom,
+        properties: Map.of(geojson.properties ?? {}),
+        bbox: geojson.bbox?.clone(),
+        id: geojson.id,
+      );
+    }
   } else {
     throw Exception('${geojson.type} is not a supported type');
   }
 }
 
 List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
-  var points = getCoords(coords) as List<Position>;
   // handle "clean" segment
-  if (points.length == 2 && points[0] != points[1]) {
-    return points;
+  if (coords.length == 2 && coords[0] != coords[1]) {
+    return coords;
   }
 
   var newPoints = <Position>[];
-  int secondToLast = points.length - 1;
+  int secondToLast = coords.length - 1;
   int newPointsLength = newPoints.length;
 
-  newPoints.add(points[0]);
+  newPoints.add(coords[0]);
   for (int i = 1; i < secondToLast; i++) {
     var prevAddedPoint = newPoints[newPoints.length - 1];
-    if (points[i] == prevAddedPoint) {
+    if (coords[i] == prevAddedPoint) {
       continue;
     } else {
-      newPoints.add(points[i]);
+      newPoints.add(coords[i]);
       newPointsLength = newPoints.length;
       if (newPointsLength > 2) {
         if (isPointOnLineSegment(newPoints[newPointsLength - 3],
@@ -95,12 +103,12 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
       }
     }
   }
-  newPoints.add(points[points.length - 1]);
+  newPoints.add(coords[coords.length - 1]);
   newPointsLength = newPoints.length;
 
   // (Multi)Polygons must have at least 4 points, but a closed LineString with only 3 points is acceptable
   if ((geojson is Polygon || geojson is MultiPolygon) &&
-      points[0] == points[points.length - 1] &&
+      coords[0] == coords[coords.length - 1] &&
       newPointsLength < 4) {
     throw Exception("invalid polygon");
   }
