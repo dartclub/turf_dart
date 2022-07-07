@@ -18,14 +18,12 @@ Feature cleanCoords(
   GeoJSONObject geojson, {
   bool mutate = false,
 }) {
-  // Store new "clean" points in this List
-
   if (geojson is Feature && geojson.geometry == null) {
-    return geojson;
+    throw Exception("Geometry of the Feature is null");
   }
-  GeometryObject? geom =
-      geojson is Feature ? geojson.geometry : (geojson as GeometryObject);
-  geom = mutate ? geom : (geom!.clone() as GeometryObject);
+  GeometryObject geom =
+      geojson is Feature ? geojson.geometry! : geojson as GeometryObject;
+  geom = mutate ? geom : geom.clone() as GeometryObject;
 
   if (geojson is GeometryCollection || geojson is FeatureCollection) {
     throw Exception("${geojson.type} is not supported");
@@ -35,7 +33,7 @@ Feature cleanCoords(
   } else if (geom is MultiLineString || geom is Polygon) {
     var newCoords = <List<Position>>[];
     for (var coord in (getCoords(geom) as List<List<Position>>)) {
-      newCoords.add(_cleanLine(coord, geom!));
+      newCoords.add(_cleanLine(coord, geom));
     }
     (geom as GeometryType).coordinates = newCoords;
   } else if (geom is MultiPolygon) {
@@ -61,7 +59,6 @@ Feature cleanCoords(
     geom.coordinates = newCoords;
   }
 
-  // Support input mutation
   if (geojson is GeometryType) {
     return Feature(geometry: geom);
   } else if (geojson is Feature) {
