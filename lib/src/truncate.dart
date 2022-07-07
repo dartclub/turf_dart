@@ -69,9 +69,9 @@ void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
                     [coordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           } else {
-            for (var geojson
+            for (var geometry
                 in (currentGeometry as GeometryCollection).geometries) {
-              _replaceCoords(precision, coordinates, geojson);
+              _replaceCoords(precision, coordinates, geometry);
             }
           }
         },
