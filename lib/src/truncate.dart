@@ -33,7 +33,7 @@ GeoJSONObject truncate(
   }
 }
 
-_replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
+void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
   geomEach(
     geojson,
     (
@@ -83,7 +83,7 @@ _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
 
 /// Truncate Coordinates - Mutates coordinates in place
 /// [factor] is the rounding factor for coordinate decimal precision
-/// @param {number} coordinates maximum number of coordinates (primarly used to remove z coordinates)
+/// [coordinates] sets maximum number of coordinates (primarly used to remove z coordinates)
 /// Returns mutated coordinates
 Position _truncateCoords(Position coord, num factor, int coordinates) {
   // Remove extra coordinates (usually elevation coordinates and more)
