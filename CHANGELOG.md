@@ -1,6 +1,19 @@
+## 0.0.7
+
+- Implements `nearestPointOn(Multi)Line` [#87](https://github.com/dartclub/turf_dart/pull/87)
+- Implements `explode` function [#93](https://github.com/dartclub/turf_dart/pull/93)
+- Implements `bbox-polygon` and `bbox`, `center`, polyline functions [#99](https://github.com/dartclub/turf_dart/pull/99)
+- Updates the `BBox`-class constructor [#100](https://github.com/dartclub/turf_dart/pull/100)
+- Implements `rhumbBearing` function [#109](https://github.com/dartclub/turf_dart/pull/109)
+- Implements `lineToPolygon` and `polygonToLine` functions [#104](https://github.com/dartclub/turf_dart/pull/104)
+- Implements `truncate` function [#111](https://github.com/dartclub/turf_dart/pull/111)
+- Implements `cleanCoord` function [#112](https://github.com/dartclub/turf_dart/pull/112)
+- Some documentation & README improvements
+
 ## 0.0.6+3
 
 - Rename examples file
+
 ## 0.0.6+2
 
 - Added code examples

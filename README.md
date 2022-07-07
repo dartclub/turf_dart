@@ -75,32 +75,32 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 ### Measurement
 - [ ] along
 - [ ] area
-- [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/bbox.dart)
-- [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/bbox_polygon.dart)
-- [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/bearing.dart)
+- [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
+- [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
+- [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
 - [x] [center](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/center.dart)
 - [ ] centerOfMass
 - [ ] centroid
-- [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/destination.dart)
-- [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/distance.dart)
+- [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
+- [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
 - [ ] length
-- [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/midpoint.dart)
+- [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
 - [ ] polygonTangents
 - [ ] pointToLineDistance
-- [ ] rhumbBearing
+- [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
 - [ ] rhumbDestination
 - [ ] rhumbDistance
 - [ ] square
 - [ ] greatCircle
 
 ### Coordinate Mutation
-- [ ] cleanCoords
+- [x] [cleanCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/clean_coords.dart)
 - [ ] flip
 - [ ] rewind
 - [ ] round
-- [ ] truncate
+- [x] [truncate](https://github.com/dartclub/turf_dart/blob/main/lib/src/truncate.dart)
 
 ### Transformation
 - [ ] bboxClip
@@ -128,9 +128,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] combine
 - [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
 - [ ] flatten
-- [ ] lineToPolygon
+- [x] [lineToPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_to_polygon.dart)
 - [ ] polygonize
-- [ ] polygonToLine
+- [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
 
 ### MISC
 - [ ] ellipse
@@ -144,7 +144,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] lineSliceAlong
 - [ ] lineSplit
 - [ ] mask
-- [x] [nearestPointOnLine](https://github.com/dartclub/turf_dart/blob/master/lib/nearest_point_on_line.dart)
+- [x] [nearestPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point_on_line.dart)
 - [ ] sector
 - [ ] shortestPath
 - [ ] unkinkPolygon
@@ -176,7 +176,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] triangleGrid
 
 ### Classification
-- [x] [nearestPoint](https://github.com/dartclub/turf_dart/blob/main/lib/nearest_point.dart)
+- [x] [nearestPoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point.dart)
 
 ### Aggregation
 - [ ] collect
