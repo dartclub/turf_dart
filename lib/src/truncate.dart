@@ -68,11 +68,6 @@ void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
             currentGeometry.coordinates[multiFeatureIndex!][geometryIndex!]
                     [coordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
-          } else {
-            for (var geometry
-                in (currentGeometry as GeometryCollection).geometries) {
-              _replaceCoords(precision, coordinates, geometry);
-            }
           }
         },
       );
