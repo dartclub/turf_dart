@@ -1,7 +1,7 @@
 import '../helpers.dart';
 
-/// Converts a [Polygon] to [LineString] or [MultiLineString] or a [MultiPolygon] to a
-/// [FeatureCollection] of [LineString] or [MultiLineString].
+/// Converts a [Polygon] to [LineString] or [MultiLineString] or a [MultiPolygon]
+/// to a [FeatureCollection] of [LineString] or [MultiLineString].
 /// Returns [FeatureCollection] or [Feature<LineString>] or [Feature<MultiLinestring>]
 /// example:
 /// ```dart
