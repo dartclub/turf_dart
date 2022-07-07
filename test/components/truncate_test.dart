@@ -4,73 +4,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/truncate.dart';
-
-_testIt(GeoJSONObject inGeom, int coordinates, int precision, File file1,
-    File file2) {
-  if (inGeom is FeatureCollection) {
-    inGeom.features.forEach((element) {
-      _testIt(element, coordinates, precision, file1, file2);
-    });
-  }
-  inGeom = inGeom is Feature ? inGeom.geometry! : inGeom;
-  test(
-    file2.path,
-    () {
-      var outSource = file2.readAsStringSync();
-      var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
-      if (outGeom is GeometryCollection) {
-        for (var i = 0; i < outGeom.geometries.length; i++) {
-          expect(
-              ((truncate(inGeom,
-                      coordinates: coordinates,
-                      precision: precision)) as GeometryCollection)
-                  .geometries[i]
-                  .coordinates,
-              equals((outGeom).geometries[i].coordinates));
-        }
-      } else if (outGeom is Point) {
-        expect(
-            ((truncate(inGeom, coordinates: coordinates, precision: precision))
-                    as Point)
-                .coordinates,
-            equals((outGeom).coordinates));
-      } else if (outGeom is LineString) {
-        for (var i = 0; i < outGeom.coordinates.length; i++) {
-          expect(
-              ((truncate(inGeom,
-                      coordinates: coordinates,
-                      precision: precision)) as LineString)
-                  .coordinates[i],
-              equals((outGeom).coordinates[i]));
-        }
-      } else if (outGeom is Polygon || outGeom is MultiLineString) {
-        for (var i = 0; i < (outGeom as GeometryType).coordinates.length; i++) {
-          for (var j = 0; j < outGeom.coordinates.length; j++) {
-            expect(
-                ((truncate(inGeom,
-                        coordinates: coordinates,
-                        precision: precision)) as GeometryType)
-                    .coordinates[i][j],
-                equals((outGeom).coordinates[i][j]));
-          }
-        }
-      } else if (outGeom is MultiPolygon) {
-        for (var i = 0; i < outGeom.coordinates.length; i++) {
-          for (var j = 0; j < outGeom.coordinates.length; j++) {
-            for (var k = 0; k < outGeom.coordinates.length; k++) {
-              expect(
-                  ((truncate(inGeom,
-                          coordinates: coordinates,
-                          precision: precision)) as Polygon)
-                      .coordinates[i][j][k],
-                  equals((outGeom).coordinates[i][j][k]));
-            }
-          }
-        }
-      }
-    },
-  );
-}
+import 'package:turf_equality/turf_equality.dart';
 
 main() {
   group(
@@ -90,7 +24,21 @@ main() {
             if (file2 is File &&
                 file2.path.endsWith('.geojson') &&
                 file2.uri.pathSegments.last == file.uri.pathSegments.last) {
-              _testIt(inGeom, coordinates ?? 3, precision ?? 6, file, file2);
+              test(
+                file2.path,
+                () {
+                  var outSource = file2.readAsStringSync();
+                  var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
+                  Equality eq = Equality();
+                  expect(
+                      eq.compare(
+                          truncate(inGeom,
+                              coordinates: coordinates ?? 3,
+                              precision: precision ?? 6),
+                          outGeom),
+                      true);
+                },
+              );
             }
           }
         }
@@ -99,37 +47,39 @@ main() {
       test(
         "turf-truncate - precision & coordinates",
         () {
+          Equality eq = Equality();
           // "precision 3"
           expect(
-            (truncate(Point(coordinates: Position.of([50.1234567, 40.1234567])),
-                    precision: 3) as Point)
-                .coordinates,
-            equals(Position.of([50.123, 40.123])),
-          );
+              eq.compare(
+                truncate(
+                    Point(coordinates: Position.of([50.1234567, 40.1234567])),
+                    precision: 3),
+                Point(coordinates: Position.of([50.123, 40.123])),
+              ),
+              true);
           // "precision 0"
-
           expect(
-            (truncate(Point(coordinates: Position.of([50.1234567, 40.1234567])),
-                    precision: 0) as Point)
-                .coordinates,
-            equals(
-              Position.of([50, 40]),
-            ),
-          );
+              eq.compare(
+                  truncate(
+                      Point(coordinates: Position.of([50.1234567, 40.1234567])),
+                      precision: 0),
+                  Point(coordinates: Position.of([50, 40]))),
+              true);
           // "coordinates default to 3"
           expect(
-            (truncate(Point(coordinates: Position.of([50, 40, 1100])),
-                    precision: 6) as Point)
-                .coordinates,
-            equals(Position.of([50, 40, 1100])),
-          );
+              eq.compare(
+                  truncate(Point(coordinates: Position.of([50, 40, 1100])),
+                      precision: 6),
+                  Point(coordinates: Position.of([50, 40, 1100]))),
+              true);
           // "coordinates 2"
           expect(
-            (truncate(Point(coordinates: Position.of([50, 40, 1100])),
-                    precision: 6, coordinates: 2) as Point)
-                .coordinates,
-            Position.of([50, 40]),
-          );
+              eq.compare(
+                truncate(Point(coordinates: Position.of([50, 40, 1100])),
+                    precision: 6, coordinates: 2),
+                Point(coordinates: Position.of([50, 40])),
+              ),
+              true);
         },
       );
 
@@ -148,8 +98,9 @@ main() {
 
           // "does mutate input"
           truncate(pt, precision: 0, coordinates: 2, mutate: true);
-          expect(pt.coordinates,
-              equals(Point(coordinates: Position.of([120, 40])).coordinates));
+          Equality eq = Equality();
+          expect(
+              eq.compare(pt, Point(coordinates: Position.of([120, 40]))), true);
         },
       );
     },
