@@ -96,7 +96,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] greatCircle
 
 ### Coordinate Mutation
-- [ ] cleanCoords
+- [x] [cleanCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/clean_coords.dart)
 - [ ] flip
 - [ ] rewind
 - [ ] round
