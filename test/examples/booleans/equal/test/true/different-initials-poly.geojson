@@ -1,17 +1,33 @@
 {
   "type": "FeatureCollection",
+  "properties": {
+    "precision": 6,
+    "shiftedPolygon": true,
+    "direction": false
+  },
   "features": [
     {
       "type": "Feature",
-      "properties": {},
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [1, 1],
-            [1, 0],
-            [0, 0],
-            [1, 1]
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ]
           ]
         ]
       }
@@ -23,10 +39,22 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [0, 0],
-            [1, 1],
-            [1, 0],
-            [0, 0]
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
           ]
         ]
       }

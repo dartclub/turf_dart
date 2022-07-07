@@ -12,41 +12,49 @@ main() {
       var inDir = Directory('./test/examples/booleans/equal/test/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
-          test(file.path, () {
-            // True Fixtures
-            var inSource = file.readAsStringSync();
-            var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+          test(
+            file.path,
+            () {
+              // True Fixtures
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
 
-            var feature1 = (inGeom as FeatureCollection).features[0];
-            var feature2 = inGeom.features[1];
-            Map<String, dynamic> json = jsonDecode(inSource);
-            var options = json['properties'];
-            var result = booleanEqual(feature1, feature2,
-                precision: options?['precision'] ?? 6);
-
-            expect(result, true);
-          });
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
+              Map<String, dynamic> json = jsonDecode(inSource);
+              var options = json['properties'];
+              print(json['properties']?['direction']);
+              var result = booleanEqual(feature1, feature2,
+                  precision: options?['precision'] ?? 6,
+                  shiftedPolygon: options?['shiftedPolygon'] ?? false,
+                  direction: options?['direction'] ?? false);
+              expect(result, true);
+            },
+          );
         }
       }
       // False Fixtures
       var inDir1 = Directory('./test/examples/booleans/equal/test/false');
       for (var file in inDir1.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
-          test(file.path, () {
-            // True Fixtures
-            var inSource = file.readAsStringSync();
-            var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+          test(
+            file.path,
+            () {
+              // True Fixtures
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
 
-            var feature1 = (inGeom as FeatureCollection).features[0];
-            var feature2 = inGeom.features[1];
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
 
-            Map<String, dynamic> json = jsonDecode(inSource);
-            var options = json['properties'];
-            var result = booleanEqual(feature1, feature2,
-                precision: options?['precision'] ?? 6);
+              Map<String, dynamic> json = jsonDecode(inSource);
+              var options = json['properties'];
+              var result = booleanEqual(feature1, feature2,
+                  precision: options?['precision'] ?? 6);
 
-            expect(result, false);
-          });
+              expect(result, false);
+            },
+          );
         }
       }
       var pt = Point(coordinates: Position.of([9, 50]));
