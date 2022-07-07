@@ -1,10 +1,10 @@
 import '../helpers.dart';
 import 'invariant.dart';
 
-/// Removes redundant coordinates from any GeometryType.
+/// Removes redundant coordinates from any [GeometryType].
 /// Takes a [Feature] or [GeometryType]
 /// [mutate] allows GeoJSON input to be mutated
-/// Returns the cleaned input Feature/Geometry
+/// Returns the cleaned input [Feature]
 /// example:
 /// ```dart
 /// var line = LineString(coordinates:[Position.of([0, 0]), Position.of([0, 2]), Position.of([0, 5]), Position.of([0, 8]), Position.of([0, 8]), Position.of([0, 10])]);
@@ -13,7 +13,8 @@ import 'invariant.dart';
 /// //= [Position.of([0, 0]), Position.of([0, 10])]
 /// cleanCoords(multiPoint).geometry.coordinates;
 /// //= [Position.of([0, 0]), Position.of([2, 2])]
-GeoJSONObject cleanCoords(
+/// ```
+Feature cleanCoords(
   GeoJSONObject geojson, {
   bool mutate = false,
 }) {
@@ -38,7 +39,7 @@ GeoJSONObject cleanCoords(
       newCoords.add(listPoly);
     }
   } else if (geom is Point) {
-    return geojson is Feature ? geojson : geom;
+    return geojson is Feature ? geojson : Feature<Point>(geometry: geom);
   } else if (geom is MultiPoint) {
     newCoords = <Position>[];
     Set set = <String>{};
@@ -57,10 +58,10 @@ GeoJSONObject cleanCoords(
   if (geojson is GeometryType) {
     if (mutate) {
       geojson.coordinates = newCoords;
-      return geojson;
+      return Feature(geometry: geojson);
     }
     geojson = geojson.clone()..coordinates = newCoords;
-    return geojson;
+    return Feature(geometry: geojson);
   } else if (geojson is Feature) {
     if (mutate) {
       (geojson.geometry as GeometryType).coordinates = newCoords;
