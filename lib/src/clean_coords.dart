@@ -19,7 +19,7 @@ Feature cleanCoords(
   bool mutate = false,
 }) {
   // Store new "clean" points in this List
-  var newCoords = [];
+  dynamic newCoords;
   var geom = geojson is Feature ? geojson.geometry : geojson;
   if (geom is LineString) {
     newCoords = <Position>[];
@@ -39,7 +39,7 @@ Feature cleanCoords(
       newCoords.add(listPoly);
     }
   } else if (geom is Point) {
-    return geojson is Feature ? geojson : Feature<Point>(geometry: geom);
+    newCoords = geom.coordinates;
   } else if (geom is MultiPoint) {
     newCoords = <Position>[];
     Set set = <String>{};
@@ -56,11 +56,11 @@ Feature cleanCoords(
 
   // Support input mutation
   if (geojson is GeometryType) {
+    geojson.coordinates = newCoords;
     if (mutate) {
-      geojson.coordinates = newCoords;
       return Feature(geometry: geojson);
     }
-    geojson = geojson.clone()..coordinates = newCoords;
+    geojson = geojson.clone();
     return Feature(geometry: geojson);
   } else if (geojson is Feature) {
     if (mutate) {
@@ -69,9 +69,9 @@ Feature cleanCoords(
     }
 
     return Feature(
-      geometry: (geom as GeometryType)..coordinates = newCoords,
-      properties: geojson.properties,
-      bbox: geojson.bbox,
+      geometry: newCoords.clone(),
+      properties: Map.of(geojson.properties ?? {}),
+      bbox: geojson.bbox?.clone(),
       id: geojson.id,
     );
   } else {
