@@ -22,14 +22,14 @@ GeoJSONObject truncate(
   int coordinates = 3,
   bool mutate = false,
 }) {
-  GeoJSONObject newGeojson = mutate ? geojson : geojson.clone();
+  GeoJSONObject geom = mutate ? geojson : geojson.clone();
 
   // Truncate Coordinates
-  if (coordAll(newGeojson).isNotEmpty) {
-    _replaceCoords(precision, coordinates, newGeojson);
-    return newGeojson;
+  if (coordAll(geom).isNotEmpty) {
+    _replaceCoords(precision, coordinates, geom);
+    return geom;
   } else {
-    return newGeojson;
+    return geom;
   }
 }
 
@@ -69,11 +69,10 @@ void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
                     [coordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           } else {
-            (currentGeometry as GeometryCollection).geometries.forEach(
-              (element) {
-                _replaceCoords(precision, coordinates, geojson);
-              },
-            );
+            for (var geojson
+                in (currentGeometry as GeometryCollection).geometries) {
+              _replaceCoords(precision, coordinates, geojson);
+            }
           }
         },
       );
