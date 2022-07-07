@@ -4,10 +4,13 @@ import 'package:turf/meta.dart';
 import 'package:turf/src/invariant.dart';
 
 /// Converts [LineString]s & [MultiLineString](s) to [Polygon] or [MultiPolygon].
-/// Takes an optional bool autoComplete=true that auto complete [Linestring]s (matches first & last coordinates)
-/// Takes an optional orderCoords=true that sorts [Linestring]s to place outer ring at the first position of the coordinates
-/// Takes an optional mutate=false that mutates the original [Linestring] using autoComplete (matches first & last coordinates)
-/// Returns [Feature<Polygon>] or [Feature<MultiPolygon>] converted to Polygons.
+/// Takes an optional boolean [autoComplete] that auto completes [LineString]s
+/// (matches first & last coordinates).
+/// Takes an optional [orderCoords] that sorts [LineString]s to place outer ring
+/// at the first [Position] of the coordinates.
+/// Takes an optional [mutate] that mutates the original [LineString] using
+/// [autoComplete] (matches first & last coordinates.
+/// Returns [Feature<Polygon>] or [Feature<MultiPolygon>] converted to [Polygon]s.
 /// example:
 /// ```dart
 /// var line = LineString(coordinates: [
@@ -110,10 +113,10 @@ Feature lineToPolygon(
   }
 }
 
-/// Converts LineString to Polygon
-/// Takes a optional bool autoComplete=true that auto completes linestrings
-/// Takes an optional orderCoords=true that sorts linestrings to place outer
-/// ring at the first position of the coordinates.
+/// Converts [LineString] to [Polygon]
+/// Takes a optional boolean [autoComplete] that auto completes [LineString]s
+/// Takes an optional [orderCoords] that sorts [LineString]s to place outer
+/// ring at the first [Position] of the coordinates.
 Feature<Polygon> lineStringToPolygon(
   GeoJSONObject line,
   bool autoComplete,
