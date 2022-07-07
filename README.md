@@ -128,9 +128,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] combine
 - [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
 - [ ] flatten
-- [ ] lineToPolygon
+- [x] [lineToPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_to_polygon.dart)
 - [ ] polygonize
-- [ ] polygonToLine
+- [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
 
 ### MISC
 - [ ] ellipse
