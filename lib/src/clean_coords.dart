@@ -25,38 +25,30 @@ GeoJSONObject cleanCoords(
     newCoords = _cleanLine(geom.coordinates, geojson);
   } else if (geom is MultiLineString || geom is Polygon) {
     newCoords = <List<Position>>[];
-    (getCoords(geom) as List<List<Position>>).forEach(
-      (List<Position> coord) {
-        newCoords.add(_cleanLine(coord, geojson));
-      },
-    );
+    for (var coord in (getCoords(geom) as List<List<Position>>)) {
+      newCoords.add(_cleanLine(coord, geojson));
+    }
   } else if (geom is MultiPolygon) {
     newCoords = <List<List<Position>>>[];
-    (getCoords(geom) as List<List<List<Position>>>).forEach(
-      (List<List<Position>> polyList) {
-        var listPoly = <List<Position>>[];
-        polyList.forEach(
-          (List<Position> poly) {
-            listPoly.add(_cleanLine(poly, geom));
-          },
-        );
-        newCoords.add(listPoly);
-      },
-    );
+    for (var polyList in (getCoords(geom) as List<List<List<Position>>>)) {
+      var listPoly = <List<Position>>[];
+      for (var poly in polyList) {
+        listPoly.add(_cleanLine(poly, geom));
+      }
+      newCoords.add(listPoly);
+    }
   } else if (geom is Point) {
     return geojson is Feature ? geojson : geom;
   } else if (geom is MultiPoint) {
     newCoords = <Position>[];
     Set set = <String>{};
     var list = getCoords(geom) as List<Position>;
-    list.forEach(
-      (element) {
-        if (!set.contains([element.alt, element.lat, element.lng].join('-'))) {
-          newCoords.add(element.clone());
-        }
-        set.add([element.alt, element.lat, element.lng].join('-'));
-      },
-    );
+    for (var element in list) {
+      if (!set.contains([element.alt, element.lat, element.lng].join('-'))) {
+        newCoords.add(element.clone());
+      }
+      set.add([element.alt, element.lat, element.lng].join('-'));
+    }
   } else {
     throw Exception("${geom?.type} is not supported");
   }

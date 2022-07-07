@@ -8,6 +8,7 @@ repository: https://github.com/dartclub/turf_dart
 
 dependencies:
   json_annotation: ^4.4.0
+  turf_equality: ^0.0.1
 
 dev_dependencies:
   dartclub_lint: ^0.4.2
