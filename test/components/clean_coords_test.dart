@@ -38,7 +38,9 @@ main() {
         "turf-clean-coords -- extras",
         () {
           expect(
-              (cleanCoords(Point(coordinates: Position.of([0, 0]))) as Point)
+              (cleanCoords(Point(coordinates: Position.of([0, 0])))
+                      as Feature<GeometryType>)
+                  .geometry!
                   .coordinates
                   .length,
               2);
@@ -49,7 +51,8 @@ main() {
                   Position.of([1, 1]),
                   Position.of([2, 2]),
                 ],
-              )) as LineString)
+              )) as Feature<GeometryType>)
+                  .geometry!
                   .coordinates
                   .length,
               2);
@@ -64,7 +67,8 @@ main() {
                     Position.of([0, 0]),
                   ],
                 ],
-              )) as Polygon)
+              )) as Feature<GeometryType>)
+                  .geometry!
                   .coordinates[0]
                   .length,
               4);
@@ -75,7 +79,8 @@ main() {
                 Position.of([0, 0]),
                 Position.of([2, 2]),
               ],
-            )) as MultiPoint)
+            )) as Feature<GeometryType>)
+                .geometry!
                 .coordinates
                 .length,
             2,
@@ -96,7 +101,8 @@ main() {
                         Position.of([3, 3]),
                       ],
                     ),
-                    precision: 0)) as LineString)
+                    precision: 0)) as Feature<GeometryType>)
+                .geometry!
                 .coordinates
                 .length,
             2,

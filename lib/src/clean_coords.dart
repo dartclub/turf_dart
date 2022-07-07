@@ -19,18 +19,22 @@ Feature cleanCoords(
   bool mutate = false,
 }) {
   // Store new "clean" points in this List
-  dynamic newCoords;
-  var geom = geojson is Feature ? geojson.geometry : geojson;
-  if (geom is LineString) {
-    newCoords = <Position>[];
-    newCoords = _cleanLine(geom.coordinates, geojson);
+
+  GeometryObject? geom =
+      geojson is Feature ? geojson.geometry : (geojson as GeometryObject);
+  if (geojson is GeometryCollection || geojson is FeatureCollection) {
+    throw Exception("${geojson.type} is not supported");
+  } else if (geom is LineString) {
+    var newCoords = _cleanLine(geom.coordinates, geojson);
+    geom.coordinates = newCoords;
   } else if (geom is MultiLineString || geom is Polygon) {
-    newCoords = <List<Position>>[];
+    var newCoords = <List<Position>>[];
     for (var coord in (getCoords(geom) as List<List<Position>>)) {
       newCoords.add(_cleanLine(coord, geojson));
     }
+    (geom as GeometryType).coordinates = newCoords;
   } else if (geom is MultiPolygon) {
-    newCoords = <List<List<Position>>>[];
+    var newCoords = <List<List<Position>>>[];
     for (var polyList in (getCoords(geom) as List<List<List<Position>>>)) {
       var listPoly = <List<Position>>[];
       for (var poly in polyList) {
@@ -38,10 +42,9 @@ Feature cleanCoords(
       }
       newCoords.add(listPoly);
     }
-  } else if (geom is Point) {
-    newCoords = geom.coordinates;
+    geom.coordinates = newCoords;
   } else if (geom is MultiPoint) {
-    newCoords = <Position>[];
+    var newCoords = <Position>[];
     Set set = <String>{};
     var list = getCoords(geom) as List<Position>;
     for (var element in list) {
@@ -50,30 +53,28 @@ Feature cleanCoords(
       }
       set.add([element.alt, element.lat, element.lng].join('-'));
     }
-  } else {
-    throw Exception("${geom?.type} is not supported");
+    geom.coordinates = newCoords;
   }
 
   // Support input mutation
   if (geojson is GeometryType) {
-    geojson.coordinates = newCoords;
     if (mutate) {
-      return Feature(geometry: geojson);
+      return Feature(geometry: geom as GeometryType);
     }
-    geojson = geojson.clone();
-    return Feature(geometry: geojson);
+
+    return Feature(geometry: geojson).clone();
   } else if (geojson is Feature) {
     if (mutate) {
-      (geojson.geometry as GeometryType).coordinates = newCoords;
+      geojson.geometry = geom as GeometryType;
       return geojson;
     }
 
-    return Feature(
-      geometry: newCoords.clone(),
+    return Feature<GeometryObject>(
+      geometry: geom,
       properties: Map.of(geojson.properties ?? {}),
-      bbox: geojson.bbox?.clone(),
+      bbox: geojson.bbox,
       id: geojson.id,
-    );
+    ).clone();
   } else {
     throw Exception('${geojson.type} is not a supported type');
   }
