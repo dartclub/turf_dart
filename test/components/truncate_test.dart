@@ -8,9 +8,9 @@ import 'package:turf/truncate.dart';
 _testIt(GeoJSONObject inGeom, int coordinates, int precision, File file1,
     File file2) {
   if (inGeom is FeatureCollection) {
-    inGeom.features.forEach((element) {
+    for (var element in inGeom.features) {
       _testIt(element, coordinates, precision, file1, file2);
-    });
+    }
   }
   inGeom = inGeom is Feature ? inGeom.geometry! : inGeom;
   test(
