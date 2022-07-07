@@ -51,7 +51,7 @@ GeoJSONObject cleanCoords(
       },
     );
   } else {
-    throw Exception("$geom is not supported");
+    throw Exception("${geom?.type} is not supported");
   }
 
   // Support input mutation
@@ -74,7 +74,7 @@ GeoJSONObject cleanCoords(
       id: geojson.id,
     );
   } else {
-    throw Exception('$geojson is not a supported type');
+    throw Exception('${geojson.type} is not a supported type');
   }
 }
 
