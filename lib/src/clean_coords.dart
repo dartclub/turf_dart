@@ -20,8 +20,13 @@ Feature cleanCoords(
 }) {
   // Store new "clean" points in this List
 
+  if (geojson is Feature && geojson.geometry == null) {
+    return geojson;
+  }
   GeometryObject? geom =
       geojson is Feature ? geojson.geometry : (geojson as GeometryObject);
+  geom = mutate ? geom : (geom!.clone() as GeometryObject);
+
   if (geojson is GeometryCollection || geojson is FeatureCollection) {
     throw Exception("${geojson.type} is not supported");
   } else if (geom is LineString) {
@@ -30,7 +35,7 @@ Feature cleanCoords(
   } else if (geom is MultiLineString || geom is Polygon) {
     var newCoords = <List<Position>>[];
     for (var coord in (getCoords(geom) as List<List<Position>>)) {
-      newCoords.add(_cleanLine(coord, geojson));
+      newCoords.add(_cleanLine(coord, geom!));
     }
     (geom as GeometryType).coordinates = newCoords;
   } else if (geom is MultiPolygon) {
@@ -49,7 +54,7 @@ Feature cleanCoords(
     var list = getCoords(geom) as List<Position>;
     for (var element in list) {
       if (!set.contains([element.alt, element.lat, element.lng].join('-'))) {
-        newCoords.add(element.clone());
+        newCoords.add(element);
       }
       set.add([element.alt, element.lat, element.lng].join('-'));
     }
@@ -58,23 +63,9 @@ Feature cleanCoords(
 
   // Support input mutation
   if (geojson is GeometryType) {
-    if (mutate) {
-      return Feature(geometry: geom as GeometryType);
-    }
-
-    return Feature(geometry: geojson).clone();
+    return Feature(geometry: geom);
   } else if (geojson is Feature) {
-    if (mutate) {
-      geojson.geometry = geom as GeometryType;
-      return geojson;
-    }
-
-    return Feature<GeometryObject>(
-      geometry: geom,
-      properties: Map.of(geojson.properties ?? {}),
-      bbox: geojson.bbox,
-      id: geojson.id,
-    ).clone();
+    return geojson;
   } else {
     throw Exception('${geojson.type} is not a supported type');
   }
@@ -130,14 +121,14 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
 /// [start] is the coord pair of start of line, [end] is the coord pair of end
 /// of line, and [point] is the coord pair of point to check.
 bool isPointOnLineSegment(Position start, Position end, Position point) {
-  var x = point[0], y = point[1];
-  var startX = start[0], startY = start[1];
-  var endX = end[0], endY = end[1];
+  var x = point.lat, y = point.lng;
+  var startX = start.lat, startY = start.lng;
+  var endX = end.lat, endY = end.lng;
 
-  var dxc = x! - startX!;
-  var dyc = y! - startY!;
-  var dxl = endX! - startX;
-  var dyl = endY! - startY;
+  var dxc = x - startX;
+  var dyc = y - startY;
+  var dxl = endX - startX;
+  var dyl = endY - startY;
   var cross = dxc * dyl - dyc * dxl;
 
   if (cross != 0) {

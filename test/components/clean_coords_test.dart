@@ -18,7 +18,7 @@ main() {
             () {
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
-              var results = cleanCoords(inGeom);
+              Feature results = cleanCoords(inGeom);
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)
@@ -38,9 +38,8 @@ main() {
         "turf-clean-coords -- extras",
         () {
           expect(
-              (cleanCoords(Point(coordinates: Position.of([0, 0])))
-                      as Feature<GeometryType>)
-                  .geometry!
+              ((cleanCoords(Point(coordinates: Position.of([0, 0])))).geometry!
+                      as GeometryType)
                   .coordinates
                   .length,
               2);
@@ -51,13 +50,12 @@ main() {
                   Position.of([1, 1]),
                   Position.of([2, 2]),
                 ],
-              )) as Feature<GeometryType>)
-                  .geometry!
+              )).geometry! as GeometryType)
                   .coordinates
                   .length,
               2);
           expect(
-              (cleanCoords(Polygon(
+              ((cleanCoords(Polygon(
                 coordinates: [
                   [
                     Position.of([0, 0]),
@@ -67,20 +65,18 @@ main() {
                     Position.of([0, 0]),
                   ],
                 ],
-              )) as Feature<GeometryType>)
-                  .geometry!
+              ))).geometry! as GeometryType)
                   .coordinates[0]
                   .length,
               4);
           expect(
-            (cleanCoords(MultiPoint(
+            ((cleanCoords(MultiPoint(
               coordinates: [
                 Position.of([0, 0]),
                 Position.of([0, 0]),
                 Position.of([2, 2]),
               ],
-            )) as Feature<GeometryType>)
-                .geometry!
+            ))).geometry! as GeometryType)
                 .coordinates
                 .length,
             2,
@@ -93,16 +89,16 @@ main() {
         () {
           expect(
             (cleanCoords(truncate(
-                    LineString(
-                      coordinates: [
-                        Position.of([0, 0]),
-                        Position.of([1.1, 1.123]),
-                        Position.of([2.12, 2.32]),
-                        Position.of([3, 3]),
-                      ],
-                    ),
-                    precision: 0)) as Feature<GeometryType>)
-                .geometry!
+                        LineString(
+                          coordinates: [
+                            Position.of([0, 0]),
+                            Position.of([1.1, 1.123]),
+                            Position.of([2.12, 2.32]),
+                            Position.of([3, 3]),
+                          ],
+                        ),
+                        precision: 0))
+                    .geometry! as GeometryType)
                 .coordinates
                 .length,
             2,
