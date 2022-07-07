@@ -1,4 +1,4 @@
-import 'package:geojson_equality/geojson_equality.dart';
+import 'package:turf_equality/turf_equality.dart';
 
 import '../../helpers.dart';
 import '../../line_segment.dart';
@@ -6,7 +6,8 @@ import '../invariant.dart';
 import '../line_intersect.dart';
 import '../line_overlap.dart';
 
-Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
+/*
+ * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
  * different from both but of the same dimension. It applies to Polygon/Polygon, LineString/LineString,
  * Multipoint/Multipoint, MultiLineString/MultiLineString and MultiPolygon/MultiPolygon.
  *

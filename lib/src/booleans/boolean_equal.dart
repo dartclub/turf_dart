@@ -1,4 +1,4 @@
-import 'package:geojson_equality/geojson_equality.dart';
+import 'package:turf_equality/turf_equality.dart';
 
 import '../../helpers.dart';
 import '../clean_coords.dart';

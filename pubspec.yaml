@@ -9,9 +9,7 @@ publish_to: none
 
 dependencies:
   json_annotation: ^4.4.0
-  geojson_equality:
-    git:
-      url: https://github.com/dartclub/turf_equality.git
+  turf_equality: ^0.0.1
   pip:
     git:
       url: https://github.com/dartclub/point_in_polygon.git
