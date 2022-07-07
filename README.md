@@ -100,7 +100,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] flip
 - [ ] rewind
 - [ ] round
-- [ ] truncate
+- [x] [truncate](https://github.com/dartclub/turf_dart/blob/lib/src/truncate.dart)
 
 ### Transformation
 - [ ] bboxClip
