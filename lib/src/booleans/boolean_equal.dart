@@ -29,12 +29,6 @@ bool booleanEqual(
   if (!(precision >= 0)) {
     throw Exception("precision must be a positive number");
   }
-  var geom = feature1 is Feature ? feature1.geometry : feature1;
-  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
-
-  var type1 = geom!.type;
-  var type2 = geom2!.type;
-  if (type1 != type2) return false;
 
   var equality = Equality(
       precision: precision,

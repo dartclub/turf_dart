@@ -7,7 +7,7 @@ import 'package:turf/src/booleans/boolean_equal.dart';
 
 main() {
   group(
-    'boolean_crosses',
+    'boolean_equal',
     () {
       var inDir = Directory('./test/examples/booleans/equal/test/true');
       for (var file in inDir.listSync(recursive: true)) {
@@ -23,7 +23,6 @@ main() {
               var feature2 = inGeom.features[1];
               Map<String, dynamic> json = jsonDecode(inSource);
               var options = json['properties'];
-              print(json['properties']?['direction']);
               var result = booleanEqual(feature1, feature2,
                   precision: options?['precision'] ?? 6,
                   shiftedPolygon: options?['shiftedPolygon'] ?? false,
