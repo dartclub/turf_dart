@@ -16,12 +16,12 @@ import '../meta.dart';
 /// ```
 num? area(GeoJSONObject geojson) {
   return geomReduce<num>(geojson, (value, geom, _, __, ___, ____) {
-    return value! + calculateArea(geojson);
+    return value! + calculateArea(geom!);
   }, 0);
 }
 
 /// Calculate Area
-num calculateArea(GeoJSONObject geom) {
+num calculateArea(GeometryType geom) {
   num total = 0;
   int i;
   switch (geom.type) {
@@ -39,18 +39,18 @@ num calculateArea(GeoJSONObject geom) {
     case GeoJSONObjectType.multiLineString:
       return 0;
     case GeoJSONObjectType.geometryCollection:
-      geom as GeometryCollection;
-      for (i = 0; i < geom.geometries.length; i++) {
-        total += calculateArea(geom.geometries[i]);
+      final geometryCollection = geom as GeometryCollection;
+      for (i = 0; i < geometryCollection.geometries.length; i++) {
+        total += calculateArea(geometryCollection.geometries[i]);
       }
       return total;
     case GeoJSONObjectType.feature:
-      geom as Feature;
-      return calculateArea(geom.geometry as GeoJSONObject);
+      final feature = geom as Feature;
+      return calculateArea(feature.geometry as GeometryType);
     case GeoJSONObjectType.featureCollection:
-      geom as FeatureCollection;
-      for (i = 0; i < geom.features.length; i++) {
-        total += calculateArea(geom.features[i]);
+      final featureCollection = geom as FeatureCollection;
+      for (i = 0; i < featureCollection.features.length; i++) {
+        total += calculateArea(featureCollection.features[i].geometry as GeometryType);
       }
       return total;
   }
