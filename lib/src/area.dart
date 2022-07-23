@@ -6,13 +6,22 @@ import '../meta.dart';
 /// Takes one or more features and returns their area in square meters.
 ///
 /// ```dart
-/// var polygon = turf.polygon([[[125, -15], [113, -22], [154, -27], [144, -15], [125, -15]]]);
+/// Feature<Polygon> poly = Feature<Polygon>(
+///   geometry: Polygon(coordinates: [
+///     [
+///       Position(125, -15),
+///       Position(113, -22),
+///       Position(117, -37),
+///       Position(130, -33),
+///       Position(148, -39),
+///       Position(154, -27),
+///       Position(144, -15),
+///       Position(125, -15)
+///     ]
+///   ]),
+/// );
 ///
 /// var area = turf.area(polygon);
-///
-/// //addToMap
-/// var addToMap = [polygon]
-/// polygon.properties.area = area
 /// ```
 num? area(GeoJSONObject geojson) {
   return geomReduce<num>(geojson, (value, geom, _, __, ___, ____) {
