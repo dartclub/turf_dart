@@ -76,7 +76,7 @@ num _polygonArea(List<List<Position>> coords) {
 }
 
 ///
-/// Calculate the approximate area of the polygon were it projected onto the earth in square meters.
+/// Calculate the approximate area of the [Polygon] were it projected onto the earth in square meters.
 ///
 /// Note that the area will be positive if ring is oriented clockwise, otherwise it will be negative.
 ///
