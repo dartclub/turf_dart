@@ -3,7 +3,7 @@ import 'dart:math';
 import '../helpers.dart';
 import '../meta.dart';
 
-/// Takes one or more features and returns their area in square meters.
+/// Takes a [GeoJSONObject] and returns their area in square meters.
 ///
 /// ```dart
 /// Feature<Polygon> poly = Feature<Polygon>(
@@ -25,21 +25,20 @@ import '../meta.dart';
 /// ```
 num? area(GeoJSONObject geojson) {
   return geomReduce<num>(geojson, (value, geom, _, __, ___, ____) {
-    return value! + calculateArea(geom!);
+    return value! + _calculateArea(geom!);
   }, 0);
 }
 
 /// Calculate Area
-num calculateArea(GeometryType geom) {
+num _calculateArea(GeometryType geom) {
   num total = 0;
-  int i;
   switch (geom.type) {
     case GeoJSONObjectType.polygon:
-      return polygonArea((geom as Polygon).coordinates);
+      return _polygonArea((geom as Polygon).coordinates);
     case GeoJSONObjectType.multiPolygon:
       geom as MultiPolygon;
-      for (i = 0; i < geom.coordinates.length; i++) {
-        total += polygonArea(geom.coordinates[i]);
+      for (var i = 0; i < geom.coordinates.length; i++) {
+        total += _polygonArea(geom.coordinates[i]);
       }
       return total;
     case GeoJSONObjectType.point:
@@ -49,28 +48,28 @@ num calculateArea(GeometryType geom) {
       return 0;
     case GeoJSONObjectType.geometryCollection:
       final geometryCollection = geom as GeometryCollection;
-      for (i = 0; i < geometryCollection.geometries.length; i++) {
-        total += calculateArea(geometryCollection.geometries[i]);
+      for (var i = 0; i < geometryCollection.geometries.length; i++) {
+        total += _calculateArea(geometryCollection.geometries[i]);
       }
       return total;
     case GeoJSONObjectType.feature:
       final feature = geom as Feature;
-      return calculateArea(feature.geometry as GeometryType);
+      return _calculateArea(feature.geometry as GeometryType);
     case GeoJSONObjectType.featureCollection:
       final featureCollection = geom as FeatureCollection;
-      for (i = 0; i < featureCollection.features.length; i++) {
-        total += calculateArea(featureCollection.features[i].geometry as GeometryType);
+      for (var i = 0; i < featureCollection.features.length; i++) {
+        total += _calculateArea(featureCollection.features[i].geometry as GeometryType);
       }
       return total;
   }
 }
 
-num polygonArea(List<List<Position>> coords) {
+num _polygonArea(List<List<Position>> coords) {
   num total = 0;
   if (coords.isNotEmpty) {
-    total += ringArea(coords[0]).abs();
+    total += _ringArea(coords[0]).abs();
     for (var i = 1; i < coords.length; i++) {
-      total -= ringArea(coords[i]).abs();
+      total -= _ringArea(coords[i]).abs();
     }
   }
   return total;
@@ -85,14 +84,14 @@ num polygonArea(List<List<Position>> coords) {
 /// Robert. G. Chamberlain and William H. Duquette, "Some Algorithms for Polygons on a Sphere",
 /// JPL Publication 07-03, Jet Propulsion
 /// Laboratory, Pasadena, CA, June 2007 https://trs.jpl.nasa.gov/handle/2014/40409
-num ringArea(List<Position> coords) {
-  var p1;
-  var p2;
-  var p3;
-  var lowerIndex;
-  var middleIndex;
-  var upperIndex;
-  var i;
+num _ringArea(List<Position> coords) {
+  Position p1;
+  Position p2;
+  Position p3;
+  int lowerIndex;
+  int middleIndex;
+  int upperIndex;
+  int i;
   num total = 0;
   final coordsLength = coords.length;
 
@@ -117,7 +116,7 @@ num ringArea(List<Position> coords) {
       p1 = coords[lowerIndex];
       p2 = coords[middleIndex];
       p3 = coords[upperIndex];
-      total += (rad(p3[0]) - rad(p1[0])) * sin(rad(p2[1]));
+      total += (_rad(p3[0]!) - _rad(p1[0]!)) * sin(_rad(p2[1]!));
     }
 
     total = (total * earthRadius * earthRadius) / 2;
@@ -125,6 +124,6 @@ num ringArea(List<Position> coords) {
   return total;
 }
 
-num rad(num number) {
+num _rad(num number) {
   return (number * pi) / 180;
 }
