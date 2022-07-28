@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:turf/src/geojson.dart';
 import 'package:turf/turf.dart';
 
 main() {
@@ -11,9 +10,15 @@ main() {
     final multiPoint = MultiPoint(coordinates: positions);
     final lineString = LineString(coordinates: positions);
     final multiLineString = LineString(coordinates: positions);
-    List<GeometryType> zeroAreaGeometries = [point, multiPoint, lineString, multiLineString];
-    final geometryCollection = GeometryCollection(geometries: zeroAreaGeometries);
+    List<GeometryType> zeroAreaGeometries = [
+      point,
+      multiPoint,
+      lineString,
+      multiLineString
+    ];
 
+    final geometryCollection =
+        GeometryCollection(geometries: zeroAreaGeometries);
 
     Polygon polygon = Polygon(coordinates: [
       [
@@ -28,10 +33,6 @@ main() {
       ]
     ]);
 
-    Feature<Polygon> polygonFeature = Feature<Polygon>(
-        geometry: polygon
-    );
-
     test('test area of polygon', () {
       var areaResult = area(polygon);
       expect(areaResult, isNot(equals(null)));
@@ -39,10 +40,13 @@ main() {
       expect(roundedResult, equals(7748891609977));
     });
 
-    test('test area of polygon equals to the area of a feature and a feature collection that includes it', () {
+    test(
+        'test area of polygon equals to the area of a feature and a feature collection that includes it',
+        () {
       var polygonAreaResult = round(area(polygon)!);
       var featureAreaResult = round(area(Feature(geometry: polygon))!);
-      var featureCollectionAreaResult = round(area(FeatureCollection(features: [Feature(geometry: polygon)]))!);
+      var featureCollectionAreaResult = round(
+          area(FeatureCollection(features: [Feature(geometry: polygon)]))!);
       expect(polygonAreaResult, equals(featureAreaResult));
       expect(featureCollectionAreaResult, equals(featureAreaResult));
     });
@@ -61,7 +65,9 @@ main() {
       expect(area(multiLineString), equals(0));
     });
 
-    test('area of geomrtry collection of (point, multiPoint, lineString and multiLineString) is 0', () {
+    test(
+        'area of geometry collection of (point, multiPoint, lineString and multiLineString) is 0',
+        () {
       expect(area(geometryCollection), equals(0));
     });
   });

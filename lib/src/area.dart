@@ -46,21 +46,8 @@ num _calculateArea(GeometryType geom) {
     case GeoJSONObjectType.lineString:
     case GeoJSONObjectType.multiLineString:
       return 0;
-    case GeoJSONObjectType.geometryCollection:
-      final geometryCollection = geom as GeometryCollection;
-      for (var i = 0; i < geometryCollection.geometries.length; i++) {
-        total += _calculateArea(geometryCollection.geometries[i]);
-      }
-      return total;
-    case GeoJSONObjectType.feature:
-      final feature = geom as Feature;
-      return _calculateArea(feature.geometry as GeometryType);
-    case GeoJSONObjectType.featureCollection:
-      final featureCollection = geom as FeatureCollection;
-      for (var i = 0; i < featureCollection.features.length; i++) {
-        total += _calculateArea(featureCollection.features[i].geometry as GeometryType);
-      }
-      return total;
+    default:
+      throw Exception('unsupported type ${geom.type}');
   }
 }
 
