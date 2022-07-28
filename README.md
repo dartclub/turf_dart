@@ -74,7 +74,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Measurement
 - [ ] along
-- [ ] area
+- [x] [area](https://github.com/dartclub/turf_dart/blob/main/lib/src/area.dart)
 - [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
 - [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
