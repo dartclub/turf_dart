@@ -48,7 +48,9 @@ FeatureCollection _multiPolygonToLine(MultiPolygon geom,
   properties = properties ?? <String, dynamic>{};
 
   var lines = <Feature>[];
-  coords.forEach((coord) => {lines.add(_coordsToLine(coord, properties))});
+  for (var coord in coords) {
+    lines.add(_coordsToLine(coord, properties));
+  }
   return FeatureCollection(features: lines);
 }
 
