@@ -39,13 +39,13 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
 
     switch (geom?.type) {
       case GeoJSONObjectType.polygon:
-        outCoords = [<Position>[]];
+        outCoords = <List<Position>>[[]];
         for (var i = 0; i < iterations; i++) {
-          tempOutput = [[]];
+          tempOutput = <List<Position>>[[]];
           poly = geom;
           if (i > 0) poly = Polygon(coordinates: outCoords);
           _processPolygon(poly, tempOutput);
-          outCoords = tempOutput.slice(0);
+          outCoords = List<List<Position>>.of(tempOutput);
         }
         outPolys.add(Feature(
             geometry: Polygon(coordinates: outCoords),
@@ -56,13 +56,13 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
           [<Position>[]]
         ];
         for (var y = 0; y < iterations; y++) {
-          tempOutput = [
-            [<Position>[]]
+          tempOutput = <List<List<Position>>>[
+            [[]]
           ];
           poly = geom;
-          if (y > 0) poly = Polygon(coordinates: outCoords);
+          if (y > 0) poly = MultiPolygon(coordinates: outCoords);
           _processMultiPolygon(poly, tempOutput);
-          outCoords = tempOutput.slice(0);
+          outCoords = List<List<List<Position>>>.of(tempOutput);
         }
         outPolys.add(Feature(
             geometry: MultiPolygon(coordinates: outCoords),
@@ -75,7 +75,7 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
   return FeatureCollection(features: outPolys);
 }
 
-_processPolygon(Polygon poly, tempOutput) {
+_processPolygon(Polygon poly, List<List<Position>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
 
@@ -84,7 +84,7 @@ _processPolygon(Polygon poly, tempOutput) {
     if (geometryIndex! > prevGeomIndex) {
       prevGeomIndex = geometryIndex;
       subtractCoordIndex = coordIndex!;
-      tempOutput.push([]);
+      tempOutput.add([]);
     }
     var realCoordIndex = coordIndex! - subtractCoordIndex;
     var p1 = poly.coordinates[geometryIndex][realCoordIndex + 1];
@@ -92,21 +92,21 @@ _processPolygon(Polygon poly, tempOutput) {
     var p0y = currentCoord.lat;
     var p1x = p1.lng;
     var p1y = p1.lat;
-    tempOutput[geometryIndex].push(Position(
+    tempOutput[geometryIndex].add(Position(
       0.75 * p0x + 0.25 * p1x,
       0.75 * p0y + 0.25 * p1y,
     ));
-    tempOutput[geometryIndex].push(Position(
+    tempOutput[geometryIndex].add(Position(
       0.25 * p0x + 0.75 * p1x,
       0.25 * p0y + 0.75 * p1y,
     ));
   }, true);
-  tempOutput.forEach((ring) {
+  for (var ring in tempOutput) {
     ring.add(ring[0]);
-  });
+  }
 }
 
-_processMultiPolygon(poly, tempOutput) {
+_processMultiPolygon(poly, List<List<List<Position>>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
   var prevMultiIndex = 0;
@@ -116,33 +116,37 @@ _processMultiPolygon(poly, tempOutput) {
     if (multiFeatureIndex! > prevMultiIndex) {
       prevMultiIndex = multiFeatureIndex;
       subtractCoordIndex = coordIndex!;
-      tempOutput.push([[]]);
+      tempOutput.add([[]]);
     }
     if (geometryIndex! > prevGeomIndex) {
       prevGeomIndex = geometryIndex;
       subtractCoordIndex = coordIndex!;
-      tempOutput[multiFeatureIndex].push([]);
+      tempOutput[multiFeatureIndex].add([]);
     }
     var realCoordIndex = coordIndex! - subtractCoordIndex;
+    if (realCoordIndex + 1 ==
+        poly.coordinates[multiFeatureIndex][geometryIndex].length) {
+      return;
+    }
     var p1 =
         poly.coordinates[multiFeatureIndex][geometryIndex][realCoordIndex + 1];
     var p0x = currentCoord!.lng;
     var p0y = currentCoord.lat;
     var p1x = p1.lng;
     var p1y = p1.lat;
-    tempOutput[multiFeatureIndex][geometryIndex].push(Position(
+    tempOutput[multiFeatureIndex][geometryIndex].add(Position(
       0.75 * p0x + 0.25 * p1x,
       0.75 * p0y + 0.25 * p1y,
     ));
-    tempOutput[multiFeatureIndex][geometryIndex].push(Position(
+    tempOutput[multiFeatureIndex][geometryIndex].add(Position(
       0.25 * p0x + 0.75 * p1x,
       0.25 * p0y + 0.75 * p1y,
     ));
   }, true);
 
-  tempOutput.forEach((poly) {
-    poly.forEach((ring) {
+  for (var poly in tempOutput) {
+    for (var ring in poly) {
       ring.add(ring[0]);
-    });
-  });
+    }
+  }
 }
