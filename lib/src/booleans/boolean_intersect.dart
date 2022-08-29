@@ -2,8 +2,7 @@ import '../../helpers.dart';
 import '../../meta.dart';
 import 'boolean_disjoint.dart';
 
-
-Boolean-intersects returns (TRUE) two geometries intersect.
+/// returns (TRUE) when two geometries intersect.
 /// @name booleanIntersects
 /// @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
 /// @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry

@@ -32,7 +32,7 @@ bool booleanEqual(
 
   var equality = Equality(
       precision: precision,
-      shiftedPolygon: shiftedPolygon,
-      direction: direction);
+      shiftedPolygons: shiftedPolygon,
+      reversedGeometries: direction);
   return equality.compare(cleanCoords(feature1), cleanCoords(feature2));
 }

@@ -1,10 +1,10 @@
 // http://en.wikipedia.org/wiki/Even%E2%80%93odd_rule
 // modified from: https://github.com/substack/point-in-polygon/blob/master/index.js
 // which was modified from http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-import 'package:pip/pip.dart';
+
+import 'package:turf_pip/turf_pip.dart';
 
 import '../../helpers.dart';
-import '../invariant.dart';
 
 /// Takes a [Point], and a [Polygon] or [MultiPolygon]and determines if the
 /// [Point] resides inside the [Polygon]. The polygon can be convex or concave.
@@ -58,11 +58,11 @@ bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
 
   var result = false;
   for (var i = 0; i < polys!.length; ++i) {
-    var polyResult =
-        pip(Point(coordinates: point), Polygon(coordinates: polys[i]));
-    if (polyResult == 0) {
+    var polyResult = pointInPolygon(
+        Point(coordinates: point), Polygon(coordinates: polys[i]));
+    if (polyResult == PointInPolygonResult.isOnEdge) {
       return ignoreBoundary ? false : true;
-    } else if (polyResult) {
+    } else if (polyResult == PointInPolygonResult.isInside) {
       result = true;
     }
   }

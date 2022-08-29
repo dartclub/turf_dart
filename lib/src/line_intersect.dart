@@ -1,3 +1,4 @@
+import 'package:sweepline_intersections/sweepline_intersections.dart';
 
 import '../helpers.dart';
 
@@ -8,71 +9,61 @@ import '../helpers.dart';
 /// example:
 /// ```dart
 /// var line1 = LineString(coordinates:[
-///    Position.of([126, -11]), 
+///    Position.of([126, -11]),
 ///    Position.of([129, -21]),
 ///  ]);
 /// var line2 = LineString(coordinates:[
-///  Position.of([123, -18]), 
+///  Position.of([123, -18]),
 ///  Position.of([131, -14]),
 ///  ]);
 /// var intersects = lineIntersect(line1, line2);
 /// //addToMap
 /// var addToMap = [line1, line2, intersects]
-FeatureCollection<Point>  lineIntersect(
-  GeoJSONObject line1,
- GeoJSONObject line2,
-{
-   bool removeDuplicates = true,
-  bool  ignoreSelfIntersections = false
-  }
-){
-  var features= <Feature>[];
-  if (line1 is FeatureCollection)
-{    features = features..addAll(line1.features);
-}  else if (line1 is Feature) {features.add(line1);}
-  else if (
-    line1 is LineString ||
-    line1 is Polygon ||
-    line1 is MultiLineString ||
-    line1 is MultiPolygon
-  ) {
+FeatureCollection<Point> lineIntersect(GeoJSONObject line1, GeoJSONObject line2,
+    {bool removeDuplicates = true, bool ignoreSelfIntersections = false}) {
+  var features = <Feature>[];
+  if (line1 is FeatureCollection) {
+    features = features..addAll(line1.features);
+  } else if (line1 is Feature) {
+    features.add(line1);
+  } else if (line1 is LineString ||
+      line1 is Polygon ||
+      line1 is MultiLineString ||
+      line1 is MultiPolygon) {
     features.add(Feature(geometry: line1 as GeometryObject));
   }
 
-  if (line2 is FeatureCollection)
-    {features = features..addAll(line2.features);}
-  else if (line2 is Feature) {features.add(line2);}
-  else if (
-    line2 is LineString ||
-    line2 is Polygon ||
-    line2 is MultiLineString ||
-    line2 is MultiPolygon
-  ) {
+  if (line2 is FeatureCollection) {
+    features = features..addAll(line2.features);
+  } else if (line2 is Feature) {
+    features.add(line2);
+  } else if (line2 is LineString ||
+      line2 is Polygon ||
+      line2 is MultiLineString ||
+      line2 is MultiPolygon) {
     features.add(Feature(geometry: line2 as GeometryObject));
   }
 
-  var intersections = findIntersections(
-    FeatureCollection(features: features),
-    ignoreSelfIntersections
-  );
+  var intersections = sweeplineIntersections(
+      FeatureCollection(features: features), ignoreSelfIntersections);
 
-  var results: Intersection[] = [];
+  var results = [];
   if (removeDuplicates) {
-    const unique: Record<string, boolean> = {};
-    intersections.forEach((intersection) => {
-      var key = intersection.join(",");
-      if (!unique[key]) {
-        unique[key] = true;
-        results.push(intersection);
+    Set unique = {};
+    intersections.forEach((intersection) {
+      if (!unique.contains(intersection)) {
+        unique.add(intersection);
+        results.add(intersection);
       }
     });
   } else {
     results = intersections;
   }
-  return FeatureCollection(features: results.map((r) => Feature(geometry: Point(coordinates:r))));
+  return FeatureCollection(
+      features: results
+          .map((r) => Feature(geometry: Point(coordinates: r)))
+          .toList());
 }
-
-
 /** 
  * import { feature, featureCollection, point } from "@turf/helpers";
 import {

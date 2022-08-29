@@ -27,8 +27,8 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
       flattenEach(
         feature2,
         (flatten2, featureIndex, multiFeatureIndex) {
-          if (bool == false) {
-            return false;
+          if (!bool) {
+            return bool;
           }
           bool = _disjoint(flatten1.geometry!, flatten2.geometry!);
         },
@@ -39,7 +39,7 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
 }
 
 /// Disjoint operation for simple Geometries (Point/LineString/Polygon)
-_disjoint(GeometryType geom1, GeometryType geom2) {
+bool _disjoint(GeometryType geom1, GeometryType geom2) {
   if (geom1 is Point) {
     if (geom2 is Point) {
       return !_compareCoords(geom1.coordinates, geom2.coordinates);
@@ -64,9 +64,8 @@ _disjoint(GeometryType geom1, GeometryType geom2) {
     } else if (geom2 is Polygon) {
       return !_isPolyInPoly(geom2, geom1);
     }
-  } else {
-    return false;
   }
+  return false;
 }
 
 // http://stackoverflow.com/a/11908158/1979085

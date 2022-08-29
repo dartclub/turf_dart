@@ -7,9 +7,9 @@ import 'package:turf/src/booleans/boolean_disjoint.dart';
 
 main() {
   group(
-    'boolean_crosses',
+    'boolean_disjoint',
     () {
-      var inDir = Directory('./test/examples/booleans/disjoint/true');
+      var inDir = Directory('./test/examples/booleans/disjoint/test/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
           test(
@@ -26,7 +26,8 @@ main() {
             },
           );
           // False Fixtures
-          var inDir1 = Directory('./test/examples/booleans/disjoint/false');
+          var inDir1 =
+              Directory('./test/examples/booleans/disjoint/test/false');
           for (var file in inDir1.listSync(recursive: true)) {
             if (file is File && file.path.endsWith('.geojson')) {
               test(

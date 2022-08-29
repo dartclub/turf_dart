@@ -1,5 +1,4 @@
 import '../../helpers.dart';
-import '../invariant.dart';
 import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
@@ -115,7 +114,7 @@ bool doLineStringsCross(LineString lineString1, LineString lineString2) {
 }
 
 bool doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
-  LineString line = polygonToLine(polygon);
+  Feature line = polygonToLine(polygon) as Feature;
   var doLinesIntersect = lineIntersect(lineString, line);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
