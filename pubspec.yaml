@@ -13,6 +13,7 @@ dependencies:
   sweepline_intersections:
     git: https://github.com/dartclub/sweepline_intersections.git
   turf_pip: ^0.0.1+1
+  rbush: ^1.1.0
 
 dev_dependencies:
   dartclub_lint: ^0.4.2

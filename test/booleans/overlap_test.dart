@@ -1,139 +1,150 @@
-const glob = require("glob");
-const path = require("path");
-const test = require("tape");
-const load = require("load-json-file");
-const shapely = require("boolean-shapely");
-const {
-  point,
-  lineString,
-  polygon,
-  multiLineString,
-  multiPolygon,
-} = require("@turf/helpers");
-const overlap = require("./index").default;
+import 'dart:convert';
+import 'dart:io';
 
-test("turf-boolean-overlap", (t) => {
-  // True Fixtures
-  glob
-    .sync(path.join(__dirname, "test", "true", "**", "*.geojson"))
-    .forEach((filepath) => {
-      const name = path.parse(filepath).name;
-      const geojson = load.sync(filepath);
-      const feature1 = geojson.features[0];
-      const feature2 = geojson.features[1];
-      const result = overlap(feature1, feature2);
+import 'package:test/test.dart';
+import 'package:turf/helpers.dart';
+import 'package:turf/src/booleans/boolean_overlap.dart';
 
-      if (process.env.SHAPELY)
-        shapely
-          .contains(feature1, feature2)
-          .then((result) => t.true(result, "[true] shapely - " + name));
-      t.true(result, "[true] " + name);
-    });
-  // False Fixtures
-  glob
-    .sync(path.join(__dirname, "test", "false", "**", "*.geojson"))
-    .forEach((filepath) => {
-      const name = path.parse(filepath).name;
-      const geojson = load.sync(filepath);
-      const feature1 = geojson.features[0];
-      const feature2 = geojson.features[1];
-      const result = overlap(feature1, feature2);
+main() {
+  group(
+    'boolean-overlap',
+    () {
+      test("turf-boolean-overlap-trues", () {
+        // True Fixtures
+        Directory dir = Directory('./test/examples/booleans/overlap/true');
+        for (var file in dir.listSync(recursive: true)) {
+          if (file is File && file.path.endsWith('.geojson')) {
+            var inSource = file.readAsStringSync();
+            var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+            var feature1 = (inGeom as FeatureCollection).features[0];
+            var feature2 = inGeom.features[1];
+            var result = booleanOverlap(feature1, feature2);
+            expect(result, true);
+          }
+        }
+      });
+      test(
+        "turf-boolean-overlap - falses",
+        () {
+          // True Fixtures
+          Directory dir1 = Directory('./test/examples/booleans/overlap/false');
+          for (var file in dir1.listSync(recursive: true)) {
+            if (file is File && file.path.endsWith('.geojson')) {
+              var inSource = file.readAsStringSync();
+              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              var feature1 = (inGeom as FeatureCollection).features[0];
+              var feature2 = inGeom.features[1];
+              var result = booleanOverlap(feature1, feature2);
+              expect(result, false);
+            }
+          }
+        },
+      );
 
-      if (process.env.SHAPELY)
-        shapely
-          .contains(feature1, feature2)
-          .then((result) => t.false(result, "[false] shapely - " + name));
-      t.false(result, "[false] " + name);
-    });
-  t.end();
-});
+      var pt = Point(coordinates: Position.of([9, 50]));
+      var line1 = LineString(
+        coordinates: [
+          Position.of([7, 50]),
+          Position.of([8, 50]),
+          Position.of([9, 50]),
+        ],
+      );
+      var line2 = LineString(
+        coordinates: [
+          Position.of([8, 50]),
+          Position.of([9, 50]),
+          Position.of([10, 50]),
+        ],
+      );
+      var poly1 = Polygon(
+        coordinates: [
+          [
+            Position.of([8.5, 50]),
+            Position.of([9.5, 50]),
+            Position.of([9.5, 49]),
+            Position.of([8.5, 49]),
+            Position.of([8.5, 50]),
+          ],
+        ],
+      );
+      var poly2 = Polygon(
+        coordinates: [
+          [
+            Position.of([8, 50]),
+            Position.of([9, 50]),
+            Position.of([9, 49]),
+            Position.of([8, 49]),
+            Position.of([8, 50]),
+          ],
+        ],
+      );
+      var poly3 = Polygon(
+        coordinates: [
+          [
+            Position.of([10, 50]),
+            Position.of([10.5, 50]),
+            Position.of([10.5, 49]),
+            Position.of([10, 49]),
+            Position.of([10, 50]),
+          ],
+        ],
+      );
+      var multiline1 = MultiLineString(
+        coordinates: [
+          [
+            Position.of([8, 50]),
+            Position.of([9, 50]),
+            Position.of([7, 50]),
+          ],
+        ],
+      );
+      var multipoly1 = MultiPolygon(
+        coordinates: [
+          [
+            [
+              Position.of([8.5, 50]),
+              Position.of([9.5, 50]),
+              Position.of([9.5, 49]),
+              Position.of([8.5, 49]),
+              Position.of([8.5, 50]),
+            ],
+          ],
+        ],
+      );
 
-const pt = point([9, 50]);
-const line1 = lineString([
-  [7, 50],
-  [8, 50],
-  [9, 50],
-]);
-const line2 = lineString([
-  [8, 50],
-  [9, 50],
-  [10, 50],
-]);
-const poly1 = polygon([
-  [
-    [8.5, 50],
-    [9.5, 50],
-    [9.5, 49],
-    [8.5, 49],
-    [8.5, 50],
-  ],
-]);
-const poly2 = polygon([
-  [
-    [8, 50],
-    [9, 50],
-    [9, 49],
-    [8, 49],
-    [8, 50],
-  ],
-]);
-const poly3 = polygon([
-  [
-    [10, 50],
-    [10.5, 50],
-    [10.5, 49],
-    [10, 49],
-    [10, 50],
-  ],
-]);
-const multiline1 = multiLineString([
-  [
-    [7, 50],
-    [8, 50],
-    [9, 50],
-  ],
-]);
-const multipoly1 = multiPolygon([
-  [
-    [
-      [8.5, 50],
-      [9.5, 50],
-      [9.5, 49],
-      [8.5, 49],
-      [8.5, 50],
-    ],
-  ],
-]);
+      test(
+        "turf-boolean-overlap -- geometries",
+        () {
+          expect(booleanOverlap(line1, line2), true);
+          expect(booleanOverlap(poly1, poly2), true);
+          var z = booleanOverlap(poly1, poly3);
+          expect(z, isFalse);
+        },
+      );
 
-test("turf-boolean-overlap -- geometries", (t) => {
-  t.true(overlap(line1.geometry, line2.geometry), "[true] LineString geometry");
-  t.true(overlap(poly1.geometry, poly2.geometry), "[true] Polygon geometry");
-  t.false(overlap(poly1.geometry, poly3.geometry), "[false] Polygon geometry");
-  t.end();
-});
+      test(
+        "turf-boolean-overlap -- throws",
+        () {
+          // t.throws(() => overlap(null, line1), /feature1 is required/, 'missing feature1');
+          // t.throws(() => overlap(line1, null), /feature2 is required/, 'missing feature2');
 
-test("turf-boolean-overlap -- throws", (t) => {
-  // t.throws(() => overlap(null, line1), /feature1 is required/, 'missing feature1');
-  // t.throws(() => overlap(line1, null), /feature2 is required/, 'missing feature2');
-  t.throws(
-    () => overlap(poly1, line1),
-    /features must be of the same type/,
-    "different types"
+//'different types',
+          expect(
+              () => booleanOverlap(
+                    poly1,
+                    line1,
+                  ),
+              throwsA(isA<Exception>()));
+// "geometry not supported"
+
+          expect(() => booleanOverlap(pt, pt), throwsA(isA<Exception>()));
+          //  "supports line and multiline comparison"
+          var x = booleanOverlap(line1, multiline1);
+          expect(() => booleanOverlap(line1, multiline1), x);
+          var y = booleanOverlap(poly1, multipoly1);
+          expect(() => booleanOverlap(poly1, multipoly1), y);
+        },
+      );
+    },
   );
-  t.throws(
-    () => overlap(pt, pt),
-    /Point geometry not supported/,
-    "geometry not supported"
-  );
-
-  t.doesNotThrow(
-    () => overlap(line1, multiline1),
-    "supports line and multiline comparison"
-  );
-  t.doesNotThrow(
-    () => overlap(poly1, multipoly1),
-    "supports polygon and multipolygon comparison"
-  );
-
-  t.end();
-});
+}

@@ -40,7 +40,9 @@ bool booleanOverlap(GeoJSONObject feature1, GeoJSONObject feature2) {
 
   // features must be not equal
   var equality = Equality(precision: 6);
-  if (equality.compare(feature1, feature2)) return false;
+  if (equality.compare(feature1, feature2)) {
+    return false;
+  }
 
   var overlap = 0;
 
@@ -74,9 +76,11 @@ bool booleanOverlap(GeoJSONObject feature1, GeoJSONObject feature2) {
             int? geometryIndex,
             int segmentIndex,
           ) {
-            if (lineOverlap(line1: currentSegment, line2: currentSegment1)
+            if (lineOverlap(currentSegment, currentSegment1)
                 .features
-                .length) overlap++;
+                .isNotEmpty) {
+              overlap++;
+            }
           },
         );
       },
