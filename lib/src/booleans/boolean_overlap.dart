@@ -1,48 +1,42 @@
+import 'package:turf/helpers.dart';
+import 'package:turf/line_segment.dart';
+import 'package:turf/src/line_intersect.dart';
+import 'package:turf/src/line_overlap.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-import '../../helpers.dart';
-import '../../line_segment.dart';
-import '../invariant.dart';
-import '../line_intersect.dart';
-import '../line_overlap.dart';
+/// Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
+/// different from both but of the same dimension. It applies to Polygon/Polygon, LineString/LineString,
+/// Multipoint/Multipoint, MultiLineString/MultiLineString and MultiPolygon/MultiPolygon.
+///
+/// In other words, it returns true if the two geometries overlap, provided that neither completely contains the other.
+///
+/// @name booleanOverlap
+/// @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature1 input
+/// @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature2 input
+/// @returns {boolean} true/false
+/// @example
+/// var poly1 = turf.polygon([[[0,0],[0,5],[5,5],[5,0],[0,0]]]);
+/// var poly2 = turf.polygon([[[1,1],[1,6],[6,6],[6,1],[1,1]]]);
+/// var poly3 = turf.polygon([[[10,10],[10,15],[15,15],[15,10],[10,10]]]);
+///
+/// turf.booleanOverlap(poly1, poly2)
+/// //=true
+/// turf.booleanOverlap(poly2, poly3)
+/// //=false
+bool booleanOverlap(GeoJSONObject feature1, GeoJSONObject feature2) {
+  var geom1 = feature1 is Feature ? feature1.geometry : feature1;
+  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
 
-/*
- * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
- * different from both but of the same dimension. It applies to Polygon/Polygon, LineString/LineString,
- * Multipoint/Multipoint, MultiLineString/MultiLineString and MultiPolygon/MultiPolygon.
- *
- * In other words, it returns true if the two geometries overlap, provided that neither completely contains the other.
- *
- * @name booleanOverlap
- * @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature1 input
- * @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature2 input
- * @returns {boolean} true/false
- * @example
- * var poly1 = turf.polygon([[[0,0],[0,5],[5,5],[5,0],[0,0]]]);
- * var poly2 = turf.polygon([[[1,1],[1,6],[6,6],[6,1],[1,1]]]);
- * var poly3 = turf.polygon([[[10,10],[10,15],[15,15],[15,10],[10,10]]]);
- *
- * turf.booleanOverlap(poly1, poly2)
- * //=true
- * turf.booleanOverlap(poly2, poly3)
- * //=false
- */
-booleanOverlap(GeometryObject feature1, GeometryObject feature2) {
-  var geom1 = getGeom(feature1);
-  var geom2 = getGeom(feature2);
-  var type1 = geom1.type;
-  var type2 = geom2.type;
-
-  if ((type1 == MultiPoint && type2 != MultiPoint) ||
-      ((type1 == LineString || type1 == MultiLineString) &&
-          type2 != LineString &&
-          type2 != MultiLineString) ||
-      ((type1 == Polygon || type1 == MultiPolygon) &&
-          type2 != Polygon &&
-          type2 != MultiPolygon)) {
+  if ((feature1 is MultiPoint && feature2 is! MultiPoint) ||
+      ((feature1 is LineString || feature1 is MultiLineString) &&
+          feature2 is! LineString &&
+          feature2 is! MultiLineString) ||
+      ((feature1 is Polygon || feature1 is MultiPolygon) &&
+          feature2 is! Polygon &&
+          feature2 is! MultiPolygon)) {
     throw Exception("features must be of the same type");
   }
-  if (type1 == Point) throw Exception("Point geometry not supported");
+  if (feature1 is Point) throw Exception("Point geometry not supported");
 
   // features must be not equal
   var equality = Equality(precision: 6);
@@ -50,164 +44,72 @@ booleanOverlap(GeometryObject feature1, GeometryObject feature2) {
 
   var overlap = 0;
 
-  switch (type1) {
-    case MultiPoint:
-      for (var i = 0; i < (geom1 as MultiPoint).coordinates.length; i++) {
-        for (var j = 0; j < (geom2 as MultiPoint).coordinates.length; j++) {
-          var coord1 = geom1.coordinates[i];
-          var coord2 = geom2.coordinates[j];
-          if (coord1[0] == coord2[0] && coord1[1] == coord2[1]) {
-            return true;
-          }
+  if (feature1 is MultiPoint) {
+    for (var i = 0; i < (geom1 as MultiPoint).coordinates.length; i++) {
+      for (var j = 0; j < (geom2 as MultiPoint).coordinates.length; j++) {
+        var coord1 = geom1.coordinates[i];
+        var coord2 = geom2.coordinates[j];
+        if (coord1[0] == coord2[0] && coord1[1] == coord2[1]) {
+          return true;
         }
       }
-      return false;
-
-    case LineString:
-    case MultiLineString:
-      segmentEach(
-        feature1,
-        (
-          segment1,
-          featureIndex,
-          multiFeatureIndex,
-          geometryIndex,
-          segmentIndex,
-        ) {
-          segmentEach(
-            feature2,
-            (
-              segment2,
-              featureIndex,
-              multiFeatureIndex,
-              geometryIndex,
-              segmentIndex,
-            ) {
-              if (lineOverlap(line1: segment1, line2: segment2)
-                  .features
-                  .length) {
-                overlap++;
-              }
-            },
-          );
-        },
-      );
-      break;
-
-    case Polygon:
-    case MultiPolygon:
-      segmentEach(feature1, (
-        segment1,
-        featureIndex,
-        multiFeatureIndex,
-        geometryIndex,
-        segmentIndex,
+    }
+    return false;
+  } else if (feature1 is MultiLineString) {
+    segmentEach(
+      feature1,
+      (
+        Feature<LineString> currentSegment,
+        int featureIndex,
+        int? multiFeatureIndex,
+        int? geometryIndex,
+        int segmentIndex,
       ) {
-        segmentEach(feature2, (
-          segment2,
-          featureIndex,
-          multiFeatureIndex,
-          geometryIndex,
-          segmentIndex,
-        ) {
-          if (lineIntersect(segment1, segment2).features.isNotEmpty) overlap++;
-        });
-      });
-      break;
+        segmentEach(
+          feature2,
+          (
+            Feature<LineString> currentSegment1,
+            int featureIndex,
+            int? multiFeatureIndex,
+            int? geometryIndex,
+            int segmentIndex,
+          ) {
+            if (lineOverlap(line1: currentSegment, line2: currentSegment1)
+                .features
+                .length) overlap++;
+          },
+        );
+      },
+    );
+  } else if (feature1 is Polygon || feature1 is MultiPolygon) {
+    segmentEach(
+      feature1,
+      (
+        Feature<LineString> currentSegment,
+        int featureIndex,
+        int? multiFeatureIndex,
+        int? geometryIndex,
+        int segmentIndex,
+      ) {
+        segmentEach(
+          feature2,
+          (
+            Feature<LineString> currentSegment1,
+            int featureIndex,
+            int? multiFeatureIndex,
+            int? geometryIndex,
+            int segmentIndex,
+          ) {
+            if (lineIntersect(currentSegment, currentSegment1)
+                .features
+                .isNotEmpty) {
+              overlap++;
+            }
+          },
+        );
+      },
+    );
   }
 
   return overlap > 0;
 }
-
-/**
- * import { Feature, Geometry, MultiPoint } from "geojson";
-import { segmentEach } from "@turf/meta";
-import { getGeom } from "@turf/invariant";
-import lineOverlap from "@turf/line-overlap";
-import lineIntersect from "@turf/line-intersect";
-import GeojsonEquality from "geojson-equality";
-
-/**
- * Compares two geometries of the same dimension and returns true if their intersection set results in a geometry
- * different from both but of the same dimension. It applies to Polygon/Polygon, LineString/LineString,
- * Multipoint/Multipoint, MultiLineString/MultiLineString and MultiPolygon/MultiPolygon.
- *
- * In other words, it returns true if the two geometries overlap, provided that neither completely contains the other.
- *
- * @name booleanOverlap
- * @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature1 input
- * @param  {Geometry|Feature<LineString|MultiLineString|Polygon|MultiPolygon>} feature2 input
- * @returns {boolean} true/false
- * @example
- * var poly1 = turf.polygon([[[0,0],[0,5],[5,5],[5,0],[0,0]]]);
- * var poly2 = turf.polygon([[[1,1],[1,6],[6,6],[6,1],[1,1]]]);
- * var poly3 = turf.polygon([[[10,10],[10,15],[15,15],[15,10],[10,10]]]);
- *
- * turf.booleanOverlap(poly1, poly2)
- * //=true
- * turf.booleanOverlap(poly2, poly3)
- * //=false
- */
-export default function booleanOverlap(
-  feature1: Feature<any> | Geometry,
-  feature2: Feature<any> | Geometry
-): boolean {
-  const geom1 = getGeom(feature1);
-  const geom2 = getGeom(feature2);
-  const type1 = geom1.type;
-  const type2 = geom2.type;
-
-  if (
-    (type1 == "MultiPoint" && type2 !== "MultiPoint") ||
-    ((type1 === "LineString" || type1 === "MultiLineString") &&
-      type2 !== "LineString" &&
-      type2 !== "MultiLineString") ||
-    ((type1 === "Polygon" || type1 === "MultiPolygon") &&
-      type2 !== "Polygon" &&
-      type2 !== "MultiPolygon")
-  ) {
-    throw new Error("features must be of the same type");
-  }
-  if (type1 === "Point") throw new Error("Point geometry not supported");
-
-  // features must be not equal
-  const equality = new GeojsonEquality({ precision: 6 });
-  if (equality.compare(feature1 as any, feature2 as any)) return false;
-
-  let overlap = 0;
-
-  switch (type1) {
-    case "MultiPoint":
-      for (var i = 0; i < (geom1 as MultiPoint).coordinates.length; i++) {
-        for (var j = 0; j < (geom2 as MultiPoint).coordinates.length; j++) {
-          var coord1 = geom1.coordinates[i];
-          var coord2 = geom2.coordinates[j];
-          if (coord1[0] === coord2[0] && coord1[1] === coord2[1]) {
-            return true;
-          }
-        }
-      }
-      return false;
-
-    case "LineString":
-    case "MultiLineString":
-      segmentEach(feature1, (segment1) => {
-        segmentEach(feature2, (segment2) => {
-          if (lineOverlap(segment1!, segment2!).features.length) overlap++;
-        });
-      });
-      break;
-
-    case "Polygon":
-    case "MultiPolygon":
-      segmentEach(feature1, (segment1) => {
-        segmentEach(feature2, (segment2) => {
-          if (lineIntersect(segment1!, segment2!).features.length) overlap++;
-        });
-      });
-      break;
-  }
-
-  return overlap > 0;
-}
- */
