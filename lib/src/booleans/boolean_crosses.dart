@@ -6,8 +6,8 @@ import 'boolean_point_in_polygon.dart';
 /// Boolean-Crosses returns True if the intersection results in a geometry whose
 /// dimension is one less than the maximum dimension of the two source geometries
 /// and the intersection set is interior to both source geometries.
-/// Boolean-Crosses returns [true] for only [MultiPoint]/[Polygon], [MultiPoint]/[Linestring],
-/// [Linestring]/[Linestring], [Linestring]/[Polygon], and [Linestring]/[multiPolygon] comparisons.
+/// Boolean-Crosses returns [true] for only [MultiPoint]/[Polygon], [MultiPoint]/[LineString],
+/// [LineString]/[LineString], [LineString]/[Polygon], and [LineString]/[MultiPolygon] comparisons.
 /// Other comparisons are not supported as they are outside the OpenGIS Simple
 /// [Feature]s spec and may give unexpected results.
 /// example:

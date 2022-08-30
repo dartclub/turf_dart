@@ -7,11 +7,11 @@ import 'package:turf_pip/turf_pip.dart';
 import '../../helpers.dart';
 
 /// Takes a [Point], and a [Polygon] or [MultiPolygon]and determines if the
-/// [Point] resides inside the [Polygon]. The polygon can be convex or concave.
+/// [Point] resides within the [Polygon]. The [polygon] can be convex or concave.
 /// The function accounts for holes. By taking a [Feature<Polygon>] or a
-/// [Feature<MultiPolygon>]. [ignoreBoundary=false] should be set [true] if polygon's
-/// boundary should be ignored when determining if the [Point] is inside the
-/// [Polygon] otherwise false.
+/// [Feature<MultiPolygon>]. [ignoreBoundary=false] should be set to [true] if
+/// [Polygon]'s boundary should be ignored when determining if the [Point] is
+/// inside the [Polygon], otherwise, false.
 /// example:
 /// ```dart
 /// var pt = Point(coordinates: Position([-77, 44]));

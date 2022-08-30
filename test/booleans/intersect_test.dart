@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_intersect.dart';
+import 'package:turf/src/intersection.dart';
 
 main() {
   var featureCollection = FeatureCollection(features: [
@@ -88,6 +92,39 @@ main() {
       var feature3 = featureCollection1.features[0];
       var feature4 = featureCollection1.features[1];
       expect(booleanIntersects(feature3, feature4), equals(false));
+    },
+  );
+  test(
+    "turf-boolean-intersects",
+    () {
+      // True Fixtures
+      var inDir = Directory('./test/examples/booleans/intersects/true');
+      for (var file in inDir.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          var inSource = file.readAsStringSync();
+          var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+
+          var feature1 = (inGeom as FeatureCollection).features[0];
+          var feature2 = inGeom.features[1];
+          var result = booleanIntersects(feature1, feature2);
+
+          expect(result, isTrue);
+        }
+      }
+      // False Fixtures
+      var inDir1 = Directory('./test/examples/booleans/intersects/false');
+      for (var file in inDir1.listSync(recursive: true)) {
+        if (file is File && file.path.endsWith('.geojson')) {
+          var inSource = file.readAsStringSync();
+          var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+
+          var feature1 = (inGeom as FeatureCollection).features[0];
+          var feature2 = inGeom.features[1];
+          var result = booleanIntersects(feature1, feature2);
+
+          expect(result, isFalse);
+        }
+      }
     },
   );
 }

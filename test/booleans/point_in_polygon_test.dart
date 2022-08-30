@@ -7,165 +7,184 @@ import 'package:turf/src/booleans/boolean_point_in_polygon.dart';
 
 main() {
   group(
-    '',
+    'pip',
     () {
-      test("boolean-point-in-polygon -- featureCollection", () {
-        // test for a simple polygon
-        var poly = Polygon(coordinates: [
-          [
-            Position.of([0, 0]),
-            Position.of([0, 100]),
-            Position.of([100, 100]),
-            Position.of([100, 0]),
-            Position.of([0, 0]),
-          ],
-        ]);
-        var ptIn = Point(coordinates: (Position.of([50, 50])));
-        var ptOut = Point(coordinates: (Position.of([140, 150])));
-// "point inside simple polygon"
-        expect(booleanPointInPolygon(ptIn.coordinates, poly), true);
-        // "point outside simple polygon"
-        expect(booleanPointInPolygon(ptOut.coordinates, poly), false);
+      test(
+        "boolean-point-in-polygon -- featureCollection",
+        () {
+          // test for a simple polygon
+          var poly = Polygon(coordinates: [
+            [
+              Position.of([0, 0]),
+              Position.of([0, 100]),
+              Position.of([100, 100]),
+              Position.of([100, 0]),
+              Position.of([0, 0]),
+            ],
+          ]);
+          var ptIn = Point(coordinates: (Position.of([50, 50])));
+          var ptOut = Point(coordinates: (Position.of([140, 150])));
+          // "point inside simple polygon"
+          expect(booleanPointInPolygon(ptIn.coordinates, poly), true);
+          // "point outside simple polygon"
+          expect(booleanPointInPolygon(ptOut.coordinates, poly), false);
 
-        // test for a concave polygon
-        var concavePoly = Polygon(coordinates: [
-          [
-            Position.of([0, 0]),
-            Position.of([50, 50]),
-            Position.of([0, 100]),
-            Position.of([100, 100]),
-            Position.of([100, 0]),
-            Position.of([0, 0]),
-          ],
-        ]);
-        var ptConcaveIn = Point(coordinates: (Position.of([75, 75])));
-        var ptConcaveOut = Point(coordinates: (Position.of([25, 50])));
+          // test for a concave polygon
+          var concavePoly = Polygon(coordinates: [
+            [
+              Position.of([0, 0]),
+              Position.of([50, 50]),
+              Position.of([0, 100]),
+              Position.of([100, 100]),
+              Position.of([100, 0]),
+              Position.of([0, 0]),
+            ],
+          ]);
+          var ptConcaveIn = Point(coordinates: (Position.of([75, 75])));
+          var ptConcaveOut = Point(coordinates: (Position.of([25, 50])));
 
-// "point inside concave polygon"
-        expect(
-            booleanPointInPolygon(ptConcaveIn.coordinates, concavePoly), true);
-        //   "point outside concave polygon"
+          // "point inside concave polygon"
+          expect(booleanPointInPolygon(ptConcaveIn.coordinates, concavePoly),
+              true);
+          //   "point outside concave polygon"
+          expect(booleanPointInPolygon(ptConcaveOut.coordinates, concavePoly),
+              false);
+        },
+      );
 
-        expect(booleanPointInPolygon(ptConcaveOut.coordinates, concavePoly),
-            false);
-      });
+      test(
+        "boolean-point-in-polygon -- poly with hole",
+        () {
+          var ptInHole = Point(
+              coordinates:
+                  (Position.of([-86.69208526611328, 36.20373274711739])));
+          var ptInPoly = Point(
+              coordinates:
+                  (Position.of([-86.72229766845702, 36.20258997094334])));
+          var ptOutsidePoly = Point(
+              coordinates:
+                  (Position.of([-86.75079345703125, 36.18527313913089])));
 
-      test("boolean-point-in-polygon -- poly with hole", () {
-        var ptInHole = Point(
-            coordinates:
-                (Position.of([-86.69208526611328, 36.20373274711739])));
-        var ptInPoly = Point(
-            coordinates:
-                (Position.of([-86.72229766845702, 36.20258997094334])));
-        var ptOutsidePoly = Point(
-            coordinates:
-                (Position.of([-86.75079345703125, 36.18527313913089])));
+          var inFile = File(
+              './test/examples/booleans/point_in_polygon/in/poly-with-hole.geojson');
 
-        var inFile = File(
-            './test/examples/booleans/point_in_polygon/in/poly-with-hole.geojson');
+          var polyHole =
+              GeoJSONObject.fromJson(jsonDecode(inFile.readAsStringSync()));
 
-        var polyHole =
-            GeoJSONObject.fromJson(jsonDecode(inFile.readAsStringSync()));
+          expect(booleanPointInPolygon(ptInHole.coordinates, polyHole), false);
+          expect(booleanPointInPolygon(ptInPoly.coordinates, polyHole), true);
+          expect(booleanPointInPolygon(ptOutsidePoly.coordinates, polyHole),
+              false);
+        },
+      );
 
-        expect(booleanPointInPolygon(ptInHole.coordinates, polyHole), false);
-        expect(booleanPointInPolygon(ptInPoly.coordinates, polyHole), true);
-        expect(
-            booleanPointInPolygon(ptOutsidePoly.coordinates, polyHole), false);
-      });
+      test(
+        "boolean-point-in-polygon -- multipolygon with hole",
+        () {
+          var ptInHole = Point(
+              coordinates:
+                  (Position.of([-86.69208526611328, 36.20373274711739])));
+          var ptInPoly = Point(
+              coordinates:
+                  (Position.of([-86.72229766845702, 36.20258997094334])));
+          var ptInPoly2 = Point(
+              coordinates:
+                  (Position.of([-86.75079345703125, 36.18527313913089])));
+          var ptOutsidePoly = Point(
+              coordinates:
+                  (Position.of([-86.75302505493164, 36.23015046460186])));
 
-      test("boolean-point-in-polygon -- multipolygon with hole", () {
-        var ptInHole = Point(
-            coordinates:
-                (Position.of([-86.69208526611328, 36.20373274711739])));
-        var ptInPoly = Point(
-            coordinates:
-                (Position.of([-86.72229766845702, 36.20258997094334])));
-        var ptInPoly2 = Point(
-            coordinates:
-                (Position.of([-86.75079345703125, 36.18527313913089])));
-        var ptOutsidePoly = Point(
-            coordinates:
-                (Position.of([-86.75302505493164, 36.23015046460186])));
+          var inFile = File(
+              './test/examples/booleans/point_in_polygon/in/multipoly-with-hole.geojson');
 
-        var inFile = File(
-            './test/examples/booleans/point_in_polygon/in/multipoly-with-hole.geojson');
+          var multiPolyHole =
+              GeoJSONObject.fromJson(jsonDecode(inFile.readAsStringSync()));
 
-        var multiPolyHole =
-            GeoJSONObject.fromJson(jsonDecode(inFile.readAsStringSync()));
-
-        expect(
-            booleanPointInPolygon(ptInHole.coordinates, multiPolyHole), false);
-        expect(
-            booleanPointInPolygon(ptInPoly.coordinates, multiPolyHole), true);
-        expect(
-            booleanPointInPolygon(ptInPoly2.coordinates, multiPolyHole), true);
-        expect(
-            booleanPointInPolygon(ptInPoly.coordinates, multiPolyHole), true);
-        expect(booleanPointInPolygon(ptOutsidePoly.coordinates, multiPolyHole),
-            false);
-      });
+          expect(booleanPointInPolygon(ptInHole.coordinates, multiPolyHole),
+              false);
+          expect(
+              booleanPointInPolygon(ptInPoly.coordinates, multiPolyHole), true);
+          expect(booleanPointInPolygon(ptInPoly2.coordinates, multiPolyHole),
+              true);
+          expect(
+              booleanPointInPolygon(ptInPoly.coordinates, multiPolyHole), true);
+          expect(
+              booleanPointInPolygon(ptOutsidePoly.coordinates, multiPolyHole),
+              false);
+        },
+      );
 
       test(
         'boolean-point-in-polygon -- Boundary test',
         () {
-          var poly1 = Polygon(coordinates: [
-            [
-              Position.of([10, 10]),
-              Position.of([30, 20]),
-              Position.of([50, 10]),
-              Position.of([30, 0]),
-              Position.of([10, 10]),
+          var poly1 = Polygon(
+            coordinates: [
+              [
+                Position.of([10, 10]),
+                Position.of([30, 20]),
+                Position.of([50, 10]),
+                Position.of([30, 0]),
+                Position.of([10, 10]),
+              ],
             ],
-          ]);
-          var poly2 = Polygon(coordinates: [
-            [
-              Position.of([10, 0]),
-              Position.of([30, 20]),
-              Position.of([50, 0]),
-              Position.of([30, 10]),
-              Position.of([10, 0]),
+          );
+          var poly2 = Polygon(
+            coordinates: [
+              [
+                Position.of([10, 0]),
+                Position.of([30, 20]),
+                Position.of([50, 0]),
+                Position.of([30, 10]),
+                Position.of([10, 0]),
+              ],
             ],
-          ]);
-          var poly3 = Polygon(coordinates: [
-            [
-              Position.of([10, 0]),
-              Position.of([30, 20]),
-              Position.of([50, 0]),
-              Position.of([30, -20]),
-              Position.of([10, 0]),
+          );
+          var poly3 = Polygon(
+            coordinates: [
+              [
+                Position.of([10, 0]),
+                Position.of([30, 20]),
+                Position.of([50, 0]),
+                Position.of([30, -20]),
+                Position.of([10, 0]),
+              ],
             ],
-          ]);
-          var poly4 = Polygon(coordinates: [
-            [
-              Position.of([0, 0]),
-              Position.of([0, 20]),
-              Position.of([50, 20]),
-              Position.of([50, 0]),
-              Position.of([40, 0]),
-              Position.of([30, 10]),
-              Position.of([30, 0]),
-              Position.of([20, 10]),
-              Position.of([10, 10]),
-              Position.of([10, 0]),
-              Position.of([0, 0]),
+          );
+          var poly4 = Polygon(
+            coordinates: [
+              [
+                Position.of([0, 0]),
+                Position.of([0, 20]),
+                Position.of([50, 20]),
+                Position.of([50, 0]),
+                Position.of([40, 0]),
+                Position.of([30, 10]),
+                Position.of([30, 0]),
+                Position.of([20, 10]),
+                Position.of([10, 10]),
+                Position.of([10, 0]),
+                Position.of([0, 0]),
+              ],
             ],
-          ]);
-          var poly5 = Polygon(coordinates: [
-            [
-              Position.of([0, 20]),
-              Position.of([20, 40]),
-              Position.of([40, 20]),
-              Position.of([20, 0]),
-              Position.of([0, 20]),
+          );
+          var poly5 = Polygon(
+            coordinates: [
+              [
+                Position.of([0, 20]),
+                Position.of([20, 40]),
+                Position.of([40, 20]),
+                Position.of([20, 0]),
+                Position.of([0, 20]),
+              ],
+              [
+                Position.of([10, 20]),
+                Position.of([20, 30]),
+                Position.of([30, 20]),
+                Position.of([20, 10]),
+                Position.of([10, 20]),
+              ],
             ],
-            [
-              Position.of([10, 20]),
-              Position.of([20, 30]),
-              Position.of([30, 20]),
-              Position.of([20, 10]),
-              Position.of([10, 20]),
-            ],
-          ]);
+          );
 
           runTest(bool ignoreBoundary) {
             var isBoundaryIncluded = ignoreBoundary == false;
@@ -357,7 +376,7 @@ main() {
               ],
             ];
 
-            for (var i = 0; i < tests.length; i++) {
+            for (int i = 0; i < tests.length; i++) {
               var item = tests[i];
               expect(
                   booleanPointInPolygon(
@@ -366,7 +385,7 @@ main() {
                         ignoreBoundary: ignoreBoundary,
                       ) ==
                       item[2],
-                  true);
+                  isTrue);
             }
           }
 
@@ -380,15 +399,17 @@ main() {
         "boolean-point-in-polygon -- issue #15",
         () {
           var pt1 = Point(coordinates: (Position.of([-9.9964077, 53.8040989])));
-          var poly = Polygon(coordinates: [
-            [
-              Position.of([5.080336744095521, 67.89398938540765]),
-              Position.of([0.35070899909145403, 69.32470003971179]),
-              Position.of([-24.453622256504122, 41.146696777884564]),
-              Position.of([-21.6445524714804, 40.43225902006474]),
-              Position.of([5.080336744095521, 67.89398938540765]),
+          var poly = Polygon(
+            coordinates: [
+              [
+                Position.of([5.080336744095521, 67.89398938540765]),
+                Position.of([0.35070899909145403, 69.32470003971179]),
+                Position.of([-24.453622256504122, 41.146696777884564]),
+                Position.of([-21.6445524714804, 40.43225902006474]),
+                Position.of([5.080336744095521, 67.89398938540765]),
+              ],
             ],
-          ]);
+          );
 
           expect(booleanPointInPolygon(pt1.coordinates, poly), true);
         },

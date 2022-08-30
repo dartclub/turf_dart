@@ -9,13 +9,13 @@ main() {
   group(
     'boolean_equal',
     () {
+      // True Fixtures
       var inDir = Directory('./test/examples/booleans/equal/test/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
           test(
             file.path,
             () {
-              // True Fixtures
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
 

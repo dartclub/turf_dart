@@ -9,18 +9,17 @@ main() {
   group(
     'boolean_crosses',
     () {
+      // True Fixtures
       var inDir = Directory('./test/examples/booleans/crosses/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
           test(
             file.path,
             () {
-              // True Fixtures
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var feature1 = (inGeom as FeatureCollection).features[0];
               var feature2 = inGeom.features[1];
-
               expect(
                   booleanCrosses(feature1.geometry!, feature2.geometry!), true);
             },
@@ -34,7 +33,6 @@ main() {
           test(
             file.path,
             () {
-              // True Fixtures
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var feature1 = (inGeom as FeatureCollection).features[0];

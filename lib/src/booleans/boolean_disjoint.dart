@@ -4,7 +4,7 @@ import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
 
-/// Returns (TRUE) if the intersection of the two geometries is an empty set.
+/// Returns [true] if the intersection of the two geometries is an empty set.
 /// example:
 /// ```dart
 /// var point = Point(coordinates: Position.of([2, 2]));
@@ -38,7 +38,7 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
   return bool;
 }
 
-/// Disjoint operation for simple Geometries (Point/LineString/Polygon)
+/// Disjoint operation for simple Geometries ([Point]/[LineString]/[Polygon])
 bool _disjoint(GeometryType geom1, GeometryType geom2) {
   if (geom1 is Point) {
     if (geom2 is Point) {
@@ -100,7 +100,7 @@ bool isLineInPoly(Polygon polygon, LineString lineString) {
   return false;
 }
 
-/// Is Polygon (geom1) in Polygon (geom2)
+/// Is [Polygon] (geom1) in [Polygon] (geom2)
 /// Only takes into account outer rings
 /// See http://stackoverflow.com/a/4833823/1979085
 _isPolyInPoly(Polygon feature1, Polygon feature2) {
