@@ -23,7 +23,7 @@ import 'package:turf_equality/turf_equality.dart';
 /// //=true
 /// turf.booleanOverlap(poly2, poly3)
 /// //=false
-bool booleanOverlap(GeoJSONObject feature1, GeoJSONObject feature2) {
+bool bo oleanOverlap(GeoJSONObject feature1, GeoJSONObject feature2) {
   var geom1 = feature1 is Feature ? feature1.geometry : feature1;
   var geom2 = feature2 is Feature ? feature2.geometry : feature2;
 
