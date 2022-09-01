@@ -580,7 +580,7 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
   }
 }
 
-isPointOnLineEnd(Point point, LineString line) {
+bool isPointOnLineEnd(Point point, LineString line) {
   if (line.coordinates[0] == point.coordinates) return true;
   if (line.coordinates[line.coordinates.length - 1] == point.coordinates) {
     return true;

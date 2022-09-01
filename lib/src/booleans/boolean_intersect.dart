@@ -12,21 +12,21 @@ import 'boolean_disjoint.dart';
 /// booleanIntersects(line, point);
 /// ```
 //=true
-booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var bool = false;
+bool booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2) {
+  var result = false;
   flattenEach(
     feature1,
     (flatten1, featureIndex, multiFeatureIndex) {
       flattenEach(
         feature2,
         (flatten2, featureIndex, multiFeatureIndex) {
-          if (bool) {
+          if (result) {
             return true;
           }
-          bool = !booleanDisjoint(flatten1, flatten2);
+          result = !booleanDisjoint(flatten1, flatten2);
         },
       );
     },
   );
-  return bool;
+  return result;
 }

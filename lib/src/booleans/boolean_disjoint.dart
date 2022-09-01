@@ -103,7 +103,7 @@ bool isLineInPoly(Polygon polygon, LineString lineString) {
 /// Is [Polygon] (geom1) in [Polygon] (geom2)
 /// Only takes into account outer rings
 /// See http://stackoverflow.com/a/4833823/1979085
-_isPolyInPoly(Polygon feature1, Polygon feature2) {
+bool _isPolyInPoly(Polygon feature1, Polygon feature2) {
   for (var coord1 in feature1.coordinates[0]) {
     if (booleanPointInPolygon(coord1, feature2)) {
       return true;

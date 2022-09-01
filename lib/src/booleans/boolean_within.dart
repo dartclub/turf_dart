@@ -1,85 +1,95 @@
 import 'package:turf/bbox.dart';
 
 import '../../helpers.dart';
-import '../invariant.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 
-/**
- * Boolean-within returns true if the first geometry is completely within the second geometry.
- * The interiors of both geometries must intersect and, the interior and boundary of the primary (geometry a)
- * must not intersect the exterior of the secondary (geometry b).
- * Boolean-within returns the exact opposite result of the `@turf/boolean-contains`.
- *
- * @name booleanWithin
- * @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
- * @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
- * @returns {boolean} true/false
- * @example
- * var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
- * var point = turf.point([1, 2]);
- *
- * turf.booleanWithin(point, line);
- * //=true
- */
+/// Boolean-within returns true if the first geometry is completely within the second geometry.
+/// The interiors of both geometries must intersect and, the interior and boundary of the primary (geometry a)
+/// must not intersect the exterior of the secondary (geometry b).
+/// Boolean-within returns the exact opposite result of the `@turf/boolean-contains`.
+/// @name booleanWithin
+/// @param {Geometry|Feature<any>} feature1 GeoJSON Feature or Geometry
+/// @param {Geometry|Feature<any>} feature2 GeoJSON Feature or Geometry
+/// @returns {boolean} true/false
+/// @example
+/// var line = turf.lineString([[1, 1], [1, 2], [1, 3], [1, 4]]);
+/// var point = turf.point([1, 2]);
+/// turf.booleanWithin(point, line);
+/// //=true
 bool booleanWithin(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var geom1 = getGeom(feature1);
-  var geom2 = getGeom(feature2);
-  var type1 = geom1.type;
-  var type2 = geom2.type;
+  var geom1 = feature1 is Feature ? feature1.geometry : feature1;
+  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
 
-  switch (type1) {
-    case Point:
-      switch (type2) {
-        case MultiPoint:
-          return isPointInMultiPoint(geom1, geom2);
-        case LineString:
-          return booleanPointOnLine(geom1, geom2, ignoreEndVertices: true);
-        case Polygon:
-        case MultiPolygon:
-          return booleanPointInPolygon(geom1, geom2, ignoreBoundary: true);
-        default:
-          throw Exception("feature2 " + type2 + " geometry not supported");
+  if (geom1 is Point) {
+    if (geom2 is MultiPoint) {
+      return isPointInMultiPoint(geom1, geom2);
+    }
+    if (geom2 is LineString) {
+      return booleanPointOnLine(geom1, geom2, ignoreEndVertices: true);
+    }
+    if (geom2 is Polygon || geom2 is MultiPolygon) {
+      return booleanPointInPolygon(geom1.coordinates, geom2!,
+          ignoreBoundary: true);
+    } else {
+      throw Exception("feature2 $geom2 geometry not supported");
+    }
+  } else if (geom1 is MultiPoint) {
+    if (geom2 is MultiPoint) {
+      return isMultiPointInMultiPoint(geom1, geom2);
+    } else if (geom2 is LineString) {
+      return isMultiPointOnLine(geom1, geom2);
+    } else if (geom2 is Polygon) {
+      return isMultiPointInPoly(geom1, geom2);
+    } else if (geom2 is MultiPolygon) {
+      bool result = false;
+      for (var p in geom2.coordinates) {
+        if (isMultiPointInPoly(geom1, Polygon(coordinates: p))) {
+          result = true;
+        }
       }
-    case MultiPoint:
-      switch (type2) {
-        case MultiPoint:
-          return isMultiPointInMultiPoint(geom1, geom2);
-        case LineString:
-          return isMultiPointOnLine(geom1, geom2);
-        case Polygon:
-        case MultiPolygon:
-          return isMultiPointInPoly(geom1, geom2);
-        default:
-          throw Exception("feature2 " + type2 + " geometry not supported");
+      return result;
+    } else {
+      throw Exception("feature2 $geom2 geometry not supported");
+    }
+  } else if (geom1 is LineString) {
+    if (geom2 is LineString) {
+      return isLineOnLine(geom1, geom2);
+    } else if (geom2 is Polygon) {
+      return isLineInPoly(geom1, geom2);
+    } else if (geom2 is MultiPolygon) {
+      bool result = false;
+      for (var p in geom2.coordinates) {
+        if (isLineInPoly(geom1, Polygon(coordinates: p))) {
+          result = true;
+        }
       }
-    case LineString:
-      switch (type2) {
-        case LineString:
-          return isLineOnLine(geom1, geom2);
-        case Polygon:
-        case MultiPolygon:
-          return isLineInPoly(geom1, geom2);
-        default:
-          throw Exception("feature2 " + type2 + " geometry not supported");
+      return result;
+    } else {
+      throw Exception("feature2: $geom2 geometry not supported");
+    }
+  } else if (geom1 is Polygon) {
+    if (geom2 is Polygon) {
+      return isPolyInPoly(geom1, geom2);
+    } else if (geom2 is MultiPolygon) {
+      bool result = false;
+      for (var p in geom2.coordinates) {
+        if (isPolyInPoly(geom1, Polygon(coordinates: p))) {
+          result = true;
+        }
       }
-    case Polygon:
-      switch (type2) {
-        case Polygon:
-        case MultiPolygon:
-          return isPolyInPoly(geom1, geom2);
-        default:
-          throw Exception("feature2 " + type2 + " geometry not supported");
-      }
-    default:
-      throw Exception("feature1 " + type1 + " geometry not supported");
+      return result;
+    } else {
+      throw Exception("feature2 $geom2 geometry not supported");
+    }
+  } else {
+    throw Exception("feature1 $geom1 geometry not supported");
   }
 }
 
-isPointInMultiPoint(Point point, MultiPoint multiPoint) {
-  var i;
+bool isPointInMultiPoint(Point point, MultiPoint multiPoint) {
   var output = false;
-  for (i = 0; i < multiPoint.coordinates.length; i++) {
+  for (var i = 0; i < multiPoint.coordinates.length; i++) {
     if (compareCoords(multiPoint.coordinates[i], point.coordinates)) {
       output = true;
       break;
@@ -88,7 +98,7 @@ isPointInMultiPoint(Point point, MultiPoint multiPoint) {
   return output;
 }
 
-isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
+bool isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
   for (var i = 0; i < multiPoint1.coordinates.length; i++) {
     var anyMatch = false;
     for (var i2 = 0; i2 < multiPoint2.coordinates.length; i2++) {
@@ -104,7 +114,7 @@ isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
   return true;
 }
 
-isMultiPointOnLine(MultiPoint multiPoint, LineString lineString) {
+bool isMultiPointOnLine(MultiPoint multiPoint, LineString lineString) {
   var foundInsidePoint = false;
 
   for (var i = 0; i < multiPoint.coordinates.length; i++) {
@@ -121,7 +131,7 @@ isMultiPointOnLine(MultiPoint multiPoint, LineString lineString) {
   return foundInsidePoint;
 }
 
-isMultiPointInPoly(MultiPoint multiPoint, Polygon polygon) {
+bool isMultiPointInPoly(MultiPoint multiPoint, Polygon polygon) {
   var output = true;
   var oneInside = false;
   var isInside = false;
@@ -142,7 +152,7 @@ isMultiPointInPoly(MultiPoint multiPoint, Polygon polygon) {
   return output && isInside;
 }
 
-isLineOnLine(LineString lineString1, LineString lineString2) {
+bool isLineOnLine(LineString lineString1, LineString lineString2) {
   for (var i = 0; i < lineString1.coordinates.length; i++) {
     if (!booleanPointOnLine(
         Point(coordinates: lineString1.coordinates[i]), lineString2)) {
@@ -152,7 +162,7 @@ isLineOnLine(LineString lineString1, LineString lineString2) {
   return true;
 }
 
-isLineInPoly(LineString linestring, Polygon polygon) {
+bool isLineInPoly(LineString linestring, Polygon polygon) {
   var polyBbox = bbox(polygon);
   var lineBbox = bbox(linestring);
   if (!doBBoxOverlap(polyBbox, lineBbox)) {
@@ -182,16 +192,10 @@ isLineInPoly(LineString linestring, Polygon polygon) {
   return foundInsidePoint;
 }
 
-/**
- * Is Polygon2 in Polygon1
- * Only takes into account outer rings
- *
- * @private
- * @param {Polygon} geometry1
- * @param {Polygon|MultiPolygon} geometry2
- * @returns {boolean} true/false
- */
-isPolyInPoly(Polygon geometry1, GeometryObject geometry2) {
+///
+/// Is Polygon2 in Polygon1
+/// Only takes into account outer rings
+bool isPolyInPoly(Polygon geometry1, GeometryObject geometry2) {
   var poly1Bbox = bbox(geometry1);
   var poly2Bbox = bbox(geometry2);
   if (!doBBoxOverlap(poly2Bbox, poly1Bbox)) {
@@ -205,7 +209,7 @@ isPolyInPoly(Polygon geometry1, GeometryObject geometry2) {
   return true;
 }
 
-doBBoxOverlap(BBox bbox1, BBox bbox2) {
+bool doBBoxOverlap(BBox bbox1, BBox bbox2) {
   if (bbox1[0]! > bbox2[0]!) return false;
   if (bbox1[2]! < bbox2[2]!) return false;
   if (bbox1[1]! > bbox2[1]!) return false;
@@ -213,28 +217,15 @@ doBBoxOverlap(BBox bbox1, BBox bbox2) {
   return true;
 }
 
-/**
- * compareCoords
- *
- * @private
- * @param {Position} pair1 point [x,y]
- * @param {Position} pair2 point [x,y]
- * @returns {boolean} true/false if coord pairs match
- */
-compareCoords(Position pair1, Position pair2) {
+/// compareCoords
+bool compareCoords(Position pair1, Position pair2) {
   return pair1[0] == pair2[0] && pair1[1] == pair2[1];
 }
 
-/**
- * getMidpoint
- *
- * @private
- * @param {Position} pair1 point [x,y]
- * @param {Position} pair2 point [x,y]
- * @returns {Position} midpoint of pair1 and pair2
- */
-getMidpoint(Position pair1, Position pair2) {
-  return [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2];
+/// getMidpoint
+Position getMidpoint(Position pair1, Position pair2) {
+  return Position.of(
+      [(pair1.lng + pair2.lng) / 2, (pair1.lat + pair2.lat) / 2]);
 }
 
 /*
