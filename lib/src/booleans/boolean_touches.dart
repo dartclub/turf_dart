@@ -1,7 +1,4 @@
-import 'package:turf/meta.dart';
-
 import '../../helpers.dart';
-import '../invariant.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 

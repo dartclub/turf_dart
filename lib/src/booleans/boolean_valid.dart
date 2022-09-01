@@ -1,8 +1,39 @@
+import 'package:turf/src/booleans/boolean_disjoint.dart';
+import 'package:turf/src/booleans/boolean_point_on_line.dart';
+import 'package:turf/src/meta/extensions.dart';
+
 import '../../helpers.dart';
-import '../invariant.dart';
 import '../line_intersect.dart';
 import 'boolean_crosses.dart';
-import 'boolean_disjoint.dart';
+
+bool checkRingsClose(List<Position> geom) {
+  return (geom[0].lng == geom[geom.length - 1].lng ||
+      geom[0].lat == geom[geom.length - 1].lat);
+}
+
+bool checkRingsForSpikesPunctures(List<Position> geom) {
+  for (var i = 0; i < geom.length - 1; i++) {
+    var point = Point(coordinates: geom[i]);
+    for (var ii = i + 1; ii < geom.length - 2; ii++) {
+      var seg = [geom[ii], geom[ii + 1]];
+      if (booleanPointOnLine(point, LineString(coordinates: seg))) return true;
+    }
+  }
+  return false;
+}
+
+bool checkPolygonAgainstOthers(
+    List<List<Position>> poly, List<List<List<Position>>> geom, int index) {
+  var polyToCheck = Polygon(coordinates: poly);
+  for (var i = index + 1; i < geom.length; i++) {
+    if (!booleanDisjoint(polyToCheck, Polygon(coordinates: geom[i]))) {
+      if (booleanCrosses(polyToCheck, LineString(coordinates: geom[i][0]))) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
 
 /// booleanValid checks if the geometry is a valid according to the OGC Simple Feature Specification.
 ///  Take a [Feature] or a [GeometryType]
@@ -14,48 +45,60 @@ import 'boolean_disjoint.dart';
 ///  booleanValid(line); // => true
 ///  booleanValid({foo: "bar"}); // => false
 /// ```
-booleanValid(GeoJSONObject feature) {
-  // // Automatic False
-  // if (!feature.type) return false;
-
+bool booleanValid(GeoJSONObject feature) {
+  print(feature);
   // Parse GeoJSON
-  var geom = getGeom(feature);
-  var type = geom.type;
-  var coords = geom.coordinates;
+  if (feature is FeatureCollection<GeometryObject>) {
+    for (Feature f in feature.features) {
+      booleanValid(f);
+    }
+  } else if (feature is GeometryCollection) {
+    for (GeometryObject g in feature.geometries) {
+      booleanValid(g);
+    }
+  } else {
+    var geom = feature is Feature ? feature.geometry : feature;
 
-  switch (type) {
-    case Point:
-      return coords.length > 1;
-    case MultiPoint:
-      for (var i = 0; i < coords.length; i++) {
-        if (coords[i].length < 2) return false;
+    if (geom is Point) {
+      if (!(geom.coordinates.length >= 2 && geom.coordinates.length <= 3)) {
+        return false;
       }
-      return true;
-    case LineString:
-      if (coords.length < 2) return false;
-      for (var i = 0; i < coords.length; i++) {
-        if (coords[i].length < 2) return false;
+    } else if (geom is MultiPoint) {
+      if (geom.coordinates.length < 2) {
+        return false;
       }
-      return true;
-    case MultiLineString:
-      if (coords.length < 2) return false;
-      for (var i = 0; i < coords.length; i++) {
-        if (coords[i].length < 2) return false;
+      for (Position p in geom.coordinates) {
+        booleanValid(Point(coordinates: p));
       }
-      return true;
-    case Polygon:
+    } else if (geom is LineString) {
+      if (geom.coordinates.length < 2) return false;
+      for (Position p in geom.coordinates) {
+        booleanValid(Point(coordinates: p));
+      }
+    } else if (geom is MultiLineString) {
+      if (geom.coordinates.length < 2) return false;
       for (var i = 0; i < geom.coordinates.length; i++) {
-        if (coords[i].length < 4) return false;
-        if (!checkRingsClose(coords[i])) return false;
-        if (checkRingsForSpikesPunctures(coords[i])) return false;
+        booleanValid(LineString(coordinates: geom.coordinates[i]));
+      }
+    } else if (geom is Polygon) {
+      geom.coordEach((Position? cCoord, _, __, ___, ____) {
+        booleanValid(Point(coordinates: cCoord!));
+      });
+      for (var i = 0; i < geom.coordinates.length; i++) {
+        if (geom.coordinates[i].length < 4) return false;
+        if (!checkRingsClose(geom.coordinates[i])) return false;
+        if (checkRingsForSpikesPunctures(geom.coordinates[i])) return false;
         if (i > 0) {
-          if (lineIntersect(Polygon(coordinates: [coords[0]]),
-                  Polygon(coordinates: [coords[i]])).features.length >
-              1) return false;
+          if (lineIntersect(
+                Polygon(coordinates: [geom.coordinates[0]]),
+                Polygon(coordinates: [geom.coordinates[i]]),
+              ).features.length >
+              1) {
+            return false;
+          }
         }
       }
-      return true;
-    case MultiPolygon:
+    } else if (geom is MultiPolygon) {
       for (var i = 0; i < geom.coordinates.length; i++) {
         var poly = geom.coordinates[i];
 
@@ -71,42 +114,12 @@ booleanValid(GeoJSONObject feature) {
           if (ii > 0) {
             if (lineIntersect(Polygon(coordinates: [poly[0]]),
                     Polygon(coordinates: [poly[ii]])).features.length >
-                1) {
-              return false;
-            }
+                1) return false;
           }
         }
       }
-      return true;
-    default:
-      return false;
-  }
-}
-
-checkRingsClose(List<Position> geom) {
-  return (geom[0][0] == geom[geom.length - 1][0] ||
-      geom[0][1] == geom[geom.length - 1][1]);
-}
-
-checkRingsForSpikesPunctures(List<Position> geom) {
-  for (var i = 0; i < geom.length - 1; i++) {
-    var point = Point(coordinates: geom[i]);
-    for (var ii = i + 1; ii < geom.length - 2; ii++) {
-      var seg = [geom[ii], geom[ii + 1]];
-      if (isPointOnLine(LineString(coordinates: seg), point)) return true;
-    }
-  }
-  return false;
-}
-
-checkPolygonAgainstOthers(
-    List<List<Position>> poly, List<List<List<Position>>> geom, int index) {
-  var polyToCheck = Polygon(coordinates: poly);
-  for (var i = index + 1; i < geom.length; i++) {
-    if (!booleanDisjoint(polyToCheck, Polygon(coordinates: geom[i]))) {
-      if (booleanCrosses(polyToCheck, LineString(coordinates: geom[i][0]))) {
-        return false;
-      }
+    } else {
+      print('is strange $geom');
     }
   }
   return true;

@@ -1,42 +1,56 @@
-// const glob = require("glob");
-// const path = require("path");
-// const test = require("tape");
-// const load = require("load-json-file");
-// // const shapely = require('boolean-shapely');
-// const isValid = require("./index").default;
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
-// test("turf-boolean-valid", (t) => {
-//   // True Fixtures
-//   glob
-//     .sync(path.join(__dirname, "test", "true", "**", "*.geojson"))
-//     .forEach((filepath) => {
-//       const name = path.parse(filepath).name;
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:test/test.dart';
+import 'package:turf/src/booleans/boolean_valid.dart';
+import 'package:turf/turf.dart';
 
-//       if (name === "multipolygon-touch") return t.skip("multipolygon-touch");
-
-//       const geojson = load.sync(filepath);
-//       const feature1 = geojson.features[0];
-//       const result = isValid(feature1);
-
-//       // if (process.env.SHAPELY) shapely.contains(feature1).then(result => t.true(result, '[true] shapely - ' + name));
-//       t.true(result, "[true] " + name);
-//     });
-//   // False Fixtures
-//   glob
-//     .sync(path.join(__dirname, "test", "false", "**", "*.geojson"))
-//     .forEach((filepath) => {
-//       const name = path.parse(filepath).name;
-//       const geojson = load.sync(filepath);
-//       const feature1 = geojson.features[0];
-//       const result = isValid(feature1);
-
-//       // if (process.env.SHAPELY) shapely.contains(feature1, feature2).then(result => t.false(result, '[false] shapely - ' + name));
-//       t.false(result, "[false] " + name);
-//     });
-//   t.end();
-// });
-
-// test("turf-boolean-valid -- obvious fails", (t) => {
-//   t.false(isValid({ foo: "bar" }));
-//   t.end();
-// });
+main() {
+  group(
+    'boolean-valid',
+    () {
+      // Directory dir = Directory('./test/examples/booleans/valid/true');
+      // for (var file in dir.listSync(recursive: true)) {
+      //   test(
+      //     file.path,
+      //     () {
+      //       // True Fixtures
+      //       if (file is File && file.path.endsWith('.geojson')) {
+      //         var inSource = file.readAsStringSync();
+      //         var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+      //         var result = booleanValid(inGeom);
+      //         expect(result, true);
+      //       }
+      //     },
+      //   );
+      // }
+      Directory dir1 = Directory('./test/examples/booleans/valid/false');
+      for (var file in dir1.listSync(recursive: true)) {
+        test(
+          file.path,
+          () {
+            // False Fixtures
+            if (file is File && file.path.endsWith('.geojson')) {
+              var inSource = file.readAsStringSync();
+              try {
+                var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+              } catch (e) {
+                if (e is AssertionError) {
+                  print('assertion worked in case of ${file.path}');
+                }
+              } finally {
+                if (!e.toString().contains('Failed assersion')) {
+                  var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
+                  var result = booleanValid(inGeom);
+                  expect(result, false);
+                }
+              }
+            }
+          },
+        );
+      }
+    },
+  );
+}
