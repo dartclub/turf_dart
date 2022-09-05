@@ -41,20 +41,22 @@ bool checkPolygonAgainstOthers(
 ///  example
 ///  ```dart
 ///  var line = LineString(coordinates:[Position.of([1, 1]), Position.of([1, 2]), Position.of([1, 3]), Position.of([1, 4])]);
-///
 ///  booleanValid(line); // => true
 ///  booleanValid({foo: "bar"}); // => false
 /// ```
 bool booleanValid(GeoJSONObject feature) {
-  print(feature);
   // Parse GeoJSON
   if (feature is FeatureCollection<GeometryObject>) {
     for (Feature f in feature.features) {
-      booleanValid(f);
+      if (!booleanValid(f)) {
+        return false;
+      }
     }
   } else if (feature is GeometryCollection) {
     for (GeometryObject g in feature.geometries) {
-      booleanValid(g);
+      if (!booleanValid(g)) {
+        return false;
+      }
     }
   } else {
     var geom = feature is Feature ? feature.geometry : feature;
@@ -68,22 +70,26 @@ bool booleanValid(GeoJSONObject feature) {
         return false;
       }
       for (Position p in geom.coordinates) {
-        booleanValid(Point(coordinates: p));
+        if (!booleanValid(Point(coordinates: p))) return false;
       }
     } else if (geom is LineString) {
       if (geom.coordinates.length < 2) return false;
       for (Position p in geom.coordinates) {
-        booleanValid(Point(coordinates: p));
+        if (!booleanValid(Point(coordinates: p))) return false;
       }
     } else if (geom is MultiLineString) {
       if (geom.coordinates.length < 2) return false;
       for (var i = 0; i < geom.coordinates.length; i++) {
-        booleanValid(LineString(coordinates: geom.coordinates[i]));
+        if (!booleanValid(LineString(coordinates: geom.coordinates[i]))) {
+          return false;
+        }
       }
     } else if (geom is Polygon) {
+      var valid = true;
       geom.coordEach((Position? cCoord, _, __, ___, ____) {
-        booleanValid(Point(coordinates: cCoord!));
+        valid = booleanValid(Point(coordinates: cCoord!));
       });
+      if (!valid) return false;
       for (var i = 0; i < geom.coordinates.length; i++) {
         if (geom.coordinates[i].length < 4) return false;
         if (!checkRingsClose(geom.coordinates[i])) return false;
@@ -119,7 +125,7 @@ bool booleanValid(GeoJSONObject feature) {
         }
       }
     } else {
-      print('is strange $geom');
+      throw Exception('the type ${geom?.type} is not supported');
     }
   }
   return true;

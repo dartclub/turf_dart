@@ -143,26 +143,24 @@ Feature<Polygon> lineStringToPolygon(
     List<List<Position>> multiCoords = [];
     num largestArea = 0;
 
-    line.coordinates.forEach(
-      (coord) {
-        if (autoComplete) {
-          coord = _autoCompleteCoords(coord);
-        }
+    for (var coord in line.coordinates) {
+      if (autoComplete) {
+        coord = _autoCompleteCoords(coord);
+      }
 
-        // Largest LineString to be placed in the first position of the coordinates array
-        if (orderCoords) {
-          var area = _calculateArea(bbox(LineString(coordinates: coord)));
-          if (area > largestArea) {
-            multiCoords.insert(0, coord);
-            largestArea = area;
-          } else {
-            multiCoords.add(coord);
-          }
+      // Largest LineString to be placed in the first position of the coordinates array
+      if (orderCoords) {
+        var area = _calculateArea(bbox(LineString(coordinates: coord)));
+        if (area > largestArea) {
+          multiCoords.insert(0, coord);
+          largestArea = area;
         } else {
           multiCoords.add(coord);
         }
-      },
-    );
+      } else {
+        multiCoords.add(coord);
+      }
+    }
     return Feature(
         geometry: Polygon(coordinates: multiCoords), properties: properties);
   } else {

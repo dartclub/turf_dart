@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_intersect.dart';
-import 'package:turf/src/intersection.dart';
 
 main() {
   var featureCollection = FeatureCollection(features: [

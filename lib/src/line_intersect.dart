@@ -50,12 +50,12 @@ FeatureCollection<Point> lineIntersect(GeoJSONObject line1, GeoJSONObject line2,
   var results = [];
   if (removeDuplicates) {
     Set unique = {};
-    intersections.forEach((intersection) {
+    for (var intersection in intersections) {
       if (!unique.contains(intersection)) {
         unique.add(intersection);
         results.add(intersection);
       }
-    });
+    }
   } else {
     results = intersections;
   }

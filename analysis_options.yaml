@@ -2,7 +2,7 @@ include: package:dartclub_lint/dart.yaml
 
 linter:
   rules:
-    always_declare_return_types: true
+    # always_declare_return_types: true
 analyzer:
   errors:
     prefer_generic_function_type_aliases: error
