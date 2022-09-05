@@ -23,11 +23,10 @@ bool checkRingsForSpikesPunctures(List<Position> geom) {
 }
 
 bool checkPolygonAgainstOthers(
-    List<List<Position>> poly, List<List<List<Position>>> geom, int index) {
-  var polyToCheck = Polygon(coordinates: poly);
+    Polygon poly, List<List<List<Position>>> geom, int index) {
   for (var i = index + 1; i < geom.length; i++) {
-    if (!booleanDisjoint(polyToCheck, Polygon(coordinates: geom[i]))) {
-      if (booleanCrosses(polyToCheck, LineString(coordinates: geom[i][0]))) {
+    if (!booleanDisjoint(poly, Polygon(coordinates: geom[i]))) {
+      if (booleanCrosses(poly, LineString(coordinates: geom[i][0]))) {
         return false;
       }
     }
@@ -109,18 +108,32 @@ bool booleanValid(GeoJSONObject feature) {
         var poly = geom.coordinates[i];
 
         for (var ii = 0; ii < poly.length; ii++) {
-          if (poly[ii].length < 4) return false;
-          if (!checkRingsClose(poly[ii])) return false;
-          if (checkRingsForSpikesPunctures(poly[ii])) return false;
+          if (poly[ii].length < 4) {
+            print('length is short');
+            return false;
+          }
+          if (!checkRingsClose(poly[ii])) {
+            print('ring closure issues');
+            return false;
+          }
+          if (checkRingsForSpikesPunctures(poly[ii])) {
+            print('spikes');
+            return false;
+          }
           if (ii == 0) {
-            if (!checkPolygonAgainstOthers(poly, geom.coordinates, i)) {
+            if (!checkPolygonAgainstOthers(
+                Polygon(coordinates: poly), geom.coordinates, i)) {
+              print('comparison fails');
               return false;
             }
           }
           if (ii > 0) {
             if (lineIntersect(Polygon(coordinates: [poly[0]]),
                     Polygon(coordinates: [poly[ii]])).features.length >
-                1) return false;
+                1) {
+              print('intersects');
+              return false;
+            }
           }
         }
       }
