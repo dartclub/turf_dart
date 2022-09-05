@@ -31,8 +31,9 @@ bool booleanEqual(
   }
 
   var equality = Equality(
-      precision: precision,
-      shiftedPolygons: shiftedPolygon,
-      reversedGeometries: direction);
+    precision: precision,
+    shiftedPolygon: shiftedPolygon,
+    direction: direction,
+  );
   return equality.compare(cleanCoords(feature1), cleanCoords(feature2));
 }

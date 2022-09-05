@@ -5,13 +5,11 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 homepage: https://github.com/dartclub/turf_dart
 repository: https://github.com/dartclub/turf_dart
-publish_to: none
 
 dependencies:
   json_annotation: ^4.4.0
-  turf_equality: ^0.0.1
-  sweepline_intersections:
-    git: https://github.com/dartclub/sweepline_intersections.git
+  turf_equality: ^0.0.2
+  sweepline_intersections: ^0.0.1
   turf_pip: ^0.0.1+1
   rbush: ^1.1.0
 
