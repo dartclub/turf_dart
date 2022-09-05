@@ -463,7 +463,9 @@ main() {
   group('Example file', () {
     var dir = Directory('./test/examples');
     for (var file in dir.listSync(recursive: true)) {
-      if (file is File && file.path.endsWith('.geojson')) {
+      if (file is File &&
+          file.path.endsWith('.geojson') &&
+          !file.path.contains('assertion')) {
         test(file.path, () {
           var source = (file).readAsStringSync();
           var json = jsonDecode(source);
