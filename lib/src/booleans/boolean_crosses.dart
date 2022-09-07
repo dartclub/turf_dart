@@ -116,9 +116,8 @@ bool doLineStringsCross(LineString lineString1, LineString lineString2) {
 bool doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
   Feature line = polygonToLine(polygon) as Feature;
   var doLinesIntersect = lineIntersect(lineString, line);
-  if (doLinesIntersect.features.isNotEmpty) {
-    return true;
-  }
+  if (doLinesIntersect.features.isNotEmpty) return true;
+
   return false;
 }
 

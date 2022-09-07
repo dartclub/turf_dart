@@ -1,3 +1,4 @@
+import 'package:turf/polygon_to_line.dart';
 import 'package:turf/src/booleans/boolean_disjoint.dart';
 import 'package:turf/src/booleans/boolean_point_on_line.dart';
 import 'package:turf/src/meta/extensions.dart';
@@ -22,11 +23,17 @@ bool checkRingsForSpikesPunctures(List<Position> geom) {
   return false;
 }
 
-bool checkPolygonAgainstOthers(
-    Polygon poly, List<List<List<Position>>> geom, int index) {
-  for (var i = index + 1; i < geom.length; i++) {
-    if (!booleanDisjoint(poly, Polygon(coordinates: geom[i]))) {
-      if (booleanCrosses(poly, LineString(coordinates: geom[i][0]))) {
+bool checkPolygonAgainstOthers(Polygon poly, MultiPolygon geom, int index) {
+  for (var i = index + 1; i < geom.coordinates.length; i++) {
+    if (!booleanDisjoint(poly, Polygon(coordinates: geom.coordinates[i]))) {
+      LineString lineS = LineString(coordinates: geom.coordinates[i][0]);
+      if (booleanCrosses(poly, lineS)) {
+        Feature line = polygonToLine(poly) as Feature;
+        var doLinesIntersect = lineIntersect(lineS, line);
+
+        /// http://portal.opengeospatial.org/files/?artifact_id=829 p.22 - 2 :
+        /// 1 intersection Point is 'finite', therefore passes the test
+        if (doLinesIntersect.features.length == 1) return true;
         return false;
       }
     }
@@ -34,12 +41,13 @@ bool checkPolygonAgainstOthers(
   return true;
 }
 
-/// booleanValid checks if the geometry is a valid according to the OGC Simple Feature Specification.
+/// booleanValid checks if the geometry is a valid according to the OGC Simple
+/// Feature Specification.
 ///  Take a [Feature] or a [GeometryType]
-///  returns a boolean true/false
 ///  example
 ///  ```dart
-///  var line = LineString(coordinates:[Position.of([1, 1]), Position.of([1, 2]), Position.of([1, 3]), Position.of([1, 4])]);
+///  var line = LineString(coordinates:[Position.of([1, 1]), Position.of([1, 2]),
+///  Position.of([1, 3]), Position.of([1, 4])]);
 ///  booleanValid(line); // => true
 ///  booleanValid({foo: "bar"}); // => false
 /// ```
@@ -109,21 +117,17 @@ bool booleanValid(GeoJSONObject feature) {
 
         for (var ii = 0; ii < poly.length; ii++) {
           if (poly[ii].length < 4) {
-            print('length is short');
             return false;
           }
           if (!checkRingsClose(poly[ii])) {
-            print('ring closure issues');
             return false;
           }
           if (checkRingsForSpikesPunctures(poly[ii])) {
-            print('spikes');
             return false;
           }
           if (ii == 0) {
             if (!checkPolygonAgainstOthers(
-                Polygon(coordinates: poly), geom.coordinates, i)) {
-              print('comparison fails');
+                Polygon(coordinates: poly), geom, i)) {
               return false;
             }
           }
@@ -131,7 +135,6 @@ bool booleanValid(GeoJSONObject feature) {
             if (lineIntersect(Polygon(coordinates: [poly[0]]),
                     Polygon(coordinates: [poly[ii]])).features.length >
                 1) {
-              print('intersects');
               return false;
             }
           }

@@ -35,7 +35,6 @@ main() {
         test(
           file.path,
           () {
-            print(file.path);
             // False Fixtures
             if (file is File && file.path.endsWith('.geojson')) {
               var inSource = file.readAsStringSync();

@@ -38,7 +38,7 @@ main() {
               var feature1 = (inGeom as FeatureCollection).features[0];
               var feature2 = inGeom.features[1];
               expect(booleanCrosses(feature1.geometry!, feature2.geometry!),
-                  false);
+                  isFalse);
             },
           );
         }
