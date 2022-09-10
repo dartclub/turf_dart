@@ -8,15 +8,31 @@ import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/feature.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-/// Takes any [LineString] or [Polygon] and returns the overlapping [LineString]s between both [Feature]s.
-/// [line1] is a Feature<LineString|MultiLineString|Polygon|MultiPolygon> or any [LineString] or [Polygon]
-/// [line2] is a Feature<LineString|MultiLineString|Polygon|MultiPolygon> or any [LineString] or [Polygon]
-/// [options.tolerance=0] Tolerance distance to match overlapping line segments (in kilometers)
-/// returns a [FeatureCollection<LineString>] lines(s) that are overlapping between both [Feature]s
+/// Takes any [LineString] or [Polygon] and returns the overlapping [LineString]s
+/// between both [Feature]s. [line1] is a [Feature]<[LineString]|[MultiLineString]
+/// |[Polygon]|[MultiPolygon]> or any [LineString] or [Polygon], [line2] is a
+/// [Feature]<[LineString]|[MultiLineString]|[Polygon]|[MultiPolygon]> or any
+/// [LineString] or [Polygon]. [tolerance=0] Tolerance distance to match
+/// overlapping line segments (in kilometers) returns a [FeatureCollection]<[LineString]>
+/// lines(s) that are overlapping between both [Feature]s.
 /// example
 /// ```dart
-/// var line1 = LineString(coordiantes:[Position.of([115, -35]), Position.of([125, -30]), Position.of([135, -30]), Position.of([145, -35])]);
-/// var line2 = LineString(coordiantes:[Position.of([115, -25]), Position.of([125, -30]), Position.of([135, -30]), Position.of([145, -25])]);
+/// var line1 = LineString(
+///   coordinates: [
+///     Position.of([115, -35]),
+///     Position.of([125, -30]),
+///     Position.of([135, -30]),
+///     Position.of([145, -35])
+///   ],
+/// );
+/// var line2 = LineString(
+///   coordinates: [
+///     Position.of([115, -25]),
+///     Position.of([125, -30]),
+///     Position.of([135, -30]),
+///     Position.of([145, -25])
+///   ],
+/// );
 /// var overlapping = lineOverlap(line1, line2);
 /// //addToMap
 /// var addToMap = [line1, line2, overlapping]
@@ -117,7 +133,8 @@ FeatureCollection<LineString> lineOverlap(
                             Point(coordinates: coordsMatch[1]))
                         .properties!['dist'] <=
                     tolerance) {
-          // Do not define (doesOverlap = true) since more matches can occur within the same segment
+          // Do not define doesOverlap = true since more matches can occur
+          // within the same segment
           // doesOverlaps = true;
           if (overlapSegment != null) {
             var combinedSegment =
@@ -168,7 +185,8 @@ Feature<LineString>? concatSegment(
     geom.add(coords[0]);
   } else {
     return null;
-  } // If the overlap leaves the segment unchanged, return undefined so that this can be identified.
+  } // If the overlap leaves the segment unchanged, return null so that this can be
+  // identified.
 
   // Otherwise return the mutated line.
   return line;

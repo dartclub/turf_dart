@@ -27,7 +27,6 @@ Position getCoord(dynamic coord) {
 }
 
 /// Unwraps coordinates from a [Feature], [GeometryObject] or a [List]
-///
 /// Gets a [List<dynamic>], [GeometryObject] or a [Feature] or a [List<dynamic>] and
 /// returns [List<dynamic>].
 /// For example:
@@ -77,8 +76,7 @@ _getCoordsForGeometry(GeometryObject geom) {
   return (geom as GeometryType).coordinates;
 }
 
-// TODO
-/// Get Geometry or Geometries from [Feature] or [GeometryType]
+/// Get Geometry or Geometries from [Feature] or [GeometryCollection]
 /// Returns [List<GeometryType>] in case geojson is a [GeometryCollection] and a
 /// [GeometryType] if geojson is a simple [GeometryType].
 /// example:

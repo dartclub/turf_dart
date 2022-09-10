@@ -10,7 +10,7 @@ import '../clean_coords.dart';
 /// of each other but they have similar [Position]s, they will be considered the
 /// same. If [shiftedPolygon] is [true], two [Polygon]s with shifted [Position]s
 /// are considered the same.
-/// Returns [true] if the objects are equal, false otherwise
+/// Returns [true] if the objects are equal, [false] otherwise
 /// example:
 /// var pt1 = Point(coordinates: Position.of([0, 0]));
 /// var pt2 = Point(coordinates: Position.of([0, 0]));

@@ -86,8 +86,7 @@ main() {
           );
           //    "support Geometry Objects"
           expect(lineIntersect(line1, line2).features, isNotEmpty);
-//     "support Feature Collection"
-
+          //    "support Feature Collection"
           expect(
               lineIntersect(
                   FeatureCollection<LineString>(

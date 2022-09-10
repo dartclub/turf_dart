@@ -19,8 +19,13 @@ import '../helpers.dart';
 /// var intersects = lineIntersect(line1, line2);
 /// //addToMap
 /// var addToMap = [line1, line2, intersects]
-FeatureCollection<Point> lineIntersect(GeoJSONObject line1, GeoJSONObject line2,
-    {bool removeDuplicates = true, bool ignoreSelfIntersections = false}) {
+/// ```
+FeatureCollection<Point> lineIntersect(
+  GeoJSONObject line1,
+  GeoJSONObject line2, {
+  bool removeDuplicates = true,
+  bool ignoreSelfIntersections = false,
+}) {
   var features = <Feature>[];
   if (line1 is FeatureCollection) {
     features.addAll(line1.features);
@@ -46,21 +51,19 @@ FeatureCollection<Point> lineIntersect(GeoJSONObject line1, GeoJSONObject line2,
 
   var intersections = sweeplineIntersections(
       FeatureCollection(features: features), ignoreSelfIntersections);
-
-  var results = [];
+  Set unique = {};
   if (removeDuplicates) {
-    Set unique = {};
     for (var intersection in intersections) {
-      if (!unique.contains(intersection)) {
-        unique.add(intersection);
-        results.add(intersection);
-      }
+      unique.add(intersection);
     }
-  } else {
-    results = intersections;
   }
   return FeatureCollection(
-      features: results
-          .map((r) => Feature(geometry: Point(coordinates: r)))
-          .toList());
+    features: (removeDuplicates ? unique.toList() : intersections)
+        .map(
+          (r) => Feature(
+            geometry: Point(coordinates: r),
+          ),
+        )
+        .toList(),
+  );
 }

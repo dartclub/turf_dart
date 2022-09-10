@@ -9,25 +9,19 @@ main() {
   group(
     'clockwise',
     () {
-      test('', () {
-        var list = <Position>[
-          Position.of([10, 10]),
-          Position.of([11, 10]),
-          Position.of([12, 10]),
-          Position.of([13, 10]),
-        ];
-        expect(booleanClockwise(list), true);
-      });
+      test(
+        'simple LineString',
+        () {
+          var list = <Position>[
+            Position.of([10, 10]),
+            Position.of([11, 10]),
+            Position.of([12, 10]),
+            Position.of([13, 10]),
+          ];
+          expect(booleanClockwise(LineString(coordinates: list)), true);
+        },
+      );
 
-      test('', () {
-        var list = [
-          [10, 10],
-          [11, 10],
-          [12, 10],
-          [13, 10],
-        ];
-        expect(() => booleanClockwise(list), throwsA(isA<UnsupportedError>()));
-      });
       var inDir = Directory('./test/examples/booleans/clockwise/true');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
@@ -38,7 +32,7 @@ main() {
             var inGeom = GeoJSONObject.fromJson(json);
             var feature0 = (inGeom as FeatureCollection).features[0];
 
-            expect(booleanClockwise(feature0), true);
+            expect(booleanClockwise(feature0.geometry as LineString), true);
           });
         }
       }
@@ -54,7 +48,7 @@ main() {
               dynamic json = jsonDecode(inSource);
               var inGeom = GeoJSONObject.fromJson(json);
               var feature0 = (inGeom as FeatureCollection).features[0];
-              expect(booleanClockwise(feature0), false);
+              expect(booleanClockwise(feature0.geometry as LineString), false);
             },
           );
         }

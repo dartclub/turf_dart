@@ -18,7 +18,7 @@ main() {
             () {
               // True Fixtures
               var inSource = file.readAsStringSync();
-              dynamic json = jsonDecode(inSource);
+              var json = jsonDecode(inSource);
               var inGeom = GeoJSONObject.fromJson(json);
               var feature = (inGeom as FeatureCollection).features[0];
               expect(booleanConcave(feature.geometry as Polygon), true);
@@ -35,7 +35,7 @@ main() {
             () {
               // False Fixtures
               var inSource = file.readAsStringSync();
-              dynamic json = jsonDecode(inSource);
+              var json = jsonDecode(inSource);
               var inGeom = GeoJSONObject.fromJson(json);
               var feature = (inGeom as FeatureCollection).features[0];
               expect(booleanConcave(feature.geometry as Polygon), false);

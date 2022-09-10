@@ -1,6 +1,7 @@
 import 'package:turf/helpers.dart';
 
-/// Takes a [Polygon] and returns true or false as to whether it is concave or not.
+/// Takes a [Polygon] and returns [true] or [false] as to whether it is concave
+/// or not.
 /// example:
 /// ```dart
 /// var convexPolygon = Polygon(coordinates: [
@@ -12,7 +13,7 @@ import 'package:turf/helpers.dart';
 ///     Position.of([0, 0])
 ///   ]
 /// ]);
-/// booleanConcave(convexPolygon)
+/// booleanConcave(convexPolygon);
 /// //=false
 /// ```
 bool booleanConcave(Polygon polygon) {

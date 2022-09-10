@@ -3,7 +3,7 @@ import 'package:turf/turf.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 
-/// Boolean-contains returns True if the second geometry is completely contained
+/// [booleanContains] returns [true] if the second geometry is completely contained
 /// by the first geometry.
 /// The interiors of both geometries must intersect and, the interior and
 /// boundary of the secondary must not intersect the exterior of the primary.

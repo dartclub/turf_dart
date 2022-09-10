@@ -9,9 +9,9 @@ repository: https://github.com/dartclub/turf_dart
 dependencies:
   json_annotation: ^4.4.0
   turf_equality: ^0.0.2
-  sweepline_intersections: ^0.0.1
   turf_pip: ^0.0.1+1
   rbush: ^1.1.0
+  sweepline_intersections: ^0.0.3+1
 
 dev_dependencies:
   dartclub_lint: ^0.4.2
