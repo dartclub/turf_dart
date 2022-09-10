@@ -154,8 +154,7 @@ bool _isLineInPoly(Polygon polygon, LineString linestring) {
       polygon,
       ignoreBoundary: true,
     )) {
-      output = true;
-      break;
+      return true;
     }
   }
   return output;
@@ -181,18 +180,11 @@ bool isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
 }
 
 bool doBBoxOverlap(BBox bbox1, BBox bbox2) {
-  if (bbox1[0]! > bbox2[0]!) {
-    return false;
-  }
-  if (bbox1[2]! < bbox2[2]!) {
-    return false;
-  }
-  if (bbox1[1]! > bbox2[1]!) {
-    return false;
-  }
-  if (bbox1[3]! < bbox2[3]!) {
-    return false;
-  }
+  if (bbox1[0]! > bbox2[0]! ||
+      bbox1[2]! < bbox2[2]! ||
+      bbox1[1]! > bbox2[1]! ||
+      bbox1[3]! < bbox2[3]!) return false;
+
   return true;
 }
 

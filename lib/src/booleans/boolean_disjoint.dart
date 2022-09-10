@@ -1,3 +1,5 @@
+import 'package:turf/src/booleans/boolean_crosses.dart';
+
 import '../../helpers.dart';
 import '../../meta.dart';
 import '../line_intersect.dart';
@@ -42,7 +44,7 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
 bool _disjoint(GeometryType geom1, GeometryType geom2) {
   if (geom1 is Point) {
     if (geom2 is Point) {
-      return !_compareCoords(geom1.coordinates, geom2.coordinates);
+      return geom1.coordinates != geom2.coordinates;
     } else if (geom2 is LineString) {
       return !isPointOnLine(geom2, geom1);
     } else if (geom2 is Polygon) {
@@ -72,7 +74,7 @@ bool _disjoint(GeometryType geom1, GeometryType geom2) {
 bool isPointOnLine(LineString lineString, Point pt) {
   for (var i = 0; i < lineString.coordinates.length - 1; i++) {
     if (isPointOnLineSegment(lineString.coordinates[i],
-        lineString.coordinates[i + 1], pt.coordinates)) {
+        lineString.coordinates[i + 1], pt.coordinates, true)) {
       return true;
     }
   }
@@ -120,32 +122,4 @@ bool _isPolyInPoly(Polygon feature1, Polygon feature2) {
     return true;
   }
   return false;
-}
-
-bool isPointOnLineSegment(
-    Position lineSegmentStart, Position lineSegmentEnd, Position pt) {
-  var dxc = pt[0]! - lineSegmentStart[0]!;
-  var dyc = pt[1]! - lineSegmentStart[1]!;
-  var dxl = lineSegmentEnd[0]! - lineSegmentStart[0]!;
-  var dyl = lineSegmentEnd[1]! - lineSegmentStart[1]!;
-  var cross = dxc * dyl - dyc * dxl;
-  if (cross != 0) {
-    return false;
-  }
-  if ((dxl).abs() >= (dyl).abs()) {
-    if (dxl > 0) {
-      return lineSegmentStart[0]! <= pt[0]! && pt[0]! <= lineSegmentEnd[0]!;
-    } else {
-      return lineSegmentEnd[0]! <= pt[0]! && pt[0]! <= lineSegmentStart[0]!;
-    }
-  } else if (dyl > 0) {
-    return lineSegmentStart[1]! <= pt[1]! && pt[1]! <= lineSegmentEnd[1]!;
-  } else {
-    return lineSegmentEnd[1]! <= pt[1]! && pt[1]! <= lineSegmentStart[1]!;
-  }
-}
-
-/// Returns true/false if coord pairs match
-bool _compareCoords(Position pair1, Position pair2) {
-  return pair1[0] == pair2[0] && pair1[1] == pair2[1];
 }

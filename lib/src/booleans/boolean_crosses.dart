@@ -1,12 +1,14 @@
+import 'package:turf/src/invariant.dart';
+
 import '../../helpers.dart';
 import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 import 'boolean_point_in_polygon.dart';
 
-/// Boolean-Crosses returns True if the intersection results in a geometry whose
+/// [booleanCrosses] returns [true] if the intersection results in a geometry whose
 /// dimension is one less than the maximum dimension of the two source geometries
 /// and the intersection set is interior to both source geometries.
-/// Boolean-Crosses returns [true] for only [MultiPoint]/[Polygon], [MultiPoint]/[LineString],
+/// [booleanCsses] returns [true] for only [MultiPoint]/[Polygon], [MultiPoint]/[LineString],
 /// [LineString]/[LineString], [LineString]/[Polygon], and [LineString]/[MultiPolygon] comparisons.
 /// Other comparisons are not supported as they are outside the OpenGIS Simple
 /// [Feature]s spec and may give unexpected results.
@@ -26,17 +28,17 @@ import 'boolean_point_in_polygon.dart';
 /// //=true
 /// ```
 bool booleanCrosses(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var geom1 = feature1 is Feature ? feature1.geometry : feature1;
-  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
+  var geom1 = getGeom(feature1);
+  var geom2 = getGeom(feature2);
 
-  Exception exception() => Exception("$geom2 is not supperted");
+  var exception = Exception("$geom2 is not supperted");
   if (geom1 is MultiPoint) {
     if (geom2 is LineString) {
       return doMultiPointAndLineStringCross(geom1, geom2);
     } else if (geom2 is Polygon) {
       return doesMultiPointCrossPoly(geom1, geom2);
     } else {
-      throw exception();
+      throw exception;
     }
   } else if (geom1 is LineString) {
     if (geom2 is MultiPoint) {
@@ -47,7 +49,7 @@ bool booleanCrosses(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is Polygon) {
       return doLineStringAndPolygonCross(geom1, geom2);
     } else {
-      throw exception();
+      throw exception;
     }
   } else if (geom1 is Polygon) {
     if (geom2 is MultiPoint) {
@@ -57,10 +59,10 @@ bool booleanCrosses(GeoJSONObject feature1, GeoJSONObject feature2) {
       // An inverse operation
       return doLineStringAndPolygonCross(geom2, geom1);
     } else {
-      throw exception();
+      throw exception;
     }
   } else {
-    throw exception();
+    throw exception;
   }
 }
 
@@ -76,7 +78,7 @@ bool doMultiPointAndLineStringCross(
       if (i2 == 0 || i2 == lineString.coordinates.length - 2) {
         incEndVertices = false;
       }
-      if (_isPointOnLineSegment(
+      if (isPointOnLineSegment(
           lineString.coordinates[i2],
           lineString.coordinates[i2 + 1],
           multiPoint.coordinates[i],
@@ -100,7 +102,7 @@ bool doLineStringsCross(LineString lineString1, LineString lineString2) {
         if (i2 == 0 || i2 == lineString2.coordinates.length - 2) {
           incEndVertices = false;
         }
-        if (_isPointOnLineSegment(
+        if (isPointOnLineSegment(
             lineString1.coordinates[i],
             lineString1.coordinates[i + 1],
             lineString2.coordinates[i2],
@@ -142,7 +144,7 @@ bool doesMultiPointCrossPoly(MultiPoint multiPoint, Polygon polygon) {
 /// lineSegmentEnd [Position] of end of line
 /// pt [Position] of point to check
 /// [incEnd] controls whether the [Point] is allowed to fall on the line ends
-bool _isPointOnLineSegment(
+bool isPointOnLineSegment(
   Position lineSegmentStart,
   Position lineSegmentEnd,
   Position pt,
