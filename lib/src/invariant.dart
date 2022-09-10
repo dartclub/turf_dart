@@ -87,11 +87,9 @@ _getCoordsForGeometry(GeometryObject geom) {
 ///   ));
 /// var geom = getGeom(feature)
 /// //= Point(coordinates: Position.of([110, 40]))
-getGeom(GeoJSONObject geojson) {
+GeoJSONObject getGeom(GeoJSONObject geojson) {
   if (geojson is Feature) {
-    return (geojson).geometry;
-  } else if (geojson is GeometryCollection) {
-    return geojson.geometries;
+    return geojson.geometry!;
   }
   return geojson;
 }
