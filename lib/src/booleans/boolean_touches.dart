@@ -10,6 +10,7 @@ import 'boolean_point_on_line.dart';
 /// var point = Point(coordinates: Positon.of([1, 1]));
 /// booleanTouches(point, line);
 /// //=true
+/// ```
 bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
   var geom1 = feature1 is Feature ? feature1.geometry : feature1;
   var geom2 = feature2 is Feature ? feature2.geometry : feature2;

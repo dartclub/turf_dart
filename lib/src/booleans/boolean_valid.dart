@@ -7,12 +7,12 @@ import '../../helpers.dart';
 import '../line_intersect.dart';
 import 'boolean_crosses.dart';
 
-bool checkRingsClose(List<Position> geom) {
+bool _checkRingsClose(List<Position> geom) {
   return (geom[0].lng == geom[geom.length - 1].lng ||
       geom[0].lat == geom[geom.length - 1].lat);
 }
 
-bool checkRingsForSpikesPunctures(List<Position> geom) {
+bool _checkRingsForSpikesPunctures(List<Position> geom) {
   for (var i = 0; i < geom.length - 1; i++) {
     var point = Point(coordinates: geom[i]);
     for (var ii = i + 1; ii < geom.length - 2; ii++) {
@@ -23,7 +23,7 @@ bool checkRingsForSpikesPunctures(List<Position> geom) {
   return false;
 }
 
-bool checkPolygonAgainstOthers(Polygon poly, MultiPolygon geom, int index) {
+bool _checkPolygonAgainstOthers(Polygon poly, MultiPolygon geom, int index) {
   for (var i = index + 1; i < geom.coordinates.length; i++) {
     if (!booleanDisjoint(poly, Polygon(coordinates: geom.coordinates[i]))) {
       LineString lineS = LineString(coordinates: geom.coordinates[i][0]);
@@ -99,8 +99,8 @@ bool booleanValid(GeoJSONObject feature) {
       if (!valid) return false;
       for (var i = 0; i < geom.coordinates.length; i++) {
         if (geom.coordinates[i].length < 4) return false;
-        if (!checkRingsClose(geom.coordinates[i])) return false;
-        if (checkRingsForSpikesPunctures(geom.coordinates[i])) return false;
+        if (!_checkRingsClose(geom.coordinates[i])) return false;
+        if (_checkRingsForSpikesPunctures(geom.coordinates[i])) return false;
         if (i > 0) {
           if (lineIntersect(
                 Polygon(coordinates: [geom.coordinates[0]]),
@@ -119,14 +119,14 @@ bool booleanValid(GeoJSONObject feature) {
           if (poly[ii].length < 4) {
             return false;
           }
-          if (!checkRingsClose(poly[ii])) {
+          if (!_checkRingsClose(poly[ii])) {
             return false;
           }
-          if (checkRingsForSpikesPunctures(poly[ii])) {
+          if (_checkRingsForSpikesPunctures(poly[ii])) {
             return false;
           }
           if (ii == 0) {
-            if (!checkPolygonAgainstOthers(
+            if (!_checkPolygonAgainstOthers(
                 Polygon(coordinates: poly), geom, i)) {
               return false;
             }

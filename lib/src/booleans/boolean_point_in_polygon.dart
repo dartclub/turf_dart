@@ -26,12 +26,13 @@ import '../invariant.dart';
 /// turf.booleanPointInPolygon(pt, poly);
 /// //= true
 /// ```
-bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
-    {bool ignoreBoundary = false}) {
+bool booleanPointInPolygon(
+  Position point,
+  GeoJSONObject polygon, {
+  bool ignoreBoundary = false,
+}) {
   List<List<List<Position>>>? polys;
   BBox? bbox = polygon.bbox;
-
-  Exception _exception = Exception('${polygon.type} is not supported');
 
   var theGeom = getGeom(polygon);
   if (theGeom is Polygon) {
@@ -39,7 +40,7 @@ bool booleanPointInPolygon(Position point, GeoJSONObject polygon,
   } else if (theGeom is MultiPolygon) {
     polys = theGeom.coordinates;
   } else {
-    throw _exception;
+    throw Exception('${polygon.type} is not supported');
   }
 
   // Quick elimination if point is not inside bbox

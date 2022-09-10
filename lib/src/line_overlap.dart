@@ -169,11 +169,12 @@ FeatureCollection<LineString> lineOverlap(
 
 Feature<LineString>? concatSegment(
     Feature<LineString> line, Feature<LineString> segment) {
+  var newLine = line.clone();
   var coords = getCoords(segment);
-  var lineCoords = getCoords(line);
+  var lineCoords = getCoords(newLine);
   var start = lineCoords[0];
   var end = lineCoords[lineCoords.length - 1];
-  List<Position> geom = (line.geometry as LineString).coordinates;
+  List<Position> geom = (newLine.geometry as LineString).coordinates;
 
   if (coords[0] == start) {
     geom.insert(0, coords[1]);
@@ -189,5 +190,5 @@ Feature<LineString>? concatSegment(
   // identified.
 
   // Otherwise return the mutated line.
-  return line;
+  return newLine;
 }
