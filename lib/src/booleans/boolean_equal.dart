@@ -12,6 +12,7 @@ import '../clean_coords.dart';
 /// are considered the same.
 /// Returns [true] if the objects are equal, [false] otherwise
 /// example:
+/// ```dart
 /// var pt1 = Point(coordinates: Position.of([0, 0]));
 /// var pt2 = Point(coordinates: Position.of([0, 0]));
 /// var pt3 = Point(coordinates: Position.of([1, 1]));
@@ -19,6 +20,7 @@ import '../clean_coords.dart';
 /// //= true
 /// booleanEqual(pt2, pt3);
 /// //= false
+/// ```
 bool booleanEqual(
   GeoJSONObject feature1,
   GeoJSONObject feature2, {
@@ -26,8 +28,8 @@ bool booleanEqual(
   bool direction = false,
   bool shiftedPolygon = false,
 }) {
-  if (!(precision >= 0)) {
-    throw Exception("precision must be a positive number");
+  if (precision < 0 || precision > 17) {
+    throw Exception("precision must be a positive number and smaller than 15");
   }
 
   var equality = Equality(

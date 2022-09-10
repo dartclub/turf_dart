@@ -20,7 +20,8 @@ void main() {
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var feature1 = (inGeom as FeatureCollection).features[0];
               var feature2 = inGeom.features[1];
-              var result = booleanParallel(feature1, feature2);
+              var result = booleanParallel(feature1.geometry as LineString,
+                  feature2.geometry as LineString);
               expect(result, true);
             }
           }
@@ -38,7 +39,8 @@ void main() {
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var feature1 = (inGeom as FeatureCollection).features[0];
               var feature2 = inGeom.features[1];
-              var result = booleanParallel(feature1, feature2);
+              var result = booleanParallel(feature1.geometry as LineString,
+                  feature2.geometry as LineString);
               expect(result, false);
             }
           }
