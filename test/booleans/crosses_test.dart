@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_crosses.dart';
 
-main() {
+void main() {
   group(
     'boolean_crosses',
     () {

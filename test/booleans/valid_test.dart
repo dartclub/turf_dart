@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/src/booleans/boolean_valid.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'boolean-valid',
     () {

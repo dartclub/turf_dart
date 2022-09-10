@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/bbox_polygon.dart';
 
-main() {
+void main() {
   test(
     "bbox-polygon",
     () {

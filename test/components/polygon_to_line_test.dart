@@ -6,7 +6,7 @@ import 'package:test/scaffolding.dart';
 import 'package:turf/polygon_to_line.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'polygonToLine',
     () {

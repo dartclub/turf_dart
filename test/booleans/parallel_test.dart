@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/src/booleans/boolean_parallel.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'boolean-overlap',
     () {

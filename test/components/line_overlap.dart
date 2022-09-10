@@ -7,7 +7,7 @@ import 'package:turf/src/line_overlap.dart';
 import 'package:turf/src/meta/feature.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-main() {
+void main() {
   FeatureCollection colorize(features, {color = "#F00", width = 25}) {
     var results = <Feature>[];
     featureEach(

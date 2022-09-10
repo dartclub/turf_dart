@@ -14,7 +14,7 @@ dependencies:
   sweepline_intersections: ^0.0.3+1
 
 dev_dependencies:
-  dartclub_lint: ^0.4.2
+  dartclub_lint: ^1.0.0
   test: ^1.19.3
   json_serializable: ^6.1.1
   build_runner: ^2.1.5

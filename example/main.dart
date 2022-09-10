@@ -18,7 +18,7 @@ Feature<Polygon> poly = Feature<Polygon>(
   ]),
 );
 
-main() {
+void main() {
   var total = segmentReduce<int>(
     poly,
     (previousValue, currentSegment, initialValue, featureIndex,

@@ -68,7 +68,7 @@ List<dynamic> getCoords(dynamic coords) {
       "Parameter must be a List<dynamic>, Geometry, Feature. coords Feature, Geometry Object or a List");
 }
 
-_getCoordsForGeometry(GeometryObject geom) {
+List<dynamic> _getCoordsForGeometry(GeometryObject geom) {
   if (geom is Point || geom is GeometryCollection) {
     throw Exception("Type must contain a list of Positions e.g Polygon");
   }

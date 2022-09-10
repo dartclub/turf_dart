@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/invariant.dart';
 
-main() {
+void main() {
   LineString line1 = LineString(coordinates: [Position(1, 2), Position(3, 4)]);
   var feature1 =
       Feature<Point>(geometry: Point(coordinates: Position(1, 2, 3)));

@@ -10,8 +10,13 @@ import 'boolean_point_on_line.dart';
 /// Boolean-contains returns the exact opposite result of the `turf/boolean-within`.
 /// example:
 /// ```dart
-/// var line = LineString(coordinates: [Position.of([1, 1]), Position.of([1, 2]), Position.of([1, 3]), Position.of([1, 4])]);
-/// var point = Point(cooridantes:Position.of([1, 2]));
+/// var line = LineString(coordinates: [
+///   Position.of([1, 1]),
+///   Position.of([1, 2]),
+///   Position.of([1, 3]),
+///   Position.of([1, 4])
+/// ]);
+/// var point = Point(coordinates: Position.of([1, 2]));
 /// booleanContains(line, point);
 /// //=true
 /// ```

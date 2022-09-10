@@ -61,7 +61,7 @@ abstract class GeoJSONObject {
     }
   }
 
-  toJson();
+  Map<String, dynamic> toJson();
 
   GeoJSONObject clone();
 }
@@ -182,7 +182,7 @@ abstract class CoordinateType implements Iterable<num> {
 
   bool get isSigned;
 
-  _untilSigned(val, limit) {
+  num _untilSigned(num val, limit) {
     if (val > limit) {
       return _untilSigned(val - 360, limit);
     } else {

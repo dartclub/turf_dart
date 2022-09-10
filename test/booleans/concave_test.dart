@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_concave.dart';
 
-main() {
+void main() {
   group(
     'concave',
     () {

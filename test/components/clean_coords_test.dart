@@ -6,7 +6,7 @@ import 'package:turf/src/clean_coords.dart';
 import 'package:turf/src/truncate.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-main() {
+void main() {
   group(
     'cleanCoords',
     () {

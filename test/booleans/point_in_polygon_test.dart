@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_point_in_polygon.dart';
 
-main() {
+void main() {
   group(
     'pip',
     () {
@@ -186,7 +186,7 @@ main() {
             ],
           );
 
-          runTest(bool ignoreBoundary) {
+          void runTest(bool ignoreBoundary) {
             var isBoundaryIncluded = ignoreBoundary == false;
             var tests = [
               [

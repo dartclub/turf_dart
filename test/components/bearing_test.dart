@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/bearing.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   test(
     'bearing',
     () {

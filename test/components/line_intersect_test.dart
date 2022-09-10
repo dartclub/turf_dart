@@ -7,7 +7,7 @@ import 'package:turf/src/line_intersect.dart';
 import 'package:turf/src/truncate.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-main() {
+void main() {
   group(
     'line_intersect',
     () {

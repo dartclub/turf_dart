@@ -23,7 +23,7 @@ final geojson = FeatureCollection(features: [
   Feature(geometry: Point(coordinates: Position.of([4, 3])), properties: null),
 ]);
 
-main() {
+void main() {
   test("clusters -- getCluster", () {
     expect(getCluster(geojson, '0').features.length, 1);
     expect(() => getCluster(geojson, 1), throwsA(isA<Exception>()));

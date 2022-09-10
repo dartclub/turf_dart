@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_contains.dart';
 
-main() {
+void main() {
   group(
     'contains',
     () {

@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_disjoint.dart';
 
-main() {
+void main() {
   group('boolean_disjoint', () {
     // True Fixtures
     var inDir = Directory('./test/examples/booleans/disjoint/test/true');
