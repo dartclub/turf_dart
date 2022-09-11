@@ -34,30 +34,30 @@ bool booleanCrosses(GeoJSONObject feature1, GeoJSONObject feature2) {
   var exception = Exception("$geom2 is not supperted");
   if (geom1 is MultiPoint) {
     if (geom2 is LineString) {
-      return doMultiPointAndLineStringCross(geom1, geom2);
+      return _doMultiPointAndLineStringCross(geom1, geom2);
     } else if (geom2 is Polygon) {
-      return doesMultiPointCrossPoly(geom1, geom2);
+      return _doesMultiPointCrossPoly(geom1, geom2);
     } else {
       throw exception;
     }
   } else if (geom1 is LineString) {
     if (geom2 is MultiPoint) {
       // An inverse operation
-      return doMultiPointAndLineStringCross(geom2, geom1);
+      return _doMultiPointAndLineStringCross(geom2, geom1);
     } else if (geom2 is LineString) {
-      return doLineStringsCross(geom1, geom2);
+      return _doLineStringsCross(geom1, geom2);
     } else if (geom2 is Polygon) {
-      return doLineStringAndPolygonCross(geom1, geom2);
+      return _doLineStringAndPolygonCross(geom1, geom2);
     } else {
       throw exception;
     }
   } else if (geom1 is Polygon) {
     if (geom2 is MultiPoint) {
       // An inverse operation
-      return doesMultiPointCrossPoly(geom2, geom1);
+      return _doesMultiPointCrossPoly(geom2, geom1);
     } else if (geom2 is LineString) {
       // An inverse operation
-      return doLineStringAndPolygonCross(geom2, geom1);
+      return _doLineStringAndPolygonCross(geom2, geom1);
     } else {
       throw exception;
     }
@@ -66,7 +66,7 @@ bool booleanCrosses(GeoJSONObject feature1, GeoJSONObject feature2) {
   }
 }
 
-bool doMultiPointAndLineStringCross(
+bool _doMultiPointAndLineStringCross(
     MultiPoint multiPoint, LineString lineString) {
   var foundIntPoint = false;
   var foundExtPoint = false;
@@ -93,7 +93,7 @@ bool doMultiPointAndLineStringCross(
   return foundIntPoint && foundExtPoint;
 }
 
-bool doLineStringsCross(LineString lineString1, LineString lineString2) {
+bool _doLineStringsCross(LineString lineString1, LineString lineString2) {
   var doLinesIntersect = lineIntersect(lineString1, lineString2);
   if (doLinesIntersect.features.isNotEmpty) {
     for (var i = 0; i < lineString1.coordinates.length - 1; i++) {
@@ -115,7 +115,7 @@ bool doLineStringsCross(LineString lineString1, LineString lineString2) {
   return false;
 }
 
-bool doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
+bool _doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
   Feature line = polygonToLine(polygon) as Feature;
   var doLinesIntersect = lineIntersect(lineString, line);
   if (doLinesIntersect.features.isNotEmpty) return true;
@@ -123,7 +123,7 @@ bool doLineStringAndPolygonCross(LineString lineString, Polygon polygon) {
   return false;
 }
 
-bool doesMultiPointCrossPoly(MultiPoint multiPoint, Polygon polygon) {
+bool _doesMultiPointCrossPoly(MultiPoint multiPoint, Polygon polygon) {
   var foundIntPoint = false;
   var foundExtPoint = false;
   var pointLength = multiPoint.coordinates.length;

@@ -46,23 +46,23 @@ bool _disjoint(GeometryType geom1, GeometryType geom2) {
     if (geom2 is Point) {
       return geom1.coordinates != geom2.coordinates;
     } else if (geom2 is LineString) {
-      return !isPointOnLine(geom2, geom1);
+      return !_isPointOnLine(geom2, geom1);
     } else if (geom2 is Polygon) {
       return !booleanPointInPolygon((geom1).coordinates, geom2);
     }
   } else if (geom1 is LineString) {
     if (geom2 is Point) {
-      return !isPointOnLine(geom1, geom2);
+      return !_isPointOnLine(geom1, geom2);
     } else if (geom2 is LineString) {
-      return !isLineOnLine(geom1, geom2);
+      return !_isLineOnLine(geom1, geom2);
     } else if (geom2 is Polygon) {
-      return !isLineInPoly(geom2, geom1);
+      return !_isLineInPoly(geom2, geom1);
     }
   } else if (geom1 is Polygon) {
     if (geom2 is Point) {
       return !booleanPointInPolygon((geom2).coordinates, geom1);
     } else if (geom2 is LineString) {
-      return !isLineInPoly(geom1, geom2);
+      return !_isLineInPoly(geom1, geom2);
     } else if (geom2 is Polygon) {
       return !_isPolyInPoly(geom2, geom1);
     }
@@ -71,7 +71,7 @@ bool _disjoint(GeometryType geom1, GeometryType geom2) {
 }
 
 // http://stackoverflow.com/a/11908158/1979085
-bool isPointOnLine(LineString lineString, Point pt) {
+bool _isPointOnLine(LineString lineString, Point pt) {
   for (var i = 0; i < lineString.coordinates.length - 1; i++) {
     if (isPointOnLineSegment(lineString.coordinates[i],
         lineString.coordinates[i + 1], pt.coordinates, true)) {
@@ -81,7 +81,7 @@ bool isPointOnLine(LineString lineString, Point pt) {
   return false;
 }
 
-bool isLineOnLine(LineString lineString1, LineString lineString2) {
+bool _isLineOnLine(LineString lineString1, LineString lineString2) {
   var doLinesIntersect = lineIntersect(lineString1, lineString2);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
@@ -89,7 +89,7 @@ bool isLineOnLine(LineString lineString1, LineString lineString2) {
   return false;
 }
 
-bool isLineInPoly(Polygon polygon, LineString lineString) {
+bool _isLineInPoly(Polygon polygon, LineString lineString) {
   for (var coord in lineString.coordinates) {
     if (booleanPointInPolygon(coord, polygon)) {
       return true;
