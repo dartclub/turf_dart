@@ -1,6 +1,7 @@
 import 'package:turf/polygon_to_line.dart';
 import 'package:turf/src/booleans/boolean_disjoint.dart';
 import 'package:turf/src/booleans/boolean_point_on_line.dart';
+import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/extensions.dart';
 
 import '../../helpers.dart';
@@ -66,7 +67,7 @@ bool booleanValid(GeoJSONObject feature) {
       }
     }
   } else {
-    var geom = feature is Feature ? feature.geometry : feature;
+    var geom = getGeom(feature);
 
     if (geom is Point) {
       if (!(geom.coordinates.length >= 2 && geom.coordinates.length <= 3)) {
@@ -141,7 +142,7 @@ bool booleanValid(GeoJSONObject feature) {
         }
       }
     } else {
-      throw Exception('the type ${geom?.type} is not supported');
+      throw Exception('the type ${geom.type} is not supported');
     }
   }
   return true;

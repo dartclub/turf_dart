@@ -87,9 +87,13 @@ List<dynamic> _getCoordsForGeometry(GeometryObject geom) {
 ///   ));
 /// var geom = getGeom(feature)
 /// //= Point(coordinates: Position.of([110, 40]))
-GeoJSONObject getGeom(GeoJSONObject geojson) {
+GeometryObject getGeom(GeoJSONObject geojson) {
   if (geojson is Feature) {
     return geojson.geometry!;
+  } else if (geojson is FeatureCollection) {
+    throw Exception(
+      'Cannot retrieve single Geometry from FeatureCollection in getGeom',
+    );
   }
-  return geojson;
+  return geojson as GeometryObject;
 }

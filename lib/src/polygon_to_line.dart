@@ -1,3 +1,5 @@
+import 'package:turf/src/invariant.dart';
+
 import '../helpers.dart';
 
 /// Converts a [Polygon] to [LineString] or [MultiLineString] or a [MultiPolygon]
@@ -21,7 +23,7 @@ import '../helpers.dart';
 /// ```
 GeoJSONObject polygonToLine(GeoJSONObject poly,
     {Map<String, dynamic>? properties}) {
-  var geom = poly is Feature ? poly.geometry : poly;
+  var geom = getGeom(poly);
 
   properties =
       properties ?? ((poly is Feature) ? poly.properties : <String, dynamic>{});
