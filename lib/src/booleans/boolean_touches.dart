@@ -1,3 +1,5 @@
+import 'package:turf/src/invariant.dart';
+
 import '../../helpers.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
@@ -12,8 +14,8 @@ import 'boolean_point_on_line.dart';
 /// //=true
 /// ```
 bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var geom1 = feature1 is Feature ? feature1.geometry : feature1;
-  var geom2 = feature2 is Feature ? feature2.geometry : feature2;
+  var geom1 = getGeom(feature1);
+  var geom2 = getGeom(feature2);
 
   if (geom1 is Point) {
     if (geom2 is LineString) {
