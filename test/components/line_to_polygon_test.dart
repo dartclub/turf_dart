@@ -25,6 +25,7 @@ void main() {
                 properties: properties,
               );
 
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

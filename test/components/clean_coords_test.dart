@@ -19,6 +19,7 @@ void main() {
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               Feature results = cleanCoords(inGeom);
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

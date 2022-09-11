@@ -33,9 +33,9 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
     BBox? featureBBox,
     dynamic featureId,
   ) {
-    var outCoords;
-    var poly;
-    var tempOutput;
+    dynamic outCoords;
+    dynamic poly;
+    dynamic tempOutput;
 
     switch (geom?.type) {
       case GeoJSONObjectType.polygon:
