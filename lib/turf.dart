@@ -1,5 +1,6 @@
 library turf;
 
+export 'src/area.dart';
 export 'src/bbox.dart';
 export 'src/bearing.dart';
 export 'src/center.dart';
