@@ -2,7 +2,7 @@ import 'package:turf/src/line_segment.dart';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   Feature<MultiLineString> multiLine = Feature<MultiLineString>(
     geometry: MultiLineString(
       coordinates: [

@@ -22,7 +22,7 @@ final l4 = LineString(coordinates: [
   Position(0, 2),
 ]);
 
-main() {
+void main() {
   test('test intersects()', () {
     expect(intersects(l1, l2)?.coordinates, Position(1, 1));
     expect(intersects(l1, l3)?.coordinates, Position(2, 2));

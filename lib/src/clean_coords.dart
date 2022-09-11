@@ -21,8 +21,7 @@ Feature cleanCoords(
   if (geojson is Feature && geojson.geometry == null) {
     throw Exception("Geometry of the Feature is null");
   }
-  GeometryObject geom =
-      geojson is Feature ? geojson.geometry! : geojson as GeometryObject;
+  GeometryObject geom = getGeom(geojson);
   geom = mutate ? geom : geom.clone() as GeometryObject;
 
   if (geojson is GeometryCollection || geojson is FeatureCollection) {

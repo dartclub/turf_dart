@@ -33,9 +33,9 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
     BBox? featureBBox,
     dynamic featureId,
   ) {
-    var outCoords;
-    var poly;
-    var tempOutput;
+    dynamic outCoords;
+    dynamic poly;
+    dynamic tempOutput;
 
     switch (geom?.type) {
       case GeoJSONObjectType.polygon:
@@ -75,7 +75,7 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
   return FeatureCollection(features: outPolys);
 }
 
-_processPolygon(Polygon poly, List<List<Position>> tempOutput) {
+void _processPolygon(Polygon poly, List<List<Position>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
 
@@ -106,7 +106,7 @@ _processPolygon(Polygon poly, List<List<Position>> tempOutput) {
   }
 }
 
-_processMultiPolygon(poly, List<List<List<Position>>> tempOutput) {
+void _processMultiPolygon(poly, List<List<List<Position>>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
   var prevMultiIndex = 0;

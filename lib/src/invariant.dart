@@ -27,7 +27,6 @@ Position getCoord(dynamic coord) {
 }
 
 /// Unwraps coordinates from a [Feature], [GeometryObject] or a [List]
-///
 /// Gets a [List<dynamic>], [GeometryObject] or a [Feature] or a [List<dynamic>] and
 /// returns [List<dynamic>].
 /// For example:
@@ -69,10 +68,32 @@ List<dynamic> getCoords(dynamic coords) {
       "Parameter must be a List<dynamic>, Geometry, Feature. coords Feature, Geometry Object or a List");
 }
 
-_getCoordsForGeometry(GeometryObject geom) {
+List<dynamic> _getCoordsForGeometry(GeometryObject geom) {
   if (geom is Point || geom is GeometryCollection) {
     throw Exception("Type must contain a list of Positions e.g Polygon");
   }
 
   return (geom as GeometryType).coordinates;
+}
+
+/// Get Geometry or Geometries from [Feature] or [GeometryCollection]
+/// Returns [List<GeometryType>] in case geojson is a [GeometryCollection] and a
+/// [GeometryType] if geojson is a simple [GeometryType].
+/// example:
+/// ```dart
+/// var feature = Feature(
+///   geometry: Point(
+///     coordinates: Position.of([110, 40])
+///   ));
+/// var geom = getGeom(feature)
+/// //= Point(coordinates: Position.of([110, 40]))
+GeometryObject getGeom(GeoJSONObject geojson) {
+  if (geojson is Feature) {
+    return geojson.geometry!;
+  } else if (geojson is FeatureCollection) {
+    throw Exception(
+      'Cannot retrieve single Geometry from FeatureCollection in getGeom',
+    );
+  }
+  return geojson as GeometryObject;
 }

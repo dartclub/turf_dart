@@ -5,7 +5,7 @@ import 'package:benchmark/benchmark.dart';
 import 'package:turf/polygon_smooth.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group("turf-polygon-smooth", () {
     var inDir = Directory('./test/examples/polygonSmooth/in');
     for (var file in inDir.listSync(recursive: true)) {

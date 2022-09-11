@@ -16,7 +16,7 @@ Feature<Polygon> poly = Feature<Polygon>(
   ]),
 );
 
-main() {
+void main() {
   group('area', () {
     benchmark('simple', () {
       area(poly);

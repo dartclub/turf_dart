@@ -6,7 +6,7 @@ import 'package:turf/polygon_smooth.dart';
 import 'package:turf/turf.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-main() {
+void main() {
   group("turf-polygon-smooth", () {
     var inDir = Directory('./test/examples/polygonSmooth/in');
     for (var file in inDir.listSync(recursive: true)) {
@@ -15,6 +15,7 @@ main() {
           var inSource = file.readAsStringSync();
           var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
           var results = polygonSmooth(inGeom, iterations: 3);
+          // ignore: prefer_interpolation_to_compose_strings
           var outPath = './' +
               file.uri.pathSegments
                   .sublist(0, file.uri.pathSegments.length - 2)

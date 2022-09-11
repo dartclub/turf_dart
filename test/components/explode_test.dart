@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:turf/src/explode.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'explode in == out',
     () {
@@ -19,6 +19,7 @@ main() {
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var inExploded = explode(inGeom);
 
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

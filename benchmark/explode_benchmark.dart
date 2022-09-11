@@ -12,7 +12,7 @@ var poly = Polygon(coordinates: [
   ],
 ]);
 
-main() {
+void main() {
   group('explode', () {
     benchmark('simple', () {
       explode(poly);
