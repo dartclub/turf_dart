@@ -193,7 +193,7 @@ FeatureCollection<GeometryObject> getAsMixedFeatCollection(
   );
 }
 
-main() {
+void main() {
   test('coordEach -- Point', () {
     featureAndCollection(pt.geometry!).forEach((input) {
       coordEach(input, (currentCoord, coordIndex, featureIndex,

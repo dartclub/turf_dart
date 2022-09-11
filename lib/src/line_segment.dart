@@ -7,7 +7,6 @@ import 'geojson.dart';
 /// [LineString] or [MultiLineString] or [Polygon] and [MultiPolygon]
 /// Returns [FeatureCollection<LineString>] 2-vertex line segments
 /// For example:
-///
 /// ```dart
 /// var polygon = Polygon.fromJson({
 ///     'coordinates': [
@@ -21,7 +20,6 @@ import 'geojson.dart';
 /// var segments = lineSegment(polygon);
 /// //addToMap
 /// var addToMap = [polygon, segments]
-
 FeatureCollection<LineString> lineSegment(GeoJSONObject geoJson,
     {bool combineGeometries = false}) {
   List<Feature<LineString>> features = [];
@@ -77,11 +75,6 @@ typedef SegmentEachCallback = dynamic Function(
 /// turf.segmentEach(polygon, function () {
 ///     total++;
 /// });
-///
-///
-///
-///
-
 void segmentEach(
   GeoJSONObject geojson,
   SegmentEachCallback callback, {
@@ -244,7 +237,6 @@ typedef SegmentReduceCallback<T> = T? Function(
 ///     return previousValue;
 /// }, 0);
 /// ```
-
 T? segmentReduce<T>(
   GeoJSONObject geojson,
   SegmentReduceCallback<T> callback,

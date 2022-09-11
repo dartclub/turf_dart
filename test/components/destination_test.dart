@@ -4,7 +4,7 @@ import 'package:turf/destination.dart';
 import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   num defaultBearing = 180;
   num defaultDistance = 100;
 

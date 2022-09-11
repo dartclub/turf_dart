@@ -20,6 +20,42 @@ To put it simply, be kind to each other.
 - Clone the repository: ```git clone git@github.com:dartclub/turf_dart.git```
 - Navigate to project's folder in terminal & get its dependencies:  ```dart pub get```
 - Go through [Implementation Process](#implementation-process)
+- Import the library in your code and use it. For example:
+```dart
+import 'package:turf/helpers.dart';
+import 'package:turf/src/line_segment.dart';
+
+  Feature<Polygon> poly = Feature<Polygon>(
+    geometry: Polygon(coordinates: [
+      [
+        Position(0, 0),
+        Position(2, 2),
+        Position(0, 1),
+        Position(0, 0),
+      ],
+      [
+        Position(0, 0),
+        Position(1, 1),
+        Position(0, 1),
+        Position(0, 0),
+      ],
+    ]),
+  );
+
+var total = segmentReduce<int>(poly, (previousValue,
+        currentSegment,
+        initialValue,
+        featureIndex,
+        multiFeatureIndex,
+        geometryIndex,
+        segmentIndex) {
+      if (previousValue != null) {
+        previousValue++;
+      }
+      return previousValue;
+    }, 0, combineNestedGeometries: false);
+// total.length ==  6
+```
 
 ## Structure of modules
 ```
