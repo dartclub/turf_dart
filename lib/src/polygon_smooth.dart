@@ -75,7 +75,7 @@ FeatureCollection polygonSmooth(GeoJSONObject inputPolys,
   return FeatureCollection(features: outPolys);
 }
 
-_processPolygon(Polygon poly, List<List<Position>> tempOutput) {
+void _processPolygon(Polygon poly, List<List<Position>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
 
@@ -106,7 +106,7 @@ _processPolygon(Polygon poly, List<List<Position>> tempOutput) {
   }
 }
 
-_processMultiPolygon(poly, List<List<List<Position>>> tempOutput) {
+void _processMultiPolygon(poly, List<List<List<Position>>> tempOutput) {
   var prevGeomIndex = 0;
   var subtractCoordIndex = 0;
   var prevMultiIndex = 0;

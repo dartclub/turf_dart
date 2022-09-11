@@ -8,7 +8,7 @@ import 'boolean_point_on_line.dart';
 /// by the first geometry.
 /// The interiors of both geometries must intersect and, the interior and
 /// boundary of the secondary must not intersect the exterior of the primary.
-/// Boolean-contains returns the exact opposite result of the `turf/boolean-within`.
+/// [booleanContains] returns the exact opposite result of the [booleanWithin].
 /// example:
 /// ```dart
 /// var line = LineString(coordinates: [
@@ -27,13 +27,12 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 
   var coords1 = (geom1 as GeometryType).coordinates;
   var coords2 = (geom2 as GeometryType).coordinates;
-  Exception _exception() =>
-      Exception("{feature2 $geom2 geometry not supported}");
+  final exception = Exception("{feature2 $geom2 geometry not supported}");
   if (geom1 is Point) {
     if (geom2 is Point) {
       return coords1 == coords2;
     } else {
-      throw _exception();
+      throw exception;
     }
   } else if (geom1 is MultiPoint) {
     if (geom2 is Point) {
@@ -41,7 +40,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is MultiPoint) {
       return _isMultiPointInMultiPoint(geom1, geom2);
     } else {
-      throw _exception();
+      throw exception;
     }
   } else if (geom1 is LineString) {
     if (geom2 is Point) {
@@ -51,7 +50,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is MultiPoint) {
       return _isMultiPointOnLine(geom1, geom2);
     } else {
-      throw _exception();
+      throw exception;
     }
   } else if (geom1 is Polygon) {
     if (geom2 is Point) {
@@ -60,14 +59,14 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is LineString) {
       return _isLineInPoly(geom1, geom2);
     } else if (geom2 is Polygon) {
-      return isPolyInPoly(geom1, geom2);
+      return _isPolyInPoly(geom1, geom2);
     } else if (geom2 is MultiPoint) {
       return _isMultiPointInPoly(geom1, geom2);
     } else {
-      throw _exception();
+      throw exception;
     }
   } else {
-    throw _exception();
+    throw exception;
   }
 }
 
@@ -138,17 +137,14 @@ bool _isLineOnLine(LineString lineString1, LineString lineString2) {
 }
 
 bool _isLineInPoly(Polygon polygon, LineString linestring) {
-  var output = false;
-  var i = 0;
-
   var polyBbox = bbox(polygon);
   var lineBbox = bbox(linestring);
-  if (!doBBoxOverlap(polyBbox, lineBbox)) {
+  if (!_doBBoxesOverlap(polyBbox, lineBbox)) {
     return false;
   }
-  for (i; i < linestring.coordinates.length - 1; i++) {
+  for (var i = 0; i < linestring.coordinates.length - 1; i++) {
     var midPoint =
-        getMidpoint(linestring.coordinates[i], linestring.coordinates[i + 1]);
+        midpointRaw(linestring.coordinates[i], linestring.coordinates[i + 1]);
     if (booleanPointInPolygon(
       midPoint,
       polygon,
@@ -157,15 +153,15 @@ bool _isLineInPoly(Polygon polygon, LineString linestring) {
       return true;
     }
   }
-  return output;
+  return false;
 }
 
 /// Is Polygon2 in Polygon1
 /// Only takes into account outer rings
-bool isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
+bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   var poly1Bbox = bbox(geom1);
   var poly2Bbox = bbox(geom2);
-  if (!doBBoxOverlap(poly1Bbox, poly2Bbox)) {
+  if (!_doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
@@ -179,16 +175,11 @@ bool isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   return true;
 }
 
-bool doBBoxOverlap(BBox bbox1, BBox bbox2) {
+bool _doBBoxesOverlap(BBox bbox1, BBox bbox2) {
   if (bbox1[0]! > bbox2[0]! ||
       bbox1[2]! < bbox2[2]! ||
       bbox1[1]! > bbox2[1]! ||
       bbox1[3]! < bbox2[3]!) return false;
 
   return true;
-}
-
-Position getMidpoint(Position pair1, Position pair2) {
-  return Position.of(
-      [(pair1[0]! + pair2[0]!) / 2, (pair1[1]! + pair2[1]!) / 2]);
 }

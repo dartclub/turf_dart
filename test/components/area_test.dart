@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group('area', () {
     final position1 = Position(0, 0);
     final position2 = Position(0, 1);
