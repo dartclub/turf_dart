@@ -11,6 +11,7 @@ This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant 
 Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
 
 ## Get started
+
 - Get the [Dart tools](https://dart.dev/tools)
 - Install the library with `dart pub add turf`
 - Import the library in your code and use it. For example:
@@ -58,12 +59,14 @@ void main() {
 ![polymorphism](https://user-images.githubusercontent.com/10634693/159876354-f9da2f37-02b3-4546-b32a-c0f82c372272.png)
 
 ## Notable Design Decisions
+
 - Nested `GeometryCollections` (as described in
   [RFC 7946 section 3.1.8](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8))
   are _not supported_ which takes a slightly firmer stance than the "should
   avoid" language in the specification
 
 ## Tests and Benchmarks
+
 Tests are run with `dart test` and benchmarks can be run with
 `dart run benchmark`
 
@@ -73,8 +76,9 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 ## Components
 
 ### Measurement
+
 - [ ] along
-- [ ] area
+- [x] [area](https://github.com/dartclub/turf_dart/blob/main/lib/src/area.dart)
 - [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
 - [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
@@ -96,6 +100,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] greatCircle
 
 ### Coordinate Mutation
+
 - [x] [cleanCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/clean_coords.dart)
 - [ ] flip
 - [ ] rewind
@@ -103,6 +108,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [truncate](https://github.com/dartclub/turf_dart/blob/main/lib/src/truncate.dart)
 
 ### Transformation
+
 - [ ] bboxClip
 - [ ] bezierSpline
 - [ ] buffer
@@ -114,7 +120,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] dissolve
 - [ ] intersect
 - [ ] lineOffset
-- [ ] polygonSmooth
+- [x] [polygonSmooth](ttps://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
 - [ ] simplify
 - [ ] tesselate
 - [ ] transformRotate
@@ -122,9 +128,10 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] transformScale
 - [ ] union
 - [ ] voronoi
-- [x] [polyLineDecode](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/polyline.dart)
+- [x] [polyLineDecode](https://github.com/dartclub/turf_dart/blob/main/lib/src/polyline.dart)
 
 ### Feature Conversion
+
 - [ ] combine
 - [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
 - [ ] flatten
@@ -133,6 +140,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
 
 ### MISC
+
 - [ ] ellipse
 - [ ] kinks
 - [ ] lineArc
@@ -150,15 +158,18 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] unkinkPolygon
 
 ### Random
+
 - [ ] randomPosition
 - [ ] randomPoint
 - [ ] randomLineString
 - [ ] randomPolygon
 
 ### Data
+
 - [ ] sample
 
 ### Interpolation
+
 - [ ] interpolate
 - [ ] isobands
 - [ ] isolines
@@ -166,24 +177,29 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] tin
 
 ### Joins
+
 - [ ] pointsWithinPolygon
 - [ ] tag
 
 ### Grids
+
 - [ ] hexGrid
 - [ ] pointGrid
 - [ ] squareGrid
 - [ ] triangleGrid
 
 ### Classification
+
 - [x] [nearestPoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point.dart)
 
 ### Aggregation
+
 - [ ] collect
 - [ ] clustersDbscan
 - [ ] clustersKmeans
 
 ### META
+
 - [x] [coordAll](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
 - [x] [coordEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
 - [x] [coordReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
@@ -204,6 +220,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [clusterReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
 
 ### Booleans
+
 - [ ] booleanClockwise
 - [ ] booleanConcave
 - [ ] booleanContains
@@ -218,6 +235,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] booleanWithin
 
 ### Unit Conversion
+
 - [x] [bearingToAzimuth](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
 - [x] [convertArea](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
 - [x] [convertLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)

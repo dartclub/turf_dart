@@ -49,9 +49,7 @@ FeatureCollection _multiPolygonToLine(MultiPolygon geom,
 
   var lines = <Feature>[];
   for (var coord in coords) {
-    {
-      lines.add(_coordsToLine(coord, properties));
-    }
+    lines.add(_coordsToLine(coord, properties));
   }
   return FeatureCollection(features: lines);
 }
