@@ -40,7 +40,7 @@ import 'package:turf_equality/turf_equality.dart';
 FeatureCollection<LineString> lineOverlap(
     GeoJSONObject line1, GeoJSONObject line2,
     {num tolerance = 0}) {
-  RBus  hBox _toRBBox(Feature<LineString> feature) {
+  RBushBox _toRBBox(Feature<LineString> feature) {
     return RBushBox.fromList(bbox(feature).toList());
   }
 
