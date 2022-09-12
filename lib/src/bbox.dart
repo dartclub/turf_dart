@@ -9,10 +9,12 @@ BBox bbox(GeoJSONObject geoJson, {bool recompute = false}) {
   }
 
   var result = BBox.named(
-    lat1: double.infinity,
+    // min x & y
     lng1: double.infinity,
-    lat2: double.negativeInfinity,
+    lat1: double.infinity,
+    // max x & y
     lng2: double.negativeInfinity,
+    lat2: double.negativeInfinity,
   );
 
   coordEach(

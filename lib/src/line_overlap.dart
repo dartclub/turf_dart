@@ -43,10 +43,11 @@ FeatureCollection<LineString> lineOverlap(
   RBushBox _toRBBox(Feature<LineString> feature) {
     var bb = bbox(feature);
     return RBushBox(
-        minX: bb.lng1.toDouble(),
-        minY: bb.lat1.toDouble(),
-        maxX: bb.lng2.toDouble(),
-        maxY: bb.lat2.toDouble());
+      minX: bb.lng1.toDouble(),
+      minY: bb.lat1.toDouble(),
+      maxX: bb.lng2.toDouble(),
+      maxY: bb.lat2.toDouble(),
+    );
   }
 
   // Containers
@@ -54,131 +55,122 @@ FeatureCollection<LineString> lineOverlap(
 
   // Create Spatial Index
   var tree = RBushBase<Feature<LineString>>(
-      getMinY: (Feature<LineString> feature) => bbox(feature).lat1.toDouble(),
-      getMinX: (Feature<LineString> feature) => bbox(feature).lng1.toDouble(),
-      toBBox: (feature) => _toRBBox(feature));
+    getMinX: (Feature<LineString> feature) => bbox(feature).lng1.toDouble(),
+    getMinY: (Feature<LineString> feature) => bbox(feature).lat1.toDouble(),
+    toBBox: (feature) => _toRBBox(feature),
+  );
 
   FeatureCollection<LineString> line = lineSegment(line1);
   tree.load(line.features);
   Feature<LineString>? overlapSegment;
-  var additionalSegments = <Feature<LineString>>[];
+  List<Feature<LineString>> additionalSegments = [];
 
   // Line Intersection
 
   // Iterate over line segments
-  segmentEach(
-    line2,
-    (Feature<LineString> currentSegment, int featureIndex,
-        int? multiFeatureIndex, int? geometryIndex, int segmentIndex) {
-      var doesOverlap = false;
+  segmentEach(line2, (Feature<LineString> currentSegment, int featureIndex,
+      int? multiFeatureIndex, int? geometryIndex, int segmentIndex) {
+    bool doesOverlap = false;
 
-      // Iterate over each segments which falls within the same bounds
-      featureEach(
+    // Iterate over each segments which falls within the same bounds
+    featureEach(
         FeatureCollection<LineString>(
             features: tree.search(_toRBBox(currentSegment))),
-        (match, index) {
-          if (!doesOverlap) {
-            List<Position> coordsSegment = () {
-              List<Position> list = getCoords(currentSegment) as List<Position>;
-              list.sort(((a, b) {
-                return a.lng < b.lng
-                    ? -1
-                    : a.lng > b.lng
-                        ? 1
-                        : 0;
-              }));
-              return list;
-            }();
-            List<Position> coordsMatch = () {
-              List<Position> list = getCoords(match) as List<Position>;
-              list.sort(((a, b) {
-                return a.lng < b.lng
-                    ? -1
-                    : a.lng > b.lng
-                        ? 1
-                        : 0;
-              }));
-              return list;
-            }();
+        (Feature currentFeature, int featureIndex) {
+      if (!doesOverlap) {
+        var coords = getCoords(currentSegment) as List<Position>;
+        var coordsMatch = getCoords(currentFeature) as List<Position>;
 
-            Equality eq = Equality();
-            // Segment overlaps feature - with dummy LineStrings just to use eq.
-            if (eq.compare(LineString(coordinates: coordsSegment),
-                LineString(coordinates: coordsMatch))) {
-              doesOverlap = true;
-              // Overlaps already exists - only append last coordinate of segment
-              if (overlapSegment != null) {
-                overlapSegment =
-                    concatSegment(overlapSegment!, currentSegment) ??
-                        overlapSegment;
-              } else {
-                overlapSegment = currentSegment;
-              }
-              // Match segments which don't share nodes (Issue #901)
-            } else if (tolerance == 0
-                ? booleanPointOnLine(Point(coordinates: coordsSegment[0]),
-                        match.geometry as LineString) &&
-                    booleanPointOnLine(Point(coordinates: coordsSegment[1]),
-                        match.geometry as LineString)
-                : nearestPointOnLine(match.geometry as LineString,
-                                Point(coordinates: coordsSegment[0]))
-                            .properties!['dist'] <=
-                        tolerance &&
-                    nearestPointOnLine(match.geometry as LineString,
-                                Point(coordinates: coordsSegment[1]))
-                            .properties!['dist'] <=
-                        tolerance) {
-              doesOverlap = true;
-              if (overlapSegment != null) {
-                overlapSegment =
-                    concatSegment(overlapSegment!, currentSegment) ??
-                        overlapSegment;
-              } else {
-                overlapSegment = currentSegment;
-              }
-            } else if (tolerance == 0
-                ? booleanPointOnLine(Point(coordinates: coordsMatch[0]),
-                        currentSegment.geometry as LineString) &&
-                    booleanPointOnLine(Point(coordinates: coordsMatch[1]),
-                        currentSegment.geometry as LineString)
-                : nearestPointOnLine(currentSegment.geometry as LineString,
-                                Point(coordinates: coordsMatch[0]))
-                            .properties!['dist'] <=
-                        tolerance &&
-                    nearestPointOnLine(currentSegment.geometry as LineString,
-                                Point(coordinates: coordsMatch[1]))
-                            .properties!['dist'] <=
-                        tolerance) {
-              // Do not define doesOverlap = true since more matches can occur
-              // within the same segment
-              // doesOverlaps = true;
-              if (overlapSegment != null) {
-                Feature<LineString>? combinedSegment = concatSegment(
-                    overlapSegment!, match as Feature<LineString>);
-                if (combinedSegment != null) {
-                  overlapSegment = combinedSegment;
-                } else {
-                  additionalSegments.add(match);
-                }
-              } else {
-                overlapSegment = match as Feature<LineString>;
-              }
-            }
+        coords.sort(((a, b) {
+          return a.lng < b.lng
+              ? -1
+              : a.lng > b.lng
+                  ? 1
+                  : 0;
+        }));
+
+        coordsMatch.sort(((a, b) {
+          return a.lng < b.lng
+              ? -1
+              : a.lng > b.lng
+                  ? 1
+                  : 0;
+        }));
+
+        Equality eq = Equality();
+        // Segment overlaps feature - with dummy LineStrings just to use eq.
+        if (eq.compare(LineString(coordinates: coords),
+            LineString(coordinates: coordsMatch))) {
+          doesOverlap = true;
+          // Overlaps already exists - only append last coordinate of segment
+          if (overlapSegment != null) {
+            overlapSegment = concatSegment(overlapSegment!, currentSegment) ??
+                overlapSegment;
+          } else {
+            overlapSegment = currentSegment;
           }
-        },
-      );
-
-      // Segment doesn't overlap - add overlaps to results & reset
-      if (doesOverlap == false && overlapSegment != null) {
-        features.add(overlapSegment!);
-        if (additionalSegments.isNotEmpty) {
-          features = [...features, ...additionalSegments];
-          additionalSegments = [];
+          // Match segments which don't share nodes (Issue #901)
+        } else if (tolerance == 0
+            ? booleanPointOnLine(Point(coordinates: coords[0]),
+                    currentFeature.geometry as LineString) &&
+                booleanPointOnLine(Point(coordinates: coords[1]),
+                    currentFeature.geometry as LineString)
+            : nearestPointOnLine(currentFeature.geometry as LineString,
+                            Point(coordinates: coords[0]))
+                        .properties!['dist'] <=
+                    tolerance &&
+                nearestPointOnLine(currentFeature.geometry as LineString,
+                            Point(coordinates: coords[1]))
+                        .properties!['dist'] <=
+                    tolerance) {
+          doesOverlap = true;
+          if (overlapSegment != null) {
+            overlapSegment = concatSegment(overlapSegment!, currentSegment) ??
+                overlapSegment;
+          } else {
+            overlapSegment = currentSegment;
+          }
+        } else if (tolerance == 0
+            ? booleanPointOnLine(Point(coordinates: coordsMatch[0]),
+                    currentSegment.geometry as LineString) &&
+                booleanPointOnLine(Point(coordinates: coordsMatch[1]),
+                    currentSegment.geometry as LineString)
+            : nearestPointOnLine(currentSegment.geometry as LineString,
+                            Point(coordinates: coordsMatch[0]))
+                        .properties!['dist'] <=
+                    tolerance &&
+                nearestPointOnLine(currentSegment.geometry as LineString,
+                            Point(coordinates: coordsMatch[1]))
+                        .properties!['dist'] <=
+                    tolerance) {
+          // Do not define doesOverlap = true since more matches can occur
+          // within the same segment
+          // doesOverlaps = true;
+          if (overlapSegment != null) {
+            Feature<LineString>? combinedSegment = concatSegment(
+                overlapSegment!, currentFeature as Feature<LineString>);
+            if (combinedSegment != null) {
+              overlapSegment = combinedSegment;
+            } else {
+              additionalSegments.add(currentFeature);
+            }
+          } else {
+            overlapSegment = currentFeature as Feature<LineString>;
+          }
         }
-        overlapSegment = null;
       }
-    },
-  );
+    });
+
+    // Segment doesn't overlap - add overlaps to results & reset
+    if (doesOverlap == false && overlapSegment != null) {
+      features.add(overlapSegment!);
+      if (additionalSegments.isNotEmpty) {
+        features.addAll(additionalSegments);
+        additionalSegments = [];
+      }
+      overlapSegment = null;
+    }
+  });
   // Add last segment if exists
   if (overlapSegment != null) features.add(overlapSegment!);
 
@@ -186,11 +178,13 @@ FeatureCollection<LineString> lineOverlap(
 }
 
 Feature<LineString>? concatSegment(
-    Feature<LineString> line, Feature<LineString> segment) {
-  var coords = getCoords(segment);
-  var lineCoords = getCoords(line);
-  var start = lineCoords[0];
-  var end = lineCoords[lineCoords.length - 1];
+  Feature<LineString> line,
+  Feature<LineString> segment,
+) {
+  var coords = getCoords(segment) as List<Position>;
+  var lineCoords = getCoords(line) as List<Position>;
+  Position start = lineCoords[0];
+  Position end = lineCoords[lineCoords.length - 1];
   List<Position> positions = (line.geometry as LineString).clone().coordinates;
 
   if (coords[0] == start) {
