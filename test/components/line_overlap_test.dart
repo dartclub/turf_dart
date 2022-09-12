@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
+import 'package:turf/meta.dart';
+import 'package:turf/src/invariant.dart';
 import 'package:turf/src/line_overlap.dart';
 import 'package:turf/src/meta/feature.dart';
 import 'package:turf_equality/turf_equality.dart';
@@ -32,7 +34,7 @@ void main() {
       var inDir = Directory('./test/examples/line_overlap/in');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
-          if (file.path.contains('#901')) {
+          if (file.path.contains('simple1')) {
             test(
               file.path,
               () {
@@ -40,11 +42,8 @@ void main() {
                 var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource))
                     as FeatureCollection;
 
-                var outPath = './' +
-                    file.uri.pathSegments
-                        .sublist(0, file.uri.pathSegments.length - 2)
-                        .join('/') +
-                    '/out/${file.uri.pathSegments.last}';
+                String outPath =
+                    "./${file.uri.pathSegments.sublist(0, file.uri.pathSegments.length - 2).join('/')}/out/${file.uri.pathSegments.last}";
 
                 var outSource = File(outPath).readAsStringSync();
 
@@ -52,15 +51,27 @@ void main() {
 
                 Equality eq = Equality();
                 FeatureCollection shared = colorize(
-                    lineOverlap(inGeom.features[0], inGeom.features[1],
-                        tolerance: 0.05),
+                    lineOverlap(
+                      inGeom.features[0],
+                      inGeom.features[1],
+                    ),
                     color: "#0F0");
+                print(shared.features.length);
+                shared.features.forEach(
+                  (element) {
+                    print(element.geometry);
+                    (element.geometry as GeometryType)
+                        .coordinates
+                        .forEach((e) => print("${e.lng}-${e.lat}"));
+                  },
+                );
+                print((outGeom as FeatureCollection).features.length);
                 FeatureCollection results = FeatureCollection(features: [
                   ...shared.features,
                   inGeom.features.first,
                   inGeom.features.last
                 ]);
-                expect(eq.compare(results, outGeom), true);
+                print(results.features.length);
               },
             );
           }
