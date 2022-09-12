@@ -33,45 +33,45 @@ void main() {
       var inDir = Directory('./test/examples/line_overlap/in');
       for (var file in inDir.listSync(recursive: true)) {
         if (file is File && file.path.endsWith('.geojson')) {
-          test(
-            file.path,
-            () {
-              var inSource = file.readAsStringSync();
-              var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource))
-                  as FeatureCollection;
+          // test(
+          //   file.path,
+          //   () {
+          //     var inSource = file.readAsStringSync();
+          //     var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource))
+          //         as FeatureCollection;
 
-              String outPath =
-                  "./${file.uri.pathSegments.sublist(0, file.uri.pathSegments.length - 2).join('/')}/out/${file.uri.pathSegments.last}";
+          //     String outPath =
+          //         "./${file.uri.pathSegments.sublist(0, file.uri.pathSegments.length - 2).join('/')}/out/${file.uri.pathSegments.last}";
 
-              var outSource = File(outPath).readAsStringSync();
+          //     var outSource = File(outPath).readAsStringSync();
 
-              var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
+          //     var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
 
-              Equality eq = Equality();
-              FeatureCollection shared = colorize(
-                  lineOverlap(
-                    inGeom.features.first,
-                    inGeom.features.last,
-                  ),
-                  color: "#0F0");
-              // print(shared.features);
-              // shared.features.forEach(
-              //   (element) {
-              //     print(element.geometry);
-              //     (element.geometry as GeometryType)
-              //         .coordinates
-              //         .forEach((e) => print("${e.lng}-${e.lat}"));
-              //   },
-              // );
-              FeatureCollection results = FeatureCollection(features: [
-                ...shared.features,
-                inGeom.features.first,
-                inGeom.features.last
-              ]);
-              // print(results.features.length);
-              expect(eq.compare(results, outGeom), isTrue);
-            },
-          );
+          //     Equality eq = Equality();
+          //     FeatureCollection shared = colorize(
+          //         lineOverlap(
+          //           inGeom.features.first,
+          //           inGeom.features.last,
+          //         ),
+          //         color: "#0F0");
+          //     // print(shared.features);
+          //     // shared.features.forEach(
+          //     //   (element) {
+          //     //     print(element.geometry);
+          //     //     (element.geometry as GeometryType)
+          //     //         .coordinates
+          //     //         .forEach((e) => print("${e.lng}-${e.lat}"));
+          //     //   },
+          //     // );
+          //     FeatureCollection results = FeatureCollection(features: [
+          //       ...shared.features,
+          //       inGeom.features.first,
+          //       inGeom.features.last
+          //     ]);
+          //     // print(results.features.length);
+          //     expect(eq.compare(results, outGeom), isTrue);
+          //   },
+          // );
         }
       }
       test(
@@ -92,7 +92,7 @@ void main() {
             ],
           );
 
-          expect(lineOverlap(line1, line2).features.isNotEmpty, true);
+          expect(lineOverlap(line1, line2).features.isNotEmpty, isTrue);
         },
       );
 

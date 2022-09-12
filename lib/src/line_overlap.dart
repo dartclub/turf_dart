@@ -40,14 +40,8 @@ import 'package:turf_equality/turf_equality.dart';
 FeatureCollection<LineString> lineOverlap(
     GeoJSONObject line1, GeoJSONObject line2,
     {num tolerance = 0}) {
-  RBushBox _toRBBox(Feature<LineString> feature) {
-    var bb = bbox(feature);
-    return RBushBox(
-      minX: bb.lng1.toDouble(),
-      minY: bb.lat1.toDouble(),
-      maxX: bb.lng2.toDouble(),
-      maxY: bb.lat2.toDouble(),
-    );
+  RBus  hBox _toRBBox(Feature<LineString> feature) {
+    return RBushBox.fromList(bbox(feature).toList());
   }
 
   // Containers
@@ -55,6 +49,7 @@ FeatureCollection<LineString> lineOverlap(
 
   // Create Spatial Index
   var tree = RBushBase<Feature<LineString>>(
+    maxEntries: 4,
     getMinX: (Feature<LineString> feature) => bbox(feature).lng1.toDouble(),
     getMinY: (Feature<LineString> feature) => bbox(feature).lat1.toDouble(),
     toBBox: (feature) => _toRBBox(feature),
@@ -71,11 +66,9 @@ FeatureCollection<LineString> lineOverlap(
   segmentEach(line2, (Feature<LineString> currentSegment, int featureIndex,
       int? multiFeatureIndex, int? geometryIndex, int segmentIndex) {
     bool doesOverlap = false;
-
+    var list = tree.search(_toRBBox(currentSegment));
     // Iterate over each segments which falls within the same bounds
-    featureEach(
-        FeatureCollection<LineString>(
-            features: tree.search(_toRBBox(currentSegment))),
+    featureEach(FeatureCollection<LineString>(features: list),
         (Feature currentFeature, int featureIndex) {
       if (!doesOverlap) {
         var coords = getCoords(currentSegment) as List<Position>;
