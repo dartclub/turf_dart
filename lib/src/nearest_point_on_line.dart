@@ -163,7 +163,7 @@ _NearestMulti? _nearestPointOnMultiLine(
   for (var i = 0; i < lines.coordinates.length; ++i) {
     final line = LineString(coordinates: lines.coordinates[i]);
 
-    final candidate = _nearestPointOnLine(line, point);
+    final candidate = _nearestPointOnLine(line, point, unit);
 
     if (nearest == null || candidate.distance < nearest.distance) {
       nearest = _NearestMulti(
