@@ -35,11 +35,13 @@ void main() {
 
         transformRotate(line, 100);
 
-        expect(eq.compare(line, lineBefore), true, reason: 'input should NOT be mutated');
+        expect(eq.compare(line, lineBefore), true,
+            reason: 'input should NOT be mutated');
 
         transformRotate(line, 100, mutate: true);
 
-        expect(eq.compare(truncate(line, precision: 1), rotatedMatcher), true, reason: "input should be mutated");
+        expect(eq.compare(truncate(line, precision: 1), rotatedMatcher), true,
+            reason: "input should be mutated");
       });
 
       Directory inDir = Directory('./test/examples/transform_rotate/in');
@@ -53,7 +55,8 @@ void main() {
 
               final angle = feature.properties?['angle'];
               var pivot = feature.properties?['pivot'];
-              pivot = pivot == null ? null : Point.fromJson({'coordinates': pivot});
+              pivot =
+                  pivot == null ? null : Point.fromJson({'coordinates': pivot});
 
               final rotated = transformRotate(
                 feature,
@@ -74,9 +77,11 @@ void main() {
                   makePivot(pivot, feature),
                 ];
 
-              Directory outDir = Directory('./test/examples/transform_rotate/out');
+              Directory outDir =
+                  Directory('./test/examples/transform_rotate/out');
               for (var file2 in outDir.listSync(recursive: true)) {
-                if (file2 is File && file2.uri.pathSegments.last == file.uri.pathSegments.last) {
+                if (file2 is File &&
+                    file2.uri.pathSegments.last == file.uri.pathSegments.last) {
                   var outSource = file2.readAsStringSync();
                   var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
                   Equality eq = Equality();
@@ -93,7 +98,8 @@ void main() {
 
 Feature<GeometryObject> colorize(GeoJSONObject geojson) {
   final feature = geojson as Feature<GeometryObject>;
-  if (feature.geometry?.type == GeoJSONObjectType.point || feature.geometry?.type == GeoJSONObjectType.multiPoint) {
+  if (feature.geometry?.type == GeoJSONObjectType.point ||
+      feature.geometry?.type == GeoJSONObjectType.multiPoint) {
     feature.properties?.putIfAbsent("marker-color", () => "#F00");
     feature.properties?.putIfAbsent("marker-symbol", () => "star");
   } else {
@@ -107,5 +113,7 @@ Feature<Point> makePivot(Point? pivot, GeoJSONObject geojson) {
   if (pivot == null) {
     return centroid(geojson, properties: {"marker-symbol": "circle"});
   }
-  return Feature<Point>(geometry: Point(coordinates: getCoord(pivot)), properties: {"marker-symbol": "circle"});
+  return Feature<Point>(
+      geometry: Point(coordinates: getCoord(pivot)),
+      properties: {"marker-symbol": "circle"});
 }

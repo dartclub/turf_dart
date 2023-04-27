@@ -18,14 +18,17 @@ void main() {
           geometry: Point(coordinates: Position(12, -54)),
           properties: props,
         );
-        final out = rhumbDestination(pt.geometry!, 0, 45, properties: {'foo': 'bar'});
+        final out =
+            rhumbDestination(pt.geometry!, 0, 45, properties: {'foo': 'bar'});
 
-        final isEqual = out.properties != null && out.properties!.keys.every((k) => props[k] == out.properties?[k]);
+        final isEqual = out.properties != null &&
+            out.properties!.keys.every((k) => props[k] == out.properties?[k]);
         expect(isEqual, true);
       });
 
       test('rhumb-destintation -- allows negative distance', () {
-        final matcher = Point(coordinates: Position(10.90974456038191, -54.63591552764877));
+        final matcher =
+            Point(coordinates: Position(10.90974456038191, -54.63591552764877));
         final pt = Point(coordinates: Position(12, -54));
 
         final out = rhumbDestination(pt, -100, 45);
@@ -45,7 +48,8 @@ void main() {
               final bearing = feature.properties?['bearing'] ?? 180;
               final dist = feature.properties?['dist'] ?? 100;
               final unitName = feature.properties?['units'];
-              final unit = unitName == null ? null : Unit.values.byName(unitName);
+              final unit =
+                  unitName == null ? null : Unit.values.byName(unitName);
 
               final destinationPoint = rhumbDestination(
                 feature.geometry!,
@@ -57,7 +61,10 @@ void main() {
 
               final line = truncate(
                 Feature<LineString>(
-                    geometry: LineString(coordinates: [getCoord(feature), getCoord(destinationPoint)]),
+                    geometry: LineString(coordinates: [
+                      getCoord(feature),
+                      getCoord(destinationPoint)
+                    ]),
                     properties: {
                       'stroke': "#F00",
                       "stroke-width": 4,
@@ -67,9 +74,11 @@ void main() {
               feature.properties ??= const {};
               feature.properties?.putIfAbsent('marker-color', () => "#F00");
 
-              final result = FeatureCollection<GeometryObject>(features: [line, feature, destinationPoint]);
+              final result = FeatureCollection<GeometryObject>(
+                  features: [line, feature, destinationPoint]);
 
-              Directory outDir = Directory('./test/examples/rhumb_destination/out');
+              Directory outDir =
+                  Directory('./test/examples/rhumb_destination/out');
               for (var file2 in outDir.listSync(recursive: true)) {
                 if (file2 is File &&
                     file2.uri.pathSegments.last == file.uri.pathSegments.last) {

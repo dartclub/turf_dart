@@ -293,7 +293,6 @@ class BBox extends CoordinateType {
 
     /// latitude 2 for 2 dim. positions; longitude 2 for 3 dim. positions
     num lng2, [
-
     /// latitude 2 for 3 dim. positions
     num? lat2,
 

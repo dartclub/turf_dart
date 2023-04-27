@@ -1,6 +1,7 @@
-import 'package:turf/src/invariant.dart';
 import 'dart:math' as math;
-import '../helpers.dart';
+
+import 'package:turf/helpers.dart';
+import 'package:turf/src/invariant.dart';
 
 ///
 /// Returns the destination [Point] having travelled the given distance along a Rhumb line from the
@@ -33,7 +34,8 @@ Feature<Point> rhumbDestination(
   var distanceInMeters = convertLength(distance.abs(), unit, Unit.meters);
   if (wasNegativeDistance) distanceInMeters = -(distanceInMeters.abs());
   final coords = getCoord(origin);
-  final destination = calculateRhumbDestination(coords, distanceInMeters, bearing);
+  final destination =
+      calculateRhumbDestination(coords, distanceInMeters, bearing);
 
   // compensate the crossing of the 180th meridian (https://macwright.org/2016/09/26/the-180th-meridian.html)
   // solution from https://github.com/mapbox/mapbox-gl-js/issues/3250#issuecomment-294887678
@@ -43,10 +45,14 @@ Feature<Point> rhumbDestination(
           ? 360
           : 0;
 
-  return Feature<Point>(geometry: Point(coordinates: Position(destination.lng + compensateLng, destination.lat)));
+  return Feature<Point>(
+      geometry: Point(
+          coordinates:
+              Position(destination.lng + compensateLng, destination.lat)));
 }
 
-Position calculateRhumbDestination(Position origin, num distance, num bearing, [num radius = earthRadius]) {
+Position calculateRhumbDestination(Position origin, num distance, num bearing,
+    [num radius = earthRadius]) {
   final R = radius > 0 ? radius : earthRadius;
   final delta = distance / R;
   final lambda1 = (origin.lng * math.pi) / 180;
@@ -61,7 +67,8 @@ Position calculateRhumbDestination(Position origin, num distance, num bearing, [
     phi2 = phi2 > 0 ? math.pi - phi2 : -math.pi - phi2;
   }
 
-  final dPsi = math.log(math.tan(phi2 / 2 + math.pi / 4) / math.tan(phi1 / 2 + math.pi / 4));
+  final dPsi = math
+      .log(math.tan(phi2 / 2 + math.pi / 4) / math.tan(phi1 / 2 + math.pi / 4));
   // E-W course becomes ill-conditioned with 0/0
   final q = dPsi.abs() > 10e-12 ? dPhi / dPsi : math.cos(phi1);
 

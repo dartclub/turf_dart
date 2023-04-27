@@ -1,11 +1,10 @@
 import 'package:turf/bearing.dart';
 import 'package:turf/distance.dart';
+import 'package:turf/helpers.dart';
 import 'package:turf/src/centroid.dart';
+import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/coord.dart';
 import 'package:turf/src/rhumb_destination.dart';
-
-import '../helpers.dart';
-import 'invariant.dart';
 
 /// Rotates any [GeoJSONObject] of a specified angle, around its `centroid` or a given `pivot` [Point].
 ///

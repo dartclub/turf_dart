@@ -1,6 +1,7 @@
-import 'package:turf/src/invariant.dart';
 import 'dart:math' as math;
-import '../helpers.dart';
+
+import 'package:turf/helpers.dart';
+import 'package:turf/src/invariant.dart';
 
 /// Calculates the distance along a rhumb line between two [Point] in degrees, radians,
 /// miles, or kilometers.
@@ -25,7 +26,8 @@ num rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
           ? 360
           : 0;
 
-  final distanceInMeters = calculateRhumbDistance(origin, Position(destination.lng + compensateLng, destination.lat));
+  final distanceInMeters = calculateRhumbDistance(
+      origin, Position(destination.lng + compensateLng, destination.lat));
   final distance = convertLength(distanceInMeters, Unit.meters, unit);
   return distance;
 }
@@ -42,7 +44,8 @@ num rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
 /// ```
 ///
 
-num calculateRhumbDistance(Position origin, Position destination, [num radius = earthRadius]) {
+num calculateRhumbDistance(Position origin, Position destination,
+    [num radius = earthRadius]) {
   final R = radius;
   final phi1 = (origin.lat * math.pi) / 180;
   final phi2 = (destination.lat * math.pi) / 180;
@@ -56,11 +59,13 @@ num calculateRhumbDistance(Position origin, Position destination, [num radius = 
 
   // on Mercator projection, longitude distances shrink by latitude; q is the 'stretch factor'
   // q becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it
-  final dPsi = math.log(math.tan(phi2 / 2 + math.pi / 4) / math.tan(phi1 / 2 + math.pi / 4));
+  final dPsi = math
+      .log(math.tan(phi2 / 2 + math.pi / 4) / math.tan(phi1 / 2 + math.pi / 4));
   final q = dPsi.abs() > 10e-12 ? dPhi / dPsi : math.cos(phi1);
 
   // distance is pythagoras on 'stretched' Mercator projection
-  final delta = math.sqrt(dPhi * dPhi + q * q * dLambda * dLambda); // angular distance in radians
+  final delta = math.sqrt(
+      dPhi * dPhi + q * q * dLambda * dLambda); // angular distance in radians
   final dist = delta * R;
 
   return dist;

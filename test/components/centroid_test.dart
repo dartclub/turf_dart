@@ -11,7 +11,9 @@ void main() {
     'centroid',
     () {
       test('centroid -- add properties', () {
-        final line = Feature<LineString>(geometry: LineString(coordinates: [Position(0, 0), Position(1, 1)]));
+        final line = Feature<LineString>(
+            geometry:
+                LineString(coordinates: [Position(0, 0), Position(1, 1)]));
         final out = centroid(line, properties: {'foo': 'bar'});
 
         final isEqual = out.properties?['foo'] == 'bar';
@@ -32,15 +34,18 @@ void main() {
                 properties: {"marker-symbol": "circle"},
               );
 
-              final result = FeatureCollection<GeometryObject>(features: [centered]);
+              final result =
+                  FeatureCollection<GeometryObject>(features: [centered]);
               featureEach(
                 feature,
-                (currentFeature, featureIndex) => result.features.add(currentFeature),
+                (currentFeature, featureIndex) =>
+                    result.features.add(currentFeature),
               );
 
               Directory outDir = Directory('./test/examples/centroid/out');
               for (var file2 in outDir.listSync(recursive: true)) {
-                if (file2 is File && file2.uri.pathSegments.last == file.uri.pathSegments.last) {
+                if (file2 is File &&
+                    file2.uri.pathSegments.last == file.uri.pathSegments.last) {
                   var outSource = file2.readAsStringSync();
                   var outGeom = GeoJSONObject.fromJson(jsonDecode(outSource));
                   Equality eq = Equality();
