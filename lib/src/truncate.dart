@@ -51,22 +51,24 @@ void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
           int? featureIndex,
           int? multiFeatureIndex,
           int? geometryIndex,
+          int? localCoordIndex,
         ) {
           if (currentGeometry is Point) {
             currentGeometry.coordinates =
                 _truncateCoords(currentCoord!, precision, coordinates);
-          } else if (currentGeometry is LineString) {
-            currentGeometry.coordinates[coordIndex!] =
+          } else if (currentGeometry is LineString ||
+              currentGeometry is MultiPoint) {
+            currentGeometry.coordinates[localCoordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           } else if (currentGeometry is Polygon) {
-            currentGeometry.coordinates[geometryIndex!][coordIndex!] =
+            currentGeometry.coordinates[geometryIndex!][localCoordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           } else if (currentGeometry is MultiLineString) {
-            currentGeometry.coordinates[multiFeatureIndex!][coordIndex!] =
+            currentGeometry.coordinates[multiFeatureIndex!][localCoordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           } else if (currentGeometry is MultiPolygon) {
             currentGeometry.coordinates[multiFeatureIndex!][geometryIndex!]
-                    [coordIndex!] =
+                    [localCoordIndex!] =
                 _truncateCoords(currentCoord!, precision, coordinates);
           }
         },

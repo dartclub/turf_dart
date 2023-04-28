@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:test/test.dart';
 import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
