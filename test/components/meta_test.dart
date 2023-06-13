@@ -193,7 +193,7 @@ FeatureCollection<GeometryObject> getAsMixedFeatCollection(
   );
 }
 
-main() {
+void main() {
   test('coordEach -- Point', () {
     featureAndCollection(pt.geometry!).forEach((input) {
       coordEach(input, (currentCoord, coordIndex, featureIndex,
@@ -485,6 +485,24 @@ main() {
       return false;
     });
     expect(count, 1);
+  });
+
+  test('coordEach -- excludeWrapCoord - Polygon', () {
+    var count = 0;
+    coordEach(poly, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
+        geometryIndex) {
+      count += 1;
+    }, true);
+    expect(count, 3);
+  });
+
+  test('coordEach -- excludeWrapCoord - MultiPolygon', () {
+    var count = 0;
+    coordEach(multiPoly, (currentCoord, coordIndex, featureIndex,
+        multiFeatureIndex, geometryIndex) {
+      count += 1;
+    }, true);
+    expect(count, 6);
   });
 
   test('propEach --featureCollection', () {

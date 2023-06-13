@@ -1,8 +1,10 @@
 library turf;
 
+export 'src/area.dart';
 export 'src/bbox.dart';
 export 'src/bearing.dart';
 export 'src/center.dart';
+export 'src/centroid.dart';
 export 'src/destination.dart';
 export 'src/distance.dart';
 export 'src/geojson.dart';

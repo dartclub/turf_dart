@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/bbox.dart';
 import 'package:turf/helpers.dart';
 
-main() {
+void main() {
   final pt = Feature<Point>(
       geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)));
   final line = Feature<LineString>(

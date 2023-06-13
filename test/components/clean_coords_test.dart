@@ -6,7 +6,7 @@ import 'package:turf/src/clean_coords.dart';
 import 'package:turf/src/truncate.dart';
 import 'package:turf_equality/turf_equality.dart';
 
-main() {
+void main() {
   group(
     'cleanCoords',
     () {
@@ -19,6 +19,7 @@ main() {
               var inSource = file.readAsStringSync();
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               Feature results = cleanCoords(inGeom);
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

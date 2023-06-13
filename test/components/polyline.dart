@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/polyline.dart';
 
-main() {
+void main() {
   group('Polyline:', () {
     var example = [
           Position.named(lat: 38.5, lng: -120.2),

@@ -5,9 +5,9 @@ import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/rhumb_bearing.dart';
 
-main() {
+void main() {
   group(
-    '',
+    'Rhumb Bearing test',
     () {
       Directory inDir = Directory('./test/examples/rhumb_bearing/in');
       for (var file in inDir.listSync(recursive: true)) {

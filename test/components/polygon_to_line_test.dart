@@ -6,7 +6,7 @@ import 'package:test/scaffolding.dart';
 import 'package:turf/polygon_to_line.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'polygonToLine',
     () {
@@ -20,6 +20,7 @@ main() {
               var inGeom = GeoJSONObject.fromJson(jsonDecode(inSource));
               var results = polygonToLine(inGeom);
 
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

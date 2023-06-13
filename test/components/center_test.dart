@@ -6,7 +6,7 @@ import 'package:turf/meta.dart';
 import 'package:turf/src/bbox_polygon.dart';
 import 'package:turf/turf.dart';
 
-main() {
+void main() {
   group(
     'center in == out',
     () {
@@ -58,6 +58,7 @@ main() {
               );
               featureCollection.features.add(extent);
 
+              // ignore: prefer_interpolation_to_compose_strings
               var outPath = './' +
                   file.uri.pathSegments
                       .sublist(0, file.uri.pathSegments.length - 2)

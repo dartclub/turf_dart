@@ -1,11 +1,13 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:test/test.dart';
 import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/midpoint.dart';
 
 void checkLatLngInRange(Point result) {
-  _lngRange(num lng) => lng >= -180 && lng <= 180;
-  _latRange(num lat) => lat >= -90 && lat <= 90;
+  bool _lngRange(num lng) => lng >= -180 && lng <= 180;
+  bool _latRange(num lat) => lat >= -90 && lat <= 90;
 
   expect(_lngRange(result.coordinates.lng), true,
       reason: 'Longitude of ${result.coordinates.lng} out of range');
@@ -13,7 +15,7 @@ void checkLatLngInRange(Point result) {
       reason: 'Latitude of ${result.coordinates.lat} out of range');
 }
 
-main() {
+void main() {
   test('simple midpoint', () {
     Position result = midpointRaw(
       Position.named(

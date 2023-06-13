@@ -3,7 +3,7 @@ import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/nearest_point_on_line.dart';
 
-main() {
+void main() {
   test('nearest_point_on_line -- start point', () {
     final start = Point(coordinates: Position.of([-122.457175, 37.720033]));
     final end = Point(coordinates: Position.of([-122.457175, 37.718242]));
