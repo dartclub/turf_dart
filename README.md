@@ -1,6 +1,6 @@
 # turf.dart
 
-ℹ️ Looking for maintainers as a work student position in Germany: Write an email to jobs@scalabs.de ℹ️
+ℹ️ Looking for maintainers as a work student position in Germany: Write an email to [jobs@scalabs.de](mailto:jobs@scalabs.de) ℹ️
 
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 

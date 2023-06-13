@@ -36,10 +36,9 @@
 - Documentation: improves pub.dev scores, raised documentation coverage, fixed typos
 - Return type fixes for the the meta extensions
 
-
 ## 0.0.5
 
-- Implements *all* meta functions and`lineSegment` 
+- Implements *all* meta functions and`lineSegment`
 - Adds a lot of documentation
 - Several bug and type fixes
 
