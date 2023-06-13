@@ -85,7 +85,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
 - [x] [center](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/center.dart)
 - [ ] centerOfMass
-- [ ] centroid
+- [x] [centroid](https://github.com/dartclub/turf_dart/blob/main/lib/src/centroid.dart)
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
@@ -95,8 +95,8 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] polygonTangents
 - [ ] pointToLineDistance
 - [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
-- [ ] rhumbDestination
-- [ ] rhumbDistance
+- [x] [rhumbDestination](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_destination.dart)
+- [x] [rhumbDistance](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_distance.dart)
 - [ ] square
 - [ ] greatCircle
 
@@ -124,7 +124,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [polygonSmooth](ttps://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
 - [ ] simplify
 - [ ] tesselate
-- [ ] transformRotate
+- [x] [transformRotate](https://github.com/dartclub/turf_dart/blob/main/lib/src/transform_rotate.dart)
 - [ ] transformTranslate
 - [ ] transformScale
 - [ ] union

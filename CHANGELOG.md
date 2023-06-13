@@ -1,3 +1,14 @@
+## 0.0.8
+
+- Implements `transformRotate`, `rhumbDistance`, `rhumbDestination`, `centroid` [#147](https://github.com/dartclub/turf_dart/pull/147)
+- Introduce `localCoordIndex` in `coordEach`
+- Implements all the `boolean`* functions [#91](https://github.com/dartclub/turf_dart/pull/91)
+- Implements `area` function [#123](https://github.com/dartclub/turf_dart/pull/123)
+- Implements `polygonSmooth` function [#127](https://github.com/dartclub/turf_dart/pull/127)
+- Fixes missing parameter in nearest point on line [#145](https://github.com/dartclub/turf_dart/pull/145)
+- Other core improvements
+- Support for Dart 3
+
 ## 0.0.7
 
 - Implements `nearestPointOn(Multi)Line` [#87](https://github.com/dartclub/turf_dart/pull/87)

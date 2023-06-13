@@ -1,4 +1,4 @@
-include: package:dartclub_lint/dart.yaml
+include: package:lints/recommended.yaml
 
 analyzer:
   errors:
