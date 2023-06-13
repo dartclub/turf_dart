@@ -90,7 +90,7 @@ void _forEachCoordInGeometryObject(GeometryType geometry, Function callback,
   GeoJSONObjectType geomType = geometry.type;
   int wrapShrink = excludeWrapCoord &&
           (geomType == GeoJSONObjectType.polygon ||
-              geomType == GeoJSONObjectType.multiLineString)
+              geomType == GeoJSONObjectType.multiPolygon)
       ? 1
       : 0;
   indexCounter.multiFeatureIndex = 0;
