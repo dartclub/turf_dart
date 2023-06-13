@@ -1,5 +1,7 @@
 # turf.dart
 
+ℹ️ Looking for maintainers as a work student position in Germany: Write an email to jobs@scalabs.de ℹ️
+
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 
 THIS PROJECT IS WORK IN PROCESS
@@ -85,7 +87,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
 - [x] [center](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/center.dart)
 - [ ] centerOfMass
-- [ ] centroid
+- [x] [centroid](https://github.com/dartclub/turf_dart/blob/main/lib/src/centroid.dart)
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
@@ -95,8 +97,8 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] polygonTangents
 - [ ] pointToLineDistance
 - [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
-- [ ] rhumbDestination
-- [ ] rhumbDistance
+- [x] [rhumbDestination](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_destination.dart)
+- [x] [rhumbDistance](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_distance.dart)
 - [ ] square
 - [ ] greatCircle
 
@@ -124,7 +126,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [polygonSmooth](ttps://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
 - [ ] simplify
 - [ ] tesselate
-- [ ] transformRotate
+- [x] [transformRotate](https://github.com/dartclub/turf_dart/blob/main/lib/src/transform_rotate.dart)
 - [ ] transformTranslate
 - [ ] transformScale
 - [ ] union
