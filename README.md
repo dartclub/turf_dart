@@ -91,7 +91,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
-- [ ] length
+- [x] [length](https://github.com/dartclub/turf_dart/blob/main/lib/src/length.dart)
 - [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
 - [ ] polygonTangents
