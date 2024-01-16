@@ -22,8 +22,10 @@ void main() {
     expect(startToViaDistance.round(), equals(57));
     final resolvedViaPoint = along(line, startToViaDistance / 2, Unit.meters);
     expect(resolvedViaPoint, isNotNull);
-    expect(resolvedViaPoint!.coordinates.lat.toStringAsFixed(6), equals('55.709028'));
-    expect(resolvedViaPoint.coordinates.lng.toStringAsFixed(6), equals('13.185096'));
+    expect(resolvedViaPoint!.coordinates.lat.toStringAsFixed(6),
+        equals('55.709028'));
+    expect(resolvedViaPoint.coordinates.lng.toStringAsFixed(6),
+        equals('13.185096'));
   });
   test('along - to via point', () {
     final startToViaDistance = distance(
@@ -37,16 +39,19 @@ void main() {
   test('along - to point between via and end', () {
     final startToViaDistance = distance(
         Point(coordinates: start), Point(coordinates: via), Unit.meters);
-    final viaToEndDistance = distance(
-        Point(coordinates: via), Point(coordinates: end), Unit.meters);
+    final viaToEndDistance =
+        distance(Point(coordinates: via), Point(coordinates: end), Unit.meters);
     expect(startToViaDistance, isNotNull);
     expect(startToViaDistance.round(), equals(57));
     expect(viaToEndDistance, isNotNull);
     expect(viaToEndDistance.round(), equals(198));
-    final resolvedViaPoint = along(line, startToViaDistance + viaToEndDistance / 2, Unit.meters);
+    final resolvedViaPoint =
+        along(line, startToViaDistance + viaToEndDistance / 2, Unit.meters);
     expect(resolvedViaPoint, isNotNull);
-    expect(resolvedViaPoint!.coordinates.lat.toStringAsFixed(6), equals('55.708330'));
-    expect(resolvedViaPoint.coordinates.lng.toStringAsFixed(6), equals('13.186555'));
+    expect(resolvedViaPoint!.coordinates.lat.toStringAsFixed(6),
+        equals('55.708330'));
+    expect(resolvedViaPoint.coordinates.lng.toStringAsFixed(6),
+        equals('13.186555'));
   });
   test('along - to end point', () {
     final len = length(line, Unit.meters);
