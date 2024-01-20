@@ -2,14 +2,15 @@ import 'package:turf/bearing.dart';
 import 'package:turf/destination.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/distance.dart' as measure_distance;
+import 'package:turf/src/invariant.dart';
 
 /// Takes a [line] and returns a [Point] at a specified [distance] along the line.
 ///
 /// If [distance] is less than 0, the line start point is returned
 /// If [distance] is larger than line length, the end point is returned
-Point? along(LineString line, num distance, [Unit unit = Unit.kilometers]) {
+Point? along(Feature<LineString> line, num distance, [Unit unit = Unit.kilometers]) {
   // Get Coords
-  final coords = line.coordinates;
+  final coords = getCoords(line);
   if (distance < 0) {
     return coords.isNotEmpty ? Point(coordinates: coords.first) : null;
   }

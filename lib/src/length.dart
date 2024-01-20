@@ -3,7 +3,7 @@ import 'package:turf/helpers.dart';
 import 'package:turf/line_segment.dart';
 
 /// Takes a [line] and measures its length in the specified [unit].
-num? length(LineString line, [Unit unit = Unit.kilometers]) {
+num? length(Feature<LineString> line, [Unit unit = Unit.kilometers]) {
   return segmentReduce<num>(line, (
     previousValue,
     currentSegment,

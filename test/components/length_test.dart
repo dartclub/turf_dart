@@ -16,12 +16,14 @@ void main() {
       lat: 55.70764669578079,
       lng: 13.187563637197076,
     );
-    final line = LineString(
-      coordinates: [
-        start,
-        via,
-        end,
-      ],
+    final line = Feature<LineString>(
+      geometry: LineString(
+        coordinates: [
+          start,
+          via,
+          end,
+        ],
+      ),
     );
     final len = length(line, Unit.meters);
     expect(len, isNotNull);
