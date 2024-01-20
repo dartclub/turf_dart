@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:turf/bearing.dart';
 import 'package:turf/destination.dart';
 import 'package:turf/helpers.dart';
+import 'package:turf/length.dart';
 import 'package:turf/src/distance.dart' as measure_distance;
 import 'package:turf/src/invariant.dart';
 
@@ -17,7 +20,7 @@ Point along(Feature<LineString> line, num distance,
     throw Exception('line must contain at least one coordinate');
   }
   if (distance < 0) {
-    return Point(coordinates: coords.first);
+    distance = max(0, length(line, unit) + distance);
   }
   num travelled = 0;
   for (int i = 0; i < coords.length; i++) {
