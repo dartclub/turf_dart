@@ -8,11 +8,16 @@ import 'package:turf/src/invariant.dart';
 ///
 /// If [distance] is less than 0, the line start point is returned
 /// If [distance] is larger than line length, the end point is returned
-Point? along(Feature<LineString> line, num distance, [Unit unit = Unit.kilometers]) {
+/// If [line] have no geometry or coordinates, an Exception is thrown
+Point along(Feature<LineString> line, num distance,
+    [Unit unit = Unit.kilometers]) {
   // Get Coords
   final coords = getCoords(line);
+  if (coords.isEmpty) {
+    throw Exception('line must contain at least one coordinate');
+  }
   if (distance < 0) {
-    return coords.isNotEmpty ? Point(coordinates: coords.first) : null;
+    return Point(coordinates: coords.first);
   }
   num travelled = 0;
   for (int i = 0; i < coords.length; i++) {
