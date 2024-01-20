@@ -26,7 +26,6 @@ void main() {
       ),
     );
     final len = length(line, Unit.meters);
-    expect(len, isNotNull);
-    expect(len!.round(), equals(254));
+    expect(len.round(), equals(254));
   });
 }
