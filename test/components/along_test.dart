@@ -5,8 +5,11 @@ import 'package:turf/helpers.dart';
 import 'package:turf/length.dart';
 
 void main() {
-  test('along - negative distance along', () {
-    final resolvedStartPoint = along(line, -100, Unit.meters);
+  test('along - negative distance should count backwards', () {
+    final viaToEndDistance =
+        distance(Point(coordinates: via), Point(coordinates: end), Unit.meters);
+    expect(viaToEndDistance.round(), equals(198));
+    final resolvedStartPoint = along(line, -1 * viaToEndDistance, Unit.meters);
     expect(resolvedStartPoint.coordinates, equals(start));
   });
   test('along - to start point', () {
