@@ -28,22 +28,22 @@ Point along(Feature<LineString> line, num distance,
   for (int i = 0; i < coords.length; i++) {
     if (distance >= travelled && i == coords.length - 1) {
       break;
-    } else if (travelled >= distance) {
+    }
+    if (travelled == distance) {
+      return Point(coordinates: coords[i]);
+    }
+    if (travelled > distance) {
       final overshot = distance - travelled;
-      if (overshot == 0) {
-        return Point(coordinates: coords[i]);
-      } else {
-        final direction = bearing(Point(coordinates: coords[i]),
-                Point(coordinates: coords[i - 1])) -
-            180;
-        final interpolated = destination(
-          Point(coordinates: coords[i]),
-          overshot,
-          direction,
-          unit,
-        );
-        return interpolated;
-      }
+      final direction = bearing(Point(coordinates: coords[i]),
+              Point(coordinates: coords[i - 1])) -
+          180;
+      final interpolated = destination(
+        Point(coordinates: coords[i]),
+        overshot,
+        direction,
+        unit,
+      );
+      return interpolated;
     } else {
       travelled += measure_distance.distance(Point(coordinates: coords[i]),
           Point(coordinates: coords[i + 1]), unit);
