@@ -9,7 +9,9 @@ import 'package:turf/src/invariant.dart';
 
 /// Takes a [line] and returns a [Point] at a specified [distance] along the line.
 ///
-/// If [distance] is less than 0, the line start point is returned
+/// If [distance] is less than 0, it will count distance along the line from end
+///   to start of line. If negative [distance] overshoots the length of the line,
+///   the start point of the line is returned.
 /// If [distance] is larger than line length, the end point is returned
 /// If [line] have no geometry or coordinates, an Exception is thrown
 Point along(Feature<LineString> line, num distance,
