@@ -80,7 +80,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Measurement
 
-- [ ] along
+- [x] [along](https://github.com/dartclub/turf_dart/blob/main/lib/src/along.dart)
 - [x] [area](https://github.com/dartclub/turf_dart/blob/main/lib/src/area.dart)
 - [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
 - [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
@@ -91,7 +91,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
-- [ ] length
+- [x] [length](https://github.com/dartclub/turf_dart/blob/main/lib/src/length.dart)
 - [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
 - [ ] polygonTangents
