@@ -487,6 +487,24 @@ void main() {
     expect(count, 1);
   });
 
+  test('coordEach -- excludeWrapCoord - Polygon', () {
+    var count = 0;
+    coordEach(poly, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
+        geometryIndex) {
+      count += 1;
+    }, true);
+    expect(count, 3);
+  });
+
+  test('coordEach -- excludeWrapCoord - MultiPolygon', () {
+    var count = 0;
+    coordEach(multiPoly, (currentCoord, coordIndex, featureIndex,
+        multiFeatureIndex, geometryIndex) {
+      count += 1;
+    }, true);
+    expect(count, 6);
+  });
+
   test('propEach --featureCollection', () {
     collection(pt).forEach((input) {
       propEach(input, (prop, i) {

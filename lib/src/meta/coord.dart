@@ -10,6 +10,39 @@ typedef CoordEachCallback = dynamic Function(
   int? geometryIndex,
 );
 
+typedef LocalizedCoordEachCallback = dynamic Function(
+  Position? currentCoord,
+  int? coordIndex,
+  int? featureIndex,
+  int? multiFeatureIndex,
+  int? geometryIndex,
+  int? localCoordIndex,
+);
+
+dynamic _callbackWrapper(
+    Function callback, Position? currentCoord, _IndexCounter counter) {
+  if (callback is CoordEachCallback) {
+    return callback(
+      currentCoord,
+      counter.coordIndex,
+      counter.featureIndex,
+      counter.multiFeatureIndex,
+      counter.geometryIndex,
+    );
+  } else if (callback is LocalizedCoordEachCallback) {
+    return callback(
+      currentCoord,
+      counter.coordIndex,
+      counter.featureIndex,
+      counter.multiFeatureIndex,
+      counter.geometryIndex,
+      counter.localCoordIndex,
+    );
+  } else {
+    throw Exception('Unknown callback type');
+  }
+}
+
 /// Iterates over coordinates in any [geoJSONObject], similar to [Iterable.forEach]
 /// example:
 /// ```dart
@@ -26,7 +59,7 @@ typedef CoordEachCallback = dynamic Function(
 ///  //=geometryIndex
 /// });
 /// ```
-void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
+void coordEach(GeoJSONObject geoJSON, Function callback,
     [bool excludeWrapCoord = false]) {
   _IndexCounter indexCounter = _IndexCounter();
   try {
@@ -52,15 +85,12 @@ void coordEach(GeoJSONObject geoJSON, CoordEachCallback callback,
   }
 }
 
-void _forEachCoordInGeometryObject(
-    GeometryType geometry,
-    CoordEachCallback callback,
-    bool excludeWrapCoord,
-    _IndexCounter indexCounter) {
+void _forEachCoordInGeometryObject(GeometryType geometry, Function callback,
+    bool excludeWrapCoord, _IndexCounter indexCounter) {
   GeoJSONObjectType geomType = geometry.type;
   int wrapShrink = excludeWrapCoord &&
           (geomType == GeoJSONObjectType.polygon ||
-              geomType == GeoJSONObjectType.multiLineString)
+              geomType == GeoJSONObjectType.multiPolygon)
       ? 1
       : 0;
   indexCounter.multiFeatureIndex = 0;
@@ -84,42 +114,35 @@ void _forEachCoordInGeometryObject(
 }
 
 void _forEachCoordInMultiNestedCollection(coords, GeoJSONObjectType geomType,
-    int wrapShrink, CoordEachCallback callback, _IndexCounter indexCounter) {
+    int wrapShrink, Function callback, _IndexCounter indexCounter) {
   for (var j = 0; j < coords.length; j++) {
-    int geometryIndex = 0;
+    indexCounter.geometryIndex = 0;
     for (var k = 0; k < coords[j].length; k++) {
+      indexCounter.localCoordIndex = 0;
       for (var l = 0; l < coords[j][k].length - wrapShrink; l++) {
-        if (callback(
-                coords[j][k][l],
-                indexCounter.coordIndex,
-                indexCounter.featureIndex,
-                indexCounter.multiFeatureIndex,
-                geometryIndex) ==
+        if (_callbackWrapper(callback, coords[j][k][l], indexCounter) ==
             false) {
           throw ShortCircuit();
         }
         indexCounter.coordIndex++;
+        indexCounter.localCoordIndex++;
       }
-      geometryIndex++;
+      indexCounter.geometryIndex++;
     }
     indexCounter.multiFeatureIndex++;
   }
 }
 
 void _forEachCoordInNestedCollection(coords, GeoJSONObjectType geomType,
-    int wrapShrink, CoordEachCallback callback, _IndexCounter indexCounter) {
+    int wrapShrink, Function callback, _IndexCounter indexCounter) {
   for (var j = 0; j < coords.length; j++) {
+    indexCounter.localCoordIndex = 0;
     for (var k = 0; k < coords[j].length - wrapShrink; k++) {
-      if (callback(
-              coords[j][k],
-              indexCounter.coordIndex,
-              indexCounter.featureIndex,
-              indexCounter.multiFeatureIndex,
-              indexCounter.geometryIndex) ==
-          false) {
+      if (_callbackWrapper(callback, coords[j][k], indexCounter) == false) {
         throw ShortCircuit();
       }
       indexCounter.coordIndex++;
+      indexCounter.localCoordIndex++;
     }
     if (geomType == GeoJSONObjectType.multiLineString) {
       indexCounter.multiFeatureIndex++;
@@ -134,14 +157,14 @@ void _forEachCoordInNestedCollection(coords, GeoJSONObjectType geomType,
 }
 
 void _forEachCoordInCollection(coords, GeoJSONObjectType geomType,
-    CoordEachCallback callback, _IndexCounter indexCounter) {
+    Function callback, _IndexCounter indexCounter) {
+  indexCounter.localCoordIndex = 0;
   for (var j = 0; j < coords.length; j++) {
-    if (callback(coords[j], indexCounter.coordIndex, indexCounter.featureIndex,
-            indexCounter.multiFeatureIndex, indexCounter.geometryIndex) ==
-        false) {
+    if (_callbackWrapper(callback, coords[j], indexCounter) == false) {
       throw ShortCircuit();
     }
     indexCounter.coordIndex++;
+    indexCounter.localCoordIndex++;
     if (geomType == GeoJSONObjectType.multiPoint) {
       indexCounter.multiFeatureIndex++;
     }
@@ -152,18 +175,19 @@ void _forEachCoordInCollection(coords, GeoJSONObjectType geomType,
 }
 
 void _forEachCoordInPoint(
-    Position coords, CoordEachCallback callback, _IndexCounter indexCounter) {
-  if (callback(coords, indexCounter.coordIndex, indexCounter.featureIndex,
-          indexCounter.multiFeatureIndex, indexCounter.geometryIndex) ==
-      false) {
+    Position coords, Function callback, _IndexCounter indexCounter) {
+  indexCounter.localCoordIndex = 0;
+  if (_callbackWrapper(callback, coords, indexCounter) == false) {
     throw ShortCircuit();
   }
+  indexCounter.localCoordIndex++;
   indexCounter.coordIndex++;
   indexCounter.multiFeatureIndex++;
 }
 
 /// A simple class to manage counters from CoordinateEach functions
 class _IndexCounter {
+  int localCoordIndex = 0;
   int coordIndex = 0;
   int geometryIndex = 0;
   int multiFeatureIndex = 0;
@@ -232,8 +256,8 @@ T? coordReduce<T>(
   bool excludeWrapCoord = false,
 ]) {
   var previousValue = initialValue;
-  coordEach(geojson, (currentCoord, coordIndex, featureIndex, multiFeatureIndex,
-      geometryIndex) {
+  coordEach(geojson, (Position? currentCoord, coordIndex, featureIndex,
+      multiFeatureIndex, geometryIndex) {
     if (coordIndex == 0 && initialValue == null && currentCoord is T) {
       previousValue = currentCoord?.clone() as T;
     } else {

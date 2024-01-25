@@ -163,7 +163,7 @@ _NearestMulti? _nearestPointOnMultiLine(
   for (var i = 0; i < lines.coordinates.length; ++i) {
     final line = LineString(coordinates: lines.coordinates[i]);
 
-    final candidate = _nearestPointOnLine(line, point);
+    final candidate = _nearestPointOnLine(line, point, unit);
 
     if (nearest == null || candidate.distance < nearest.distance) {
       nearest = _NearestMulti(
@@ -183,6 +183,13 @@ _NearestMulti? _nearestPointOnMultiLine(
 }
 
 /// Takes a [Point] and a [LineString] and calculates the closest Point on the [LineString].
+///
+/// The properties of returned [Point] will contain three values:
+/// * index: closest point was found on nth line part
+/// * dist: distance between [point] and the closest point on line
+/// * location: distance along the line between start and the closest point.
+///
+/// Example:
 /// ```dart
 /// var line = LineString(
 ///   coordinates: [
