@@ -53,6 +53,12 @@ void main() {
     final resolvedEndPoint = along(line, len, Unit.meters);
     expect(resolvedEndPoint.coordinates, equals(end));
   });
+  test('along - to end point - default unit (km)', () {
+    final len = length(line);
+    expect((len * 1000).round(), equals(254));
+    final resolvedEndPoint = along(line, len);
+    expect(resolvedEndPoint.coordinates, equals(end));
+  });
   test('along - beyond end point', () {
     final len = length(line, Unit.meters);
     expect(len.round(), equals(254));
