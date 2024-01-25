@@ -9,8 +9,8 @@ void main() {
     final viaToEndDistance =
         distance(Point(coordinates: via), Point(coordinates: end), Unit.meters);
     expect(viaToEndDistance.round(), equals(198));
-    final resolvedStartPoint = along(line, -1 * viaToEndDistance, Unit.meters);
-    expect(resolvedStartPoint.coordinates, equals(start));
+    final resolvedViaPoint = along(line, -1 * viaToEndDistance, Unit.meters);
+    expect(resolvedViaPoint.coordinates, equals(via));
   });
   test('along - to start point', () {
     final resolvedStartPoint = along(line, 0, Unit.meters);
