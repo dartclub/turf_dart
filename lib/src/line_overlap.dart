@@ -52,7 +52,7 @@ FeatureCollection<LineString> lineOverlap(
     maxEntries: 4,
     getMinX: (Feature<LineString> feature) => bbox(feature).lng1.toDouble(),
     getMinY: (Feature<LineString> feature) => bbox(feature).lat1.toDouble(),
-    toBBox: (feature) => _toRBBox(feature),
+    toBBox: _toRBBox,
   );
 
   FeatureCollection<LineString> line = lineSegment(line1);
@@ -104,16 +104,13 @@ FeatureCollection<LineString> lineOverlap(
           }
           // Match segments which don't share nodes (Issue #901)
         } else if (tolerance == 0
-            ? booleanPointOnLine(Point(coordinates: coords[0]),
-                    currentFeature.geometry as LineString) &&
+            ? booleanPointOnLine(Point(coordinates: coords[0]), currentFeature.geometry as LineString) &&
                 booleanPointOnLine(Point(coordinates: coords[1]),
                     currentFeature.geometry as LineString)
-            : nearestPointOnLine(currentFeature.geometry as LineString,
-                            Point(coordinates: coords[0]))
+            : nearestPointOnLine(currentFeature.geometry as LineString, Point(coordinates: coords[0]))
                         .properties!['dist'] <=
                     tolerance &&
-                nearestPointOnLine(currentFeature.geometry as LineString,
-                            Point(coordinates: coords[1]))
+                nearestPointOnLine(currentFeature.geometry as LineString, Point(coordinates: coords[1]))
                         .properties!['dist'] <=
                     tolerance) {
           doesOverlap = true;
@@ -132,8 +129,8 @@ FeatureCollection<LineString> lineOverlap(
                             Point(coordinates: coordsMatch[0]))
                         .properties!['dist'] <=
                     tolerance &&
-                nearestPointOnLine(currentSegment.geometry as LineString,
-                            Point(coordinates: coordsMatch[1]))
+                nearestPointOnLine(
+                            currentSegment.geometry as LineString, Point(coordinates: coordsMatch[1]))
                         .properties!['dist'] <=
                     tolerance) {
           // Do not define doesOverlap = true since more matches can occur
