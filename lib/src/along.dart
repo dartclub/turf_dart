@@ -14,7 +14,7 @@ import 'package:turf/src/invariant.dart';
 ///   the start point of the line is returned.
 /// If [distance] is larger than line length, the end point is returned
 /// If [line] have no geometry or coordinates, an Exception is thrown
-Point along(Feature<LineString> line, num distance,
+Feature<Point> along(Feature<LineString> line, num distance,
     [Unit unit = Unit.kilometers]) {
   // Get Coords
   final coords = getCoords(line);
@@ -30,7 +30,7 @@ Point along(Feature<LineString> line, num distance,
       break;
     }
     if (travelled == distance) {
-      return Point(coordinates: coords[i]);
+      return Feature<Point>(geometry: Point(coordinates: coords[i]));
     }
     if (travelled > distance) {
       final overshot = distance - travelled;
@@ -43,11 +43,12 @@ Point along(Feature<LineString> line, num distance,
         direction,
         unit,
       );
-      return interpolated;
+      return Feature<Point>(geometry: interpolated);
     } else {
       travelled += measure_distance.distance(Point(coordinates: coords[i]),
           Point(coordinates: coords[i + 1]), unit);
     }
   }
-  return Point(coordinates: coords[coords.length - 1]);
+  return Feature<Point>(
+      geometry: Point(coordinates: coords[coords.length - 1]));
 }
