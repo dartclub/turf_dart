@@ -8,15 +8,15 @@ repository: https://github.com/dartclub/turf_dart
 
 dependencies:
   json_annotation: ^4.8.1
-  turf_equality: ^0.0.2
-  turf_pip: ^0.0.1+1
+  turf_equality: ^0.0.3
+  turf_pip: ^0.0.2
   rbush: ^1.1.0
-  sweepline_intersections: ^0.0.3+1
+  sweepline_intersections: ^0.0.4
 
 dev_dependencies:
-  lints: ^2.1.1
+  lints: ^3.0.0
   test: ^1.24.3
   json_serializable: ^6.7.0
   build_runner: ^2.4.5
-  analyzer: ^5.13.0
+  analyzer: ^6.4.0
   benchmark: ^0.3.0
