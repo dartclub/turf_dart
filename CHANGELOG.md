@@ -1,3 +1,8 @@
+## 0.0.9
+
+- Implements `length`, `along` [#153](https://github.com/dartclub/turf_dart/pull/153)
+- Documentation: Improves pub.dev scores by fixing bad links in Readme.md
+
 ## 0.0.8
 
 - Implements `transformRotate`, `rhumbDistance`, `rhumbDestination`, `centroid` [#147](https://github.com/dartclub/turf_dart/pull/147)
@@ -38,7 +43,7 @@
 
 ## 0.0.5
 
-- Implements *all* meta functions and`lineSegment`
+- Implements *all* meta functions and `lineSegment`
 - Adds a lot of documentation
 - Several bug and type fixes
 
