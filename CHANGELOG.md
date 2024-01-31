@@ -43,6 +43,7 @@
 
 ## 0.0.5
 
+
 - Implements *all* meta functions and `lineSegment`
 - Adds a lot of documentation
 - Several bug and type fixes
