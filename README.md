@@ -1,7 +1,5 @@
 # turf.dart
 
-ℹ️ Looking for maintainers as a work student position in Germany: Write an email to [jobs@scalabs.de](mailto:jobs@scalabs.de) ℹ️
-
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 
 THIS PROJECT IS WORK IN PROCESS
@@ -80,7 +78,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 
 ### Measurement
 
-- [ ] along
+- [x] [along](https://github.com/dartclub/turf_dart/blob/main/lib/src/along.dart)
 - [x] [area](https://github.com/dartclub/turf_dart/blob/main/lib/src/area.dart)
 - [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
 - [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
@@ -91,7 +89,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
 - [ ] envelope
-- [ ] length
+- [x] [length](https://github.com/dartclub/turf_dart/blob/main/lib/src/length.dart)
 - [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
 - [ ] polygonTangents
@@ -123,7 +121,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] dissolve
 - [ ] intersect
 - [ ] lineOffset
-- [x] [polygonSmooth](ttps://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
+- [x] [polygonSmooth](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
 - [ ] simplify
 - [ ] tesselate
 - [x] [transformRotate](https://github.com/dartclub/turf_dart/blob/main/lib/src/transform_rotate.dart)
@@ -234,7 +232,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [booleanCrosses](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_crosses.dart)
 - [x] [booleanDisjoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_disjoint.dart)
 - [x] [booleanEqual](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_equal.dart)
-- [x] [booleanIntersects](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_intersect.dart)
+- [x] [booleanIntersects](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_intersects.dart)
 - [ ] booleanOverlap
 - [x] [booleanParallel](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_parallel.dart)
 - [x] [booleanPointInPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_in_polygon.dart)
