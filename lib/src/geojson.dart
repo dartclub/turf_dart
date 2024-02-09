@@ -68,9 +68,13 @@ abstract class GeoJSONObject {
 
 /// Coordinate types, following https://tools.ietf.org/html/rfc7946#section-4
 abstract class CoordinateType implements Iterable<num> {
+  final bool _signed;
   final List<num> _items;
 
-  CoordinateType(List<num> list) : _items = List.of(list, growable: false);
+  CoordinateType(
+    List<num> list,
+    this._signed,
+  ) : _items = List.of(list, growable: false);
 
   @override
   num get first => _items.first;
@@ -180,7 +184,9 @@ abstract class CoordinateType implements Iterable<num> {
 
   CoordinateType toSigned();
 
-  bool get isSigned;
+  CoordinateType toUnsigned();
+
+  bool get isSigned => _signed;
 
   num _untilSigned(num val, limit) {
     if (val > limit) {
@@ -195,24 +201,36 @@ abstract class CoordinateType implements Iterable<num> {
 /// Please make sure, you arrange your parameters like this:
 /// 1. Longitude, 2. Latitude, 3. Altitude (optional)
 class Position extends CoordinateType {
-  Position(num lng, num lat, [num? alt])
-      : super([
-          lng,
-          lat,
-          if (alt != null) alt,
-        ]);
+  Position(num lng, num lat, [num? alt, bool signed = false])
+      : super(
+          [
+            lng,
+            lat,
+            if (alt != null) alt,
+          ],
+          signed,
+        );
 
-  Position.named({required num lat, required num lng, num? alt})
-      : super([
-          lng,
-          lat,
-          if (alt != null) alt,
-        ]);
+  Position.named(
+      {required num lat, required num lng, num? alt, bool signed = false})
+      : super(
+          [
+            lng,
+            lat,
+            if (alt != null) alt,
+          ],
+          signed,
+        );
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  Position.of(List<num> list)
-      : assert(list.length >= 2 && list.length <= 3),
-        super(list);
+  Position.of(
+    List<num> list, {
+    bool signed = false,
+  })  : assert(list.length >= 2 && list.length <= 3),
+        super(
+          list,
+          signed,
+        );
 
   factory Position.fromJson(List<num> list) => Position.of(list);
 
@@ -253,17 +271,21 @@ class Position extends CoordinateType {
   num? get alt => length == 3 ? _items[2] : null;
 
   @override
-  bool get isSigned => lng <= 180 && lat <= 90;
+  bool get isSigned => _signed && lng <= 180 && lat <= 90;
 
   @override
   Position toSigned() => Position.named(
         lng: _untilSigned(lng, 180),
         lat: _untilSigned(lat, 90),
         alt: alt,
+        signed: true,
       );
 
   @override
-  Position clone() => Position.of(_items);
+  Position toUnsigned() => Position.of(_items, signed: false);
+
+  @override
+  Position clone() => Position.of(_items, signed: _signed);
 
   @override
   int get hashCode => Object.hashAll(_items);
@@ -298,14 +320,18 @@ class BBox extends CoordinateType {
 
     /// altitude 2 for 3 dim. positions
     num? alt2,
-  ]) : super([
-          lng1,
-          lat1,
-          alt1,
-          lng2,
-          if (lat2 != null) lat2,
-          if (alt2 != null) alt2,
-        ]);
+    bool signed = false,
+  ]) : super(
+          [
+            lng1,
+            lat1,
+            alt1,
+            lng2,
+            if (lat2 != null) lat2,
+            if (alt2 != null) alt2,
+          ],
+          signed,
+        );
 
   BBox.named({
     required num lng1,
@@ -314,19 +340,28 @@ class BBox extends CoordinateType {
     required num lng2,
     required num lat2,
     num? alt2,
-  }) : super([
-          lng1,
-          lat1,
-          if (alt1 != null) alt1,
-          lng2,
-          lat2,
-          if (alt2 != null) alt2,
-        ]);
+    bool signed = false,
+  }) : super(
+          [
+            lng1,
+            lat1,
+            if (alt1 != null) alt1,
+            lng2,
+            lat2,
+            if (alt2 != null) alt2,
+          ],
+          signed,
+        );
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  BBox.of(List<num> list)
-      : assert(list.length == 4 || list.length == 6),
-        super(list);
+  BBox.of(
+    List<num> list, {
+    bool signed = false,
+  })  : assert(list.length == 4 || list.length == 6),
+        super(
+          list,
+          signed,
+        );
 
   factory BBox.fromJson(List<num> list) => BBox.of(list);
 
@@ -376,6 +411,9 @@ class BBox extends CoordinateType {
         lng1: _untilSigned(lng1, 180),
         lng2: _untilSigned(lng2, 180),
       );
+
+  @override
+  BBox toUnsigned() => BBox.of(_items, signed: false);
 
   @override
   int get hashCode => Object.hashAll(_items);
