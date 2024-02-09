@@ -151,7 +151,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] [lineIntersect](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_intersect.dart)
 - [ ] lineOverlap
 - [x] [lineSegment](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
-- [x] lineSlice
+- [x] [lineSlice](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_slice.dart)
 - [ ] lineSliceAlong
 - [ ] lineSplit
 - [ ] mask
