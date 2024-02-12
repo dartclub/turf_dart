@@ -3,7 +3,7 @@ import 'package:turf/turf.dart';
 
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
-import 'boolean_within_helper.dart';
+import 'boolean_helper.dart';
 
 /// [booleanContains] returns [true] if the second geometry is completely contained
 /// by the first geometry.
