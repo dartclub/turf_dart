@@ -3,6 +3,7 @@ import 'package:turf/turf.dart';
 
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
+import 'boolean_within_helper.dart';
 
 /// [booleanContains] returns [true] if the second geometry is completely contained
 /// by the first geometry.
@@ -27,133 +28,46 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 
   var coords1 = (geom1 as GeometryType).coordinates;
   var coords2 = (geom2 as GeometryType).coordinates;
-  final exception = Exception("{feature2 $geom2 geometry not supported}");
   if (geom1 is Point) {
     if (geom2 is Point) {
       return coords1 == coords2;
     } else {
-      throw exception;
+      throw FeatureNotSupported(geom1, geom2);
     }
   } else if (geom1 is MultiPoint) {
     if (geom2 is Point) {
-      return _isPointInMultiPoint(geom1, geom2);
+      return isPointInMultiPoint(geom2, geom1);
     } else if (geom2 is MultiPoint) {
-      return _isMultiPointInMultiPoint(geom1, geom2);
+      return isMultiPointInMultiPoint(geom2, geom1);
     } else {
-      throw exception;
+      throw FeatureNotSupported(geom1, geom2);
     }
   } else if (geom1 is LineString) {
     if (geom2 is Point) {
       return booleanPointOnLine(geom2, geom1, ignoreEndVertices: true);
     } else if (geom2 is LineString) {
-      return _isLineOnLine(geom1, geom2);
+      return isLineOnLine(geom2, geom1);
     } else if (geom2 is MultiPoint) {
-      return _isMultiPointOnLine(geom1, geom2);
+      return isMultiPointOnLine(geom2, geom1);
     } else {
-      throw exception;
+      throw FeatureNotSupported(geom1, geom2);
     }
   } else if (geom1 is Polygon) {
     if (geom2 is Point) {
       return booleanPointInPolygon((geom2).coordinates, geom1,
           ignoreBoundary: true);
     } else if (geom2 is LineString) {
-      return _isLineInPoly(geom1, geom2);
+      return isLineInPolygon(geom2, geom1);
     } else if (geom2 is Polygon) {
       return _isPolyInPoly(geom1, geom2);
     } else if (geom2 is MultiPoint) {
-      return _isMultiPointInPoly(geom1, geom2);
+      return isMultiPointInPolygon(geom2, geom1);
     } else {
-      throw exception;
+      throw FeatureNotSupported(geom1, geom2);
     }
   } else {
-    throw exception;
+    throw FeatureNotSupported(geom1, geom2);
   }
-}
-
-bool _isPointInMultiPoint(MultiPoint multiPoint, Point pt) {
-  for (int i = 0; i < multiPoint.coordinates.length; i++) {
-    if ((multiPoint.coordinates[i] == pt.coordinates)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool _isMultiPointInMultiPoint(MultiPoint multiPoint1, MultiPoint multiPoint2) {
-  for (Position coord2 in multiPoint2.coordinates) {
-    bool match = false;
-    for (Position coord1 in multiPoint1.coordinates) {
-      if (coord2 == coord1) {
-        match = true;
-      }
-    }
-    if (!match) return false;
-  }
-  return true;
-}
-
-bool _isMultiPointOnLine(LineString lineString, MultiPoint multiPoint) {
-  var haveFoundInteriorPoint = false;
-  for (var coord in multiPoint.coordinates) {
-    if (booleanPointOnLine(Point(coordinates: coord), lineString,
-        ignoreEndVertices: true)) {
-      haveFoundInteriorPoint = true;
-    }
-    if (!booleanPointOnLine(Point(coordinates: coord), lineString)) {
-      return false;
-    }
-  }
-  return haveFoundInteriorPoint;
-}
-
-bool _isMultiPointInPoly(Polygon polygon, MultiPoint multiPoint) {
-  for (var coord in multiPoint.coordinates) {
-    if (!booleanPointInPolygon(coord, polygon, ignoreBoundary: true)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool _isLineOnLine(LineString lineString1, LineString lineString2) {
-  var haveFoundInteriorPoint = false;
-  for (Position coord in lineString2.coordinates) {
-    if (booleanPointOnLine(
-      Point(coordinates: coord),
-      lineString1,
-      ignoreEndVertices: true,
-    )) {
-      haveFoundInteriorPoint = true;
-    }
-    if (!booleanPointOnLine(
-      Point(coordinates: coord),
-      lineString1,
-      ignoreEndVertices: false,
-    )) {
-      return false;
-    }
-  }
-  return haveFoundInteriorPoint;
-}
-
-bool _isLineInPoly(Polygon polygon, LineString linestring) {
-  var polyBbox = bbox(polygon);
-  var lineBbox = bbox(linestring);
-  if (!_doBBoxesOverlap(polyBbox, lineBbox)) {
-    return false;
-  }
-  for (var i = 0; i < linestring.coordinates.length - 1; i++) {
-    var midPoint =
-        midpointRaw(linestring.coordinates[i], linestring.coordinates[i + 1]);
-    if (booleanPointInPolygon(
-      midPoint,
-      polygon,
-      ignoreBoundary: true,
-    )) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /// Is Polygon2 in Polygon1
