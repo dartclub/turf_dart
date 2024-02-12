@@ -237,7 +237,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [booleanParallel](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_parallel.dart)
 - [x] [booleanPointInPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_in_polygon.dart)
 - [x] [booleanPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_on_line.dart)
-- [ ] booleanWithin
+- [x] booleanWithin
 
 ### Unit Conversion
 
