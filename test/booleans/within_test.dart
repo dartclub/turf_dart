@@ -8,7 +8,7 @@ import 'package:turf/src/booleans/boolean_within.dart';
 
 void main() {
   group('within - true', () {
-    testFiles('./test/examples/booleans/within/true', (path, geoJson) {
+    loadGeoJsonFiles('./test/examples/booleans/within/true', (path, geoJson) {
       final feature1 = (geoJson as FeatureCollection).features[0];
       final feature2 = geoJson.features[1];
       test(path, () => expect(booleanWithin(feature1, feature2), true));
@@ -16,7 +16,7 @@ void main() {
   });
 
   group('within - false', () {
-    testFiles('./test/examples/booleans/within/false', (path, geoJson) {
+    loadGeoJsonFiles('./test/examples/booleans/within/false', (path, geoJson) {
       final feature1 = (geoJson as FeatureCollection).features[0];
       final feature2 = geoJson.features[1];
       test(path, () => expect(booleanWithin(feature1, feature2), false));
@@ -24,7 +24,7 @@ void main() {
   });
 
   group('within', () {
-    testFile(
+    loadGeoJson(
         './test/examples/booleans/within/true/MultiPolygon/MultiPolygon/skip-multipolygon-within-multipolygon.geojson',
         (path, geoJson) {
       final feature1 = (geoJson as FeatureCollection).features[0];
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('within - point in multipoligon with hole', () {
-      testFile(
+      loadGeoJson(
           './test/examples/booleans/point_in_polygon/in/multipoly-with-hole.geojson',
           (path, geoJson) {
         final multiPolygon = (geoJson as Feature);
@@ -98,9 +98,7 @@ void main() {
   });
 }
 
-// testFiles('./test/examples/booleans/within/true');
-
-void testFile(
+void loadGeoJson(
     String path, void Function(String path, GeoJSONObject geoJson) test) {
   final file = File(path);
   final content = file.readAsStringSync();
@@ -108,7 +106,7 @@ void testFile(
   test(file.path, geoJson);
 }
 
-void testFiles(
+void loadGeoJsonFiles(
     String path, void Function(String path, GeoJSONObject geoJson) test) {
   var testDirectory = Directory(path);
 
@@ -133,12 +131,12 @@ Feature<Polygon> polygon(List<List<List<int>>> coordinates) {
   );
 }
 
-extension TestExtentions on List<List<int>> {
+extension PointsExtention on List<List<int>> {
   List<Position> toPositions() =>
       map((position) => Position.of(position)).toList(growable: false);
 }
 
-extension TestExtentions2 on List<List<List<int>>> {
+extension PolygonPointsExtentions on List<List<List<int>>> {
   List<List<Position>> toPositions() =>
       map((element) => element.toPositions()).toList(growable: false);
 }
