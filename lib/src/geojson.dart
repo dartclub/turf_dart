@@ -210,9 +210,7 @@ class Position extends CoordinateType {
         ]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  Position.of(List<num> list)
-      : assert(list.length >= 2 && list.length <= 3),
-        super(list);
+  Position.of(super.list) : assert(list.length >= 2 && list.length <= 3);
 
   factory Position.fromJson(List<num> list) => Position.of(list);
 
@@ -324,9 +322,7 @@ class BBox extends CoordinateType {
         ]);
 
   /// Position.of([<Lng>, <Lat>, <Alt (optional)>])
-  BBox.of(List<num> list)
-      : assert(list.length == 4 || list.length == 6),
-        super(list);
+  BBox.of(super.list) : assert(list.length == 4 || list.length == 6);
 
   factory BBox.fromJson(List<num> list) => BBox.of(list);
 
@@ -392,8 +388,7 @@ class BBox extends CoordinateType {
 }
 
 abstract class GeometryObject extends GeoJSONObject {
-  GeometryObject.withType(GeoJSONObjectType type, {BBox? bbox})
-      : super.withType(type, bbox: bbox);
+  GeometryObject.withType(super.type, {super.bbox}) : super.withType();
 
   static GeometryObject deserialize(Map<String, dynamic> json) {
     return json['type'] == 'GeometryCollection' ||

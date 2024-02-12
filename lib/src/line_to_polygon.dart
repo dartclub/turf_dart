@@ -60,7 +60,6 @@ Feature lineToPolygon(
             ...list,
             ...currentGeometry.coordinates
                 .map((e) => e.map((p) => p.clone()).toList())
-                .toList()
           ];
         } else {
           throw Exception("$currentGeometry type is not supperted");
