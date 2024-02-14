@@ -1,3 +1,5 @@
+library turf_boolean;
+
 export 'src/booleans/boolean_clockwise.dart';
 export 'src/booleans/boolean_concave.dart';
 export 'src/booleans/boolean_contains.dart';
