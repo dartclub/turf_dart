@@ -11,8 +11,8 @@ import 'boolean_helper.dart';
 ///
 /// example:
 /// ```dart
-/// var point = Point(coordinates: [1, 2]);
-/// var line = LineString(
+/// final point = Point(coordinates: [1, 2]);
+/// final line = LineString(
 ///   coordinates: [
 ///     Position.of([1, 1]),
 ///     Position.of([1, 2]),
@@ -27,8 +27,8 @@ bool booleanWithin(
   GeoJSONObject feature1,
   GeoJSONObject feature2,
 ) {
-  var geom1 = getGeom(feature1);
-  var geom2 = getGeom(feature2);
+  final geom1 = getGeom(feature1);
+  final geom2 = getGeom(feature2);
 
   switch (geom1.runtimeType) {
     case Point:
