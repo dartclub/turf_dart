@@ -126,7 +126,7 @@ Map<String, dynamic> _$MultiPolygonToJson(MultiPolygon instance) =>
 
 Map<String, dynamic> _$GeometryCollectionToJson(GeometryCollection instance) =>
     <String, dynamic>{
-      'type': _$GeoJSONObjectTypeEnumMap[instance.type],
+      'type': _$GeoJSONObjectTypeEnumMap[instance.type]!,
       'bbox': instance.bbox?.toJson(),
       'geometries': instance.geometries.map((e) => e.toJson()).toList(),
     };

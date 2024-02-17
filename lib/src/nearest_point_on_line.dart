@@ -37,18 +37,13 @@ class _NearestMulti extends _Nearest {
   final int localIndex;
 
   _NearestMulti({
-    required Point point,
-    required num distance,
-    required int index,
+    required super.point,
+    required super.distance,
+    required super.index,
     required this.localIndex,
-    required num location,
+    required super.location,
     required this.line,
-  }) : super(
-          point: point,
-          distance: distance,
-          index: index,
-          location: location,
-        );
+  });
 
   @override
   Feature<Point> toFeature() {
