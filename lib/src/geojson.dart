@@ -267,7 +267,7 @@ class Position extends CoordinateType {
   int get hashCode => Object.hashAll(_items);
 
   @override
-  bool operator ==(dynamic other) => other is Position
+  bool operator ==(Object other) => other is Position
       ? lng == other.lng && lat == other.lat && alt == other.alt
       : false;
 }
@@ -679,7 +679,7 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
   int get hashCode => Object.hash(type, id);
 
   @override
-  bool operator ==(dynamic other) => other is Feature ? id == other.id : false;
+  bool operator ==(Object other) => other is Feature ? id == other.id : false;
 
   @override
   Map<String, dynamic> toJson() => super.serialize({
