@@ -187,11 +187,11 @@ Position _getMidpoint(Position position1, Position position2) {
   );
 }
 
-bool isPolygonInPolygon(Polygon polygon1, Polygon poligon2) =>
-    _isPolygonInGeoJsonPolygon(polygon1, poligon2);
+bool isPolygonInPolygon(Polygon polygon1, Polygon polygon2) =>
+    _isPolygonInGeoJsonPolygon(polygon1, polygon2);
 
-bool isPolygonInMultiPolygon(Polygon polygon1, MultiPolygon poligon2) =>
-    _isPolygonInGeoJsonPolygon(polygon1, poligon2);
+bool isPolygonInMultiPolygon(Polygon polygon1, MultiPolygon polygon2) =>
+    _isPolygonInGeoJsonPolygon(polygon1, polygon2);
 
 bool _isPolygonInGeoJsonPolygon(
   Polygon polygon1,

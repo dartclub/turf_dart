@@ -39,7 +39,7 @@ void main() {
       );
     });
 
-    test('within - point in multipoligon with hole', () {
+    test('within - point in multipolygon with hole', () {
       loadGeoJson(
           './test/examples/booleans/point_in_polygon/in/multipoly-with-hole.geojson',
           (path, geoJson) {
@@ -131,12 +131,12 @@ Feature<Polygon> polygon(List<List<List<int>>> coordinates) {
   );
 }
 
-extension PointsExtention on List<List<int>> {
+extension PointsExtension on List<List<int>> {
   List<Position> toPositions() =>
       map((position) => Position.of(position)).toList(growable: false);
 }
 
-extension PolygonPointsExtentions on List<List<List<int>>> {
+extension PolygonPointsExtensions on List<List<List<int>>> {
   List<List<Position>> toPositions() =>
       map((element) => element.toPositions()).toList(growable: false);
 }
