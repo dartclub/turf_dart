@@ -117,8 +117,8 @@ bool isLineInMultiPolygon(LineString line, MultiPolygon polygon) =>
     _isLineInGeoJsonPolygon(line, polygon);
 
 bool _isLineInGeoJsonPolygon(LineString line, GeoJSONObject polygon) {
-  var boundingBoxOfPolygon = bbox(polygon);
-  var boundingBoxOfLine = bbox(line);
+  final boundingBoxOfPolygon = bbox(polygon);
+  final boundingBoxOfLine = bbox(line);
 
   if (!_doBBoxesOverlap(boundingBoxOfPolygon, boundingBoxOfLine)) {
     return false;
@@ -197,8 +197,8 @@ bool _isPolygonInGeoJsonPolygon(
   Polygon polygon1,
   GeoJSONObject polygon2,
 ) {
-  var boundingBoxOfPolygon1 = bbox(polygon1);
-  var boundingBoxOfPolygon2 = bbox(polygon2);
+  final boundingBoxOfPolygon1 = bbox(polygon1);
+  final boundingBoxOfPolygon2 = bbox(polygon2);
   if (!_doBBoxesOverlap(boundingBoxOfPolygon2, boundingBoxOfPolygon1)) {
     return false;
   }

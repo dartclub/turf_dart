@@ -12,22 +12,22 @@ import 'boolean_helper.dart';
 /// [booleanContains] returns the exact opposite result of the [booleanWithin].
 /// example:
 /// ```dart
-/// var line = LineString(coordinates: [
+/// final line = LineString(coordinates: [
 ///   Position.of([1, 1]),
 ///   Position.of([1, 2]),
 ///   Position.of([1, 3]),
 ///   Position.of([1, 4])
 /// ]);
-/// var point = Point(coordinates: Position.of([1, 2]));
+/// final point = Point(coordinates: Position.of([1, 2]));
 /// booleanContains(line, point);
 /// //=true
 /// ```
 bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
-  var geom1 = getGeom(feature1);
-  var geom2 = getGeom(feature2);
+  final geom1 = getGeom(feature1);
+  final geom2 = getGeom(feature2);
 
-  var coords1 = (geom1 as GeometryType).coordinates;
-  var coords2 = (geom2 as GeometryType).coordinates;
+  final coords1 = (geom1 as GeometryType).coordinates;
+  final coords2 = (geom2 as GeometryType).coordinates;
   if (geom1 is Point) {
     if (geom2 is Point) {
       return coords1 == coords2;
@@ -73,14 +73,14 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 /// Is Polygon2 in Polygon1
 /// Only takes into account outer rings
 bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
-  var poly1Bbox = bbox(geom1);
-  var poly2Bbox = bbox(geom2);
+  final poly1Bbox = bbox(geom1);
+  final poly2Bbox = bbox(geom2);
   if (!_doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
-  for (var ring in (geom2 as GeometryType).coordinates) {
-    for (var coord in ring) {
+  for (final ring in (geom2 as GeometryType).coordinates) {
+    for (final coord in ring) {
       if (!booleanPointInPolygon(coord, geom1)) {
         return false;
       }

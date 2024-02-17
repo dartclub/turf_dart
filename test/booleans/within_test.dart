@@ -45,8 +45,8 @@ void main() {
           (path, geoJson) {
         final multiPolygon = (geoJson as Feature);
         final pointInHole = point([-86.69208526611328, 36.20373274711739]);
-        var pointInPolygon = point([-86.72229766845702, 36.20258997094334]);
-        var pointInSecondPolygon =
+        final pointInPolygon = point([-86.72229766845702, 36.20258997094334]);
+        final pointInSecondPolygon =
             point([-86.75079345703125, 36.18527313913089]);
 
         expect(booleanWithin(pointInHole, multiPolygon), false,
@@ -59,7 +59,7 @@ void main() {
     });
 
     test("within - point in polygon", () {
-      var simplePolygon = polygon([
+      final simplePolygon = polygon([
         [
           [0, 0],
           [0, 100],
@@ -68,15 +68,15 @@ void main() {
           [0, 0],
         ],
       ]);
-      var pointIn = point([50, 50]);
-      var pointOut = point([140, 150]);
+      final pointIn = point([50, 50]);
+      final pointOut = point([140, 150]);
 
       expect(booleanWithin(pointIn, simplePolygon), true,
           reason: "point inside polygon");
       expect(booleanWithin(pointOut, simplePolygon), false,
           reason: "point outside polygon");
 
-      var concavePolygon = polygon([
+      final concavePolygon = polygon([
         [
           [0, 0],
           [50, 50],
@@ -87,8 +87,8 @@ void main() {
         ],
       ]);
 
-      var pointInConcave = point([75, 75]);
-      var pointOutConcave = point([25, 50]);
+      final pointInConcave = point([75, 75]);
+      final pointOutConcave = point([25, 50]);
 
       expect(booleanWithin(pointInConcave, concavePolygon), true,
           reason: "point inside concave polygon");
@@ -108,9 +108,9 @@ void loadGeoJson(
 
 void loadGeoJsonFiles(
     String path, void Function(String path, GeoJSONObject geoJson) test) {
-  var testDirectory = Directory(path);
+  final testDirectory = Directory(path);
 
-  for (var file in testDirectory.listSync(recursive: true)) {
+  for (final file in testDirectory.listSync(recursive: true)) {
     if (file is File && file.path.endsWith('.geojson')) {
       if (file.path.contains('skip')) continue;
 
