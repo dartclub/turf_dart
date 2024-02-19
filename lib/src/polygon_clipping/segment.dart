@@ -1,15 +1,14 @@
 // Give segments unique ID's to get consistent sorting of
 // segments and sweep events when all else is identical
-import 'dart:math';
 
-import 'package:turf/src/polygon_clipping/bbox.dart';
+import 'package:turf/src/geojson.dart';
 import 'package:turf/src/polygon_clipping/geom_out.dart';
 import 'package:turf/src/polygon_clipping/operation.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
 import 'package:turf/src/polygon_clipping/rounder.dart';
 import 'package:turf/src/polygon_clipping/sweep_event.dart';
+import 'package:turf/src/polygon_clipping/utils.dart';
 import 'package:turf/src/polygon_clipping/vector_extension.dart';
-import 'package:vector_math/vector_math.dart';
 
 class Segment {
   static int _nextId = 1;
@@ -57,19 +56,19 @@ class Segment {
 
   //TODO: Implement compare type, should return bool?
   static int compare(Segment a, Segment b) {
-    final alx = a.leftSE.point.x;
-    final blx = b.leftSE.point.x;
-    final arx = a.rightSE.point.x;
-    final brx = b.rightSE.point.x;
+    final alx = a.leftSE.point.lng;
+    final blx = b.leftSE.point.lng;
+    final arx = a.rightSE.point.lng;
+    final brx = b.rightSE.point.lng;
 
     // check if they're even in the same vertical plane
     if (brx < alx) return 1;
     if (arx < blx) return -1;
 
-    final aly = a.leftSE.point.y;
-    final bly = b.leftSE.point.y;
-    final ary = a.rightSE.point.y;
-    final bry = b.rightSE.point.y;
+    final aly = a.leftSE.point.lat;
+    final bly = b.leftSE.point.lat;
+    final ary = a.rightSE.point.lat;
+    final bry = b.rightSE.point.lat;
 
     // is left endpoint of segment B the right-more?
     if (alx < blx) {
@@ -180,31 +179,31 @@ class Segment {
    */
 
   //TODO: return bool?
-  comparePoint(Point point) {
+  comparePoint(Position point) {
     if (isAnEndpoint(point)) return 0;
 
-    final Point lPt = leftSE.point;
-    final Point rPt = rightSE.point;
-    final Vector2 v = vector;
+    final Position lPt = leftSE.point;
+    final Position rPt = rightSE.point;
+    final Position v = vector;
 
     // Exactly vertical segments.
-    if (lPt.x == rPt.x) {
-      if (point.x == lPt.x) return 0;
-      return point.x < lPt.x ? 1 : -1;
+    if (lPt.lng == rPt.lng) {
+      if (point.lng == lPt.lng) return 0;
+      return point.lng < lPt.lng ? 1 : -1;
     }
 
     // Nearly vertical segments with an intersection.
     // Check to see where a point on the line with matching Y coordinate is.
-    final yDist = (point.y - lPt.y) / v.y;
-    final xFromYDist = lPt.x + yDist * v.x;
-    if (point.x == xFromYDist) return 0;
+    final yDist = (point.lat - lPt.lat) / v.lat;
+    final xFromYDist = lPt.lng + yDist * v.lng;
+    if (point.lng == xFromYDist) return 0;
 
     // General case.
     // Check to see where a point on the line with matching X coordinate is.
-    final xDist = (point.x - lPt.x) / v.x;
-    final yFromXDist = lPt.y + xDist * v.y;
-    if (point.y == yFromXDist) return 0;
-    return point.y < yFromXDist ? -1 : 1;
+    final xDist = (point.lng - lPt.lng) / v.lng;
+    final yFromXDist = lPt.lat + xDist * v.lat;
+    if (point.lat == yFromXDist) return 0;
+    return point.lat < yFromXDist ? -1 : 1;
   }
 
   /* When a segment is split, the rightSE is replaced with a new sweep event */
@@ -216,11 +215,13 @@ class Segment {
   }
 
   /* Create Bounding Box for segment */
-  BoundingBox get bbox {
-    final y1 = leftSE.point.y;
-    final y2 = rightSE.point.y;
-    return BoundingBox(Point(leftSE.point.x, y1 < y2 ? y1 : y2),
-        Point(rightSE.point.x, y1 > y2 ? y1 : y2));
+  BBox get bbox {
+    final y1 = leftSE.point.lat;
+    final y2 = rightSE.point.lat;
+    return BBox.fromPositions(
+      Position(leftSE.point.lng, y1 < y2 ? y1 : y2),
+      Position(rightSE.point.lng, y1 > y2 ? y1 : y2),
+    );
   }
 
   /*
@@ -239,7 +240,7 @@ class Segment {
    * Else, return null.
    */
 
-  Point? getIntersection(Segment other) {
+  Position? getIntersection(Segment other) {
     // If bboxes don't overlap, there can't be any intersections
     final tBbox = bbox;
     final oBbox = other.bbox;
@@ -278,7 +279,7 @@ class Segment {
     if (touchesThisLSE) {
       // check for segments that just intersect on opposing endpoints
       if (touchesOtherRSE) {
-        if (tlp.x == orp.x && tlp.y == orp.y) return null;
+        if (tlp.lng == orp.lng && tlp.lat == orp.lat) return null;
       }
       // t-intersection on left endpoint
       return tlp;
@@ -288,7 +289,7 @@ class Segment {
     if (touchesOtherLSE) {
       // check for segments that just intersect on opposing endpoints
       if (touchesThisRSE) {
-        if (trp.x == olp.x && trp.y == olp.y) return null;
+        if (trp.lng == olp.lng && trp.lat == olp.lat) return null;
       }
       // t-intersection on left endpoint
       return olp;
@@ -303,7 +304,7 @@ class Segment {
 
     // None of our endpoints intersect. Look for a general intersection between
     // infinite lines laid over the segments
-    Point? pt = intersection(tlp, vector, olp, other.vector);
+    Position? pt = intersection(tlp, vector, olp, other.vector);
 
     // are the segments parrallel? Note that if they were colinear with overlap,
     // they would have an endpoint intersection and that case was already handled above
@@ -313,7 +314,7 @@ class Segment {
     if (!isInBbox(bboxOverlap, pt)) return null;
 
     // round the the computed point if needed
-    return rounder.round(pt.x, pt.y);
+    return rounder.round(pt.lng, pt.lat);
   }
 
   /*
@@ -329,7 +330,7 @@ class Segment {
    * Warning: input array of points is modified
    */
   //TODO: point events
-  List<SweepEvent> split(PointEvents point) {
+  List<SweepEvent> split(PositionEvents point) {
     final List<SweepEvent> newEvents = [];
     final alreadyLinked = point.events != null;
 
@@ -421,9 +422,9 @@ class Segment {
     consumee.rightSE.consumedBy = consumer.rightSE;
   }
 
-  static Segment fromRing(PointEvents pt1, PointEvents pt2, ring) {
-    PointEvents leftPt;
-    PointEvents rightPt;
+  static Segment fromRing(PositionEvents pt1, PositionEvents pt2, ring) {
+    PositionEvents leftPt;
+    PositionEvents rightPt;
     var winding;
 
     // ordering the two points according to sweep line ordering
@@ -438,7 +439,7 @@ class Segment {
       winding = -1;
     } else {
       throw Exception(
-          "Tried to create degenerate segment at [${pt1.x}, ${pt1.y}]");
+          "Tried to create degenerate segment at [${pt1.lng}, ${pt1.lat}]");
     }
 
     final leftSE = SweepEvent(leftPt, true);
@@ -549,15 +550,15 @@ class Segment {
     return _isInResult!;
   }
 
-  isAnEndpoint(Point pt) {
-    return ((pt.x == leftSE.point.x && pt.y == leftSE.point.y) ||
-        (pt.x == rightSE.point.x && pt.y == rightSE.point.y));
+  isAnEndpoint(Position pt) {
+    return ((pt.lng == leftSE.point.lng && pt.lat == leftSE.point.lat) ||
+        (pt.lng == rightSE.point.lng && pt.lat == rightSE.point.lat));
   }
 
   /* A vector from the left point to the right */
-  Vector2 get vector {
-    return Vector2((rightSE.point.x - leftSE.point.x).toDouble(),
-        (rightSE.point.y - leftSE.point.y).toDouble());
+  Position get vector {
+    return Position((rightSE.point.lng - leftSE.point.lng).toDouble(),
+        (rightSE.point.lat - leftSE.point.lat).toDouble());
   }
 }
 

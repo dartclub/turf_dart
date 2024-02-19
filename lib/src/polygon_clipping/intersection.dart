@@ -1,8 +1,8 @@
-import 'dart:math';
+import 'package:turf/src/geojson.dart';
 
 class Intersection {
   final int id;
-  final Point point;
+  final Position point;
 
   Intersection(this.id, this.point);
 }

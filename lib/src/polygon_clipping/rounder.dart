@@ -1,5 +1,6 @@
 import 'dart:collection';
-import 'dart:math';
+
+import 'package:turf/helpers.dart';
 
 /// A class for rounding floating-point coordinates to avoid floating-point problems.
 class PtRounder {
@@ -18,8 +19,8 @@ class PtRounder {
   }
 
   /// Rounds the input x and y coordinates using CoordRounder instances.
-  Point round(num x, num y) {
-    return Point(
+  Position round(num x, num y) {
+    return Position(
       xRounder.round(x),
       xRounder.round(y),
     );

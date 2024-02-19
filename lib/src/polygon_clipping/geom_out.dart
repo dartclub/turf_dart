@@ -1,9 +1,8 @@
-import 'dart:math';
-
+import 'package:turf/src/geojson.dart';
 import 'package:turf/src/polygon_clipping/intersection.dart';
 import 'package:turf/src/polygon_clipping/sweep_event.dart';
 import 'package:turf/src/polygon_clipping/segment.dart';
-import 'package:turf/src/polygon_clipping/vector.dart';
+import 'package:turf/src/polygon_clipping/vector_extension.dart';
 
 class RingOut {
   List<SweepEvent> events;
@@ -29,7 +28,7 @@ class RingOut {
       SweepEvent nextEvent = segment.rightSE;
       final List<SweepEvent> events = [event];
 
-      final Point startingPoint = event.point;
+      final Position startingPoint = event.point;
       final List<Intersection> intersectionLEs = [];
 
       while (true) {
@@ -43,10 +42,10 @@ class RingOut {
           List<SweepEvent> availableLEs = event.getAvailableLinkedEvents();
 
           if (availableLEs.isEmpty) {
-            Point firstPt = events[0].point;
-            Point lastPt = events[events.length - 1].point;
+            Position firstPt = events[0].point;
+            Position lastPt = events[events.length - 1].point;
             throw Exception(
-                'Unable to complete output ring starting at [${firstPt.x}, ${firstPt.y}]. Last matching segment found ends at [${lastPt.x}, ${lastPt.y}].');
+                'Unable to complete output ring starting at [${firstPt.lng}, ${firstPt.lat}]. Last matching segment found ends at [${lastPt.lng}, ${lastPt.lat}].');
           }
 
           if (availableLEs.length == 1) {
@@ -100,14 +99,14 @@ class RingOut {
     return _isExteriorRing!;
   }
 
-  //TODO: Convert type to List<Point>?
+  //TODO: Convert type to List<Position>?
   List<List<double>>? getGeom() {
-    Point prevPt = events[0].point;
-    List<Point> points = [prevPt];
+    Position prevPt = events[0].point;
+    List<Position> points = [prevPt];
 
     for (int i = 1, iMax = events.length - 1; i < iMax; i++) {
-      Point pt = events[i].point;
-      Point nextPt = events[i + 1].point;
+      Position pt = events[i].point;
+      Position nextPt = events[i + 1].point;
       if (compareVectorAngles(pt, prevPt, nextPt) == 0) continue;
       points.add(pt);
       prevPt = pt;
@@ -115,8 +114,8 @@ class RingOut {
 
     if (points.length == 1) return null;
 
-    Point pt = points[0];
-    Point nextPt = points[1];
+    Position pt = points[0];
+    Position nextPt = points[1];
     if (compareVectorAngles(pt, prevPt, nextPt) == 0) points.removeAt(0);
 
     points.add(points[0]);
@@ -126,7 +125,7 @@ class RingOut {
     List<List<double>> orderedPoints = [];
 
     for (int i = iStart; i != iEnd; i += step) {
-      orderedPoints.add([points[i].x.toDouble(), points[i].y.toDouble()]);
+      orderedPoints.add([points[i].lng.toDouble(), points[i].lat.toDouble()]);
     }
 
     return orderedPoints;

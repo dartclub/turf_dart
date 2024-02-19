@@ -1,6 +1,6 @@
 import 'dart:collection';
-import 'dart:math' as math;
-import 'bbox.dart';
+import 'package:turf/src/polygon_clipping/utils.dart';
+
 import 'geom_in.dart' as geomIn;
 import 'geom_out.dart' as geomOut;
 import 'rounder.dart';
@@ -96,9 +96,9 @@ class Operation {
         // prevents an infinite loop, an otherwise common manifestation of bugs
         final seg = evt.segment;
         throw StateError('Unable to pop() ${evt.isLeft ? 'left' : 'right'} '
-            'SweepEvent [${evt.point.x}, ${evt.point.y}] from segment #${seg?.id} '
-            '[${seg?.leftSE.point.x}, ${seg?.leftSE.point.y}] -> '
-            '[${seg?.rightSE.point.x}, ${seg?.rightSE.point.y}] from queue.');
+            'SweepEvent [${evt.point.lng}, ${evt.point.lat}] from segment #${seg?.id} '
+            '[${seg?.leftSE.point.lng}, ${seg?.leftSE.point.lat}] -> '
+            '[${seg?.rightSE.point.lng}, ${seg?.rightSE.point.lat}] from queue.');
       }
 
       if (queue.length > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {

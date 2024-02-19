@@ -7,10 +7,10 @@
 
 // Calculate the square of epsilon for later use.
 
-import 'package:turf/src/polygon_clipping/utils.dart';
+import 'package:turf/helpers.dart';
 
 const double epsilonsqrd = epsilon * epsilon;
-// FLP (Floating-Point) comparator function
+// FLP (Floating-Position) comparator function
 int cmp(double a, double b) {
   // Check if both numbers are close to zero.
   if (-epsilon < a && a < epsilon) {

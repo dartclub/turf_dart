@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:turf/helpers.dart';
 
 part 'geojson.g.dart';
 
@@ -330,6 +331,15 @@ class BBox extends CoordinateType {
 
   factory BBox.fromJson(List<num> list) => BBox.of(list);
 
+  factory BBox.fromPositions(Position p1, Position p2) => BBox.named(
+        lng1: p1.lng,
+        lat1: p1.lat,
+        alt1: p1.alt ?? 0,
+        lng2: p2.lng,
+        lat2: p2.lat,
+        alt2: p2.alt ?? 0,
+      );
+
   bool get _is3D => length == 6;
 
   num get lng1 => _items[0];
@@ -343,6 +353,18 @@ class BBox extends CoordinateType {
   num get lat2 => _items[_is3D ? 4 : 3];
 
   num? get alt2 => _is3D ? _items[5] : null;
+
+  Position get position1 => Position.named(
+        lng: lng1,
+        lat: lat1,
+        alt: alt1,
+      );
+
+  Position get position2 => Position.named(
+        lng: lng2,
+        lat: lat2,
+        alt: alt2,
+      );
 
   BBox copyWith({
     num? lng1,
@@ -361,6 +383,30 @@ class BBox extends CoordinateType {
         alt2: alt2 ?? this.alt2,
       );
 
+  //Adjust the bounds to include the given position
+  void expandToFitPosition(Position position) {
+    if (position.lng < lng1) {
+      _items[0] = position.lng;
+    }
+    if (position.lat < lat1) {
+      _items[1] = position.lat;
+    }
+    if (position.lng > lng2) {
+      _items[3] = position.lng;
+    }
+    if (position.lat > lat2) {
+      _items[4] = position.lat;
+    }
+    if (position.alt != null) {
+      if (alt1 == null || position.alt! < alt1!) {
+        _items[2] = position.alt!;
+      }
+      if (alt2 == null || position.alt! > alt2!) {
+        _items[5] = position.alt!;
+      }
+    }
+  }
+
   @override
   BBox clone() => BBox.of(_items);
 
@@ -376,6 +422,28 @@ class BBox extends CoordinateType {
         lng1: _untilSigned(lng1, 180),
         lng2: _untilSigned(lng2, 180),
       );
+
+  bool isPositionInBBox(Position point) {
+    return point.lng >= lng1 &&
+        point.lng <= lng2 &&
+        point.lat >= lat1 &&
+        point.lat <= lat2 &&
+        (point.alt == null ||
+            (alt1 != null && point.alt! >= alt1!) ||
+            (alt2 != null && point.alt! <= alt2!));
+  }
+
+  bool isBBoxOverlapping(BBox bbox) {
+    return bbox.lng1 <= lng2 &&
+        bbox.lng2 >= lng1 &&
+        bbox.lat1 <= lat2 &&
+        bbox.lat2 >= lat1 &&
+        ((alt1 == null && bbox.alt1 == null) ||
+            (alt1 != null &&
+                bbox.alt1 != null &&
+                bbox.alt1! <= alt2! &&
+                bbox.alt2! >= alt1!));
+  }
 
   @override
   int get hashCode => Object.hashAll(_items);
@@ -583,6 +651,10 @@ class MultiPolygon extends GeometryType<List<List<List<Position>>>> {
         super.withType(polygons.map((e) => e.coordinates).toList(),
             GeoJSONObjectType.multiPolygon,
             bbox: bbox);
+
+  List<Polygon> toPolygons() {
+    return coordinates.map((e) => Polygon(coordinates: e)).toList();
+  }
 
   @override
   Map<String, dynamic> toJson() => super.serialize(_$MultiPolygonToJson(this));

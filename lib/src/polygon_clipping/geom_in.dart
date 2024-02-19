@@ -1,7 +1,8 @@
 import 'dart:math';
 
-import 'package:turf/src/polygon_clipping/bbox.dart';
+import 'package:turf/helpers.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
+import 'package:turf/src/polygon_clipping/sweep_event.dart';
 
 import 'rounder.dart';
 import 'segment.dart';
@@ -11,42 +12,35 @@ class RingIn {
   List<Segment> segments = [];
   final bool isExterior;
   final PolyIn poly;
-  late BoundingBox bbox;
+  late BBox bbox;
 
-  RingIn(List<Point> geomRing, this.poly, this.isExterior) {
-    if (!(geomRing is List && geomRing.isNotEmpty)) {
-      throw ArgumentError(
-          "Input geometry is not a valid Polygon or MultiPolygon");
-    }
-
-    final firstPoint = rounder.round(geomRing[0].x, geomRing[0].y);
-    bbox = BoundingBox(
-      Point(firstPoint.x, firstPoint.y),
-      Point(firstPoint.x, firstPoint.y),
+  RingIn(List<Position> geomRing, this.poly, this.isExterior) {
+    final firstPoint = rounder.round(geomRing[0].lng, geomRing[0].lat);
+    bbox = BBox.fromPositions(
+      Position(firstPoint.lng, firstPoint.lat),
+      Position(firstPoint.lng, firstPoint.lat),
     );
 
     var prevPoint = firstPoint;
     for (var i = 1; i < geomRing.length; i++) {
-      var point = rounder.round(geomRing[i].x, geomRing[i].y);
+      var point = rounder.round(geomRing[i].lng, geomRing[i].lat);
       // skip repeated points
-      if (point.x == prevPoint.x && point.y == prevPoint.y) continue;
-      segments.add(Segment.fromRing(PointEvents.fromPoint(prevPoint),
-          PointEvents.fromPoint(point), this));
-
-      bbox.ll = Point(min(point.x, bbox.ll.x), min(point.y, bbox.ll.y));
-      bbox.ur = Point(max(point.x, bbox.ur.x), max(point.y, bbox.ur.y));
+      if (point.lng == prevPoint.lng && point.lat == prevPoint.lat) continue;
+      segments.add(Segment.fromRing(PositionEvents.fromPoint(prevPoint),
+          PositionEvents.fromPoint(point), this));
+      bbox.expandToFitPosition(point);
 
       prevPoint = point;
     }
     // add segment from last to first if last is not the same as first
-    if (firstPoint.x != prevPoint.x || firstPoint.y != prevPoint.y) {
-      segments.add(Segment.fromRing(PointEvents.fromPoint(prevPoint),
-          PointEvents.fromPoint(firstPoint), this));
+    if (firstPoint.lng != prevPoint.lng || firstPoint.lat != prevPoint.lat) {
+      segments.add(Segment.fromRing(PositionEvents.fromPoint(prevPoint),
+          PositionEvents.fromPoint(firstPoint), this));
     }
   }
 
-  List getSweepEvents() {
-    final sweepEvents = [];
+  List<SweepEvent> getSweepEvents() {
+    final List<SweepEvent> sweepEvents = [];
     for (var i = 0; i < segments.length; i++) {
       final segment = segments[i];
       sweepEvents.add(segment.leftSE);
@@ -61,30 +55,30 @@ class PolyIn {
   late RingIn exteriorRing;
   late List<RingIn> interiorRings;
   final MultiPolyIn multiPoly;
-  late BoundingBox bbox;
+  late BBox bbox;
 
-  PolyIn(List<dynamic> geomPoly, this.multiPoly) {
-    if (!(geomPoly is List)) {
-      throw ArgumentError(
-          "Input geometry is not a valid Polygon or MultiPolygon");
-    }
-    exteriorRing = RingIn(geomPoly[0], this, true);
+  PolyIn(Polygon geomPoly, this.multiPoly) {
+    exteriorRing = RingIn(geomPoly.coordinates[0], this, true);
     // copy by value
     bbox = exteriorRing.bbox;
 
     interiorRings = [];
-    for (var i = 1; i < geomPoly.length; i++) {
-      final ring = RingIn(geomPoly[i], this, false);
-      bbox.ll =
-          Point(min(ring.bbox.ll.x, bbox.ll.x), min(ring.bbox.ll.y, bbox.ll.y));
-      bbox.ur =
-          Point(max(ring.bbox.ur.x, bbox.ur.x), max(ring.bbox.ur.y, bbox.ur.y));
+    Position lowerLeft = bbox.position1;
+    Position upperRight = bbox.position2;
+    for (var i = 1; i < geomPoly.coordinates.length; i++) {
+      final ring = RingIn(geomPoly.coordinates[i], this, false);
+      lowerLeft = Position(min(ring.bbox.position1.lng, lowerLeft.lng),
+          min(ring.bbox.position1.lat, lowerLeft.lat));
+      upperRight = Position(max(ring.bbox.position2.lng, upperRight.lng),
+          max(ring.bbox.position2.lat, upperRight.lat));
       interiorRings.add(ring);
     }
+
+    bbox = BBox.fromPositions(lowerLeft, upperRight);
   }
 
-  List getSweepEvents() {
-    final sweepEvents = exteriorRing.getSweepEvents();
+  List<SweepEvent> getSweepEvents() {
+    final List<SweepEvent> sweepEvents = exteriorRing.getSweepEvents();
     for (var i = 0; i < interiorRings.length; i++) {
       final ringSweepEvents = interiorRings[i].getSweepEvents();
       for (var j = 0; j < ringSweepEvents.length; j++) {
@@ -99,38 +93,31 @@ class PolyIn {
 class MultiPolyIn {
   late List<PolyIn> polys;
   final bool isSubject;
-  late BoundingBox bbox;
+  late BBox bbox;
 
-  MultiPolyIn(List<dynamic> geom, this.isSubject) {
-    if (!(geom is List)) {
-      throw ArgumentError(
-          "Input geometry is not a valid Polygon or MultiPolygon");
-    }
-
-    try {
-      // if the input looks like a polygon, convert it to a multipolygon
-      if (geom[0][0][0] is num) geom = [geom];
-    } catch (ex) {
-      // The input is either malformed or has empty arrays.
-      // In either case, it will be handled later on.
-    }
-
-    polys = [];
-    bbox = BoundingBox(
-      Point(double.infinity, double.infinity),
-      Point(double.negativeInfinity, double.negativeInfinity),
+  MultiPolyIn(MultiPolygon geom, this.isSubject) {
+    bbox = BBox.fromPositions(
+      Position(double.infinity, double.infinity),
+      Position(double.negativeInfinity, double.negativeInfinity),
     );
-    for (var i = 0; i < geom.length; i++) {
-      final poly = PolyIn(geom[i], this);
-      bbox.ll =
-          Point(min(poly.bbox.ll.x, bbox.ll.x), min(poly.bbox.ll.y, bbox.ll.y));
-      bbox.ur =
-          Point(max(poly.bbox.ur.x, bbox.ur.x), max(poly.bbox.ur.y, bbox.ur.y));
+
+    List<Polygon> polygonsIn = geom.toPolygons();
+
+    Position lowerLeft = bbox.position1;
+    Position upperRight = bbox.position2;
+    for (var i = 0; i < polygonsIn.length; i++) {
+      final poly = PolyIn(polygonsIn[i], this);
+      lowerLeft = Position(min(poly.bbox.position1.lng, lowerLeft.lng),
+          min(poly.bbox.position1.lat, lowerLeft.lat));
+      upperRight = Position(max(poly.bbox.position2.lng, upperRight.lng),
+          max(poly.bbox.position2.lat, upperRight.lat));
     }
+
+    bbox = BBox.fromPositions(lowerLeft, upperRight);
   }
 
-  List getSweepEvents() {
-    final sweepEvents = [];
+  List<SweepEvent> getSweepEvents() {
+    final List<SweepEvent> sweepEvents = [];
     for (var i = 0; i < polys.length; i++) {
       final polySweepEvents = polys[i].getSweepEvents();
       for (var j = 0; j < polySweepEvents.length; j++) {

@@ -1,12 +1,11 @@
-import 'dart:math';
-
+import 'package:turf/src/geojson.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
 import 'package:turf/src/polygon_clipping/vector_extension.dart';
 
 import 'segment.dart'; // Assuming this is the Dart equivalent of your Segment class // Assuming this contains cosineOfAngle and sineOfAngle functions
 
 class SweepEvent {
-  PointEvents point;
+  PositionEvents point;
   bool isLeft;
   Segment? segment; // Assuming these are defined in your environment
   SweepEvent? otherSE;
@@ -42,18 +41,18 @@ class SweepEvent {
     return Segment.compare(a.segment!, b.segment!);
   }
 
-  static int comparePoints(Point aPt, Point bPt) {
-    if (aPt.x < bPt.x) return -1;
-    if (aPt.x > bPt.x) return 1;
+  static int comparePoints(Position aPt, Position bPt) {
+    if (aPt.lng < bPt.lng) return -1;
+    if (aPt.lng > bPt.lng) return 1;
 
-    if (aPt.y < bPt.y) return -1;
-    if (aPt.y > bPt.y) return 1;
+    if (aPt.lat < bPt.lat) return -1;
+    if (aPt.lat > bPt.lat) return 1;
 
     return 0;
   }
 
   void link(SweepEvent other) {
-    //TODO: write test for Point comparison
+    //TODO: write test for Position comparison
     if (other.point == point) {
       throw 'Tried to link already linked events';
     }
@@ -105,8 +104,10 @@ class SweepEvent {
       var nextEvent = linkedEvent.otherSE;
       if (nextEvent != null) {
         cache[linkedEvent] = {
-          'sine': sineOfAngle(point, baseEvent.point, nextEvent!.point),
-          'cosine': cosineOfAngle(point, baseEvent.point, nextEvent.point),
+          'sine':
+              sineOfAngle(point, baseEvent.point, nextEvent!.point).toDouble(),
+          'cosine':
+              cosineOfAngle(point, baseEvent.point, nextEvent.point).toDouble(),
         };
       }
     }
@@ -138,10 +139,10 @@ class SweepEvent {
 }
 
 
-// class Point {
+// class Position {
 //   double x;
 //   double y;
 //   List<SweepEvent> events;
 
-//   Point(this.x, this.y);
+//   Position(this.lng, this.lat);
 // }

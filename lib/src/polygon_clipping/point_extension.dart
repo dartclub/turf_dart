@@ -1,17 +1,16 @@
-import 'dart:math';
-
+import 'package:turf/src/geojson.dart';
 import 'package:turf/src/polygon_clipping/sweep_event.dart';
 
-class PointEvents extends Point {
+class PositionEvents extends Position {
   List<SweepEvent>? events;
 
-  PointEvents(
-    double super.x,
-    double super.y,
+  PositionEvents(
+    double super.lng,
+    double super.lat,
     this.events,
   );
 
-  factory PointEvents.fromPoint(Point point) {
-    return PointEvents(point.x.toDouble(), point.y.toDouble(), []);
+  factory PositionEvents.fromPoint(Position point) {
+    return PositionEvents(point.lng.toDouble(), point.lat.toDouble(), []);
   }
 }

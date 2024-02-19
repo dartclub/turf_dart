@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'dart:math';
+import 'package:turf/src/geojson.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
 
 import 'segment.dart';
@@ -44,8 +44,8 @@ class SweepLine {
     if (node == null) {
       throw ArgumentError(
         'Unable to find segment #${segment.id} '
-        '[${segment.leftSE.point.x}, ${segment.leftSE.point.y}] -> '
-        '[${segment.rightSE.point.x}, ${segment.rightSE.point.y}] '
+        '[${segment.leftSE.point.lng}, ${segment.leftSE.point.lat}] -> '
+        '[${segment.rightSE.point.lng}, ${segment.rightSE.point.lat}] '
         'in SweepLine tree.',
       );
     }
@@ -77,7 +77,7 @@ class SweepLine {
 
     if (event.isLeft) {
       // Check for intersections against the previous segment in the sweep line
-      Point<num>? prevMySplitter;
+      Position? prevMySplitter;
       if (prevSeg != null) {
         var prevInter = prevSeg.getIntersection(segment);
         if (prevInter != null) {
@@ -89,7 +89,7 @@ class SweepLine {
         }
       }
       // Check for intersections against the next segment in the sweep line
-      Point<num>? nextMySplitter;
+      Position? nextMySplitter;
       if (nextSeg != null) {
         var nextInter = nextSeg.getIntersection(segment);
         if (nextInter != null) {
@@ -104,7 +104,7 @@ class SweepLine {
       // For simplicity, even if we find more than one intersection we only
       // spilt on the 'earliest' (sweep-line style) of the intersections.
       // The other intersection will be handled in a future process().
-      Point<num>? mySplitter;
+      Position? mySplitter;
       if (prevMySplitter == null) {
         mySplitter = nextMySplitter;
       } else if (nextMySplitter == null) {
@@ -119,7 +119,7 @@ class SweepLine {
       //TODO: check if mySplitter is null? do we need that check?
       if (prevMySplitter != null || nextMySplitter != null) {
         queue.remove(segment.rightSE);
-        newEvents.addAll(segment.split(PointEvents.fromPoint(mySplitter!)));
+        newEvents.addAll(segment.split(PositionEvents.fromPoint(mySplitter!)));
       }
 
       if (newEvents.isNotEmpty) {
