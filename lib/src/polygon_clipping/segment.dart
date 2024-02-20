@@ -1,11 +1,10 @@
 // Give segments unique ID's to get consistent sorting of
 // segments and sweep events when all else is identical
 
-import 'package:turf/src/geojson.dart';
+import 'package:turf/helpers.dart';
 import 'package:turf/src/polygon_clipping/geom_out.dart';
 import 'package:turf/src/polygon_clipping/operation.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
-import 'package:turf/src/polygon_clipping/rounder.dart';
 import 'package:turf/src/polygon_clipping/sweep_event.dart';
 import 'package:turf/src/polygon_clipping/utils.dart';
 import 'package:turf/src/polygon_clipping/vector_extension.dart';
@@ -314,7 +313,7 @@ class Segment {
     if (!isInBbox(bboxOverlap, pt)) return null;
 
     // round the the computed point if needed
-    return rounder.round(pt.lng, pt.lat);
+    return Position(round(pt.lng), round(pt.lat));
   }
 
   /*

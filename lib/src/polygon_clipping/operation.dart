@@ -3,7 +3,6 @@ import 'package:turf/src/polygon_clipping/utils.dart';
 
 import 'geom_in.dart' as geomIn;
 import 'geom_out.dart' as geomOut;
-import 'rounder.dart';
 import 'sweep_event.dart';
 import 'sweep_line.dart';
 
@@ -25,7 +24,6 @@ class Operation {
 
   List<dynamic> run(String type, dynamic geom, List<dynamic> moreGeoms) {
     this.type = type;
-    rounder.reset();
 
     /* Convert inputs to MultiPoly objects */
     final List<geomIn.MultiPolyIn> multipolys = [
@@ -124,9 +122,6 @@ class Operation {
       node = queue.last;
       queue.remove(node);
     }
-
-    // free some memory we don't need anymore
-    rounder.reset();
 
     /* Collect and compile segments we're keeping into a multipolygon */
     final ringsOut = geomOut.RingOut.factory(sweepLine.segments);

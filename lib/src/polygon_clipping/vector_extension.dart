@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:turf/helpers.dart';
 
 /* Get the intersection of two lines, each defined by a base point and a vector.
@@ -52,7 +54,9 @@ num sineOfAngle(Position pShared, Position pBase, Position pAngle) {
       (pBase.lat - pShared.lat).toDouble());
   final Position vAngle = Position((pAngle.lng - pShared.lng).toDouble(),
       (pAngle.lat - pShared.lat).toDouble());
-  return crossProductMagnitude(vAngle, vBase) / vAngle.length / vBase.length;
+  return crossProductMagnitude(vAngle, vBase) /
+      vectorLength(vAngle) /
+      vectorLength(vBase);
 }
 
 /* Get the cosine of the angle from pShared -> pAngle to pShaed -> pBase */
@@ -61,7 +65,9 @@ num cosineOfAngle(Position pShared, Position pBase, Position pAngle) {
       (pBase.lat - pShared.lat).toDouble());
   final Position vAngle = Position((pAngle.lng - pShared.lng).toDouble(),
       (pAngle.lat - pShared.lat).toDouble());
-  return dotProductMagnitude(vAngle, vBase) / vAngle.length / vBase.length;
+  return dotProductMagnitude(vAngle, vBase) /
+      vectorLength(vAngle) /
+      vectorLength(vBase);
 }
 
 /* Cross Product of two vectors with first point at origin */
@@ -82,9 +88,13 @@ num compareVectorAngles(Position basePt, Position endPt1, Position endPt2) {
     endPt2.lng.toDouble(),
     endPt2.lat.toDouble(),
   );
-  return res > 0
+  return res < 0
       ? -1
-      : res < 0
+      : res > 0
           ? 1
           : 0;
+}
+
+num vectorLength(Position vector) {
+  return sqrt(vector.dotProduct(vector));
 }
