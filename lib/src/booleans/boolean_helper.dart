@@ -4,15 +4,22 @@ import 'package:turf/src/bbox.dart';
 import 'boolean_point_on_line.dart';
 import 'boolean_point_in_polygon.dart';
 
-class FeatureNotSupported implements Exception {
+class GeometryNotSupported implements Exception {
+  final GeometryObject geometry;
+  GeometryNotSupported(this.geometry);
+
+  @override
+  String toString() => "geometry not supported ($geometry).";
+}
+
+class GeometryCombinationNotSupported implements Exception {
   final GeometryObject geometry1;
   final GeometryObject geometry2;
 
-  FeatureNotSupported(this.geometry1, this.geometry2);
+  GeometryCombinationNotSupported(this.geometry1, this.geometry2);
 
   @override
-  String toString() =>
-      "feature geometry not supported ($geometry1, $geometry2).";
+  String toString() => "geometry not supported ($geometry1, $geometry2).";
 }
 
 bool isPointInMultiPoint(Point point, MultiPoint multipoint) {

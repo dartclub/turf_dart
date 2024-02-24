@@ -1,5 +1,8 @@
 {
   "type": "FeatureCollection",
+  "properties": {
+    "direction": true
+  },
   "features": [
     {
       "type": "Feature",

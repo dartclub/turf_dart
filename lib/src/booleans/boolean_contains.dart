@@ -1,8 +1,5 @@
 import 'package:turf/src/invariant.dart';
 import 'package:turf/turf.dart';
-
-import 'boolean_point_in_polygon.dart';
-import 'boolean_point_on_line.dart';
 import 'boolean_helper.dart';
 
 /// [booleanContains] returns [true] if the second geometry is completely contained
@@ -32,7 +29,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     if (geom2 is Point) {
       return coords1 == coords2;
     } else {
-      throw FeatureNotSupported(geom1, geom2);
+      throw GeometryCombinationNotSupported(geom1, geom2);
     }
   } else if (geom1 is MultiPoint) {
     if (geom2 is Point) {
@@ -40,7 +37,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is MultiPoint) {
       return isMultiPointInMultiPoint(geom2, geom1);
     } else {
-      throw FeatureNotSupported(geom1, geom2);
+      throw GeometryCombinationNotSupported(geom1, geom2);
     }
   } else if (geom1 is LineString) {
     if (geom2 is Point) {
@@ -50,7 +47,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is MultiPoint) {
       return isMultiPointOnLine(geom2, geom1);
     } else {
-      throw FeatureNotSupported(geom1, geom2);
+      throw GeometryCombinationNotSupported(geom1, geom2);
     }
   } else if (geom1 is Polygon) {
     if (geom2 is Point) {
@@ -63,10 +60,10 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
     } else if (geom2 is MultiPoint) {
       return isMultiPointInPolygon(geom2, geom1);
     } else {
-      throw FeatureNotSupported(geom1, geom2);
+      throw GeometryCombinationNotSupported(geom1, geom2);
     }
   } else {
-    throw FeatureNotSupported(geom1, geom2);
+    throw GeometryCombinationNotSupported(geom1, geom2);
   }
 }
 

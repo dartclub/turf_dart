@@ -1,12 +1,10 @@
 {
   "type": "FeatureCollection",
-  "properties": {
-    "tolerance": 0.05
-  },
   "features": [
     {
       "type": "Feature",
       "properties": {
+        "tolerance": 0.005,
         "stroke": "#F00",
         "fill": "#F00",
         "stroke-width": 10,
