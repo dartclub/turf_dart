@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:turf/extensions.dart';
 
 part 'geojson.g.dart';
 
@@ -64,6 +65,8 @@ abstract class GeoJSONObject {
   Map<String, dynamic> toJson();
 
   GeoJSONObject clone();
+
+  GeometryObject? get asGeometry;
 }
 
 /// Coordinate types, following https://tools.ietf.org/html/rfc7946#section-4
@@ -431,6 +434,9 @@ abstract class GeometryType<T> extends GeometryObject {
 
   @override
   GeometryType<T> clone();
+
+  @override
+  GeometryObject? get asGeometry => this;
 }
 
 /// Point, as specified here https://tools.ietf.org/html/rfc7946#section-3.1.2
@@ -621,6 +627,9 @@ class GeometryCollection extends GeometryObject {
         geometries: geometries.map((e) => e.clone()).toList(),
         bbox: bbox?.clone(),
       );
+
+  @override
+  GeometryObject? get asGeometry => this;
 }
 
 /// Feature, as specified here https://tools.ietf.org/html/rfc7946#section-3.2
@@ -697,6 +706,9 @@ class Feature<T extends GeometryObject> extends GeoJSONObject {
         properties: Map.of(properties ?? {}),
         id: id,
       );
+
+  @override
+  GeometryObject? get asGeometry => geometry;
 }
 
 /// FeatureCollection, as specified here https://tools.ietf.org/html/rfc7946#section-3.3
@@ -729,4 +741,22 @@ class FeatureCollection<T extends GeometryObject> extends GeoJSONObject {
         features: features.map((e) => e.clone()).toList(),
         bbox: bbox?.clone(),
       );
+
+  // flattens geometrycollections, because
+  // nested geometrycollections are not allowed https://github.com/dartclub/turf_dart?tab=readme-ov-file#notable-design-decisions
+  @override
+  GeometryObject get asGeometry {
+    final geoms = <GeometryType>[];
+    flattenEach((currentFeature, _, __) {
+      if (currentFeature.geometry != null) {
+        final geom = currentFeature.geometry!;
+        geoms.add(geom);
+      }
+    });
+
+    return GeometryCollection(
+      bbox: bbox,
+      geometries: geoms,
+    );
+  }
 }
