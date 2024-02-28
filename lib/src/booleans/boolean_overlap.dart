@@ -58,8 +58,8 @@ bool booleanOverlap(
   Feature firstFeature,
   Feature secondFeature,
 ) {
-  var first = getGeom(firstFeature);
-  var second = getGeom(secondFeature);
+  final first = getGeom(firstFeature);
+  final second = getGeom(secondFeature);
 
   _checkIfGeometryCombinationIsSupported(first, second);
 
