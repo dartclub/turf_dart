@@ -8,18 +8,10 @@ repository: https://github.com/dartclub/turf_dart
 
 dependencies:
   json_annotation: ^4.8.1
-
-  turf_equality: ^0.0.3
+  turf_equality: ^0.1.0
   turf_pip: ^0.0.2
   rbush: ^1.1.1
   sweepline_intersections: ^0.0.4
-
-dependency_overrides:
-  turf_equality:
-    #path: ../turf_equality
-    git:
-      url: https://github.com/jsiedentop/turf_equality.git
-      ref: main
 
 dev_dependencies:
   lints: ^3.0.0
