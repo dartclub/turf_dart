@@ -27,9 +27,5 @@ jobs:
         run: dart analyze
         if: always()
 
-      - name: Run build_runner
-        run: dart run build_runner build --delete-conflicting-outputs
-        if: always()
-
       - name: Preview publish package (dry-run)
         run: dart pub publish --dry-run
