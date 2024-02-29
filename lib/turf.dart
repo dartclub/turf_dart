@@ -1,5 +1,6 @@
 library turf;
 
+export 'package:geotypes/geotypes.dart';
 export 'src/along.dart';
 export 'src/area.dart';
 export 'src/bbox.dart';
@@ -8,7 +9,6 @@ export 'src/center.dart';
 export 'src/centroid.dart';
 export 'src/destination.dart';
 export 'src/distance.dart';
-export 'src/geojson.dart';
 export 'src/helpers.dart';
 export 'src/length.dart';
 export 'src/midpoint.dart';
