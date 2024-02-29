@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:turf/src/booleans/boolean_valid.dart';
-import 'package:turf/turf.dart';
+import 'package:turf/boolean.dart';
 
 void main() {
   group(
     'boolean-valid',
     () {
-      /// Assertion error is caught in the fromJSON factory contructor of [GeometryType]s
+      /// Assertion error is caught in the fromJSON factory constructor of [GeometryType]s
       Directory dir = Directory('./test/examples/booleans/valid/assertion');
       for (var file in dir.listSync(recursive: true)) {
         test(
@@ -30,8 +29,8 @@ void main() {
           },
         );
       }
-      Directory dirFale = Directory('./test/examples/booleans/valid/false');
-      for (var file in dirFale.listSync(recursive: true)) {
+      Directory dirFile = Directory('./test/examples/booleans/valid/false');
+      for (var file in dirFile.listSync(recursive: true)) {
         test(
           file.path,
           () {

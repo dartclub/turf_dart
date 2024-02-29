@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:turf/src/booleans/boolean_parallel.dart';
 import 'package:turf/turf.dart';
 
 void main() {
@@ -10,7 +9,7 @@ void main() {
     'boolean-overlap',
     () {
       test(
-        "turf-boolean-overlap-trues",
+        "turf-boolean-overlap-true",
         () {
           // True Fixtures
           Directory dir = Directory('./test/examples/booleans/parallel/true');
@@ -29,7 +28,7 @@ void main() {
       );
 
       test(
-        "turf-boolean-overlap-falses",
+        "turf-boolean-overlap-false",
         () {
           // True Fixtures
           Directory dir = Directory('./test/examples/booleans/parallel/false');
