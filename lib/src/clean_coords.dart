@@ -1,4 +1,5 @@
 import '../helpers.dart';
+import 'booleans/boolean_point_on_line.dart';
 import 'invariant.dart';
 
 /// Removes redundant coordinates from any [GeometryType].
@@ -95,8 +96,10 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
       newPoints.add(coords[i]);
       newPointsLength = newPoints.length;
       if (newPointsLength > 2) {
-        if (isPointOnLineSegment(newPoints[newPointsLength - 3],
-            newPoints[newPointsLength - 1], newPoints[newPointsLength - 2])) {
+        if (isPointOnLineSegmentCleanCoordsVariant(
+            newPoints[newPointsLength - 3],
+            newPoints[newPointsLength - 1],
+            newPoints[newPointsLength - 2])) {
           newPoints.removeAt(newPoints.length - 2);
         }
       }
@@ -112,34 +115,9 @@ List<Position> _cleanLine(List<Position> coords, GeoJSONObject geojson) {
     throw Exception("invalid polygon");
   }
 
-  if (isPointOnLineSegment(newPoints[newPointsLength - 3],
+  if (isPointOnLineSegmentCleanCoordsVariant(newPoints[newPointsLength - 3],
       newPoints[newPointsLength - 1], newPoints[newPointsLength - 2])) {
     newPoints.removeAt(newPoints.length - 2);
   }
   return newPoints;
-}
-
-/// Returns if [point] is on the segment between [start] and [end].
-/// Borrowed from `booleanPointOnLine` to speed up the evaluation (instead of
-/// using the module as dependency).
-/// [start] is the coord pair of start of line, [end] is the coord pair of end
-/// of line, and [point] is the coord pair of point to check.
-bool isPointOnLineSegment(Position start, Position end, Position point) {
-  var x = point.lat, y = point.lng;
-  var startX = start.lat, startY = start.lng;
-  var endX = end.lat, endY = end.lng;
-
-  var dxc = x - startX;
-  var dyc = y - startY;
-  var dxl = endX - startX;
-  var dyl = endY - startY;
-  var cross = dxc * dyl - dyc * dxl;
-
-  if (cross != 0) {
-    return false;
-  } else if ((dxl).abs() >= (dyl).abs()) {
-    return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
-  } else {
-    return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
-  }
 }

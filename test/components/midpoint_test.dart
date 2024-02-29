@@ -2,7 +2,6 @@
 
 import 'package:test/test.dart';
 import 'package:turf/distance.dart';
-import 'package:turf/helpers.dart';
 import 'package:turf/midpoint.dart';
 
 void checkLatLngInRange(Point result) {

@@ -6,7 +6,6 @@ import 'dart:math';
 
 import 'package:test/test.dart';
 import 'package:turf/distance.dart';
-import 'package:turf/helpers.dart';
 
 void main() {
   group('Coordinate Types:', () {

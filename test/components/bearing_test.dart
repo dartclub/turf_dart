@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:turf/bearing.dart';
-import 'package:turf/helpers.dart';
 
 void main() {
   test(
