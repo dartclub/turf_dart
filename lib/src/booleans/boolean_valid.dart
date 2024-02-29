@@ -4,7 +4,6 @@ import 'package:turf/src/booleans/boolean_point_on_line.dart';
 import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/extensions.dart';
 
-import '../../helpers.dart';
 import '../line_intersect.dart';
 import 'boolean_crosses.dart';
 

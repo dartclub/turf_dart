@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
-import 'package:turf/src/geojson.dart';
 import 'package:turf_equality/turf_equality.dart';
 
 Matcher equals<T extends GeoJSONObject>(T? expected) => _Equals<T>(expected);

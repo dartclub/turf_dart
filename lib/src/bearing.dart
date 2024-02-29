@@ -1,7 +1,6 @@
 import 'dart:math';
-
-import 'geojson.dart';
 import 'helpers.dart';
+import 'package:geotypes/geotypes.dart';
 
 // http://en.wikipedia.org/wiki/Haversine_formula
 // http://www.movable-type.co.uk/scripts/latlong.html

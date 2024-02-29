@@ -1,7 +1,7 @@
+import 'package:geotypes/geotypes.dart';
 import 'package:test/test.dart';
 import 'package:turf/src/booleans/boolean_helper.dart';
 import 'package:turf/src/booleans/boolean_overlap.dart';
-import 'package:turf/src/geojson.dart';
 
 import '../context/helper.dart';
 import '../context/load_test_cases.dart';

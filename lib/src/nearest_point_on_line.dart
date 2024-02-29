@@ -1,9 +1,9 @@
 import 'dart:math';
 
+import 'package:geotypes/geotypes.dart';
 import 'bearing.dart';
 import 'destination.dart';
 import 'distance.dart';
-import 'geojson.dart';
 import 'helpers.dart';
 import 'intersection.dart';
 

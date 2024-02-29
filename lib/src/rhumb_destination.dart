@@ -4,8 +4,8 @@ import 'package:turf/helpers.dart';
 import 'package:turf/src/invariant.dart';
 
 ///
-/// Returns the destination [Point] having travelled the given distance along a Rhumb line from the
-/// origin Point with the (varant) given bearing.
+/// Returns the destination [Point] having traveled the given distance along a Rhumb line from the
+/// origin Point with the (variant) given bearing.
 ///
 /// example:
 /// ```dart
@@ -62,7 +62,7 @@ Position calculateRhumbDestination(Position origin, num distance, num bearing,
   final dPhi = delta * math.cos(theta);
   var phi2 = phi1 + dPhi;
 
-  // check for some daft bugger going past the pole, normalise latitude if so
+  // check for some daft bugger going past the pole, normalize latitude if so
   if (phi2.abs() > math.pi / 2) {
     phi2 = phi2 > 0 ? math.pi - phi2 : -math.pi - phi2;
   }
@@ -75,7 +75,7 @@ Position calculateRhumbDestination(Position origin, num distance, num bearing,
   final dLambda = (delta * math.sin(theta)) / q;
   final lambda2 = lambda1 + dLambda;
 
-  // normalise to −180..+180°
+  // normalize to −180..+180°
   final lng = (((lambda2 * 180) / math.pi + 540) % 360) - 180;
   final lat = (phi2 * 180) / math.pi;
 

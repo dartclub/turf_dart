@@ -1,9 +1,12 @@
 import 'package:rbush/rbush.dart';
+import 'package:turf/boolean.dart';
 import 'package:turf/line_segment.dart';
 import 'package:turf/meta.dart';
 import 'package:turf/src/booleans/boolean_helper.dart';
-import 'package:turf/turf.dart';
+import '../helpers.dart';
+import 'destination.dart';
 import 'invariant.dart';
+import 'nearest_point_on_line.dart';
 
 /// Takes any [LineString], [MultiLineString], [Polygon] or [MultiPolygon] and
 /// returns the overlapping lines between both features.

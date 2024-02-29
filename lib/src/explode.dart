@@ -1,8 +1,7 @@
-import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
 /// Takes a feature or set of features and returns all positions as [Point]s.
-/// Takes [GeoJSONObhect] input.
+/// Takes [GeoJSONObject] input.
 /// Returns [FeatureCollection<point>] representing the exploded input features
 /// Throws [Exception] if it encounters an unknown geometry type
 /// ```dart

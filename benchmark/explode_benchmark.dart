@@ -1,5 +1,4 @@
 import 'package:benchmark/benchmark.dart';
-import 'package:turf/src/explode.dart';
 import 'package:turf/turf.dart';
 
 var poly = Polygon(coordinates: [

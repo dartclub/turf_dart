@@ -1,6 +1,5 @@
 import 'dart:math';
-
-import 'geojson.dart';
+import 'package:geotypes/geotypes.dart';
 import 'helpers.dart';
 
 Position destinationRaw(Position origin, num distance, num bearing,
