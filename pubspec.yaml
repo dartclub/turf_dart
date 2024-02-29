@@ -12,6 +12,7 @@ dependencies:
   turf_pip: ^0.0.2
   rbush: ^1.1.1
   sweepline_intersections: ^0.0.4
+  vector_math: ^2.1.4
 
 dev_dependencies:
   lints: ^3.0.0
