@@ -1,10 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/src/booleans/boolean_helper.dart';
 import 'package:turf/src/booleans/boolean_within.dart';
+import '../context/helper.dart';
+import '../context/load_test_cases.dart';
 
 void main() {
   group('within - true', () {
@@ -34,7 +33,7 @@ void main() {
         'FeatureNotSupported',
         () => expect(
           () => booleanWithin(feature1, feature2),
-          throwsA(isA<FeatureNotSupported>()),
+          throwsA(isA<GeometryCombinationNotSupported>()),
         ),
       );
     });
@@ -96,47 +95,4 @@ void main() {
           reason: "point outside concave polygon");
     });
   });
-}
-
-void loadGeoJson(
-    String path, void Function(String path, GeoJSONObject geoJson) test) {
-  final file = File(path);
-  final content = file.readAsStringSync();
-  final geoJson = GeoJSONObject.fromJson(jsonDecode(content));
-  test(file.path, geoJson);
-}
-
-void loadGeoJsonFiles(
-    String path, void Function(String path, GeoJSONObject geoJson) test) {
-  final testDirectory = Directory(path);
-
-  for (final file in testDirectory.listSync(recursive: true)) {
-    if (file is File && file.path.endsWith('.geojson')) {
-      if (file.path.contains('skip')) continue;
-
-      final content = file.readAsStringSync();
-      final geoJson = GeoJSONObject.fromJson(jsonDecode(content));
-      test(file.path, geoJson);
-    }
-  }
-}
-
-Point point(List<double> coordinates) {
-  return Point(coordinates: Position.of(coordinates));
-}
-
-Feature<Polygon> polygon(List<List<List<int>>> coordinates) {
-  return Feature(
-    geometry: Polygon(coordinates: coordinates.toPositions()),
-  );
-}
-
-extension PointsExtension on List<List<int>> {
-  List<Position> toPositions() =>
-      map((position) => Position.of(position)).toList(growable: false);
-}
-
-extension PolygonPointsExtensions on List<List<List<int>>> {
-  List<List<Position>> toPositions() =>
-      map((element) => element.toPositions()).toList(growable: false);
 }

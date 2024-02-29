@@ -15,3 +15,5 @@ export 'src/midpoint.dart';
 export 'src/nearest_point.dart';
 export 'src/polyline.dart';
 export 'src/nearest_point_on_line.dart';
+export 'boolean.dart';
+export 'src/line_overlap.dart';

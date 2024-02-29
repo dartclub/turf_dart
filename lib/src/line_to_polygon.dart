@@ -62,7 +62,7 @@ Feature lineToPolygon(
                 .map((e) => e.map((p) => p.clone()).toList())
           ];
         } else {
-          throw Exception("$currentGeometry type is not supperted");
+          throw Exception("$currentGeometry type is not supported");
         }
       },
     );

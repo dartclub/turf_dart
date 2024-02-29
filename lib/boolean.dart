@@ -7,7 +7,7 @@ export 'src/booleans/boolean_crosses.dart';
 export 'src/booleans/boolean_disjoint.dart';
 export 'src/booleans/boolean_equal.dart';
 export 'src/booleans/boolean_intersects.dart';
-// export 'src/booleans/boolean_overlap.dart';
+export 'src/booleans/boolean_overlap.dart';
 export 'src/booleans/boolean_parallel.dart';
 export 'src/booleans/boolean_point_in_polygon.dart';
 export 'src/booleans/boolean_point_on_line.dart';

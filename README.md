@@ -147,7 +147,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [ ] lineArc
 - [ ] lineChunk
 - [ ] [lineIntersect](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_intersect.dart)
-- [ ] lineOverlap
+- [x] [lineOverlap](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_overlap.dart)
 - [x] [lineSegment](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
 - [x] [lineSlice](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_slice.dart)
 - [ ] lineSliceAlong
@@ -233,7 +233,7 @@ Any new benchmarks must be named `*_benchmark.dart` and reside in the
 - [x] [booleanDisjoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_disjoint.dart)
 - [x] [booleanEqual](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_equal.dart)
 - [x] [booleanIntersects](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_intersects.dart)
-- [ ] booleanOverlap
+- [x] [booleanOverlap](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_overlap.dart)
 - [x] [booleanParallel](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_parallel.dart)
 - [x] [booleanPointInPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_in_polygon.dart)
 - [x] [booleanPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_on_line.dart)
