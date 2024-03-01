@@ -1,6 +1,5 @@
 import 'package:benchmark/benchmark.dart';
 import 'package:turf/line_segment.dart';
-import 'package:turf/helpers.dart';
 
 void main() {
   LineString lineString = LineString(

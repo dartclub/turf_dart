@@ -1,5 +1,4 @@
 import 'package:turf/bbox.dart';
-import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 import 'package:turf/src/invariant.dart';
 

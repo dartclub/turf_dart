@@ -1,6 +1,5 @@
 import 'package:turf/bearing.dart';
 import 'package:turf/distance.dart';
-import 'package:turf/helpers.dart';
 import 'package:turf/src/centroid.dart';
 import 'package:turf/src/invariant.dart';
 import 'package:turf/src/meta/coord.dart';

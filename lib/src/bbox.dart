@@ -1,4 +1,3 @@
-import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
 /// Calculates the bounding box for any [geoJson] object, including [FeatureCollection].

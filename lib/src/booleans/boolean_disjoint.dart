@@ -1,10 +1,8 @@
-import 'package:turf/src/booleans/boolean_crosses.dart';
-
-import '../../helpers.dart';
+import 'boolean_point_on_line.dart';
+import 'boolean_point_in_polygon.dart';
 import '../../meta.dart';
 import '../line_intersect.dart';
 import '../polygon_to_line.dart';
-import 'boolean_point_in_polygon.dart';
 
 /// Returns [true] if the intersection of the two geometries is an empty set.
 /// example:
@@ -73,7 +71,7 @@ bool _disjoint(GeometryType geom1, GeometryType geom2) {
 // http://stackoverflow.com/a/11908158/1979085
 bool _isPointOnLine(LineString lineString, Point pt) {
   for (var i = 0; i < lineString.coordinates.length - 1; i++) {
-    if (isPointOnLineSegment(lineString.coordinates[i],
+    if (isPointOnLineSegmentCrossesVariant(lineString.coordinates[i],
         lineString.coordinates[i + 1], pt.coordinates, true)) {
       return true;
     }

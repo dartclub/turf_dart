@@ -1,4 +1,5 @@
-import 'geojson.dart';
+// internal functions, not meant to be exposed
+import 'package:geotypes/geotypes.dart';
 
 Point? intersects(LineString line1, LineString line2) {
   if (line1.coordinates.length != 2) {

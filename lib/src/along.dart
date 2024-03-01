@@ -4,8 +4,8 @@ import 'package:turf/bearing.dart';
 import 'package:turf/destination.dart';
 import 'package:turf/helpers.dart';
 import 'package:turf/length.dart';
-import 'package:turf/src/distance.dart' as measure_distance;
-import 'package:turf/src/invariant.dart';
+import 'distance.dart' as measure_distance;
+import 'invariant.dart';
 
 /// Takes a [line] and returns a [Point] at a specified [distance] along the line.
 ///
@@ -24,16 +24,16 @@ Feature<Point> along(Feature<LineString> line, num distance,
   if (distance < 0) {
     distance = max(0, length(line, unit) + distance);
   }
-  num travelled = 0;
+  num traveled = 0;
   for (int i = 0; i < coords.length; i++) {
-    if (distance >= travelled && i == coords.length - 1) {
+    if (distance >= traveled && i == coords.length - 1) {
       break;
     }
-    if (travelled == distance) {
+    if (traveled == distance) {
       return Feature<Point>(geometry: Point(coordinates: coords[i]));
     }
-    if (travelled > distance) {
-      final overshot = distance - travelled;
+    if (traveled > distance) {
+      final overshot = distance - traveled;
       final direction = bearing(Point(coordinates: coords[i]),
               Point(coordinates: coords[i - 1])) -
           180;
@@ -45,7 +45,7 @@ Feature<Point> along(Feature<LineString> line, num distance,
       );
       return Feature<Point>(geometry: interpolated);
     } else {
-      travelled += measure_distance.distance(Point(coordinates: coords[i]),
+      traveled += measure_distance.distance(Point(coordinates: coords[i]),
           Point(coordinates: coords[i + 1]), unit);
     }
   }

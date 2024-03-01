@@ -1,6 +1,7 @@
-import 'package:turf/helpers.dart';
-import 'package:turf/nearest_point_on_line.dart';
-import 'package:turf/src/invariant.dart';
+import 'package:geotypes/geotypes.dart';
+
+import 'nearest_point_on_line.dart';
+import 'invariant.dart';
 
 /// Takes a [line], at a start point [startPt], and a stop point [stopPt]
 /// and returns a subsection of the line in-between those points.

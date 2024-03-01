@@ -1,5 +1,6 @@
 library turf_meta;
 
+export 'package:geotypes/geotypes.dart';
 export 'src/meta/cluster.dart';
 export 'src/meta/coord.dart';
 export 'src/meta/feature.dart';

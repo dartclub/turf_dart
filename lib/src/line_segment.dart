@@ -1,7 +1,6 @@
-import 'package:turf/src/meta/coord.dart';
-import 'package:turf/src/meta/flatten.dart';
-
-import 'geojson.dart';
+import 'meta/coord.dart';
+import 'meta/flatten.dart';
+import 'package:geotypes/geotypes.dart';
 
 /// Creates a [FeatureCollection] of 2-vertex [LineString] segments from a
 /// [LineString] or [MultiLineString] or [Polygon] and [MultiPolygon]

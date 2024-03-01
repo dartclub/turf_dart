@@ -1,7 +1,7 @@
 import 'bearing.dart';
 import 'destination.dart';
 import 'distance.dart';
-import 'geojson.dart';
+import 'package:geotypes/geotypes.dart';
 
 Position midpointRaw(Position point1, Position point2) {
   var dist = distanceRaw(point1, point2);
@@ -12,7 +12,8 @@ Position midpointRaw(Position point1, Position point2) {
 }
 
 /// Takes two [Point]s and returns a point midway between them.
-/// The midpoint is calculated geodesically, meaning the curvature of the earth is taken into account.
+/// The midpoint is calculated geodesically, meaning the curvature of the
+/// earth is taken into account.
 /// For example:
 ///
 /// ```

@@ -1,4 +1,3 @@
-import 'package:turf/src/invariant.dart';
 import 'package:turf/turf.dart';
 import 'boolean_helper.dart';
 

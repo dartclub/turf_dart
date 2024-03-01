@@ -1,4 +1,3 @@
-import 'package:turf/helpers.dart';
 import 'package:turf/line_overlap.dart';
 import 'package:turf/line_segment.dart';
 import 'package:turf/src/invariant.dart';

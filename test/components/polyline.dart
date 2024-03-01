@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:turf/helpers.dart';
 import 'package:turf/polyline.dart';
 
 void main() {
