@@ -8,6 +8,10 @@
 <br>
 
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
+[![dart unit tests](https://github.com/dartclub/turf_dart/actions/workflows/dart-unit-tests.yml/badge.svg)
+[![dart publish](https://github.com/dartclub/turf_dart/actions/workflows/dart-pub-publish.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 
 TurfDart is a Dart library for [spatial analysis](https://en.wikipedia.org/wiki/Spatial_analysis). It includes traditional spatial operations, helper functions for creating GeoJSON data, and data classification and statistics tools. You can use TurfDart in your Flutter applications on the web, mobile and desktop or in pure Dart applications running on the server.
 
