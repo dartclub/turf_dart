@@ -5,7 +5,7 @@ A [TurfJs](https://github.com/Turfjs/turf)-like geospatial analysis library writ
 
 TurfDart is a Dart library for [spatial analysis](https://en.wikipedia.org/wiki/Spatial_analysis). It includes traditional spatial operations, helper functions for creating GeoJSON data, and data classification and statistics tools. You can use TurfDart in your Flutter applications on the web, mobile and desktop or in pure Dart applications running on the server.
 
-As the foundation, we are using [Geotypes](https://github.com/dartclub/geotypes), a lightweight dart library that provides a strong object model for GeoJson and implements a fully [RFC 7946](https://tools.ietf.org/html/rfc7946) compliant GeoJSON serialization.
+As the foundation, we are using [Geotypes](https://github.com/dartclub/geotypes), a lightweight dart library that provides a strong GeoJSON object model and fully [RFC 7946](https://tools.ietf.org/html/rfc7946) compliant serializers.
 
 Most of the functionality is a direct translation from [turf.js](https://github.com/Turfjs/turf), the progress can be found [here](Progress.md).
 
