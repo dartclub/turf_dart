@@ -1,11 +1,12 @@
 <h1 align="center">
   <br>
-  <img src="https://github.com/jsiedentop/turf_dart/blob/update-readme/.github/turf-logo.png" alt="TurfDart Logo" width="400">
+  <img src="https://github.com/jsiedentop/turf_dart/blob/update-readme/.github/turf-logo.png" alt="TurfDart Logo" width="250">
 </h1>
 
 <h4 align="center">A <a href="https://github.com/Turfjs/turf">TurfJs</a>-like geospatial analysis library written in pure Dart.
 </h4>
 <br>
+
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 
 TurfDart is a Dart library for [spatial analysis](https://en.wikipedia.org/wiki/Spatial_analysis). It includes traditional spatial operations, helper functions for creating GeoJSON data, and data classification and statistics tools. You can use TurfDart in your Flutter applications on the web, mobile and desktop or in pure Dart applications running on the server.
