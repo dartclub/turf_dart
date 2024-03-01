@@ -1,4 +1,11 @@
-# turf.dart
+<h1 align="center">
+  <br>
+  <img src="https://github.com/dartclub/turf_dart/blob/main/.github/turf-logo.png" alt="TurfDart Logo" width="250">
+</h1>
+
+<h4 align="center">A <a href="https://github.com/Turfjs/turf">TurfJs</a>-like geospatial analysis library written in pure Dart.
+</h4>
+<br>
 
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 
