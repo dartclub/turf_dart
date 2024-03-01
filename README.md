@@ -1,7 +1,12 @@
-# TurfDart
-[![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
+<h1 align="center">
+  <br>
+  <a href="https://www.mapbox.com/android-docs/java-sdk/overview/"><img src="https://github.com/jsiedentop/turf_dart/blob/.github/turf-logo.png" alt="TurfDart Logo" width="400"></a>
+</h1>
 
-A [TurfJs](https://github.com/Turfjs/turf)-like geospatial analysis library written in pure Dart.
+<h4 align="center">A [TurfJs](https://github.com/Turfjs/turf)-like geospatial analysis library written in pure Dart.
+</h4>
+<br>
+[![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
 
 TurfDart is a Dart library for [spatial analysis](https://en.wikipedia.org/wiki/Spatial_analysis). It includes traditional spatial operations, helper functions for creating GeoJSON data, and data classification and statistics tools. You can use TurfDart in your Flutter applications on the web, mobile and desktop or in pure Dart applications running on the server.
 
