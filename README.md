@@ -1,9 +1,9 @@
 <h1 align="center">
   <br>
-  <a href="https://www.mapbox.com/android-docs/java-sdk/overview/"><img src="https://github.com/jsiedentop/turf_dart/blob/.github/turf-logo.png" alt="TurfDart Logo" width="400"></a>
+  <img src="https://github.com/jsiedentop/turf_dart/blob/update-readme/.github/turf-logo.png" alt="TurfDart Logo" width="400">
 </h1>
 
-<h4 align="center">A [TurfJs](https://github.com/Turfjs/turf)-like geospatial analysis library written in pure Dart.
+<h4 align="center">A <a href="https://github.com/Turfjs/turf">TurfJs</a>-like geospatial analysis library written in pure Dart.
 </h4>
 <br>
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
