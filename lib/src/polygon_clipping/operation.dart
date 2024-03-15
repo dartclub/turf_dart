@@ -1,8 +1,9 @@
 import 'dart:collection';
+import 'package:turf/helpers.dart';
 import 'package:turf/src/polygon_clipping/utils.dart';
 
-import 'geom_in.dart' as geomIn;
-import 'geom_out.dart' as geomOut;
+import 'geom_in.dart';
+import 'geom_out.dart';
 import 'sweep_event.dart';
 import 'sweep_line.dart';
 
@@ -22,15 +23,30 @@ class Operation {
   late String type;
   int numMultiPolys = 0;
 
-  List<dynamic> run(String type, dynamic geom, List<dynamic> moreGeoms) {
+  GeometryObject? run(
+      String type, GeometryObject geom, List<GeometryObject> moreGeoms) {
     this.type = type;
 
+    if (geom is! Polygon || geom is! MultiPolygon) {
+      throw Exception(
+          "Input GeometryTry doesn't match Polygon or MultiPolygon");
+    }
+
+    if (geom is! Polygon) {
+      geom = MultiPolygon(coordinates: [geom.coordinates]);
+    }
+
     /* Convert inputs to MultiPoly objects */
-    final List<geomIn.MultiPolyIn> multipolys = [
-      geomIn.MultiPolyIn(geom, true)
+    //TODO: handle multipolygons
+    final List<MultiPolyIn> multipolys = [
+      MultiPolyIn(geom as MultiPolygon, true)
     ];
     for (var i = 0; i < moreGeoms.length; i++) {
-      multipolys.add(geomIn.MultiPolyIn(moreGeoms[i], false));
+      if (moreGeoms[i] is! Polygon && moreGeoms[i] is! MultiPolygon) {
+        throw Exception(
+            "Input GeometryTry doesn't match Polygon or MultiPolygon");
+      }
+      multipolys.add(MultiPolyIn(moreGeoms[i] as MultiPolygon, false));
     }
     numMultiPolys = multipolys.length;
 
@@ -61,7 +77,9 @@ class Operation {
         final mpA = multipolys[i];
         for (var j = i + 1; j < multipolys.length; j++) {
           if (getBboxOverlap(mpA.bbox, multipolys[j].bbox) == null) {
-            return [];
+            // todo ensure not a list if needed
+            // return [];
+            return null;
           }
         }
       }
@@ -124,8 +142,8 @@ class Operation {
     }
 
     /* Collect and compile segments we're keeping into a multipolygon */
-    final ringsOut = geomOut.RingOut.factory(sweepLine.segments);
-    final result = geomOut.MultiPolyOut(ringsOut);
+    final ringsOut = RingOut.factory(sweepLine.segments);
+    final result = MultiPolyOut(ringsOut);
     return result.getGeom();
   }
 }

@@ -4,7 +4,14 @@ import 'package:turf/src/polygon_clipping/vector_extension.dart';
 
 import 'segment.dart'; // Assuming this is the Dart equivalent of your Segment class // Assuming this contains cosineOfAngle and sineOfAngle functions
 
+/// Represents a sweep event in the polygon clipping algorithm.
+///
+/// A sweep event is a point where the sweep line intersects an edge of a polygon.
+/// It is used in the polygon clipping algorithm to track the state of the sweep line
+/// as it moves across the polygon edges.
 class SweepEvent {
+  static int _nextId = 1;
+  int id;
   PositionEvents point;
   bool isLeft;
   Segment? segment; // Assuming these are defined in your environment
@@ -13,15 +20,34 @@ class SweepEvent {
 
   // Warning: 'point' input will be modified and re-used (for performance
 
-  SweepEvent(this.point, this.isLeft) {
+  SweepEvent(this.point, this.isLeft) : id = _nextId++ {
+    print(point);
     if (point.events == null) {
       point.events = [this];
     } else {
       point.events!.add(this);
     }
     point = point;
-    isLeft = isLeft;
     // this.segment, this.otherSE set by factory
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is SweepEvent) {
+      print("id matching: $id ${other.id}");
+      if (isLeft == other.isLeft &&
+          //Becuase segments self reference within the sweet event in their own paramenters it creates a loop that cannot be equivelant.
+          segment?.id == other.segment?.id &&
+          otherSE?.id == other.otherSE?.id &&
+          consumedBy == other.consumedBy &&
+          point == other.point) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   // for ordering sweep events in the sweep event queue
@@ -54,10 +80,10 @@ class SweepEvent {
   void link(SweepEvent other) {
     //TODO: write test for Position comparison
     if (other.point == point) {
-      throw 'Tried to link already linked events';
+      throw Exception('Tried to link already linked events');
     }
     if (other.point.events == null) {
-      throw 'PointEventsError: events called on null point.events';
+      throw Exception('PointEventsError: events called on null point.events');
     }
     for (var evt in other.point.events!) {
       point.events!.add(evt);
@@ -68,7 +94,8 @@ class SweepEvent {
 
   void checkForConsuming() {
     if (point.events == null) {
-      throw 'PointEventsError: events called on null point.events, method requires events';
+      throw Exception(
+          'PointEventsError: events called on null point.events, method requires events');
     }
     var numEvents = point.events!.length;
     for (int i = 0; i < numEvents; i++) {
@@ -87,7 +114,9 @@ class SweepEvent {
   List<SweepEvent> getAvailableLinkedEvents() {
     List<SweepEvent> events = [];
     for (var evt in point.events!) {
+      print(point.events!);
       //TODO: !evt.segment!.ringOut was written first but th
+
       if (evt != this &&
           evt.segment!.ringOut == null &&
           evt.segment!.isInResult()) {
@@ -135,6 +164,11 @@ class SweepEvent {
       if (bValues['sine']! > aValues['sine']!) return 1;
       return 0;
     };
+  }
+
+  @override
+  String toString() {
+    return 'SweepEvent(id:$id, point=$point, segment=${segment?.id})';
   }
 }
 

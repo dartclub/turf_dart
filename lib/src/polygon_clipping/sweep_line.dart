@@ -5,8 +5,10 @@ import 'package:turf/src/polygon_clipping/point_extension.dart';
 import 'segment.dart';
 import 'sweep_event.dart';
 
+/// Represents a sweep line used in polygon clipping algorithms.
+/// The sweep line is used to efficiently process intersecting edges of polygons.
 class SweepLine {
-  late SplayTreeMap<Segment, dynamic> tree;
+  late SplayTreeMap<Segment, void> tree;
   final List<Segment> segments = [];
   final List<SweepEvent> queue;
 
@@ -32,7 +34,7 @@ class SweepLine {
     Segment? node;
 
     if (event.isLeft) {
-      tree[segment];
+      tree[segment] = null;
       node = null;
       //? Can you use SplayTreeSet lookup here? looks for internal of segment.
     } else if (tree.containsKey(segment)) {
@@ -124,7 +126,7 @@ class SweepLine {
 
       if (newEvents.isNotEmpty) {
         tree.remove(segment);
-        tree[segment];
+        tree[segment] = null;
         newEvents.add(event);
       } else {
         segments.add(segment);
@@ -158,7 +160,7 @@ class SweepLine {
     var newEvents = seg.split(pt);
     newEvents.add(rightSE);
     if (seg.consumedBy == null) {
-      tree[seg];
+      tree[seg] = null;
     }
     return newEvents;
   }

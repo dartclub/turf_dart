@@ -6,11 +6,19 @@ class PositionEvents extends Position {
 
   PositionEvents(
     double super.lng,
-    double super.lat,
+    double super.lat, {
     this.events,
-  );
+  });
 
   factory PositionEvents.fromPoint(Position point) {
-    return PositionEvents(point.lng.toDouble(), point.lat.toDouble(), []);
+    return PositionEvents(
+      point.lng.toDouble(),
+      point.lat.toDouble(),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'PositionEvents(lng: $lng, lat: $lat, events: $events)';
   }
 }

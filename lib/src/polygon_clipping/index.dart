@@ -1,16 +1,20 @@
+import 'package:turf/src/geojson.dart';
+
 import 'operation.dart';
 
 //?Should these just be methods of operations? or factory constructors or something else?
-dynamic union(dynamic geom, List<dynamic> moreGeoms) =>
+GeometryObject? union(GeometryObject geom, List<GeometryObject> moreGeoms) =>
     operation.run("union", geom, moreGeoms);
 
-dynamic intersection(dynamic geom, List<dynamic> moreGeoms) =>
+GeometryObject? intersection(
+        GeometryObject geom, List<GeometryObject> moreGeoms) =>
     operation.run("intersection", geom, moreGeoms);
 
-dynamic xor(dynamic geom, List<dynamic> moreGeoms) =>
+GeometryObject? xor(GeometryObject geom, List<GeometryObject> moreGeoms) =>
     operation.run("xor", geom, moreGeoms);
 
-dynamic difference(dynamic subjectGeom, List<dynamic> clippingGeoms) =>
+GeometryObject? difference(
+        GeometryObject subjectGeom, List<GeometryObject> clippingGeoms) =>
     operation.run("difference", subjectGeom, clippingGeoms);
 
 Map<String, Function> operations = {

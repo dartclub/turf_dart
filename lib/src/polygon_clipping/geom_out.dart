@@ -100,13 +100,14 @@ class RingOut {
   }
 
   //TODO: Convert type to List<Position>?
-  List<List<double>>? getGeom() {
+  List<Position>? getGeom() {
     Position prevPt = events[0].point;
     List<Position> points = [prevPt];
 
     for (int i = 1, iMax = events.length - 1; i < iMax; i++) {
       Position pt = events[i].point;
       Position nextPt = events[i + 1].point;
+      //Check co-linear
       if (compareVectorAngles(pt, prevPt, nextPt) == 0) continue;
       points.add(pt);
       prevPt = pt;
@@ -122,10 +123,10 @@ class RingOut {
     int step = isExteriorRing ? 1 : -1;
     int iStart = isExteriorRing ? 0 : points.length - 1;
     int iEnd = isExteriorRing ? points.length : -1;
-    List<List<double>> orderedPoints = [];
+    List<Position> orderedPoints = [];
 
     for (int i = iStart; i != iEnd; i += step) {
-      orderedPoints.add([points[i].lng.toDouble(), points[i].lat.toDouble()]);
+      orderedPoints.add(Position(points[i].lng, points[i].lat));
     }
 
     return orderedPoints;
@@ -133,28 +134,34 @@ class RingOut {
 
   RingOut? _enclosingRing;
   RingOut enclosingRing() {
-    if (_enclosingRing == null) {
-      _enclosingRing = _calcEnclosingRing();
-    }
+    _enclosingRing ??= _calcEnclosingRing();
     return _enclosingRing!;
   }
 
+  /* Returns the ring that encloses this one, if any */
   RingOut? _calcEnclosingRing() {
     SweepEvent leftMostEvt = events[0];
 
+    // start with the ealier sweep line event so that the prevSeg
+    // chain doesn't lead us inside of a loop of ours
     for (int i = 1, iMax = events.length; i < iMax; i++) {
       SweepEvent evt = events[i];
       if (SweepEvent.compare(leftMostEvt, evt) > 0) leftMostEvt = evt;
     }
 
     Segment? prevSeg = leftMostEvt.segment!.prevInResult();
-    Segment? prevPrevSeg = prevSeg != null ? prevSeg.prevInResult() : null;
+    Segment? prevPrevSeg = prevSeg?.prevInResult();
 
     while (true) {
+      // no segment found, thus no ring can enclose us
       if (prevSeg == null) return null;
-
+      // no segments below prev segment found, thus the ring of the prev
+      // segment must loop back around and enclose us
       if (prevPrevSeg == null) return prevSeg.ringOut;
 
+      // if the two segments are of different rings, the ring of the prev
+      // segment must either loop around us or the ring of the prev prev
+      // seg, which would make us and the ring of the prev peers
       if (prevPrevSeg.ringOut != prevSeg.ringOut) {
         if (prevPrevSeg.ringOut!.enclosingRing() != prevSeg.ringOut) {
           return prevSeg.ringOut;
@@ -163,6 +170,8 @@ class RingOut {
         }
       }
 
+      // two segments are from the same ring, so this was a penisula
+      // of that ring. iterate downward, keep searching
       prevSeg = prevPrevSeg.prevInResult();
       prevPrevSeg = prevSeg != null ? prevSeg.prevInResult() : null;
     }
@@ -182,15 +191,14 @@ class PolyOut {
     ring.poly = this;
   }
 
-  List<List<List<double>>>? getGeom() {
-    List<List<double>>? exteriorGeom = exteriorRing.getGeom();
-    List<List<List<double>>>? geom =
-        exteriorGeom != null ? [exteriorGeom] : null;
+  List<List<Position>>? getGeom() {
+    List<Position>? exteriorGeom = exteriorRing.getGeom();
+    List<List<Position>>? geom = exteriorGeom != null ? [exteriorGeom] : null;
 
     if (geom == null) return null;
 
     for (int i = 0, iMax = interiorRings.length; i < iMax; i++) {
-      List<List<double>>? ringGeom = interiorRings[i].getGeom();
+      List<Position>? ringGeom = interiorRings[i].getGeom();
       if (ringGeom == null) continue;
       geom.add(ringGeom);
     }
@@ -207,16 +215,25 @@ class MultiPolyOut {
     polys = _composePolys(rings);
   }
 
-  List<List<List<List<double>>>> getGeom() {
-    List<List<List<List<double>>>> geom = [];
+  GeometryObject getGeom() {
+    List<List<List<Position>>> geom = [];
 
     for (int i = 0, iMax = polys.length; i < iMax; i++) {
-      List<List<List<double>>>? polyGeom = polys[i].getGeom();
+      List<List<Position>>? polyGeom = polys[i].getGeom();
       if (polyGeom == null) continue;
       geom.add(polyGeom);
     }
 
-    return geom;
+    if (geom.length > 1) {
+      //Return MultiPolgyons
+      return MultiPolygon(coordinates: geom);
+    }
+    if (geom.length == 1) {
+      //Return Polygon
+      return Polygon(coordinates: geom[0]);
+    } else {
+      throw new Exception("geomOut getGeometry empty");
+    }
   }
 
   List<PolyOut> _composePolys(List<RingOut> rings) {

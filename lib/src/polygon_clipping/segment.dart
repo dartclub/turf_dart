@@ -2,6 +2,7 @@
 // segments and sweep events when all else is identical
 
 import 'package:turf/helpers.dart';
+import 'package:turf/src/polygon_clipping/geom_in.dart';
 import 'package:turf/src/polygon_clipping/geom_out.dart';
 import 'package:turf/src/polygon_clipping/operation.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
@@ -15,9 +16,12 @@ class Segment {
   SweepEvent leftSE;
   SweepEvent rightSE;
   //TODO: can we make these empty lists instead of being nullable?
-  List? rings;
+  List<RingIn>? rings;
   // TODO: add concrete typing for winding, should this be a nullable boolean? true, clockwise, false counter clockwhise, null unknown
-  List? windings;
+  //Directional windings
+  List<int>? windings;
+  //Testing parameter: should only be used in testing
+  bool? forceIsInResult;
 
   ///These set later in algorithm
   Segment? consumedBy;
@@ -26,9 +30,15 @@ class Segment {
 
   /* Warning: a reference to ringWindings input will be stored,
    *  and possibly will be later modified */
-  Segment(this.leftSE, this.rightSE, this.rings, this.windings)
-      //Auto increment id
-      : id = _nextId++ {
+  Segment(
+    this.leftSE,
+    this.rightSE, {
+    this.rings,
+    this.windings,
+    this.forceIsInResult,
+  })
+  //Auto increment id
+  : id = _nextId++ {
     //Set intertwined relationships between segment and sweep events
     leftSE.segment = this;
     leftSE.otherSE = rightSE;
@@ -37,6 +47,33 @@ class Segment {
     rightSE.otherSE = leftSE;
     // left unset for performance, set later in algorithm
     // this.ringOut, this.consumedBy, this.prev
+    if (forceIsInResult != null) {
+      _isInResult = forceIsInResult;
+    }
+  }
+
+  @override
+  String toString() {
+    return 'Segment(id: $id, leftSE: $leftSE, rightSE: $rightSE, rings: $rings, windings: $windings, forceIsInResult: $forceIsInResult)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Segment) {
+      if (leftSE == other.leftSE &&
+          rightSE == other.rightSE &&
+          rings == other.rings &&
+          windings == other.windings &&
+          consumedBy == other.consumedBy &&
+          prev == other.prev &&
+          ringOut == other.ringOut) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   /* This compare() function is for ordering segments in the sweep
@@ -178,7 +215,7 @@ class Segment {
    */
 
   //TODO: return bool?
-  comparePoint(Position point) {
+  int comparePoint(Position point) {
     if (isAnEndpoint(point)) return 0;
 
     final Position lPt = leftSE.point;
@@ -343,8 +380,8 @@ class Segment {
       newLeftSE,
       oldRightSE,
       //TODO: Can rings and windings be null here?
-      rings != null ? List.from(rings!) : null,
-      windings != null ? List.from(windings!) : null,
+      rings: rings != null ? List.from(rings!) : null,
+      windings: windings != null ? List.from(windings!) : null,
     );
 
     // when splitting a nearly vertical downward-facing segment,
@@ -370,7 +407,18 @@ class Segment {
   }
 
   /* Swap which event is left and right */
-  swapEvents() {}
+  void swapEvents() {
+    final tmpEvt = rightSE;
+    rightSE = leftSE;
+    leftSE = tmpEvt;
+    leftSE.isLeft = true;
+    rightSE.isLeft = false;
+    if (windings != null) {
+      for (var i = 0; i < windings!.length; i++) {
+        windings![i] *= -1;
+      }
+    }
+  }
 
   /* Consume another segment. We take their rings under our wing
    * and mark them as consumed. Use for perfectly overlapping segments */
@@ -400,16 +448,17 @@ class Segment {
       consumer = consumee;
       consumee = tmp;
     }
-
-    for (var i = 0, iMax = consumee.rings!.length; i < iMax; i++) {
-      final ring = consumee.rings![i];
-      final winding = consumee.windings![i];
-      final index = consumer.rings!.indexOf(ring);
-      if (index == -1) {
-        consumer.rings!.add(ring);
-        consumer.windings!.add(winding);
-      } else {
-        consumer.windings![index] += winding;
+    if (consumee.rings != null) {
+      for (var i = 0, iMax = consumee.rings!.length; i < iMax; i++) {
+        final ring = consumee.rings![i];
+        final winding = consumee.windings![i];
+        final index = consumer.rings!.indexOf(ring);
+        if (index == -1) {
+          consumer.rings!.add(ring);
+          consumer.windings!.add(winding);
+        } else {
+          consumer.windings![index] += winding;
+        }
       }
     }
     consumee.rings = null;
@@ -421,7 +470,8 @@ class Segment {
     consumee.rightSE.consumedBy = consumer.rightSE;
   }
 
-  static Segment fromRing(PositionEvents pt1, PositionEvents pt2, ring) {
+  factory Segment.fromRing(PositionEvents pt1, PositionEvents pt2,
+      {RingIn? ring, bool? forceIsInResult}) {
     PositionEvents leftPt;
     PositionEvents rightPt;
     var winding;
@@ -443,10 +493,16 @@ class Segment {
 
     final leftSE = SweepEvent(leftPt, true);
     final rightSE = SweepEvent(rightPt, false);
-    return Segment(leftSE, rightSE, [ring], [winding]);
+    return Segment(
+      leftSE,
+      rightSE,
+      rings: ring != null ? [ring] : null,
+      windings: [winding],
+      forceIsInResult: forceIsInResult,
+    );
   }
 
-  var _prevInResult;
+  Segment? _prevInResult;
 
   /* The first segment previous segment chain that is in the result */
   Segment? prevInResult() {
@@ -461,12 +517,12 @@ class Segment {
     return _prevInResult;
   }
 
-  _SegmentState? _beforeState;
+  SegmentState? _beforeState;
 
-  beforeState() {
+  SegmentState? beforeState() {
     if (_beforeState != null) return _beforeState;
     if (prev == null) {
-      _beforeState = _SegmentState(
+      _beforeState = SegmentState(
         rings: [],
         windings: [],
         multiPolys: [],
@@ -478,19 +534,82 @@ class Segment {
     return _beforeState;
   }
 
-  afterState() {}
+  SegmentState? _afterState;
+
+  SegmentState? afterState() {
+    if (_afterState != null) return _afterState;
+
+    final beforeState = this.beforeState();
+    if (beforeState != null) {
+      throw Exception("Segment afterState() called with no before state");
+    }
+    _afterState = SegmentState(
+      rings: List.from(beforeState!.rings),
+      windings: List.from(beforeState.windings),
+      multiPolys: [],
+    );
+
+    final ringsAfter = _afterState!.rings;
+    final windingsAfter = _afterState!.windings;
+    final mpsAfter = _afterState!.multiPolys;
+
+    // calculate ringsAfter, windingsAfter
+    for (var i = 0; i < rings!.length; i++) {
+      final ring = rings![i];
+      final winding = windings![i];
+      final index = ringsAfter.indexOf(ring);
+      if (index == -1) {
+        ringsAfter.add(ring);
+        windingsAfter.add(winding);
+      } else {
+        windingsAfter[index] += winding;
+      }
+    }
+
+    // calculate polysAfter
+    final polysAfter = [];
+    final polysExclude = [];
+    for (var i = 0; i < ringsAfter.length; i++) {
+      if (windingsAfter[i] == 0) continue; // non-zero rule
+      final ring = ringsAfter[i];
+      final poly = ring.poly;
+      if (polysExclude.indexOf(poly) != -1) continue;
+      if (ring.isExterior) {
+        polysAfter.add(poly);
+      } else {
+        if (polysExclude.indexOf(poly) == -1) {
+          polysExclude.add(poly);
+        }
+        final index = polysAfter.indexOf(ring.poly);
+        if (index != -1) {
+          polysAfter.removeAt(index);
+        }
+      }
+    }
+
+    // calculate multiPolysAfter
+    for (var i = 0; i < polysAfter.length; i++) {
+      final mp = polysAfter[i].multiPoly;
+      if (mpsAfter.indexOf(mp) == -1) {
+        mpsAfter.add(mp);
+      }
+    }
+
+    return _afterState;
+  }
 
   bool? _isInResult;
 
   /* Is this segment part of the final result? */
   bool isInResult() {
+    if (forceIsInResult != null) return forceIsInResult!;
     // if we've been consumed, we're not in the result
     if (consumedBy != null) return false;
 
     if (_isInResult != null) return _isInResult!;
 
-    final mpsBefore = beforeState().multiPolys;
-    final mpsAfter = afterState().multiPolys;
+    final mpsBefore = beforeState()?.multiPolys;
+    final mpsAfter = afterState()?.multiPolys;
 
     switch (operation.type) {
       case "union":
@@ -498,8 +617,8 @@ class Segment {
           // UNION - included iff:
           //  * On one side of us there is 0 poly interiors AND
           //  * On the other side there is 1 or more.
-          final noBefores = mpsBefore.length == 0;
-          final noAfters = mpsAfter.length == 0;
+          final bool noBefores = mpsBefore!.isEmpty;
+          final bool noAfters = mpsAfter!.isEmpty;
           _isInResult = noBefores != noAfters;
           break;
         }
@@ -512,7 +631,7 @@ class Segment {
           //    with poly interiors
           int least;
           int most;
-          if (mpsBefore.length < mpsAfter.length) {
+          if (mpsBefore!.length < mpsAfter!.length) {
             least = mpsBefore.length;
             most = mpsAfter.length;
           } else {
@@ -528,7 +647,7 @@ class Segment {
           // XOR - included iff:
           //  * the difference between the number of multipolys represented
           //    with poly interiors on our two sides is an odd number
-          final diff = (mpsBefore.length - mpsAfter.length).abs();
+          final diff = (mpsBefore!.length - mpsAfter!.length).abs();
           _isInResult = diff % 2 == 1;
           break;
         }
@@ -537,8 +656,9 @@ class Segment {
         {
           // DIFFERENCE included iff:
           //  * on exactly one side, we have just the subject
-          bool isJustSubject(List mps) => mps.length == 1 && mps[0].isSubject;
-          _isInResult = isJustSubject(mpsBefore) != isJustSubject(mpsAfter);
+          bool isJustSubject(List<MultiPolyIn> mps) =>
+              mps.length == 1 && mps[0].isSubject;
+          _isInResult = isJustSubject(mpsBefore!) != isJustSubject(mpsAfter!);
           break;
         }
 
@@ -559,13 +679,16 @@ class Segment {
     return Position((rightSE.point.lng - leftSE.point.lng).toDouble(),
         (rightSE.point.lat - leftSE.point.lat).toDouble());
   }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
-class _SegmentState {
-  List rings;
-  List windings;
-  List multiPolys;
-  _SegmentState({
+class SegmentState {
+  List<RingIn> rings;
+  List<int> windings;
+  List<MultiPolyIn> multiPolys;
+  SegmentState({
     required this.rings,
     required this.windings,
     required this.multiPolys,

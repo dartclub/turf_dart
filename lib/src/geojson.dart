@@ -334,10 +334,10 @@ class BBox extends CoordinateType {
   factory BBox.fromPositions(Position p1, Position p2) => BBox.named(
         lng1: p1.lng,
         lat1: p1.lat,
-        alt1: p1.alt ?? 0,
+        alt1: p1.alt,
         lng2: p2.lng,
         lat2: p2.lat,
-        alt2: p2.alt ?? 0,
+        alt2: p2.alt,
       );
 
   bool get _is3D => length == 6;
@@ -385,6 +385,7 @@ class BBox extends CoordinateType {
 
   //Adjust the bounds to include the given position
   void expandToFitPosition(Position position) {
+    //If the position is outside the current bounds, expand the bounds
     if (position.lng < lng1) {
       _items[0] = position.lng;
     }
@@ -392,10 +393,10 @@ class BBox extends CoordinateType {
       _items[1] = position.lat;
     }
     if (position.lng > lng2) {
-      _items[3] = position.lng;
+      _items[_is3D ? 3 : 2] = position.lng;
     }
     if (position.lat > lat2) {
-      _items[4] = position.lat;
+      _items[_is3D ? 4 : 3] = position.lat;
     }
     if (position.alt != null) {
       if (alt1 == null || position.alt! < alt1!) {

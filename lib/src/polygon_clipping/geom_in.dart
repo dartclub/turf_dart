@@ -4,30 +4,40 @@ import 'package:turf/helpers.dart';
 import 'package:turf/src/polygon_clipping/point_extension.dart';
 import 'package:turf/src/polygon_clipping/sweep_event.dart';
 
-import 'rounder.dart';
 import 'segment.dart';
 
 //TODO: mark factory methods to remove late values;
+/// Represents a ring in a polygon.
 class RingIn {
+  /// List of segments.
   List<Segment> segments = [];
+
+  /// Indicates whether the polygon is an exterior polygon.
   final bool isExterior;
-  final PolyIn poly;
+
+  /// The parent polygon.
+  final PolyIn? poly;
+
+  /// The bounding box of the polygon.
   late BBox bbox;
 
-  RingIn(List<Position> geomRing, this.poly, this.isExterior) {
-    final firstPoint = rounder.round(geomRing[0].lng, geomRing[0].lat);
+  RingIn(List<Position> geomRing, {this.poly, required this.isExterior})
+      : assert(geomRing.isNotEmpty) {
+    Position firstPoint =
+        Position(round(geomRing[0].lng), round(geomRing[0].lat));
     bbox = BBox.fromPositions(
       Position(firstPoint.lng, firstPoint.lat),
       Position(firstPoint.lng, firstPoint.lat),
     );
 
-    var prevPoint = firstPoint;
+    Position prevPoint = firstPoint;
     for (var i = 1; i < geomRing.length; i++) {
-      var point = rounder.round(geomRing[i].lng, geomRing[i].lat);
+      Position point = Position(round(geomRing[i].lng), round(geomRing[i].lat));
       // skip repeated points
       if (point.lng == prevPoint.lng && point.lat == prevPoint.lat) continue;
-      segments.add(Segment.fromRing(PositionEvents.fromPoint(prevPoint),
-          PositionEvents.fromPoint(point), this));
+      segments.add(Segment.fromRing(
+          PositionEvents.fromPoint(prevPoint), PositionEvents.fromPoint(point),
+          ring: this));
       bbox.expandToFitPosition(point);
 
       prevPoint = point;
@@ -35,7 +45,8 @@ class RingIn {
     // add segment from last to first if last is not the same as first
     if (firstPoint.lng != prevPoint.lng || firstPoint.lat != prevPoint.lat) {
       segments.add(Segment.fromRing(PositionEvents.fromPoint(prevPoint),
-          PositionEvents.fromPoint(firstPoint), this));
+          PositionEvents.fromPoint(firstPoint),
+          ring: this));
     }
   }
 
@@ -54,11 +65,15 @@ class RingIn {
 class PolyIn {
   late RingIn exteriorRing;
   late List<RingIn> interiorRings;
-  final MultiPolyIn multiPoly;
   late BBox bbox;
+  final MultiPolyIn? multiPoly;
 
-  PolyIn(Polygon geomPoly, this.multiPoly) {
-    exteriorRing = RingIn(geomPoly.coordinates[0], this, true);
+  PolyIn(
+    Polygon geomPoly,
+    this.multiPoly,
+  ) {
+    exteriorRing =
+        RingIn(geomPoly.coordinates[0], poly: this, isExterior: true);
     // copy by value
     bbox = exteriorRing.bbox;
 
@@ -66,7 +81,8 @@ class PolyIn {
     Position lowerLeft = bbox.position1;
     Position upperRight = bbox.position2;
     for (var i = 1; i < geomPoly.coordinates.length; i++) {
-      final ring = RingIn(geomPoly.coordinates[i], this, false);
+      final ring =
+          RingIn(geomPoly.coordinates[i], poly: this, isExterior: false);
       lowerLeft = Position(min(ring.bbox.position1.lng, lowerLeft.lng),
           min(ring.bbox.position1.lat, lowerLeft.lat));
       upperRight = Position(max(ring.bbox.position2.lng, upperRight.lng),
@@ -91,7 +107,7 @@ class PolyIn {
 
 //TODO: mark factory methods to remove late values;
 class MultiPolyIn {
-  late List<PolyIn> polys;
+  List<PolyIn> polys = [];
   final bool isSubject;
   late BBox bbox;
 
@@ -111,6 +127,7 @@ class MultiPolyIn {
           min(poly.bbox.position1.lat, lowerLeft.lat));
       upperRight = Position(max(poly.bbox.position2.lng, upperRight.lng),
           max(poly.bbox.position2.lat, upperRight.lat));
+      polys.add(poly);
     }
 
     bbox = BBox.fromPositions(lowerLeft, upperRight);
