@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:geotypes/geotypes.dart';
 import 'package:test/test.dart';
 import 'package:turf/src/explode.dart';
-import 'package:turf/turf.dart';
 
 void main() {
   group(

@@ -1,7 +1,6 @@
-import 'package:turf/src/meta/coord.dart';
-import 'package:turf/src/meta/flatten.dart';
-
-import 'geojson.dart';
+import 'meta/coord.dart';
+import 'meta/flatten.dart';
+import 'package:geotypes/geotypes.dart';
 
 /// Creates a [FeatureCollection] of 2-vertex [LineString] segments from a
 /// [LineString] or [MultiLineString] or [Polygon] and [MultiPolygon]
@@ -92,7 +91,7 @@ void segmentEach(
       }
 
       if (geometry != null && combineNestedGeometries) {
-        segmentIndex = _segmentEachforEachUnit(
+        segmentIndex = _segmentEachForEachUnit(
           geometry,
           callback,
           currentFeature.properties,
@@ -112,7 +111,7 @@ void segmentEach(
         for (int i = 0; i < coords.length; i++) {
           var line = LineString(coordinates: coords[i]);
 
-          segmentIndex = _segmentEachforEachUnit(
+          segmentIndex = _segmentEachForEachUnit(
             line,
             callback,
             currentFeature.properties,
@@ -126,7 +125,7 @@ void segmentEach(
   );
 }
 
-int _segmentEachforEachUnit(
+int _segmentEachForEachUnit(
   GeometryType geometry,
   SegmentEachCallback callback,
   Map<String, dynamic>? currentProperties,

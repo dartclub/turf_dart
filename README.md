@@ -1,14 +1,24 @@
-# turf.dart
+<h1 align="center">
+  <br>
+  <img src="https://github.com/dartclub/turf_dart/blob/main/.github/turf-logo.png" alt="TurfDart Logo" width="250">
+</h1>
+
+<h4 align="center">A <a href="https://github.com/Turfjs/turf">TurfJs</a>-like geospatial analysis library written in pure Dart.
+</h4>
+<br>
 
 [![pub package](https://img.shields.io/pub/v/turf.svg)](https://pub.dev/packages/turf)
+![dart unit tests](https://github.com/dartclub/turf_dart/actions/workflows/dart-unit-tests.yml/badge.svg)
+![dart publish](https://github.com/dartclub/turf_dart/actions/workflows/dart-pub-publish.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-THIS PROJECT IS WORK IN PROCESS
+<h3>–> <a href="https://discord.gg/cTJk98cU">Join our Dart / Flutter GIS Community on Discord</a> <–</h3>
 
-A [turf.js](https://github.com/Turfjs/turf)-like geospatial analysis library working with GeoJSON, written in pure Dart.
+TurfDart is a Dart library for [spatial analysis](https://en.wikipedia.org/wiki/Spatial_analysis). It includes traditional spatial operations, helper functions for creating GeoJSON data, and data classification and statistics tools. You can use TurfDart in your Flutter applications on the web, mobile and desktop or in pure Dart applications running on the server.
 
-This includes a fully [RFC 7946](https://tools.ietf.org/html/rfc7946)-compliant object-representation and serialization for GeoJSON.
+As the foundation, we are using [Geotypes](https://github.com/dartclub/geotypes), a lightweight dart library that provides a strong GeoJSON object model and fully [RFC 7946](https://tools.ietf.org/html/rfc7946) compliant serializers.
 
-Most of the implementation is a direct translation from [turf.js](https://github.com/Turfjs/turf).
+Most of the functionality is a translation from [turf.js](https://github.com/Turfjs/turf), the progress can be found [here](Progress.md).
 
 ## Get started
 
@@ -59,7 +69,7 @@ void main() {
 
 ![polymorphism](https://user-images.githubusercontent.com/10634693/159876354-f9da2f37-02b3-4546-b32a-c0f82c372272.png)
 
-## Notable Design Decisions
+### Notable Design Decisions
 
 - Nested `GeometryCollections` (as described in
   [RFC 7946 section 3.1.8](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8))
@@ -73,181 +83,4 @@ Tests are run with `dart test` and benchmarks can be run with
 
 Any new benchmarks must be named `*_benchmark.dart` and reside in the
 `./benchmark` folder.
-
-## Components
-
-### Measurement
-
-- [x] [along](https://github.com/dartclub/turf_dart/blob/main/lib/src/along.dart)
-- [x] [area](https://github.com/dartclub/turf_dart/blob/main/lib/src/area.dart)
-- [x] [bbox](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox.dart)
-- [x] [bboxPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/bbox_polygon.dart)
-- [x] [bearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/bearing.dart)
-- [x] [center](https://github.com/Dennis-Mwea/turf_dart/blob/main/lib/src/center.dart)
-- [ ] centerOfMass
-- [x] [centroid](https://github.com/dartclub/turf_dart/blob/main/lib/src/centroid.dart)
-- [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
-- [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
-- [ ] envelope
-- [x] [length](https://github.com/dartclub/turf_dart/blob/main/lib/src/length.dart)
-- [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
-- [ ] pointOnFeature
-- [ ] polygonTangents
-- [ ] pointToLineDistance
-- [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
-- [x] [rhumbDestination](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_destination.dart)
-- [x] [rhumbDistance](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_distance.dart)
-- [ ] square
-- [ ] greatCircle
-
-### Coordinate Mutation
-
-- [x] [cleanCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/clean_coords.dart)
-- [ ] flip
-- [ ] rewind
-- [ ] round
-- [x] [truncate](https://github.com/dartclub/turf_dart/blob/main/lib/src/truncate.dart)
-
-### Transformation
-
-- [ ] bboxClip
-- [ ] bezierSpline
-- [ ] buffer
-- [ ] circle
-- [x] clone - implemented as a member function of each [GeoJSONObject]
-- [ ] concave
-- [ ] convex
-- [ ] difference
-- [ ] dissolve
-- [ ] intersect
-- [ ] lineOffset
-- [x] [polygonSmooth](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
-- [ ] simplify
-- [ ] tesselate
-- [x] [transformRotate](https://github.com/dartclub/turf_dart/blob/main/lib/src/transform_rotate.dart)
-- [ ] transformTranslate
-- [ ] transformScale
-- [ ] union
-- [ ] voronoi
-- [x] [polyLineDecode](https://github.com/dartclub/turf_dart/blob/main/lib/src/polyline.dart)
-
-### Feature Conversion
-
-- [ ] combine
-- [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
-- [ ] flatten
-- [x] [lineToPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_to_polygon.dart)
-- [ ] polygonize
-- [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
-
-### MISC
-
-- [ ] ellipse
-- [ ] kinks
-- [ ] lineArc
-- [ ] lineChunk
-- [ ] [lineIntersect](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_intersect.dart)
-- [ ] lineOverlap
-- [x] [lineSegment](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
-- [ ] lineSlice
-- [ ] lineSliceAlong
-- [ ] lineSplit
-- [ ] mask
-- [x] [nearestPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point_on_line.dart)
-- [ ] sector
-- [ ] shortestPath
-- [ ] unkinkPolygon
-
-### Random
-
-- [ ] randomPosition
-- [ ] randomPoint
-- [ ] randomLineString
-- [ ] randomPolygon
-
-### Data
-
-- [ ] sample
-
-### Interpolation
-
-- [ ] interpolate
-- [ ] isobands
-- [ ] isolines
-- [ ] planepoint
-- [ ] tin
-
-### Joins
-
-- [ ] pointsWithinPolygon
-- [ ] tag
-
-### Grids
-
-- [ ] hexGrid
-- [ ] pointGrid
-- [ ] squareGrid
-- [ ] triangleGrid
-
-### Classification
-
-- [x] [nearestPoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point.dart)
-
-### Aggregation
-
-- [ ] collect
-- [ ] clustersDbscan
-- [ ] clustersKmeans
-
-### META
-
-- [x] [coordAll](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
-- [x] [coordEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
-- [x] [coordReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
-- [x] [featureEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
-- [x] [featureReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/feature.dart)
-- [x] [flattenEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
-- [x] [flattenReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/flatten.dart)
-- [x] [geomEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
-- [x] [geomReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/geom.dart)
-- [x] [propEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
-- [x] [propReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/prop.dart)
-- [x] [segmentEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
-- [x] [segmentReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
-- [x] [getCluster](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
-- [x] [clusterEach](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
-- [x] [clusterReduce](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/cluster.dart)
-
-### Invariants
-
-- [x] [getCoord](https://github.com/dartclub/turf_dart/blob/main/lib/src/meta/coord.dart)
-- [x] [getCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/invariant.dart)
-- [x] [getGeom](https://github.com/dartclub/turf_dart/blob/main/lib/src/invariant.dart)
-
-### Booleans
-
-- [x] [booleanClockwise](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_clockwise.dart)
-- [x] [booleanConcave](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_concave.dart)
-- [x] [booleanContains](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_contains.dart)
-- [x] [booleanCrosses](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_crosses.dart)
-- [x] [booleanDisjoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_disjoint.dart)
-- [x] [booleanEqual](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_equal.dart)
-- [x] [booleanIntersects](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_intersects.dart)
-- [ ] booleanOverlap
-- [x] [booleanParallel](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_parallel.dart)
-- [x] [booleanPointInPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_in_polygon.dart)
-- [x] [booleanPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/booleans/boolean_point_on_line.dart)
-- [ ] booleanWithin
-
-### Unit Conversion
-
-- [x] [bearingToAzimuth](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [convertArea](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [convertLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [degreesToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [lengthToRadians](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [lengthToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [radiansToLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [x] [radiansToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [ ] toMercator
-- [ ] toWgs84
+  

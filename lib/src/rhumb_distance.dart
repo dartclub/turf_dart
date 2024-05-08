@@ -33,7 +33,7 @@ num rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
 }
 
 ///
-/// Returns the distance travelling from ‘this’ point to destination point along a rhumb line.
+/// Returns the distance traveling from ‘this’ point to destination point along a rhumb line.
 /// Adapted from Geodesy ‘distanceTo‘: https://github.com/chrisveness/geodesy/blob/master/latlon-spherical.js
 ///
 /// example:

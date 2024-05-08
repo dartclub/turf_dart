@@ -1,7 +1,7 @@
-import 'package:turf/helpers.dart';
 import 'package:turf/meta.dart';
 
-/// Takes a [Feature] or a [FeatureCollection] and computes the centroid as the mean of all vertices within the object.
+/// Takes a [Feature] or a [FeatureCollection] and computes the centroid as
+/// the mean of all vertices within the object.
 ///
 /// example:
 /// ```dart

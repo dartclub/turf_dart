@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'geojson.dart';
+import 'package:geotypes/geotypes.dart';
 import 'helpers.dart';
 
 //http://en.wikipedia.org/wiki/Haversine_formula

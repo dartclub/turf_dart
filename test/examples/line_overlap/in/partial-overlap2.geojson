@@ -1,0 +1,91 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "stroke": "#F00",
+          "fill": "#F00",
+          "stroke-width": 10,
+          "stroke-opacity": 1,
+          "fill-opacity": 0.1
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              110,
+              -25
+            ],
+            [
+              120,
+              -25
+            ],
+            [
+              120,
+              -20
+            ],
+            [
+              125,
+              -20
+            ],
+            [
+              125,
+              -25
+            ],
+            [
+              130,
+              -25
+            ],
+            [
+              135,
+              -25
+            ],
+            [
+              135,
+              -20
+            ],
+            [
+              140,
+              -20
+            ],
+            [
+              140,
+              -25
+            ],
+            [
+              145,
+              -25
+            ],
+            [
+              155,
+              -25
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "stroke": "#00F",
+          "fill": "#00F",
+          "stroke-width": 3,
+          "stroke-opacity": 1,
+          "fill-opacity": 0.1
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              115,
+              -25
+            ],
+            [
+              150,
+              -25
+            ]
+          ]
+        }
+      }
+    ]
+  }

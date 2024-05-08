@@ -41,22 +41,30 @@ bool booleanPointOnLine(Point pt, LineString line,
   return false;
 }
 
+// ToDo: These variants of isPointOnLineSegment have the
+// potential to be brought together.
+
 // See http://stackoverflow.com/a/4833823/1979085
 // See https://stackoverflow.com/a/328122/1048847
-/// [pt] is the coord pair of the [Point] to check.
+/// [point] is the coord pair of the [Point] to check.
 /// [excludeBoundary] controls whether the point is allowed to fall on the line ends.
 /// [epsilon] is the Fractional number to compare with the cross product result.
 /// Useful for dealing with floating points such as lng/lat points.
-bool _isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
-    Position pt, BoundaryType excludeBoundary, num? epsilon) {
-  var x = pt[0]!;
-  var y = pt[1]!;
-  var x1 = lineSegmentStart[0];
-  var y1 = lineSegmentStart[1];
-  var x2 = lineSegmentEnd[0];
-  var y2 = lineSegmentEnd[1];
-  var dxc = pt[0]! - x1!;
-  var dyc = pt[1]! - y1!;
+bool _isPointOnLineSegment(
+  Position start,
+  Position end,
+  Position point,
+  BoundaryType excludeBoundary,
+  num? epsilon,
+) {
+  var x = point[0]!;
+  var y = point[1]!;
+  var x1 = start[0];
+  var y1 = start[1];
+  var x2 = end[0];
+  var y2 = end[1];
+  var dxc = point[0]! - x1!;
+  var dyc = point[1]! - y1!;
   var dxl = x2! - x1;
   var dyl = y2! - y1;
   var cross = dxc * dyl - dyc * dxl;
@@ -89,4 +97,75 @@ bool _isPointOnLineSegment(Position lineSegmentStart, Position lineSegmentEnd,
     return dyl > 0 ? y1 < y && y < y2 : y2 < y && y < y1;
   }
   return false;
+}
+
+/// Returns if [point] is on the segment between [start] and [end].
+/// Borrowed from `booleanPointOnLine` to speed up the evaluation (instead of
+/// using the module as dependency).
+/// [start] is the coord pair of start of line, [end] is the coord pair of end
+/// of line, and [point] is the coord pair of point to check.
+bool isPointOnLineSegmentCleanCoordsVariant(
+  Position start,
+  Position end,
+  Position point,
+) {
+  var x = point.lat;
+  var y = point.lng;
+  var startX = start.lat, startY = start.lng;
+  var endX = end.lat, endY = end.lng;
+
+  var dxc = x - startX;
+  var dyc = y - startY;
+  var dxl = endX - startX;
+  var dyl = endY - startY;
+  var cross = dxc * dyl - dyc * dxl;
+
+  if (cross != 0) {
+    return false;
+  } else if ((dxl).abs() >= (dyl).abs()) {
+    return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
+  } else {
+    return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
+  }
+}
+
+/// Only takes into account outer rings
+/// See http://stackoverflow.com/a/4833823/1979085
+/// lineSegmentStart [Position] of start of line
+/// lineSegmentEnd [Position] of end of line
+/// pt [Position] of point to check
+/// [incEnd] controls whether the [Point] is allowed to fall on the line ends
+bool isPointOnLineSegmentCrossesVariant(
+  Position start,
+  Position end,
+  Position pt,
+  bool incEnd,
+) {
+  var dxc = pt[0]! - start[0]!;
+  var dyc = pt[1]! - start[1]!;
+  var dxl = end[0]! - start[0]!;
+  var dyl = end[1]! - start[1]!;
+  var cross = dxc * dyl - dyc * dxl;
+  if (cross != 0) {
+    return false;
+  }
+  if (incEnd) {
+    if ((dxl).abs() >= (dyl).abs()) {
+      return dxl > 0
+          ? start[0]! <= pt[0]! && pt[0]! <= end[0]!
+          : end[0]! <= pt[0]! && pt[0]! <= start[0]!;
+    }
+    return dyl > 0
+        ? start[1]! <= pt[1]! && pt[1]! <= end[1]!
+        : end[1]! <= pt[1]! && pt[1]! <= start[1]!;
+  } else {
+    if ((dxl).abs() >= (dyl).abs()) {
+      return dxl > 0
+          ? start[0]! < pt[0]! && pt[0]! < end[0]!
+          : end[0]! < pt[0]! && pt[0]! < start[0]!;
+    }
+    return dyl > 0
+        ? start[1]! < pt[1]! && pt[1]! < end[1]!
+        : end[1]! < pt[1]! && pt[1]! < start[1]!;
+  }
 }

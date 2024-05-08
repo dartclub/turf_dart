@@ -1,9 +1,9 @@
 import 'dart:math';
 
+import 'package:geotypes/geotypes.dart';
 import 'bearing.dart';
 import 'destination.dart';
 import 'distance.dart';
-import 'geojson.dart';
 import 'helpers.dart';
 import 'intersection.dart';
 
@@ -37,18 +37,13 @@ class _NearestMulti extends _Nearest {
   final int localIndex;
 
   _NearestMulti({
-    required Point point,
-    required num distance,
-    required int index,
+    required super.point,
+    required super.distance,
+    required super.index,
     required this.localIndex,
-    required num location,
+    required super.location,
     required this.line,
-  }) : super(
-          point: point,
-          distance: distance,
-          index: index,
-          location: location,
-        );
+  });
 
   @override
   Feature<Point> toFeature() {
@@ -198,9 +193,9 @@ _NearestMulti? _nearestPointOnMultiLine(
 ///     Position.of([-77.020339, 38.884084]),
 ///     Position.of([-77.025661, 38.885821]),
 ///     Position.of([-77.021884, 38.889563]),
-///     Position.of([-77.019824, 38.892368)]
+///     Position.of([-77.019824, 38.892368])
 /// ]);
-/// var pt = Point(coordinates: Position(lat: -77.037076, lng: 38.884017));
+/// var pt = Point(coordinates: Position(-77.037076, 38.884017));
 ///
 /// var snapped = nearestPointOnLine(line, pt, Unit.miles);
 /// ```

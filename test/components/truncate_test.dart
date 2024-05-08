@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:turf/helpers.dart';
 import 'package:turf/truncate.dart';
 import 'package:turf_equality/turf_equality.dart';
 

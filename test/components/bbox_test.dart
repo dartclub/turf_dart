@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:turf/bbox.dart';
-import 'package:turf/helpers.dart';
 
 void main() {
   final pt = Feature<Point>(

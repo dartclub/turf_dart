@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:turf/src/booleans/boolean_touches.dart';
-import 'package:turf/turf.dart';
+import 'package:turf/boolean.dart';
 
 void main() {
   group(
@@ -28,7 +27,7 @@ void main() {
       );
 
       test(
-        "turf-boolean-overlap-falses",
+        "turf-boolean-overlap-false",
         () {
           // True Fixtures
           Directory dir = Directory('./test/examples/booleans/touches/false');

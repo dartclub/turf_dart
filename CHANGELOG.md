@@ -1,3 +1,9 @@
+## 0.0.10
+
+- Implements `lineSlice` [#158](https://github.com/dartclub/turf_dart/pull/158)
+- Introduce [geotypes package](https://pub.dev/packages/geotypes) for GeoJSON serialization
+- Other small improvements
+
 ## 0.0.9
 
 - Implements `length`, `along` [#153](https://github.com/dartclub/turf_dart/pull/153)

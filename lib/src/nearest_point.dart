@@ -1,5 +1,5 @@
 import 'distance.dart';
-import 'geojson.dart';
+import 'package:geotypes/geotypes.dart';
 
 /// Takes a reference [Point] and a FeatureCollection of Features
 /// with Point geometries and returns the
