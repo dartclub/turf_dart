@@ -49,7 +49,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [ ] intersect
 - [ ] lineOffset
 - [x] [polygonSmooth](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_smooth.dart)
-- [ ] simplify
+- [x] [simplify](https://github.com/dartclub/turf_dart/blob/main/lib/src/simplify.dart)
 - [ ] tesselate
 - [x] [transformRotate](https://github.com/dartclub/turf_dart/blob/main/lib/src/transform_rotate.dart)
 - [ ] transformTranslate
