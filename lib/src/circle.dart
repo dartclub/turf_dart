@@ -1,7 +1,9 @@
 import 'package:turf/helpers.dart';
+import 'package:turf/invariant.dart';
+import 'package:turf/src/booleans/boolean_helper.dart';
 import 'destination.dart';
 
-/// Takes a [Point] and calculates the circle polygon given a radius in degrees, radians, miles, or kilometers; and steps for precision.
+/// Takes a [Point] or a [Feature<Point>] and calculates the circle polygon given a radius in degrees, radians, miles, or kilometers; and steps for precision.
 ///
 ///  example:
 /// ```dart
@@ -16,17 +18,26 @@ import 'destination.dart';
 ///               );
 /// ```
 Feature<Polygon> circle(
-  Point center,
+  GeoJSONObject center,
   num radius, {
-  num? steps = 64,
-  Unit? unit = Unit.kilometers,
-  Map<String, dynamic>? properties = const {},
+  num? steps,
+  Unit? unit,
+  Map<String, dynamic>? properties,
 }) {
   steps ??= 64;
   unit ??= Unit.kilometers;
+  Point origin;
+  final geometry = getGeom(center);
+  if (geometry is Point) {
+    origin = geometry;
+  } else {
+    throw GeometryNotSupported(geometry);
+  }
+  properties ??=
+      center is Feature && center.properties != null ? center.properties : {};
   final List<Position> coordinates = [];
   for (var i = 0; i < steps; i++) {
-    final c = destination(center, radius, (i * -360) / steps, unit).coordinates;
+    final c = destination(origin, radius, (i * -360) / steps, unit).coordinates;
     coordinates.add(c);
   }
   coordinates.add(coordinates[0]);
