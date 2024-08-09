@@ -31,6 +31,18 @@ enum Corner {
   centroid,
 }
 
+/// Whether to calculate the distance based on geodesic (spheroid) or
+/// planar (flat) method.
+enum DistanceGeometry {
+  /// Calculations will be made on a 2D plane, NOT taking into account the
+  /// earth curvature.
+  planar,
+
+  /// Calculate the distance with geodesic (spheroid) equations. It will take
+  /// into account the earth as a sphere.
+  geodesic,
+}
+
 /// Earth Radius used with the Harvesine formula and approximates using a spherical (non-ellipsoid) Earth.
 const earthRadius = 6371008.8;
 

@@ -20,7 +20,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
 - [ ] polygonTangents
-- [ ] pointToLineDistance
+- [x] [pointToLineDistance](https://github.com/dartclub/turf_dart/blob/main/lib/src/point_to_line_distance.dart)
 - [x] [rhumbBearing](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_bearing.dart)
 - [x] [rhumbDestination](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_destination.dart)
 - [x] [rhumbDistance](https://github.com/dartclub/turf_dart/blob/main/lib/src/rhumb_distance.dart)
