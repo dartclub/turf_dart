@@ -77,7 +77,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [x] [lineOverlap](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_overlap.dart)
 - [x] [lineSegment](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_segment.dart)
 - [x] [lineSlice](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_slice.dart)
-- [ ] lineSliceAlong
+- [x] [lineSliceAlong](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_slice_along.dart)
 - [ ] lineSplit
 - [ ] mask
 - [x] [nearestPointOnLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/nearest_point_on_line.dart)

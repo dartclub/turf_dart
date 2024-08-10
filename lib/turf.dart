@@ -22,6 +22,7 @@ export 'line_intersect.dart';
 export 'line_overlap.dart';
 export 'line_segment.dart';
 export 'line_slice.dart';
+export 'line_slice_along.dart';
 export 'line_to_polygon.dart';
 export 'meta.dart';
 export 'midpoint.dart';
