@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:turf/along.dart';
-import 'package:turf/area.dart';
 import 'package:turf/simplify.dart';
 
 main() {
