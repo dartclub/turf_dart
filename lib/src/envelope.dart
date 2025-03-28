@@ -5,6 +5,6 @@ import '../bbox_polygon.dart';
 
 
 
-num? envelope(GeoJSONObject geojson) {
+Feature<Polygon> envelope(GeoJSONObject geojson) {
     return bboxPolygon(bbox(geojson));
 }
