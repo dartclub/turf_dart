@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
 import 'package:turf/turf.dart';
 
 void main() {
-  group('pointOnFeature', () {
-    test('point geometry - returns unchanged', () {
-      // Arrange: a GeoJSON Feature with a Point geometry.
+  group('Point On Feature', () {
+    // Unit tests for specific scenarios
+    test('Point geometry - returns unchanged', () {
+      // Input: Point geometry
       const jsonString = '''
       {
         "type": "Feature",
@@ -22,17 +24,24 @@ void main() {
       final jsonData = jsonDecode(jsonString);
       final feature = Feature.fromJson(jsonData);
 
-      // Act: compute the representative point.
+      // Process the feature
       final result = pointOnFeature(feature);
 
-      // Assert: the result should be a Point identical to the input.
-      expect(result, isNotNull);
-      expect(result!.geometry, isA<Point>());
-      expect(result.geometry?.coordinates?.toList(), equals([5.0, 10.0]));
+      // Verify result
+      expect(result, isNotNull,
+          reason: 'Result should not be null');
+      expect(result!.geometry, isA<Point>(),
+          reason: 'Result should be a Point geometry');
+      expect(result.geometry?.coordinates?.toList(), equals([5.0, 10.0]),
+          reason: 'Point coordinates should remain unchanged');
+      
+      // Verify properties are maintained
+      expect(result.properties?['name'], equals('Test Point'),
+          reason: 'Feature properties should be preserved');
     });
 
-    test('polygon geometry - computes point within', () {
-      // Arrange: a GeoJSON Feature with a simple triangle Polygon.
+    test('Polygon geometry - computes point within polygon', () {
+      // Input: Triangle polygon
       const polygonJson = '''
       {
         "type": "Feature",
@@ -55,21 +64,30 @@ void main() {
       final jsonData = jsonDecode(polygonJson);
       final feature = Feature.fromJson(jsonData);
 
-      // Act: compute the representative point.
+      // Process the feature
       final result = pointOnFeature(feature);
 
-      // Assert: the result should be a Point and lie within the polygon.
-      expect(result, isNotNull);
-      expect(result!.geometry, isA<Point>());
+      // Verify result structure
+      expect(result, isNotNull,
+          reason: 'Result should not be null');
+      expect(result!.geometry, isA<Point>(),
+          reason: 'Result should be a Point geometry');
+          
+      // Verify point is within polygon
       final polygon = feature.geometry as Polygon;
-      // Convert point to position for the boolean check
-      final pointPosition = Position(result.geometry?.coordinates?[0] ?? 0.0, 
-                                     result.geometry?.coordinates?[1] ?? 0.0);
-      expect(_pointInPolygon(pointPosition, polygon), isTrue);
+      final pointPosition = Position(
+          result.geometry?.coordinates?[0] ?? 0.0, 
+          result.geometry?.coordinates?[1] ?? 0.0);
+      expect(_pointInPolygon(pointPosition, polygon), isTrue,
+          reason: 'Result point should be inside the polygon');
+      
+      // Verify properties are maintained
+      expect(result.properties?['name'], equals('Triangle'),
+          reason: 'Feature properties should be preserved');
     });
 
-    test('multipolygon - uses first polygon', () {
-      // Arrange: a GeoJSON Feature with a MultiPolygon geometry.
+    test('MultiPolygon geometry - uses first polygon', () {
+      // Input: MultiPolygon with two polygons
       const multiPolygonJson = '''
       {
         "type": "Feature",
@@ -102,27 +120,37 @@ void main() {
       final jsonData = jsonDecode(multiPolygonJson);
       final feature = Feature.fromJson(jsonData);
 
-      // Act: compute the representative point.
+      // Process the feature
       final result = pointOnFeature(feature);
 
-      // Assert: the result should be a Point and lie within the first polygon.
-      expect(result, isNotNull);
-      expect(result!.geometry, isA<Point>());
-      // Create a Polygon from just the first polygon in the MultiPolygon
+      // Verify result structure
+      expect(result, isNotNull,
+          reason: 'Result should not be null');
+      expect(result!.geometry, isA<Point>(),
+          reason: 'Result should be a Point geometry');
+          
+      // Extract the first polygon from the MultiPolygon
       final coordinates = (jsonData['geometry'] as Map<String, dynamic>)['coordinates'] as List<dynamic>;
       final polygonGeometry = {
         'type': 'Polygon',
         'coordinates': coordinates[0]
       };
       final firstPolygon = Polygon.fromJson(polygonGeometry);
-      // Convert point to position for the boolean check
-      final pointPosition = Position(result.geometry?.coordinates?[0] ?? 0.0, 
-                                     result.geometry?.coordinates?[1] ?? 0.0);
-      expect(_pointInPolygon(pointPosition, firstPolygon), isTrue);
+      
+      // Verify point is within first polygon
+      final pointPosition = Position(
+          result.geometry?.coordinates?[0] ?? 0.0, 
+          result.geometry?.coordinates?[1] ?? 0.0);
+      expect(_pointInPolygon(pointPosition, firstPolygon), isTrue,
+          reason: 'Result point should be inside the first polygon of the MultiPolygon');
+      
+      // Verify properties are maintained
+      expect(result.properties?['name'], equals('MultiPolygon Example'),
+          reason: 'Feature properties should be preserved');
     });
     
-    test('linestring - computes midpoint', () {
-      // Arrange: a GeoJSON Feature with a LineString geometry.
+    test('LineString geometry - computes midpoint of first segment', () {
+      // Input: LineString with multiple segments
       const lineJson = '''
       {
         "type": "Feature",
@@ -142,27 +170,36 @@ void main() {
       final jsonData = jsonDecode(lineJson);
       final feature = Feature.fromJson(jsonData);
 
-      // Act: compute the representative point.
+      // Process the feature
       final result = pointOnFeature(feature);
 
-      // Assert: the result should be a Point on the line (in this case, the midpoint of the middle segment).
-      expect(result, isNotNull);
-      expect(result!.geometry, isA<Point>());
+      // Verify result structure
+      expect(result, isNotNull,
+          reason: 'Result should not be null');
+      expect(result!.geometry, isA<Point>(),
+          reason: 'Result should be a Point geometry');
       
-      // Verify it's the midpoint of the middle segment
+      // Calculate the expected midpoint of the first segment
       final coordinates = (jsonData['geometry'] as Map<String, dynamic>)['coordinates'] as List<dynamic>;
-      final middleSegmentStart = coordinates[0]; // For a 3-point line, the middle segment starts at the first point
-      final middleSegmentEnd = coordinates[1];
+      final firstSegmentStart = coordinates[0];
+      final firstSegmentEnd = coordinates[1];
       
-      final expectedX = ((middleSegmentStart[0] as num) + (middleSegmentEnd[0] as num)) / 2;
-      final expectedY = ((middleSegmentStart[1] as num) + (middleSegmentEnd[1] as num)) / 2;
+      final expectedX = ((firstSegmentStart[0] as num) + (firstSegmentEnd[0] as num)) / 2;
+      final expectedY = ((firstSegmentStart[1] as num) + (firstSegmentEnd[1] as num)) / 2;
       
-      expect(result.geometry?.coordinates?[0], expectedX);
-      expect(result.geometry?.coordinates?[1], expectedY);
+      // Verify midpoint coordinates
+      expect(result.geometry?.coordinates?[0], expectedX,
+          reason: 'X coordinate should be the midpoint of the first segment');
+      expect(result.geometry?.coordinates?[1], expectedY,
+          reason: 'Y coordinate should be the midpoint of the first segment');
+      
+      // Verify properties are maintained
+      expect(result.properties?['name'], equals('Simple Line'),
+          reason: 'Feature properties should be preserved');
     });
     
-    test('featurecollection - returns point on largest feature', () {
-      // Arrange: a FeatureCollection with multiple features of different types and sizes.
+    test('FeatureCollection - returns point on largest feature', () {
+      // Input: FeatureCollection with multiple features of different sizes
       const fcJson = '''
       {
         "type": "FeatureCollection",
@@ -208,21 +245,49 @@ void main() {
       final jsonData = jsonDecode(fcJson);
       final featureCollection = FeatureCollection.fromJson(jsonData);
 
-      // Act: compute the representative point.
+      // Process the FeatureCollection
       final result = pointOnFeature(featureCollection);
 
-      // Assert: the result should be a Point that lies within the largest feature (the polygon).
-      expect(result, isNotNull);
-      expect(result!.geometry, isA<Point>());
+      // Verify result structure
+      expect(result, isNotNull, 
+          reason: 'Result should not be null');
+      expect(result!.geometry, isA<Point>(),
+          reason: 'Result should be a Point geometry');
       
-      // Extract the polygon from the collection
+      // The polygon should be identified as the largest feature
       final polygonFeature = featureCollection.features[2];
       final polygon = polygonFeature.geometry as Polygon;
       
-      // Verify the point is within the polygon
-      final pointPosition = Position(result.geometry?.coordinates?[0] ?? 0.0, 
-                                    result.geometry?.coordinates?[1] ?? 0.0);
-      expect(_pointInPolygon(pointPosition, polygon), isTrue);
+      // Verify point is within the polygon (largest feature)
+      final pointPosition = Position(
+          result.geometry?.coordinates?[0] ?? 0.0, 
+          result.geometry?.coordinates?[1] ?? 0.0);
+      expect(_pointInPolygon(pointPosition, polygon), isTrue,
+          reason: 'Result point should be inside the largest feature (polygon)');
+      
+      // Verify properties are from the largest feature
+      expect(result.properties?['name'], equals('Large Square'),
+          reason: 'Feature properties should be from the largest feature');
+    });
+    
+    // Additional test case for empty FeatureCollection
+    test('Empty FeatureCollection returns null', () {
+      // Input: FeatureCollection with no features
+      const emptyFcJson = '''
+      {
+        "type": "FeatureCollection",
+        "features": []
+      }
+      ''';
+      final jsonData = jsonDecode(emptyFcJson);
+      final featureCollection = FeatureCollection.fromJson(jsonData);
+
+      // Process the FeatureCollection
+      final result = pointOnFeature(featureCollection);
+
+      // Verify result is null for empty collection
+      expect(result, isNull,
+          reason: 'Result should be null for empty FeatureCollection');
     });
   });
 }
