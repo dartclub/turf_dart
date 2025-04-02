@@ -65,6 +65,9 @@ void main() {
     ],
   ]));
 
+  final fc =
+      FeatureCollection(features: [point, line, poly, multiLine, multiPoly]);
+
   test("envelope for point", () {
     // Point
     final pointEnvelope = envelope(point);
@@ -168,6 +171,28 @@ void main() {
         ]),
       )),
       reason: "MultiPolygon",
+    );
+  });
+
+  test("envelope for featureCollection", () {
+    final fcEnvelope = envelope(fc);
+
+    // The envelope should be a polygon that represents the minimum bounding rectangle
+    // containing all features in the collection
+    expect(
+      fcEnvelope,
+      equals(Feature<Polygon>(
+        geometry: Polygon(coordinates: [
+            [
+              Position.named(lat: 100.0, lng: 0.0),
+              Position.named(lat: 104.0, lng: 0.0),
+              Position.named(lat: 104.0, lng: 3.0),
+              Position.named(lat: 100.0, lng: 3.0),
+              Position.named(lat: 100.0, lng: 0.0),
+            ]
+        ]),
+      )),
+      reason: "FeatureCollection",
     );
   });
 }
