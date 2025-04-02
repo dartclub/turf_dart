@@ -16,21 +16,52 @@ List<List<double>> greatCircle(
   }) {
     if (start.length != 2 || end.length != 2) {
       /// Coordinate checking 
-      throw ArgumentError("Both start and end coordinates should have two values - a latitude and lnggitude");
+      throw ArgumentError("Both start and end coordinates should have two values - a latitude and longitude");
     }
 
     // If start and end points are the same, 
     if (start[0] == end[0] && start[1] == end[1]) {
       return List.generate(npoints, (_) => [start[0], start[1]]);
     }
-    
+    // Coordinate checking for valid values
+    if (start[0] < -90) {
+      throw ArgumentError("Starting latitude (vertical) coordinate is less than -90. This is not a valid coordinate.");
+    } 
+
+    if (start[0] > 90) {
+      throw ArgumentError("Starting latitude (vertical) coordinate is greater than 90. This is not a valid coordinate.");
+    }
+
+    if (start[1] < -180) {
+      throw ArgumentError('Starting longitude (horizontal) coordinate is less than -180. This is not a valid coordinate.');
+    }
+
+    if (start[1] > 180) {
+      throw ArgumentError('Starting longitude (horizontal) coordinate is greater than 180. This is not a valid coordinate.');
+    }
+
+    if (end[0] < -90) {
+      throw ArgumentError("Ending latitude (vertical) coordinate is less than -90. This is not a valid coordinate.");
+    } 
+
+    if (end[0] > 90) {
+      throw ArgumentError("Ending latitude (vertical) coordinate is greater than 90. This is not a valid coordinate.");
+    }
+
+    if (end[1] < -180) {
+      throw ArgumentError('Ending longitude (horizontal) coordinate is less than -180. This is not a valid coordinate.');
+    }
+
+    if (end[1] > 180) {
+      throw ArgumentError('Ending longitude (horizontal) coordinate is greater than 180. This is not a valid coordinate.');
+    }
     
     List<List<double>> line = [];
 
-    num lng1 = degreesToRadians(start[0]);
-    num lat1 = degreesToRadians(start[1]);
-    num lng2 = degreesToRadians(end[0]);
-    num lat2 = degreesToRadians(end[1]);
+    num lat1 = degreesToRadians(start[0]);
+    num lng1 = degreesToRadians(start[1]);
+    num lat2 = degreesToRadians(end[0]);
+    num lng2 = degreesToRadians(end[1]);
     
     // Harvesine formula 
     for (int i = 0; i <= npoints; i++) {
@@ -47,7 +78,7 @@ List<List<double>> greatCircle(
     double lat = math.atan2(z, math.sqrt(x * x + y * y));
     double lng = math.atan2(y, x);
 
-    List<double> point = [radiansToDegrees(lng).toDouble().roundToDouble(), radiansToDegrees(lat).toDouble().roundToDouble()]; 
+    List<double> point = [double.parse(radiansToDegrees(lat).toStringAsFixed(2)), double.parse(radiansToDegrees(lng).toStringAsFixed(2))]; 
     line.add(point);
     }
     /// Check for multilinestring if path crosses anti-meridian
