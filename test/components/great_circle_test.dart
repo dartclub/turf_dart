@@ -20,7 +20,7 @@ void main() {
   List<double> end2 = [39, -77];
 
   List<List<double>> resultsSecondTest1 = [[48.0, -122.0], [45.75, -97.73], [39.0, -77.0]];
-  List<List<double>> resultsSecondTest2 = [[48.0, -122.0], [47.52, -109.61], [45.75, -97.73], [42.84, -86.80], [39.0, -77.0]];
+  List<List<double>> resultsSecondTest2 = [[48.0, -122.0], [47.52, -109.61], [45.75, -97.73], [42.85, -86.80], [39.0, -77.0]];
 
 
   test('Great circle intermediate tests:', () {
@@ -33,5 +33,10 @@ void main() {
   List<double> start3 = [-21, 143];
   List<double> end3 = [41, -140];
 
-
+  List<List<double>> resultsThirdTest1 = [[-21.0, 143.0], [12.65, 176.68], [41, -140]];
+  List<List<double>> resultsThirdTest2 = [[-21.0, 143.0], [-4.36, 160.22], [12.65, 176.68], [28.52, -164.56], [41, -140]];
+  test('Great circle complex tests:', () {
+    expect(greatCircle(start3, end3, npoints: 2), resultsThirdTest1);
+    expect(greatCircle(start3, end3, npoints: 4), resultsThirdTest2);
+  });
 }
