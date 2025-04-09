@@ -145,9 +145,6 @@ void main() {
               var outSource = outFile.readAsStringSync();
               var expected = jsonDecode(outSource);
 
-              String expectedString = jsonEncode(expected);
-              String resultsString = jsonEncode(results.toJson());
-
               expect(results.toJson(), equals(expected),
                   reason: 'Result should match expected output');
             }

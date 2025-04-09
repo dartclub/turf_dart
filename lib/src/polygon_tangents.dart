@@ -39,9 +39,14 @@ import 'package:turf/nearest_point.dart' as np;
 /// final tangents = polygonTangents(point, polygon);
 ///
 /// // The FeatureCollection 'tangents' now contains the two tangent points.
-///
+/// ```
 
 FeatureCollection polygonTangents(Point point, GeoJSONObject inputPolys) {
+
+  if (inputPolys is! Feature<Polygon> && inputPolys is! Feature<MultiPolygon>) {
+    throw Exception("Input must be a Polygon or MultiPolygon feature.");
+  }
+  
   final pointCoords = getCoord(point);
   final polyCoords = getCoords(inputPolys);
 
