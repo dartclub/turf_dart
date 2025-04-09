@@ -19,7 +19,7 @@ import '../polygon_to_line.dart';
 /// booleanDisjoint(line, point);
 /// //=true
 /// ```
-bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
+bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2, {bool ignoreSelfIntersections = false}) {
   var bool = true;
   flattenEach(
     feature1,
@@ -30,7 +30,7 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
           if (!bool) {
             return bool;
           }
-          bool = _disjoint(flatten1.geometry!, flatten2.geometry!);
+          bool = _disjoint(flatten1.geometry!, flatten2.geometry!, ignoreSelfIntersections);
         },
       );
     },
@@ -39,7 +39,7 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2) {
 }
 
 /// Disjoint operation for simple Geometries ([Point]/[LineString]/[Polygon])
-bool _disjoint(GeometryType geom1, GeometryType geom2) {
+bool _disjoint(GeometryType geom1, GeometryType geom2, bool ignoreSelfIntersections) {
   if (geom1 is Point) {
     if (geom2 is Point) {
       return geom1.coordinates != geom2.coordinates;
@@ -52,17 +52,17 @@ bool _disjoint(GeometryType geom1, GeometryType geom2) {
     if (geom2 is Point) {
       return !_isPointOnLine(geom1, geom2);
     } else if (geom2 is LineString) {
-      return !_isLineOnLine(geom1, geom2);
+      return !_isLineOnLine(geom1, geom2, ignoreSelfIntersections);
     } else if (geom2 is Polygon) {
-      return !_isLineInPoly(geom2, geom1);
+      return !_isLineInPoly(geom2, geom1, ignoreSelfIntersections);
     }
   } else if (geom1 is Polygon) {
     if (geom2 is Point) {
       return !booleanPointInPolygon((geom2).coordinates, geom1);
     } else if (geom2 is LineString) {
-      return !_isLineInPoly(geom1, geom2);
+      return !_isLineInPoly(geom1, geom2, ignoreSelfIntersections);
     } else if (geom2 is Polygon) {
-      return !_isPolyInPoly(geom2, geom1);
+      return !_isPolyInPoly(geom2, geom1, ignoreSelfIntersections);
     }
   }
   return false;
@@ -79,21 +79,21 @@ bool _isPointOnLine(LineString lineString, Point pt) {
   return false;
 }
 
-bool _isLineOnLine(LineString lineString1, LineString lineString2) {
-  var doLinesIntersect = lineIntersect(lineString1, lineString2);
+bool _isLineOnLine(LineString lineString1, LineString lineString2, bool ignoreSelfIntersections) {
+  var doLinesIntersect = lineIntersect(lineString1, lineString2, ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;
 }
 
-bool _isLineInPoly(Polygon polygon, LineString lineString) {
+bool _isLineInPoly(Polygon polygon, LineString lineString, bool ignoreSelfIntersections) {
   for (var coord in lineString.coordinates) {
     if (booleanPointInPolygon(coord, polygon)) {
       return true;
     }
   }
-  var doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon));
+  var doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon), ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
@@ -103,7 +103,7 @@ bool _isLineInPoly(Polygon polygon, LineString lineString) {
 /// Is [Polygon] (geom1) in [Polygon] (geom2)
 /// Only takes into account outer rings
 /// See http://stackoverflow.com/a/4833823/1979085
-bool _isPolyInPoly(Polygon feature1, Polygon feature2) {
+bool _isPolyInPoly(Polygon feature1, Polygon feature2, bool ignoreSelfIntersections) {
   for (var coord1 in feature1.coordinates[0]) {
     if (booleanPointInPolygon(coord1, feature2)) {
       return true;
@@ -115,7 +115,7 @@ bool _isPolyInPoly(Polygon feature1, Polygon feature2) {
     }
   }
   var doLinesIntersect =
-      lineIntersect(polygonToLine(feature1), polygonToLine(feature2));
+      lineIntersect(polygonToLine(feature1), polygonToLine(feature2), ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
