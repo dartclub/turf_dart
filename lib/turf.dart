@@ -13,6 +13,7 @@ export 'clean_coords.dart';
 export 'clusters.dart';
 export 'destination.dart';
 export 'distance.dart';
+export 'envelope.dart';
 export 'explode.dart';
 export 'extensions.dart';
 export 'helpers.dart';
