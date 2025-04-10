@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
+import 'package:geotypes/geotypes.dart';
 
 void main() {
   test('radiansToLength', () {
@@ -76,5 +77,99 @@ void main() {
         convertArea(100, Unit.meters, Unit.yards), equals(119.59900459999999));
     expect(convertArea(100, Unit.meters, Unit.feet), equals(1076.3910417));
     expect(convertArea(100000, Unit.feet), equals(0.009290303999749462));
+  });
+  
+  test('toMercator', () {
+    // Test with San Francisco coordinates
+    final wgs84 = [-122.4194, 37.7749];
+    final mercator = toMercator(wgs84);
+    
+    // Expected values (approximate)
+    final expectedX = -13627665.0;
+    final expectedY = 4547675.0;
+    
+    // Check conversion produces results within an acceptable range
+    expect(mercator[0], closeTo(expectedX, 50.0));
+    expect(mercator[1], closeTo(expectedY, 50.0));
+    
+    // Test with error case
+    expect(() => toMercator([]), throwsException);
+  });
+  
+  test('toWGS84', () {
+    // Test with San Francisco Mercator coordinates
+    final mercator = [-13627695.092862014, 4547675.345836067];
+    final wgs84 = toWGS84(mercator);
+    
+    // Expected values (approximate)
+    final expectedLon = -122.42;
+    final expectedLat = 37.77;
+    
+    // Check conversion produces results within an acceptable range
+    expect(wgs84[0], closeTo(expectedLon, 0.01));
+    expect(wgs84[1], closeTo(expectedLat, 0.01));
+    
+    // Test with error case
+    expect(() => toWGS84([]), throwsException);
+  });
+  
+  test('Round-trip conversion WGS84-Mercator-WGS84', () {
+    // Test coordinates for various cities
+    final cities = [
+      [-122.4194, 37.7749], // San Francisco
+      [139.6917, 35.6895],  // Tokyo
+      [151.2093, -33.8688], // Sydney
+      [-0.1278, 51.5074],   // London
+    ];
+    
+    for (final original in cities) {
+      final mercator = toMercator(original);
+      final roundTrip = toWGS84(mercator);
+      
+      // Round-trip should return to the original value within a small delta
+      expect(roundTrip[0], closeTo(original[0], 0.00001));
+      expect(roundTrip[1], closeTo(original[1], 0.00001));
+    }
+  });
+  
+  test('convertCoordinates', () {
+    // Test WGS84 to Mercator conversion
+    final wgs84 = [-122.4194, 37.7749]; // San Francisco
+    final mercator = convertCoordinates(
+      wgs84, 
+      CoordinateSystem.wgs84, 
+      CoordinateSystem.mercator
+    );
+    
+    // Should match toMercator result
+    final directMercator = toMercator(wgs84);
+    expect(mercator[0], equals(directMercator[0]));
+    expect(mercator[1], equals(directMercator[1]));
+    
+    // Test Mercator to WGS84 conversion
+    final backToWgs84 = convertCoordinates(
+      mercator, 
+      CoordinateSystem.mercator, 
+      CoordinateSystem.wgs84
+    );
+    
+    // Should match toWGS84 result and be close to original
+    expect(backToWgs84[0], closeTo(wgs84[0], 0.00001));
+    expect(backToWgs84[1], closeTo(wgs84[1], 0.00001));
+    
+    // Test same system conversion (should return same values)
+    final sameSystem = convertCoordinates(
+      wgs84, 
+      CoordinateSystem.wgs84, 
+      CoordinateSystem.wgs84
+    );
+    expect(sameSystem[0], equals(wgs84[0]));
+    expect(sameSystem[1], equals(wgs84[1]));
+    
+    // Test error case
+    expect(
+      () => convertCoordinates([], CoordinateSystem.wgs84, CoordinateSystem.mercator), 
+      throwsException
+    );
   });
 }
