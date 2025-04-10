@@ -32,5 +32,6 @@ export 'point_to_line_distance.dart';
 export 'polygon_smooth.dart';
 export 'polygon_to_line.dart';
 export 'polyline.dart';
+export 'square.dart';
 export 'transform.dart';
 export 'truncate.dart';
