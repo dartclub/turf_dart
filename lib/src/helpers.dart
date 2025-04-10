@@ -203,9 +203,10 @@ num convertArea(num area,
 }
 
 
-/// Converts coordinates from one system to another
-/// Valid systems: wgs84, mercator
-/// Returns: Array of coordinates in the target system
+/// Converts coordinates from one system to another.
+///
+/// Valid systems: [CoordinateSystem.wgs84], [CoordinateSystem.mercator]
+/// Returns: [List] of coordinates in the target system
 List<double> convertCoordinates(
   List<num> coord, 
   CoordinateSystem fromSystem, 
@@ -224,9 +225,10 @@ List<double> convertCoordinates(
   }
 }
 
-/// Converts a WGS84 coordinate to Web Mercator
-/// Valid inputs: Array of [longitude, latitude]
-/// Returns: Array of [x, y] coordinates in meters
+/// Converts a WGS84 coordinate to Web Mercator.
+///
+/// Valid inputs: [List] of [longitude, latitude]
+/// Returns: [List] of [x, y] coordinates in meters
 List<double> toMercator(List<num> coord) {
   if (coord.length < 2) {
     throw Exception("coordinates must contain at least 2 values");
@@ -252,9 +254,10 @@ List<double> toMercator(List<num> coord) {
   return [clampedX, clampedY];
 }
 
-/// Converts a Web Mercator coordinate to WGS84
-/// Valid inputs: Array of [x, y] in meters
-/// Returns: Array of [longitude, latitude] coordinates
+/// Converts a Web Mercator coordinate to WGS84.
+///
+/// Valid inputs: [List] of [x, y] in meters
+/// Returns: [List] of [longitude, latitude] coordinates
 List<double> toWGS84(List<num> coord) {
   if (coord.length < 2) {
     throw Exception("coordinates must contain at least 2 values");
