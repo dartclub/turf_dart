@@ -120,11 +120,14 @@ void main() {
             }
 
             final ptFeature = Feature<Point>.fromJson(rawPt.toJson());
-            final results = polygonTangents(ptFeature.geometry!, polyFeature);
-
-            // Add original features to results
-            results.features.addAll([polyFeature, ptFeature]);
-
+            final FeatureCollection results = FeatureCollection(
+              features: [
+                ...polygonTangents(ptFeature.geometry!, polyFeature).features,
+                polyFeature,
+                ptFeature,
+              ],
+            );
+          
             // Prepare output path
             var outPath = file.path.replaceAll('/in', '/out');
             var outFile = File(outPath);
