@@ -46,27 +46,6 @@ enum DistanceGeometry {
 /// Earth Radius used with the Harvesine formula and approximates using a spherical (non-ellipsoid) Earth.
 const earthRadius = 6371008.8;
 
-/// Maximum extent of the Web Mercator projection in meters
-const double mercatorLimit = 20037508.34;
-
-/// Earth radius in meters used for coordinate system conversions
-const double conversionEarthRadius = 6378137.0;
-
-/// Coordinate reference systems for spatial data
-enum CoordinateSystem {
-  /// WGS84 geographic coordinates (longitude/latitude)
-  wgs84,
-  
-  /// Web Mercator projection (EPSG:3857)
-  mercator,
-}
-
-/// Coordinate system conversion constants
-const coordSystemConstants = {
-  'mercatorLimit': mercatorLimit,
-  'earthRadius': conversionEarthRadius,
-};
-
 /// Unit of measurement factors using a spherical (non-ellipsoid) earth radius.
 /// Keys are the name of the unit, values are the number of that unit in a single radian
 const factors = <Unit, num>{
@@ -200,84 +179,4 @@ num convertArea(num area,
   }
 
   return (area / startFactor) * finalFactor;
-}
-
-
-/// Converts coordinates from one system to another.
-///
-/// Valid systems: [CoordinateSystem.wgs84], [CoordinateSystem.mercator]
-/// Returns: [List] of coordinates in the target system
-List<double> convertCoordinates(
-  List<num> coord, 
-  CoordinateSystem fromSystem, 
-  CoordinateSystem toSystem
-) {
-  if (fromSystem == toSystem) {
-    return coord.map((e) => e.toDouble()).toList();
-  }
-  
-  if (fromSystem == CoordinateSystem.wgs84 && toSystem == CoordinateSystem.mercator) {
-    return toMercator(coord);
-  } else if (fromSystem == CoordinateSystem.mercator && toSystem == CoordinateSystem.wgs84) {
-    return toWGS84(coord);
-  } else {
-    throw Exception("Unsupported coordinate system conversion: $fromSystem to $toSystem");
-  }
-}
-
-/// Converts a WGS84 coordinate to Web Mercator.
-///
-/// Valid inputs: [List] of [longitude, latitude]
-/// Returns: [List] of [x, y] coordinates in meters
-List<double> toMercator(List<num> coord) {
-  if (coord.length < 2) {
-    throw Exception("coordinates must contain at least 2 values");
-  }
-  
-  // Use the earth radius constant for consistency
-  
-  // Clamp latitude to avoid infinite values near the poles
-  final longitude = coord[0].toDouble();
-  final latitude = max(min(coord[1].toDouble(), 89.99), -89.99);
-  
-  // Convert longitude to x coordinate
-  final x = longitude * (conversionEarthRadius * pi / 180.0);
-  
-  // Convert latitude to y coordinate
-  final latRad = latitude * (pi / 180.0);
-  final y = log(tan((pi / 4) + (latRad / 2))) * conversionEarthRadius;
-  
-  // Clamp to valid Mercator bounds
-  final clampedX = max(min(x, mercatorLimit), -mercatorLimit);
-  final clampedY = max(min(y, mercatorLimit), -mercatorLimit);
-  
-  return [clampedX, clampedY];
-}
-
-/// Converts a Web Mercator coordinate to WGS84.
-///
-/// Valid inputs: [List] of [x, y] in meters
-/// Returns: [List] of [longitude, latitude] coordinates
-List<double> toWGS84(List<num> coord) {
-  if (coord.length < 2) {
-    throw Exception("coordinates must contain at least 2 values");
-  }
-  
-  // Use the earth radius constant for consistency
-  
-  // Clamp inputs to valid range
-  final x = max(min(coord[0].toDouble(), mercatorLimit), -mercatorLimit);
-  final y = max(min(coord[1].toDouble(), mercatorLimit), -mercatorLimit);
-  
-  // Convert x to longitude
-  final longitude = x / (conversionEarthRadius * pi / 180.0);
-  
-  // Convert y to latitude
-  final latRad = 2 * atan(exp(y / conversionEarthRadius)) - (pi / 2);
-  final latitude = latRad * (180.0 / pi);
-  
-  // Clamp latitude to valid range
-  final clampedLatitude = max(min(latitude, 90.0), -90.0);
-  
-  return [longitude, clampedLatitude];
 }
