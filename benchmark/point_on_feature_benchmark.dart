@@ -1,13 +1,13 @@
 import 'package:benchmark/benchmark.dart';
 import 'package:turf/turf.dart';
 
-// Create some test features for benchmarking
-var point = Feature(
+// Create some test features for benchmarkings
+final point = Feature(
   geometry: Point(coordinates: Position.of([5.0, 10.0])),
   properties: {'name': 'Test Point'},
 );
 
-var polygon = Feature<Polygon>(
+final polygon = Feature<Polygon>(
   geometry: Polygon(coordinates: [
     [
       Position.of([-10.0, 0.0]),
@@ -19,7 +19,7 @@ var polygon = Feature<Polygon>(
   properties: {'name': 'Triangle Polygon'},
 );
 
-var lineString = Feature<LineString>(
+final lineString = Feature<LineString>(
   geometry: LineString(coordinates: [
     Position.of([0.0, 0.0]),
     Position.of([10.0, 10.0]),
@@ -28,7 +28,7 @@ var lineString = Feature<LineString>(
   properties: {'name': 'Line String Example'},
 );
 
-var featureCollection = FeatureCollection<GeometryObject>(features: [
+final featureCollection = FeatureCollection<GeometryObject>(features: [
   Feature(geometry: Point(coordinates: Position.of([0.0, 0.0]))),
   Feature<Polygon>(
     geometry: Polygon(coordinates: [
