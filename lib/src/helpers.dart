@@ -121,9 +121,10 @@ num round(num value, [num precision = 0]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from radians to a more friendly unit.
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
-  var factor = factors[unit];
+  final factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
   }
@@ -131,7 +132,8 @@ num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into radians
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
   num? factor = factors[unit];
   if (factor == null) {
@@ -141,7 +143,8 @@ num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into degrees
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, centimeters, kilometres, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.centimeters], [Unit.kilometers], [Unit.feet]
 num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
   return radiansToDegrees(lengthToRadians(distance, unit));
 }
@@ -169,7 +172,8 @@ num degreesToRadians(num degrees) {
 }
 
 /// Converts a length to the requested unit.
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num convertLength(
   num length, [
   Unit originalUnit = Unit.kilometers,
@@ -182,7 +186,8 @@ num convertLength(
 }
 
 /// Converts a area to the requested unit.
-/// Valid units: kilometers, kilometres, meters, metres, centimetres, millimeters, acres, miles, yards, feet, inches, hectares
+/// Valid units: [Unit.kilometers], [Unit.meters], [Unit.centimeters], [Unit.millimeters], [Unit.acres], 
+/// [Unit.miles], [Unit.yards], [Unit.feet], [Unit.inches]
 num convertArea(num area,
     [originalUnit = Unit.meters, finalUnit = Unit.kilometers]) {
   if (area < 0) {

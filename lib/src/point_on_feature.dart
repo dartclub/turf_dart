@@ -1,27 +1,35 @@
-import 'dart:math' as math;
-import 'package:geotypes/geotypes.dart'; // We still need the GeoJSON types, as they're used throughout the package
+import 'package:geotypes/geotypes.dart';
+import 'package:turf/area.dart' as turf_area;
+import 'package:turf/centroid.dart' as turf_centroid;
+import 'package:turf/helpers.dart';
+import 'package:turf/length.dart' as turf_length;
+import 'package:turf/midpoint.dart' as turf_midpoint;
+import 'package:turf_pip/turf_pip.dart';
 
-/// Returns a Feature<Point> that represents a point guaranteed to be on the feature.
+/// Returns a [Feature<Point>] that represents a point guaranteed to be on the feature.
 ///
-/// - For Point geometries: returns the original point
-/// - For Polygon geometries: computes a point inside the polygon (preference to centroid)
-/// - For MultiPolygon geometries: uses the first polygon to compute a point
-/// - For LineString geometries: computes the midpoint along the line
-/// - For FeatureCollection: returns a point on the largest feature
+/// - For [Point] geometries: returns the original point
+/// - For [Polygon] geometries: computes a point inside the polygon (preference to centroid)
+/// - For [MultiPolygon] geometries: uses the first polygon to compute a point
+/// - For [LineString] geometries: computes the midpoint along the line
+/// - For [FeatureCollection]: returns a point on the largest feature
 ///
 /// The resulting point is guaranteed to be on the feature.
-Feature<Point>? pointOnFeature(dynamic featureInput) {
+///
+/// Throws an [ArgumentError] if the input type is unsupported or if a valid point
+/// cannot be computed.
+Feature<Point> pointOnFeature(dynamic featureInput) {
   // Handle FeatureCollection
   if (featureInput is FeatureCollection) {
     if (featureInput.features.isEmpty) {
-      return null;
+      throw ArgumentError('Cannot compute point on empty FeatureCollection');
     }
     
     // Find the largest feature in the collection
     Feature largestFeature = featureInput.features.first;
     double maxSize = _calculateFeatureSize(largestFeature);
     
-    for (var feature in featureInput.features.skip(1)) {
+    for (final feature in featureInput.features.skip(1)) {
       final size = _calculateFeatureSize(feature);
       if (size > maxSize) {
         maxSize = size;
@@ -44,24 +52,33 @@ Feature<Point>? pointOnFeature(dynamic featureInput) {
       // For LineString: compute the midpoint
       return _midpointOnLine(geometry, featureInput.properties);
     } else if (geometry is Polygon) {
-      final centroid = calculateCentroid(geometry);
+      // Use the existing centroid function
+      final Feature<Point> centroidFeature = turf_centroid.centroid(
+        featureInput,
+        properties: featureInput.properties,
+      );
+      // Use non-null assertion operator since we know the geometry exists
+      final Point centroid = centroidFeature.geometry!;
       // Convert Point to Position for boolean check
       final pointPos = Position(centroid.coordinates[0] ?? 0.0, centroid.coordinates[1] ?? 0.0);
-      if (_pointInPolygon(pointPos, geometry)) {
-        return Feature<Point>(geometry: centroid, properties: featureInput.properties);
+      
+      // Use point-in-polygon from turf_pip package directly
+      final pipResult = pointInPolygon(Point(coordinates: pointPos), geometry);
+      if (pipResult == PointInPolygonResult.isInside || pipResult == PointInPolygonResult.isOnEdge) {
+        return centroidFeature;
       } else {
         // Try each vertex of the outer ring.
         final outerRing = geometry.coordinates.first;
         for (final pos in outerRing) {
           final candidate = Point(coordinates: pos);
-          // Convert Point to Position for boolean check
           final candidatePos = Position(candidate.coordinates[0] ?? 0.0, candidate.coordinates[1] ?? 0.0);
-          if (_pointInPolygon(candidatePos, geometry)) {
+          final candidatePipResult = pointInPolygon(Point(coordinates: candidatePos), geometry);
+          if (candidatePipResult == PointInPolygonResult.isInside || candidatePipResult == PointInPolygonResult.isOnEdge) {
             return Feature<Point>(geometry: candidate, properties: featureInput.properties);
           }
         }
         // Fallback: return the centroid.
-        return Feature<Point>(geometry: centroid, properties: featureInput.properties);
+        return centroidFeature;
       }
     } else if (geometry is MultiPolygon) {
       // Use the first polygon from the MultiPolygon.
@@ -70,27 +87,17 @@ Feature<Point>? pointOnFeature(dynamic featureInput) {
         return pointOnFeature(Feature(
             geometry: firstPoly, properties: featureInput.properties));
       }
+      throw ArgumentError('Cannot compute point on empty MultiPolygon');
+    } else {
+      throw ArgumentError('Unsupported geometry type: ${geometry.runtimeType}');
     }
   }
   
-  // Unsupported input type.
-  return null;
+  // If we reach here, the input type is unsupported
+  throw ArgumentError('Unsupported input type: ${featureInput.runtimeType}');
 }
 
-/// Calculates the arithmetic centroid of a Polygon's outer ring.
-Point calculateCentroid(Polygon polygon) {
-  final outerRing = polygon.coordinates.first;
-  double sumX = 0.0;
-  double sumY = 0.0;
-  final count = outerRing.length;
-  for (final pos in outerRing) {
-    sumX += pos[0] ?? 0.0;
-    sumY += pos[1] ?? 0.0;
-  }
-  return Point(coordinates: Position(sumX / count, sumY / count));
-}
-
-/// Calculates a representative midpoint on a LineString.
+/// Calculates a representative midpoint on a [LineString].
 Feature<Point> _midpointOnLine(LineString line, Map<String, dynamic>? properties) {
   final coords = line.coordinates;
   if (coords.isEmpty) {
@@ -109,61 +116,20 @@ Feature<Point> _midpointOnLine(LineString line, Map<String, dynamic>? properties
     );
   }
   
-  // Calculate the midpoint of the first segment for simplicity
-  // Note: This matches the test expectations
+  // Calculate the midpoint of the first segment using the midpoint library function
+  // This gives a geodesically correct midpoint considering the curvature of the earth
   final start = coords[0];
   final end = coords[1];
   
-  // Calculate the midpoint
-  final midX = (start[0] ?? 0.0) + ((end[0] ?? 0.0) - (start[0] ?? 0.0)) / 2;
-  final midY = (start[1] ?? 0.0) + ((end[1] ?? 0.0) - (start[1] ?? 0.0)) / 2;
+  final startPoint = Point(coordinates: start);
+  final endPoint = Point(coordinates: end);
+  
+  final midpoint = turf_midpoint.midpoint(startPoint, endPoint);
   
   return Feature<Point>(
-    geometry: Point(coordinates: Position(midX, midY)),
+    geometry: midpoint,
     properties: properties
   );
-}
-
-/// Checks if a point is inside a polygon using a ray-casting algorithm.
-bool _pointInPolygon(Position point, Polygon polygon) {
-  final outerRing = polygon.coordinates.first;
-  final int numVertices = outerRing.length;
-  bool inside = false;
-  final num pxNum = point[0] ?? 0.0;
-  final num pyNum = point[1] ?? 0.0;
-  final double px = pxNum.toDouble();
-  final double py = pyNum.toDouble();
-
-  for (int i = 0, j = numVertices - 1; i < numVertices; j = i++) {
-    final num xiNum = outerRing[i][0] ?? 0.0;
-    final num yiNum = outerRing[i][1] ?? 0.0;
-    final num xjNum = outerRing[j][0] ?? 0.0;
-    final num yjNum = outerRing[j][1] ?? 0.0;
-    final double xi = xiNum.toDouble();
-    final double yi = yiNum.toDouble();
-    final double xj = xjNum.toDouble();
-    final double yj = yjNum.toDouble();
-    
-    // Check if point is on a polygon vertex
-    if ((xi == px && yi == py) || (xj == px && yj == py)) {
-      return true;
-    }
-    
-    // Check if point is on a polygon edge
-    if (yi == yj && yi == py && 
-        ((xi <= px && px <= xj) || (xj <= px && px <= xi))) {
-      return true;
-    }
-    
-    // Ray-casting algorithm for checking if point is inside polygon
-    final bool intersect = ((yi > py) != (yj > py)) &&
-        (px < (xj - xi) * (py - yi) / (yj - yi + 0.0) + xi);
-    if (intersect) {
-      inside = !inside;
-    }
-  }
-  
-  return inside;
 }
 
 /// Helper to estimate the "size" of a feature for comparison.
@@ -173,42 +139,18 @@ double _calculateFeatureSize(Feature feature) {
   if (geometry is Point) {
     return 0; // Points have zero area
   } else if (geometry is LineString) {
-    // For LineString, use the length as a proxy for size
-    double totalLength = 0;
-    final coords = geometry.coordinates;
-    for (int i = 0; i < coords.length - 1; i++) {
-      final start = coords[i];
-      final end = coords[i + 1];
-      final dx = (end[0] ?? 0.0) - (start[0] ?? 0.0);
-      final dy = (end[1] ?? 0.0) - (start[1] ?? 0.0);
-      totalLength += math.sqrt(dx * dx + dy * dy); // Simple Euclidean distance
-    }
-    return totalLength;
-  } else if (geometry is Polygon) {
-    // For Polygon, use area of the outer ring as a simple approximation
-    double area = 0;
-    final outerRing = geometry.coordinates.first;
-    for (int i = 0; i < outerRing.length - 1; i++) {
-      area += ((outerRing[i][0] ?? 0.0) * (outerRing[i + 1][1] ?? 0.0)) - 
-              ((outerRing[i + 1][0] ?? 0.0) * (outerRing[i][1] ?? 0.0));
-    }
-    return area.abs() / 2;
-  } else if (geometry is MultiPolygon) {
-    // For MultiPolygon, sum the areas of all polygons
-    double totalArea = 0;
-    for (final polyCoords in geometry.coordinates) {
-      if (polyCoords.isNotEmpty) {
-        final outerRing = polyCoords.first;
-        double area = 0;
-        for (int i = 0; i < outerRing.length - 1; i++) {
-          area += ((outerRing[i][0] ?? 0.0) * (outerRing[i + 1][1] ?? 0.0)) - 
-                  ((outerRing[i + 1][0] ?? 0.0) * (outerRing[i][1] ?? 0.0));
-        }
-        totalArea += area.abs() / 2;
-      }
-    }
-    return totalArea;
+    // Use the library's length function for accurate distance calculation
+    final num calculatedLength = turf_length.length(
+      Feature<LineString>(geometry: geometry),
+      Unit.kilometers
+    );
+    return calculatedLength.toDouble();
+  } else if (geometry is Polygon || geometry is MultiPolygon) {
+    // Use the library's area function for accurate area calculation
+    final num? calculatedArea = turf_area.area(Feature(geometry: geometry));
+    return calculatedArea?.toDouble() ?? 0.0;
   }
   
-  return 0; // Default for unsupported geometry types
+  // Return 0 for unsupported geometry types
+  return 0;
 }
