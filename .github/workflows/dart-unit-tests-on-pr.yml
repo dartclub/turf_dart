@@ -33,7 +33,7 @@ jobs:
 
       - name: Archive raw coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: raw-coverage
           path: ./coverage
