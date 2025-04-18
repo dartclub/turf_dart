@@ -1,0 +1,37 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Point Feature"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.0, 10.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Polygon Feature",
+        "stroke": "#F00",
+        "stroke-width": 2,
+        "fill": "#F00",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-10.0, -10.0],
+            [10.0, -10.0],
+            [10.0, 10.0],
+            [-10.0, 10.0],
+            [-10.0, -10.0]
+          ]
+        ]
+      }
+    }
+  ]
+}
