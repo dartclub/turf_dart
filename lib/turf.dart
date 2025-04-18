@@ -29,7 +29,6 @@ export 'midpoint.dart';
 export 'nearest_point_on_line.dart';
 export 'nearest_point.dart';
 export 'point_to_line_distance.dart';
-export 'point_on_feature.dart';
 export 'polygon_smooth.dart';
 export 'polygon_to_line.dart';
 export 'polyline.dart';
