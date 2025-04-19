@@ -176,5 +176,5 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [x] [lengthToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
 - [x] [radiansToLength](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
 - [x] [radiansToDegrees](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
-- [ ] toMercator
-- [ ] toWgs84
+- [x] [toMercator](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)
+- [x] [toWGS84](https://github.com/dartclub/turf_dart/blob/main/lib/src/helpers.dart)

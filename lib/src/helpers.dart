@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:geotypes/geotypes.dart';
 
 enum Unit {
   meters,
@@ -211,14 +212,14 @@ num convertArea(num area,
 /// Converts coordinates from one system to another.
 ///
 /// Valid systems: [CoordinateSystem.wgs84], [CoordinateSystem.mercator]
-/// Returns: [List] of coordinates in the target system
-List<double> convertCoordinates(
-  List<num> coord, 
+/// Returns: [Position] in the target system
+Position convertCoordinates(
+  Position coord, 
   CoordinateSystem fromSystem, 
   CoordinateSystem toSystem
 ) {
   if (fromSystem == toSystem) {
-    return coord.map((e) => e.toDouble()).toList();
+    return coord;
   }
   
   if (fromSystem == CoordinateSystem.wgs84 && toSystem == CoordinateSystem.mercator) {
@@ -226,24 +227,20 @@ List<double> convertCoordinates(
   } else if (fromSystem == CoordinateSystem.mercator && toSystem == CoordinateSystem.wgs84) {
     return toWGS84(coord);
   } else {
-    throw Exception("Unsupported coordinate system conversion: $fromSystem to $toSystem");
+    throw ArgumentError("Unsupported coordinate system conversion from ${fromSystem.runtimeType} to ${toSystem.runtimeType}");
   }
 }
 
 /// Converts a WGS84 coordinate to Web Mercator.
 ///
-/// Valid inputs: [List] of [longitude, latitude]
-/// Returns: [List] of [x, y] coordinates in meters
-List<double> toMercator(List<num> coord) {
-  if (coord.length < 2) {
-    throw Exception("coordinates must contain at least 2 values");
-  }
-  
+/// Valid inputs: [Position] with [longitude, latitude]
+/// Returns: [Position] with [x, y] coordinates in meters
+Position toMercator(Position coord) {
   // Use the earth radius constant for consistency
   
   // Clamp latitude to avoid infinite values near the poles
-  final longitude = coord[0].toDouble();
-  final latitude = max(min(coord[1].toDouble(), 89.99), -89.99);
+  final longitude = coord[0]?.toDouble() ?? 0.0;
+  final latitude = max(min(coord[1]?.toDouble() ?? 0.0, 89.99), -89.99);
   
   // Convert longitude to x coordinate
   final x = longitude * (conversionEarthRadius * pi / 180.0);
@@ -256,23 +253,22 @@ List<double> toMercator(List<num> coord) {
   final clampedX = max(min(x, mercatorLimit), -mercatorLimit);
   final clampedY = max(min(y, mercatorLimit), -mercatorLimit);
   
-  return [clampedX, clampedY];
+  // Preserve altitude if present
+  final alt = coord.length > 2 ? coord[2] : null;
+  
+  return Position.of(alt != null ? [clampedX, clampedY, alt] : [clampedX, clampedY]);
 }
 
 /// Converts a Web Mercator coordinate to WGS84.
 ///
-/// Valid inputs: [List] of [x, y] in meters
-/// Returns: [List] of [longitude, latitude] coordinates
-List<double> toWGS84(List<num> coord) {
-  if (coord.length < 2) {
-    throw Exception("coordinates must contain at least 2 values");
-  }
-  
+/// Valid inputs: [Position] with [x, y] in meters
+/// Returns: [Position] with [longitude, latitude] coordinates
+Position toWGS84(Position coord) {
   // Use the earth radius constant for consistency
   
   // Clamp inputs to valid range
-  final x = max(min(coord[0].toDouble(), mercatorLimit), -mercatorLimit);
-  final y = max(min(coord[1].toDouble(), mercatorLimit), -mercatorLimit);
+  final x = max(min(coord[0]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
+  final y = max(min(coord[1]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
   
   // Convert x to longitude
   final longitude = x / (conversionEarthRadius * pi / 180.0);
@@ -284,5 +280,8 @@ List<double> toWGS84(List<num> coord) {
   // Clamp latitude to valid range
   final clampedLatitude = max(min(latitude, 90.0), -90.0);
   
-  return [longitude, clampedLatitude];
+  // Preserve altitude if present
+  final alt = coord.length > 2 ? coord[2] : null;
+  
+  return Position.of(alt != null ? [longitude, clampedLatitude, alt] : [longitude, clampedLatitude]);
 }
