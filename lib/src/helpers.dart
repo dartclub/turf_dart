@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:geotypes/geotypes.dart';
 
 enum Unit {
   meters,
@@ -45,6 +46,27 @@ enum DistanceGeometry {
 
 /// Earth Radius used with the Harvesine formula and approximates using a spherical (non-ellipsoid) Earth.
 const earthRadius = 6371008.8;
+
+/// Maximum extent of the Web Mercator projection in meters
+const double mercatorLimit = 20037508.34;
+
+/// Earth radius in meters used for coordinate system conversions
+const double conversionEarthRadius = 6378137.0;
+
+/// Coordinate reference systems for spatial data
+enum CoordinateSystem {
+  /// WGS84 geographic coordinates (longitude/latitude)
+  wgs84,
+  
+  /// Web Mercator projection (EPSG:3857)
+  mercator,
+}
+
+/// Coordinate system conversion constants
+const coordSystemConstants = {
+  'mercatorLimit': mercatorLimit,
+  'earthRadius': conversionEarthRadius,
+};
 
 /// Unit of measurement factors using a spherical (non-ellipsoid) earth radius.
 /// Keys are the name of the unit, values are the number of that unit in a single radian
@@ -100,9 +122,10 @@ num round(num value, [num precision = 0]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from radians to a more friendly unit.
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
-  var factor = factors[unit];
+  final factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
   }
@@ -110,7 +133,8 @@ num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into radians
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
   num? factor = factors[unit];
   if (factor == null) {
@@ -120,7 +144,8 @@ num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into degrees
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, centimeters, kilometres, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.centimeters], [Unit.kilometers], [Unit.feet]
 num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
   return radiansToDegrees(lengthToRadians(distance, unit));
 }
@@ -148,7 +173,8 @@ num degreesToRadians(num degrees) {
 }
 
 /// Converts a length to the requested unit.
-/// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num convertLength(
   num length, [
   Unit originalUnit = Unit.kilometers,
@@ -161,7 +187,8 @@ num convertLength(
 }
 
 /// Converts a area to the requested unit.
-/// Valid units: kilometers, kilometres, meters, metres, centimetres, millimeters, acres, miles, yards, feet, inches, hectares
+/// Valid units: [Unit.kilometers], [Unit.meters], [Unit.centimeters], [Unit.millimeters], [Unit.acres], 
+/// [Unit.miles], [Unit.yards], [Unit.feet], [Unit.inches]
 num convertArea(num area,
     [originalUnit = Unit.meters, finalUnit = Unit.kilometers]) {
   if (area < 0) {
@@ -179,4 +206,82 @@ num convertArea(num area,
   }
 
   return (area / startFactor) * finalFactor;
+}
+
+
+/// Converts coordinates from one system to another.
+///
+/// Valid systems: [CoordinateSystem.wgs84], [CoordinateSystem.mercator]
+/// Returns: [Position] in the target system
+Position convertCoordinates(
+  Position coord, 
+  CoordinateSystem fromSystem, 
+  CoordinateSystem toSystem
+) {
+  if (fromSystem == toSystem) {
+    return coord;
+  }
+  
+  if (fromSystem == CoordinateSystem.wgs84 && toSystem == CoordinateSystem.mercator) {
+    return toMercator(coord);
+  } else if (fromSystem == CoordinateSystem.mercator && toSystem == CoordinateSystem.wgs84) {
+    return toWGS84(coord);
+  } else {
+    throw ArgumentError("Unsupported coordinate system conversion from ${fromSystem.runtimeType} to ${toSystem.runtimeType}");
+  }
+}
+
+/// Converts a WGS84 coordinate to Web Mercator.
+///
+/// Valid inputs: [Position] with [longitude, latitude]
+/// Returns: [Position] with [x, y] coordinates in meters
+Position toMercator(Position coord) {
+  // Use the earth radius constant for consistency
+  
+  // Clamp latitude to avoid infinite values near the poles
+  final longitude = coord[0]?.toDouble() ?? 0.0;
+  final latitude = max(min(coord[1]?.toDouble() ?? 0.0, 89.99), -89.99);
+  
+  // Convert longitude to x coordinate
+  final x = longitude * (conversionEarthRadius * pi / 180.0);
+  
+  // Convert latitude to y coordinate
+  final latRad = latitude * (pi / 180.0);
+  final y = log(tan((pi / 4) + (latRad / 2))) * conversionEarthRadius;
+  
+  // Clamp to valid Mercator bounds
+  final clampedX = max(min(x, mercatorLimit), -mercatorLimit);
+  final clampedY = max(min(y, mercatorLimit), -mercatorLimit);
+  
+  // Preserve altitude if present
+  final alt = coord.length > 2 ? coord[2] : null;
+  
+  return Position.of(alt != null ? [clampedX, clampedY, alt] : [clampedX, clampedY]);
+}
+
+/// Converts a Web Mercator coordinate to WGS84.
+///
+/// Valid inputs: [Position] with [x, y] in meters
+/// Returns: [Position] with [longitude, latitude] coordinates
+Position toWGS84(Position coord) {
+  // Use the earth radius constant for consistency
+  
+  // Clamp inputs to valid range
+  final x = max(min(coord[0]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
+  final y = max(min(coord[1]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
+  
+  // Convert x to longitude
+  final longitude = x / (conversionEarthRadius * pi / 180.0);
+  
+  // Convert y to latitude
+  final latRad = 2 * atan(exp(y / conversionEarthRadius)) - (pi / 2);
+  final latitude = latRad * (180.0 / pi);
+  
+  // Clamp latitude to valid range
+  final clampedLatitude = max(min(latitude, 90.0), -90.0);
+  
+  // Preserve altitude if present
+  final alt = coord.length > 2 ? coord[2] : null;
+  
+  return Position.of(alt != null ? [longitude, clampedLatitude, alt] : [longitude, clampedLatitude]);
 }
