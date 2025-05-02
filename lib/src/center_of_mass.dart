@@ -1,20 +1,20 @@
-//import 'helpers.dart';
-//import 'invariant.dart';
 import 'package:turf/meta.dart';
 import 'centroid.dart';
 
+// Takes a Feature and returns its center of mass using the Centroid of Polygon formula
+// Link to formula: https://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon
 Feature<Point> centerOfMass(
   GeoJSONObject geoJson,
   {Map<String, dynamic>? properties = const {}, }) 
 
   {
-  List<List<double>> coords =[];
+  List<Position> coords =[];
 
   coordEach(
     geoJson,
     (Position? currentCoord, int? coordIndex, int? featureIndex, int? multiFeatureIndex, int? geometryIndex) {
       if (currentCoord != null && currentCoord[0] != null && currentCoord[1] != null) {
-        coords.add([currentCoord[0]!.toDouble(), currentCoord[1]!.toDouble()]);
+        coords.add(currentCoord);
       }
     },
  );
@@ -26,22 +26,22 @@ Feature<Point> centerOfMass(
   double sy = 0;
   double sArea = 0;
 
-  List<List<double>> neutralizedPoints = coords.map((point) {
-    return [point[0] - translation[0]!, point[1] - translation[1]!];
+  List<Position> neutralizedPoints = coords.map((point) {
+    return Position(point[0]! - translation[0]!, point[1]! - translation[1]!);
   }).toList();
 
   // Compute signed area and weighted sums
   for (int i = 0; i < neutralizedPoints.length - 1; i++) {
-    List<double> pi = neutralizedPoints[i];
-    List<double> pj = neutralizedPoints[i + 1];
+    Position pi = neutralizedPoints[i];
+    Position pj = neutralizedPoints[i + 1];
 
-    double xi = pi[0], yi = pi[1];
-    double xj = pj[0], yj = pj[1];
+    double xi = pi[0]!.toDouble(), yi = pi[1]!.toDouble();
+    double xj = pj[0]!.toDouble(), yj = pj[1]!.toDouble();
 
-    double a = xi * yj - xj * yi; // Compute factor
-    sArea += a;                  // Accumulate signed area
-    sx += (xi + xj) * a;         // Accumulate weighted sum of x-coordinates
-    sy += (yi + yj) * a;         // Accumulate weighted sum of y-coordinates
+    double a = xi * yj - xj * yi; 
+    sArea += a;                  
+    sx += (xi + xj) * a;         
+    sy += (yi + yj) * a;         
   }
 
   if (sArea == 0) {
