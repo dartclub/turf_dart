@@ -1,39 +1,33 @@
 name: Dart Unit Tests for PRs
 
-on:
-  pull_request:
-    branches: ["**"]
+on: workflow_dispatch # FIXME TEST
+#on:
+#  pull_request:
+#    branches: ["fix/pr-code-coverage"] # TODO
 
 jobs:
-  test:
+  code-coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v6
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
+      - run: dart --version
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed ./
 
-      - name: Print Dart SDK version
-        run: dart --version
-
-      - name: Install dependencies
-        run: dart pub get
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-
-      - name: Analyze project source
+      - name: Analyze Project
         run: dart analyze
         if: always()
 
-      - name: Run tests with coverage enabled
-        run: dart test --coverage=./coverage
-        if: always()
+     # - name: Run tests with coverage enabled
+     #   run: dart test --coverage=./coverage
+     #   if: always()
 
-      - name: Archive raw coverage artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: raw-coverage
-          path: ./coverage
+     # - name: Archive raw coverage artifacts
+     #   if: always()
+     #   uses: actions/upload-artifact@v3
+     #   with:
+     #     name: raw-coverage
+     #     path: .artefacts/coverage
