@@ -21,9 +21,9 @@ jobs:
         run: dart analyze
         if: always()
 
-     # - name: Run tests with coverage enabled
-     #   run: dart test --coverage=.artefacts/coverage
-     #   if: always()
+      - name: Run tests # with coverage enabled
+        run: dart test # --coverage=.artefacts/coverage
+        if: always()
 
      # - name: Archive raw coverage artifacts
      #   if: always()
