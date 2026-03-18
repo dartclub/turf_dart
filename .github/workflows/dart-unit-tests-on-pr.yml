@@ -1,9 +1,9 @@
 name: Dart Unit Tests for PRs
 
-on: workflow_dispatch # FIXME TEST
-#on:
-#  pull_request:
-#    branches: ["fix/pr-code-coverage"] # TODO
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["fix/pr-code-coverage"] # TODO
 
 jobs:
   code-coverage:
