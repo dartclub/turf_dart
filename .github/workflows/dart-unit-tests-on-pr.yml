@@ -57,10 +57,13 @@ jobs:
           name: raw-coverage
           path: .artefacts/coverage
 
+      - name: set artefact var for bash
+        run: ARTEFACTS=/home/runner/work/turf_dart/turf_dart/.artefacts/
+
       - name: test coverage availability
         run: |
-          echo $artefacts
-          ls -la $artefacts/coverage
+          echo $ARTEFACTS
+          ls -la $ARTEFACTS/coverage
 
       - name: Convert to LCOV report
         run: |
