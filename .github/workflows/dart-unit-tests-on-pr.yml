@@ -94,10 +94,11 @@ jobs:
 
       - name: Comment on PR with coverage
         continue-on-error: true
-        uses: romeovs/lcov-reporter-action@v0.2.21
+        uses: romeovs/lcov-reporter-action@v0.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: .artefacts/coverage/lcov.info
+          delete-old-comments: true
 
       - name: Archive coverage report
         if: always()
