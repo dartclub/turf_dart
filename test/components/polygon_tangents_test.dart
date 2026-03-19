@@ -127,7 +127,7 @@ void main() {
                 ptFeature,
               ],
             );
-          
+
             // Prepare output path
             var outPath = file.path.replaceAll('/in', '/out');
             var outFile = File(outPath);

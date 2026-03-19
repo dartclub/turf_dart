@@ -19,7 +19,8 @@ import '../polygon_to_line.dart';
 /// booleanDisjoint(line, point);
 /// //=true
 /// ```
-bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2, {bool ignoreSelfIntersections = false}) {
+bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2,
+    {bool ignoreSelfIntersections = false}) {
   var bool = true;
   flattenEach(
     feature1,
@@ -30,7 +31,8 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2, {bool ignor
           if (!bool) {
             return bool;
           }
-          bool = _disjoint(flatten1.geometry!, flatten2.geometry!, ignoreSelfIntersections);
+          bool = _disjoint(
+              flatten1.geometry!, flatten2.geometry!, ignoreSelfIntersections);
         },
       );
     },
@@ -39,7 +41,8 @@ bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2, {bool ignor
 }
 
 /// Disjoint operation for simple Geometries ([Point]/[LineString]/[Polygon])
-bool _disjoint(GeometryType geom1, GeometryType geom2, bool ignoreSelfIntersections) {
+bool _disjoint(
+    GeometryType geom1, GeometryType geom2, bool ignoreSelfIntersections) {
   if (geom1 is Point) {
     if (geom2 is Point) {
       return geom1.coordinates != geom2.coordinates;
@@ -79,21 +82,25 @@ bool _isPointOnLine(LineString lineString, Point pt) {
   return false;
 }
 
-bool _isLineOnLine(LineString lineString1, LineString lineString2, bool ignoreSelfIntersections) {
-  var doLinesIntersect = lineIntersect(lineString1, lineString2, ignoreSelfIntersections: ignoreSelfIntersections);
+bool _isLineOnLine(LineString lineString1, LineString lineString2,
+    bool ignoreSelfIntersections) {
+  var doLinesIntersect = lineIntersect(lineString1, lineString2,
+      ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
   return false;
 }
 
-bool _isLineInPoly(Polygon polygon, LineString lineString, bool ignoreSelfIntersections) {
+bool _isLineInPoly(
+    Polygon polygon, LineString lineString, bool ignoreSelfIntersections) {
   for (var coord in lineString.coordinates) {
     if (booleanPointInPolygon(coord, polygon)) {
       return true;
     }
   }
-  var doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon), ignoreSelfIntersections: ignoreSelfIntersections);
+  var doLinesIntersect = lineIntersect(lineString, polygonToLine(polygon),
+      ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
@@ -103,7 +110,8 @@ bool _isLineInPoly(Polygon polygon, LineString lineString, bool ignoreSelfInters
 /// Is [Polygon] (geom1) in [Polygon] (geom2)
 /// Only takes into account outer rings
 /// See http://stackoverflow.com/a/4833823/1979085
-bool _isPolyInPoly(Polygon feature1, Polygon feature2, bool ignoreSelfIntersections) {
+bool _isPolyInPoly(
+    Polygon feature1, Polygon feature2, bool ignoreSelfIntersections) {
   for (var coord1 in feature1.coordinates[0]) {
     if (booleanPointInPolygon(coord1, feature2)) {
       return true;
@@ -114,8 +122,9 @@ bool _isPolyInPoly(Polygon feature1, Polygon feature2, bool ignoreSelfIntersecti
       return true;
     }
   }
-  var doLinesIntersect =
-      lineIntersect(polygonToLine(feature1), polygonToLine(feature2), ignoreSelfIntersections: ignoreSelfIntersections);
+  var doLinesIntersect = lineIntersect(
+      polygonToLine(feature1), polygonToLine(feature2),
+      ignoreSelfIntersections: ignoreSelfIntersections);
   if (doLinesIntersect.features.isNotEmpty) {
     return true;
   }
