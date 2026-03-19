@@ -31,3 +31,21 @@ jobs:
         with:
           name: raw-coverage
           path: .artefacts/coverage
+
+      #- name: test artefact location
+      #  run: ls .artefacts/coverage
+      #
+      #- name: Convert to LCOV report
+      #  run: |
+      #    dart pub global activate coverage
+      #    dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o .artefacts/coverage/lcov.info -i .artefacts/coverage
+      #- name: Generate HTML coverage report
+      #  run: |
+      #    sudo apt install lcov
+      #    genhtml -o .artefacts/coverage/report .artefacts/coverage/lcov.info
+  code-coverage:
+    runs-on: ubuntu-latest
+    needs: unit-tests # only run code-coverage is unit-tests pass
+    steps:
+      - name: test dart availability
+        run: dart --version
