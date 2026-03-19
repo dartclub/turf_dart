@@ -58,12 +58,14 @@ jobs:
           path: .artefacts/coverage
 
       - name: test coverage availability
-        run: ls -la $artefacts/coverage
+        run: |
+          echo $artefacts
+          ls -la $artefacts/coverage
 
       - name: Convert to LCOV report
         run: |
           dart pub global activate coverage
-          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o $artefacts/coverage/lcov.info -i .artefacts/coverage
+          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o $artefacts/coverage/lcov.info -i $artefacts/coverage
 
       - name: Generate HTML coverage report
         run: |
