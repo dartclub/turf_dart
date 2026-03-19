@@ -47,4 +47,4 @@ jobs:
 
       - name: test artefact availability
         run: | 
-          ls -la ./artefacts/coverage
+          ls -la /home/runner/work/turf_dart/turf_dart/.artefacts/coverage
