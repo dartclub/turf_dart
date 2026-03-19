@@ -33,7 +33,8 @@ jobs:
           path: .artefacts/coverage
 
   code-coverage:
-    when: unit-tests
+    needs: unit-tests
+    if: ${{ needs.unit-tests.result == 'success' }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
