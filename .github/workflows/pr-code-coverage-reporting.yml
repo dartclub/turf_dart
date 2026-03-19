@@ -34,28 +34,28 @@ jobs:
       - name: Test artefact download
         run: ls ./artefacts/coverage
 
-      #- name: Convert to LCOV report
-      #  run: |
-      #    dart pub global activate coverage
-      #    dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o .artefacts/coverage/lcov.info -i .artefacts/coverage
+      - name: Convert to LCOV report
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o .artefacts/coverage/lcov.info -i .artefacts/coverage
 
-      #- name: Generate HTML coverage report
-      #  run: |
-      #    sudo apt install lcov
-      #    genhtml -o .artefacts/coverage/report .artefacts/coverage/lcov.info
+      - name: Generate HTML coverage report
+        run: |
+          sudo apt install lcov
+          genhtml -o .artefacts/coverage/report .artefacts/coverage/lcov.info
 
-      #- name: Comment on PR with coverage # NOT CONVINCED THIS WORKS
-      #  continue-on-error: true
-      #  uses: romeovs/lcov-reporter-action@v0.2.21
-      #  with:
-      #    github-token: ${{ secrets.GITHUB_TOKEN }}
-      #    lcov-file: .artefacts/coverage/lcov.info
+      - name: Comment on PR with coverage # NOT CONVINCED THIS WORKS
+        continue-on-error: true
+        uses: romeovs/lcov-reporter-action@v0.2.21
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: .artefacts/coverage/lcov.info
 
-      #- name: Archive coverage report
-      #  if: always()
-      #  uses: actions/upload-artifact@v6
-      #  with:
-      #    name: coverage-report
-      #    path: |
-      #      .artefacts/coverage/report
-      #      .artefacts/coverage/lcov.info
+      - name: Archive coverage report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: |
+            .artefacts/coverage/report
+            .artefacts/coverage/lcov.info
