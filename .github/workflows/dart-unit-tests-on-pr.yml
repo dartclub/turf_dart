@@ -23,14 +23,14 @@ jobs:
 
       - name: Run tests with coverage enabled
         shell: bash
-        run: | # Create test logs and output if failed to step summary
+        run: |
           set -o pipefail
           mkdir -p .artefacts/test-logs
           dart test --coverage=.artefacts/coverage 2>&1 \
             | tee .artefacts/test-logs/dart-test.log
           TEST_EXIT_CODE=${PIPESTATUS[0]}
           {
-            echo "## Unit test results"
+            echo "## Unit test result"
             if [ "$TEST_EXIT_CODE" -eq 0 ]; then
               echo ""
               echo "Tests passed."
@@ -45,7 +45,7 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$TEST_EXIT_CODE"
-       if: always()
+        if: always()
 
       - name: Archive raw coverage artifacts
         if: always()
