@@ -1,6 +1,6 @@
 name: Dart Unit Tests for PRs
 
-"on":
+on:
   workflow_dispatch:
   pull_request:
     branches: ["**"]
