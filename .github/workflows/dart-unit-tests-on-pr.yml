@@ -15,7 +15,7 @@ jobs:
           sdk: stable
       - run: dart --version
       - run: dart pub get
-#      - run: dart format --output=none --set-exit-if-changed ./ # FIXME https://github.com/dartclub/turf_dart/pull/248
+      - run: dart format --output=none --set-exit-if-changed .
 
       - name: Analyze Project
         run: dart analyze
