@@ -38,12 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: dart-lang/setup-dart@v1
+
+      - name: download coverage artefacts
+        uses: actions/download-artifact@v8
         with:
-          sdk: stable
-      - name: Install dependencies
-        run: dart pub get
+          name: raw-coverage
+
       - name: test artefact availability
         run: | 
-          dart --version
           ls -la ./artefacts/coverage
