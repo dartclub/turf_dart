@@ -37,7 +37,8 @@ void main() {
       // We expect one segment with a clipped point at the left edge
       expect(result.length, equals(1));
       expect(result[0].length, equals(2));
-      expect(result[0][0].lat, equals(0.0)); // The intersection should clip at lat=0.0
+      expect(result[0][0].lat,
+          equals(0.0)); // The intersection should clip at lat=0.0
     });
 
     test('Polygon Clipping: Simple square inside bbox', () {
@@ -66,8 +67,8 @@ void main() {
       // Define a polygon that partially crosses outside the bbox
       List<Position> points = [
         Position.named(lat: -1.0, lng: 1.0), // outside bbox
-        Position.named(lat: 1.0, lng: 1.0),  // inside bbox
-        Position.named(lat: 1.0, lng: 3.0),  // inside bbox
+        Position.named(lat: 1.0, lng: 1.0), // inside bbox
+        Position.named(lat: 1.0, lng: 3.0), // inside bbox
         Position.named(lat: -1.0, lng: 3.0), // outside bbox
       ];
 
@@ -75,7 +76,8 @@ void main() {
       List<Position> result = polygonclip(points, bbox);
 
       // We expect the polygon to be clipped to the bounding box
-      expect(result.length, greaterThan(0));  // Expect the clipped polygon to have some vertices
+      expect(result.length,
+          greaterThan(0)); // Expect the clipped polygon to have some vertices
     });
 
     test('Polygon Clipping: Polygon fully outside bbox', () {
