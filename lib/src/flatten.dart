@@ -32,9 +32,6 @@ import 'package:turf/src/meta/flatten.dart';
 /// - A Feature with null geometry is provided
 /// - An unsupported geometry type is encountered
 FeatureCollection<GeometryObject> flatten(GeoJSONObject geojson) {
-  if (geojson == null) {
-    throw ArgumentError('Cannot flatten null geojson');
-  }
 
   // Reject GeometryCollection inputs - not supported per the requirements
   if (geojson is GeometryCollection) {
