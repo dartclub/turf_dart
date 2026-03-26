@@ -21,7 +21,7 @@ import 'package:turf/src/meta/flatten.dart';
 ///   [Position(0, 0), Position(1, 1)],
 ///   [Position(2, 2), Position(3, 3)]
 /// ]);
-/// 
+///
 /// var flattened = flatten(multiLineString);
 /// // Returns FeatureCollection with 2 LineString features
 /// ```
@@ -51,7 +51,7 @@ FeatureCollection<GeometryObject> flatten(GeoJSONObject geojson) {
       return;
     }
 
-    // We know this is a Feature with a GeometryType, but we want to ensure 
+    // We know this is a Feature with a GeometryType, but we want to ensure
     // it's treated as a Feature<GeometryObject> to match return type
     final feature = Feature<GeometryObject>(
       geometry: currentFeature.geometry,
@@ -59,7 +59,7 @@ FeatureCollection<GeometryObject> flatten(GeoJSONObject geojson) {
       id: currentFeature.id,
       bbox: currentFeature.bbox,
     );
-    
+
     // Add to our features list - this maintains original geometry order
     features.add(feature);
   });

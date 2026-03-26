@@ -62,7 +62,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 
 - [ ] combine
 - [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
-- [ ] flatten
+- [x] flatten
 - [x] [lineToPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_to_polygon.dart)
 - [ ] polygonize
 - [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
