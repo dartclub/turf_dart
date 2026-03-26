@@ -289,7 +289,7 @@ void main() {
     });
   });
 
-  group('flatten - out', () {
+  group('flatten - invariant checks', () { // Like the JS implementation
     test('always returns FeatureCollection', () {
       final samples = <GeoJSONObject>[
         Point(coordinates: Position.of([1, 2])),
