@@ -33,36 +33,38 @@ import 'package:polyclip-dart/polyclip.dart'; // TSubject to change as per polyc
  
  var union = turf.union(featureCollection([poly1, poly2]));
  */
-Feature<dynamic>? union(FeatureCollection features, {Map<String, dynamic>? properties}) {
+Feature<dynamic>? union(FeatureCollection features,
+    {Map<String, dynamic>? properties}) {
   final geoms = <List<dynamic>>[];
-  
+
   // Extract geometries from features
-  geomEach(features, (geom, featureIndex, featureProperties, featureBBox, featureId) {
+  geomEach(features,
+      (geom, featureIndex, featureProperties, featureBBox, featureId) {
     if (geom != null && geom.coordinates != null) {
       geoms.add(geom.coordinates as List<dynamic>);
     }
   });
-  
+
   if (geoms.length < 2) {
     throw Exception('Must have at least 2 geometries');
   }
-  
+
   // Use polyclip library to find union
   final unioned = Polyclip.union(geoms[0], [...geoms.sublist(1)]);
-  
+
   if (unioned.isEmpty) {
     return null;
   }
-  
+
   if (unioned.length == 1) {
     // Create a polygon feature
-    final polygonGeometry = Polygon(coordinates: unioned[0] as List<List<Position>>);
+    final polygonGeometry =
+        Polygon(coordinates: unioned[0] as List<List<Position>>);
     return Feature(geometry: polygonGeometry, properties: properties ?? {});
   }
-  
+
   // Create a multipolygon feature
-  final multiPolygonGeometry = MultiPolygon(
-    coordinates: unioned as List<List<List<Position>>>
-  );
+  final multiPolygonGeometry =
+      MultiPolygon(coordinates: unioned as List<List<List<Position>>>);
   return Feature(geometry: multiPolygonGeometry, properties: properties ?? {});
 }
