@@ -2,7 +2,7 @@ import 'package:turf/helpers.dart';
 import 'package:turf/src/meta/flatten.dart';
 
 /// Takes any [GeoJSONObject] and returns a [FeatureCollection] of simple features.
-/// The function flattens all Multi* geometries and GeometryCollections into single-geometry Features.
+/// The function flattens all Multi* geometries into single-geometry Features.
 ///
 /// This function is useful when handling complex shapes with multiple parts, making it easier to process
 /// each part as a distinct feature.
@@ -27,13 +27,11 @@ import 'package:turf/src/meta/flatten.dart';
 /// ```
 ///
 /// Throws [ArgumentError] if:
-/// - A null [geojson] is provided
-/// - A [GeometryCollection] is provided (explicitly not supported)
+/// - A [GeometryCollection] is provided (unsupported in this Dart implementation)
 /// - A Feature with null geometry is provided
 /// - An unsupported geometry type is encountered
 FeatureCollection<GeometryObject> flatten(GeoJSONObject geojson) {
-
-  // Reject GeometryCollection inputs - not supported per the requirements
+  // Keep strict behavior for unsupported GeometryCollection inputs.
   if (geojson is GeometryCollection) {
     throw ArgumentError('flatten does not support GeometryCollection input.');
   }
