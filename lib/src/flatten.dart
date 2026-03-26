@@ -27,11 +27,11 @@ import 'package:turf/src/meta/flatten.dart';
 /// ```
 ///
 /// Throws [ArgumentError] if:
-/// - A [GeometryCollection] is provided (unsupported in this Dart implementation)
+/// - A [GeometryCollection] is provided
 /// - A Feature with null geometry is provided
 /// - An unsupported geometry type is encountered
 FeatureCollection<GeometryObject> flatten(GeoJSONObject geojson) {
-  // Keep strict behavior for unsupported GeometryCollection inputs.
+  // Reject GeometryCollection inputs - not supported per the requirements
   if (geojson is GeometryCollection) {
     throw ArgumentError('flatten does not support GeometryCollection input.');
   }
