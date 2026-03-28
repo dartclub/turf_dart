@@ -17,12 +17,12 @@ import 'package:turf/src/meta/flatten.dart';
 ///
 /// Example:
 /// ```dart
-/// var multiLineString = MultiLineString(coordinates: [
+/// final multiLineString = MultiLineString(coordinates: [
 ///   [Position(0, 0), Position(1, 1)],
 ///   [Position(2, 2), Position(3, 3)]
 /// ]);
 ///
-/// var flattened = flatten(multiLineString);
+/// final flattened = flatten(multiLineString);
 /// // Returns FeatureCollection with 2 LineString features
 /// ```
 ///
