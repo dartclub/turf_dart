@@ -38,7 +38,7 @@ void main() {
     });
 
     test('Testing maxLength and maxRotation constraints', () {
-      num maxLength = 0.001;
+      double maxLength = 0.001;
       FeatureCollection<LineString> featureCollection =
           randomLineString(5, maxLength: maxLength);
 
