@@ -48,8 +48,11 @@ Position intersect(Position a, Position b, int edge, BBox bbox) {
 }
 
 // Cohen-Sutherland line clipping for polylines
-List<List<Position>> lineclip(List<Position> points, BBox bbox,
-    [List<List<Position>>? result]) {
+List<List<Position>> lineclip(
+  List<Position> points,
+  BBox bbox, [
+  List<List<Position>>? result,
+]) {
   int len = points.length;
   int codeA = bitCode(points[0], bbox);
   List<Position> part = [];
