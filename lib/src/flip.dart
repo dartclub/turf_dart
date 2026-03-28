@@ -5,18 +5,34 @@ import 'package:turf/meta.dart';
 
 // Returns a GeoJSON FeatureCollection with the flipped Coordinates
 
-Feature<GeometryType> flip(Feature<GeometryType>? geojson,
-{Map<String,dynamic>? properties, }) {
+Feature<GeometryType> flip(Feature<GeometryType>? geojson) {
   if (geojson == null) {
     throw ArgumentError('geojson cannot be null');
-  }  
+  }
 
-  coordEach(
-    geojson,
-    (Position? currentCoord, int? coordIndex, int? featureIndex, int? multiFeatureIndex, int? geometryIndex) {
-      currentCoord = Position.named(lat: currentCoord!.lng, lng: currentCoord.lat);
-    }
-  );
+  final geometry = geojson.geometry;
+
+  if (geometry is Point) {
+    geojson.geometry = Point(
+      coordinates: Position.named(
+        lat: geometry.coordinates.lng, // swap lat and lng
+        lng: geometry.coordinates.lat,
+      ),
+    );
+    return geojson;
+  }
+
+  if (geometry is Polygon) {
+    final flippedCoords = geometry.coordinates.map((ring) {
+      return ring.map((pos) => Position.named(
+        lat: pos.lng,  // swap lat and lng
+        lng: pos.lat,
+      )).toList();
+    }).toList();
+
+    geojson.geometry = Polygon(coordinates: flippedCoords);
+    return geojson;
+  }
 
   return geojson;
 }
