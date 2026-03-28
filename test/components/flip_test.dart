@@ -3,7 +3,6 @@ import 'package:turf/flip.dart';
 
 void main() {
   group('flip tests', () {
-
     test('flipping individual coordinates - point', () {
       // Original point
       var point = Feature(
@@ -109,8 +108,10 @@ void main() {
 
       // Compare ring by ring
       for (int i = 0; i < expPolygon[0].length; i++) {
-        expect(flipped.geometry?.coordinates[0][i].lat, equals(expPolygon[0][i].lat));
-        expect(flipped.geometry?.coordinates[0][i].lng, equals(expPolygon[0][i].lng));
+        expect(flipped.geometry?.coordinates[0][i].lat,
+            equals(expPolygon[0][i].lat));
+        expect(flipped.geometry?.coordinates[0][i].lng,
+            equals(expPolygon[0][i].lng));
       }
     });
 
@@ -173,6 +174,5 @@ void main() {
       var flipped = flip(emptyLine);
       expect(flipped.geometry?.coordinates, equals([]));
     });
-
   });
 }
