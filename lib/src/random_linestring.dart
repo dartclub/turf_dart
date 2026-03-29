@@ -5,7 +5,7 @@ import 'package:turf/turf.dart';
 // Returns a random linestring
 
 FeatureCollection<LineString> randomLineString(int? count,
-{BBox? bbox, int? numVertices, double? maxLength, double? maxRotation}) {
+    {BBox? bbox, int? numVertices, double? maxLength, double? maxRotation}) {
   numVertices ??= 10;
   maxLength ??= 0.0001;
   maxRotation ??= pi / 8;
@@ -42,9 +42,10 @@ FeatureCollection<LineString> randomLineString(int? count,
     for (int j = 0; j < numVertices - 1; j++) {
       double priorAngle = j == 0
           ? Random().nextDouble() * 2 * pi
-          : atan2(vertices[j][1]! - vertices[j - 1][1]!,
-                  vertices[j][0]! - vertices[j - 1][0]!,
-  );
+          : atan2(
+              vertices[j][1]! - vertices[j - 1][1]!,
+              vertices[j][0]! - vertices[j - 1][0]!,
+            );
 
       double angle =
           priorAngle + (Random().nextDouble() - 0.5) * maxRotation * 2;
