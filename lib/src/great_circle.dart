@@ -72,6 +72,7 @@ Feature<GeometryType> greatCircle(
     );
   }
 
+
   final List<Position> line = [];
 
   final num lat1 = degreesToRadians(start[0]!);
