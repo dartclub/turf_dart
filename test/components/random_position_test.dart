@@ -1,4 +1,5 @@
 import 'package:turf/random_position.dart';
+import 'package:turf/turf.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -13,13 +14,22 @@ void main() {
       expect(randomPos.lat, lessThanOrEqualTo(bbox[3]!));
     });
 
-    test('Check coordInBox returns point within bbox', () {
+    test('Check coordInBBox returns point within bbox', () {
       BBox bbox = BBox(100.0, -24.0, 110.0, -23.0);
       Position coord = coordInBBox(bbox);
+
       expect(coord.lng, greaterThanOrEqualTo(bbox[0]!));
       expect(coord.lng, lessThanOrEqualTo(bbox[2]!));
       expect(coord.lat, greaterThanOrEqualTo(bbox[1]!));
       expect(coord.lat, lessThanOrEqualTo(bbox[3]!));
+    });
+
+    test('randomPosition throws when bbox is null', () {
+      expect(() => randomPosition(null), throwsArgumentError);
+    });
+
+    test('checkBBox throws when bbox is null', () {
+      expect(() => checkBBox(null), throwsArgumentError);
     });
   });
 }
