@@ -5,7 +5,7 @@ import 'dart:math';
 void main() {
   group('Random linestring tests', () {
     test('Returning a valid feature collection', () {
-      FeatureCollection<LineString> featureCollection = randomLineString(3);
+      final featureCollection = randomLineString(3);
 
       expect(featureCollection, isA<FeatureCollection<LineString>>());
       expect(
@@ -15,10 +15,9 @@ void main() {
     });
 
     test('Checking bbox boundaries', () {
-      BBox? bbox = BBox(100.0, -24.0, 110.0, -23.0);
+      final bbox = BBox(100.0, -24.0, 110.0, -23.0);
 
-      FeatureCollection<LineString> lineString =
-          randomLineString(1, bbox: bbox);
+      final lineString = randomLineString(1, bbox: bbox);
 
       lineString.features.first.geometry?.coordinates.forEach((coord) {
         expect(coord[0], greaterThanOrEqualTo(bbox[0]!));
@@ -29,18 +28,16 @@ void main() {
     });
 
     test('Testing Linestrings have vertexes = numVertices', () {
-      int vertices = 15;
-      FeatureCollection<LineString> lineString =
-          randomLineString(1, numVertices: vertices);
+      final vertices = 15;
+      final lineString = randomLineString(1, numVertices: vertices);
 
       expect(lineString.features.first.geometry?.coordinates.length,
           equals(vertices));
     });
 
     test('Testing maxLength and maxRotation constraints', () {
-      double maxLength = 0.001;
-      FeatureCollection<LineString> featureCollection =
-          randomLineString(5, maxLength: maxLength);
+     final maxLength = 0.001;
+     final featureCollection = randomLineString(5, maxLength: maxLength); 
 
       featureCollection.features.forEach((feature) {
         final coords = feature.geometry?.coordinates;

@@ -1,17 +1,18 @@
 import 'dart:math';
 import 'package:turf/turf.dart';
 
-// Takes an optional bbox and a mandatory integer to generate x number of linestrings. Other optional parameters: numVertices, maxLength, maxRotation
-// Returns a random linestring
+/// Takes an optional bbox and a mandatory integer to generate x number of linestrings. Other optional parameters: numVertices, maxLength, maxRotation
+/// Returns a random linestring
 
-FeatureCollection<LineString> randomLineString(int? count,
-    {BBox? bbox, int? numVertices, double? maxLength, double? maxRotation}) {
-  numVertices ??= 10;
-  maxLength ??= 0.0001;
-  maxRotation ??= pi / 8;
-
+FeatureCollection<LineString> randomLineString(
+  int count, {
+  BBox? bbox,
+  int numVertices = 10,
+  double maxLength = 0.0001,
+  double maxRotation = pi / 8,
+}) {
   // Ensure count is +ve value
-  if (count == null || count <= 0) {
+  if (count <= 0) {
     throw ArgumentError(
         'Count must be set to a positive integer to return a LineString.');
   }
