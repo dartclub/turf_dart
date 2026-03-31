@@ -36,8 +36,8 @@ void main() {
     });
 
     test('Testing maxLength and maxRotation constraints', () {
-     final maxLength = 0.001;
-     final featureCollection = randomLineString(5, maxLength: maxLength); 
+      final maxLength = 0.001;
+      final featureCollection = randomLineString(5, maxLength: maxLength);
 
       featureCollection.features.forEach((feature) {
         final coords = feature.geometry?.coordinates;
