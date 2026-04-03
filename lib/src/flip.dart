@@ -17,29 +17,39 @@ Feature<GeometryType> flip(Feature<GeometryType>? geojson) {
   if (geometry == null) return geojson;
 
   if (geometry is Point) {
-    geojson.geometry = Point(coordinates: flipPosition(geometry.coordinates));
+    geojson.geometry = Point(
+      coordinates: flipPosition(geometry.coordinates),
+    );
   } else if (geometry is MultiPoint) {
     geojson.geometry = MultiPoint(
-        coordinates: geometry.coordinates.map(flipPosition).toList());
+      coordinates: geometry.coordinates.map(flipPosition).toList(),
+    );
   } else if (geometry is LineString) {
     geojson.geometry = LineString(
-        coordinates: geometry.coordinates.map(flipPosition).toList());
+      coordinates: geometry.coordinates.map(flipPosition).toList(),
+    );
   } else if (geometry is MultiLineString) {
     geojson.geometry = MultiLineString(
-        coordinates: geometry.coordinates
-            .map((line) => line.map(flipPosition).toList())
-            .toList());
+      coordinates: geometry.coordinates
+          .map((line) => line.map(flipPosition).toList())
+          .toList(),
+    );
   } else if (geometry is Polygon) {
     geojson.geometry = Polygon(
-        coordinates: geometry.coordinates
-            .map((ring) => ring.map(flipPosition).toList())
-            .toList());
+      coordinates: geometry.coordinates
+          .map((ring) => ring.map(flipPosition).toList())
+          .toList(),
+    );
   } else if (geometry is MultiPolygon) {
     geojson.geometry = MultiPolygon(
-        coordinates: geometry.coordinates
-            .map((polygon) =>
-                polygon.map((ring) => ring.map(flipPosition).toList()).toList())
-            .toList());
+      coordinates: geometry.coordinates
+          .map(
+            (polygon) => polygon
+                .map((ring) => ring.map(flipPosition).toList())
+                .toList(),
+          )
+          .toList(),
+    );
   }
 
   return geojson;
