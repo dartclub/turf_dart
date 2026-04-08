@@ -1,4 +1,4 @@
-library center_of_mass.dart;
+library turf_center_of_mass;
 
 export 'package:geotypes/geotypes.dart';
-export 'center_of_mass.dart';
+export 'src/center_of_mass.dart';
