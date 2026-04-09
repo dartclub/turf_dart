@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-symbol": "star",
+        "marker-color": "#F00"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.5, 2.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]]],
+          [[[3, 3], [5, 3], [5, 5], [3, 5], [3, 3]]]
+        ]
+      }
+    }
+  ]
+}
