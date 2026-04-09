@@ -58,8 +58,7 @@ void main() {
         }
 
         final expectedSource = File(expectedPath).readAsStringSync();
-        final expected =
-            GeoJSONObject.fromJson(jsonDecode(expectedSource));
+        final expected = GeoJSONObject.fromJson(jsonDecode(expectedSource));
 
         final resultCoords = result.geometry!.coordinates;
         final expectedFeature = (expected as FeatureCollection).features.first;
