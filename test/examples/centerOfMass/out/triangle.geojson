@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-symbol": "star",
+        "marker-color": "#F00"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.333333333333332, 25.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[43, 21], [27, 13], [21, 41], [43, 21]]]
+      }
+    }
+  ]
+}
