@@ -180,10 +180,10 @@ bool _isLineCrossingThePolygon(LineString line, GeoJSONObject polygon) {
 }
 
 bool _doBBoxesOverlap(BBox bbox1, BBox bbox2) {
-  if (bbox1[0]! > bbox2[0]!) return false;
-  if (bbox1[2]! < bbox2[2]!) return false;
-  if (bbox1[1]! > bbox2[1]!) return false;
-  if (bbox1[3]! < bbox2[3]!) return false;
+  if (bbox1.lng1 > bbox2.lng1) return false;
+  if (bbox1.lng2 < bbox2.lng2) return false;
+  if (bbox1.lat1 > bbox2.lat1) return false;
+  if (bbox1.lat2 < bbox2.lat2) return false;
   return true;
 }
 
