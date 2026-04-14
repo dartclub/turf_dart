@@ -24,22 +24,22 @@ int bitCode(Position p, BBox bbox) {
 Position intersect(Position a, Position b, int edge, BBox bbox) {
   if ((edge & 8) != 0) {
     // top
-    double lng =
+    final double lng =
         a.lng + (b.lng - a.lng) * (bbox.lat2 - a.lat) / (b.lat - a.lat);
     return Position.named(lat: bbox.lat2, lng: lng);
   } else if ((edge & 4) != 0) {
     // bottom
-    double lng =
+    final double lng =
         a.lng + (b.lng - a.lng) * (bbox.lat1 - a.lat) / (b.lat - a.lat);
     return Position.named(lat: bbox.lat1, lng: lng);
   } else if ((edge & 2) != 0) {
     // right
-    double lat =
+    final double lat =
         a.lat + (b.lat - a.lat) * (bbox.lng2 - a.lng) / (b.lng - a.lng);
     return Position.named(lat: lat, lng: bbox.lng2);
   } else if ((edge & 1) != 0) {
     // left
-    double lat =
+    final double lat =
         a.lat + (b.lat - a.lat) * (bbox.lng1 - a.lng) / (b.lng - a.lng);
     return Position.named(lat: lat, lng: bbox.lng1);
   }
@@ -53,7 +53,7 @@ List<List<Position>> lineclip(
   BBox bbox, [
   List<List<Position>>? result,
 ]) {
-  int len = points.length;
+  final int len = points.length;
   int codeA = bitCode(points[0], bbox);
   List<Position> part = [];
   result ??= [];
@@ -62,7 +62,7 @@ List<List<Position>> lineclip(
     Position a = points[i - 1];
     Position b = points[i];
     int codeB = bitCode(b, bbox);
-    int lastCode = codeB;
+    final int lastCode = codeB;
 
     while (true) {
       if ((codeA | codeB) == 0) {
@@ -105,7 +105,7 @@ List<Position> polygonclip(List<Position> points, BBox bbox) {
   bool inside;
 
   // First check if all points are outside the bounding box
-  bool allOutside = points.every((p) {
+  final bool allOutside = points.every((p) {
     return (bitCode(p, bbox) !=
         0); // If bitCode is non-zero, the point is outside
   });
