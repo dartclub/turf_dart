@@ -44,9 +44,8 @@ Feature<GeometryType> flip(Feature<GeometryType>? geojson) {
     geojson.geometry = MultiPolygon(
       coordinates: geometry.coordinates
           .map(
-            (polygon) => polygon
-                .map((ring) => ring.map(flipPosition).toList())
-                .toList(),
+            (polygon) =>
+                polygon.map((ring) => ring.map(flipPosition).toList()).toList(),
           )
           .toList(),
     );
