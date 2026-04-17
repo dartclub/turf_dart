@@ -9,11 +9,9 @@ import 'package:path/path.dart' as p;
 void main() {
   group('centerOfMass', () {
     // Compute absolute paths based on the location of this test file
-    final testDir = p.dirname(Platform.script.toFilePath());
-    final inDir = p.normalize(p.join(testDir, '../examples/centerOfMass/in'));
-    final outDir = p.normalize(p.join(testDir, '../examples/centerOfMass/out'));
-
-    // safety check
+    // use repo-root-relative paths; the test runner runs from project root
+    final inDir = p.join('test', 'examples', 'centerOfMass', 'in');
+    final outDir = p.join('test', 'examples', 'centerOfMass', 'out');
     if (!Directory(inDir).existsSync()) {
       throw Exception('Input directory not found: $inDir');
     }
