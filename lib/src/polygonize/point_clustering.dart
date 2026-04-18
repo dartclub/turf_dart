@@ -11,7 +11,7 @@ class PointClustering {
 
     for (final feature in features) {
       if (feature.geometry is LineString) {
-        final coords = getCoords(feature.geometry!) as List<Position>;
+        final coords = (feature.geometry as LineString).coordinates;
         for (final coord in coords) {
           final key = '${coord[0]},${coord[1]}';
           if (!visited.contains(key)) {
@@ -20,8 +20,7 @@ class PointClustering {
           }
         }
       } else if (feature.geometry is MultiLineString) {
-        final multiCoords =
-            getCoords(feature.geometry!) as List<List<Position>>;
+        final multiCoords = (feature.geometry as MultiLineString).coordinates;
         for (final coords in multiCoords) {
           for (final coord in coords) {
             final key = '${coord[0]},${coord[1]}';
@@ -37,12 +36,6 @@ class PointClustering {
     // If there are less than 4 points, we can't form a polygon
     if (allPoints.length < 4) {
       return [allPoints]; // Just return all points as one group
-    }
-
-    // Special case for test cases with two squares
-    if (features.length == 8) {
-      final result = _handleSpecificTestCase(allPoints);
-      if (result != null) return result;
     }
 
     // Try clustering by x coordinates
@@ -61,199 +54,50 @@ class PointClustering {
     return [allPoints];
   }
 
-  /// Special case handler for test cases
-  static List<List<Position>>? _handleSpecificTestCase(List<Position> points) {
-    // Check for the two disjoint squares test case (0,0)-(10,10) and (20,20)-(30,30)
-    bool hasFirstSquare = false;
-    bool hasSecondSquare = false;
+  static List<List<Position>> _clusterByMetric(
+    List<Position> points,
+    double Function(Position) metric,
+    double gapFactor,
+  ) {
+    if (points.length < 2) return [points];
 
-    // Check for points in a square with a hole test case (0,0)-(10,10) with inner (2,2)-(8,8)
-    bool hasOuterSquare = false;
-    bool hasInnerSquare = false;
+    final sortedPoints = List<Position>.from(points)
+      ..sort((a, b) => metric(a).compareTo(metric(b)));
 
-    for (final point in points) {
-      final x = point[0] ?? 0;
-      final y = point[1] ?? 0;
+    final values = sortedPoints.map(metric).toList();
+    final gaps = <double>[];
 
-      // Check for first square of disjoint squares test
-      if (x >= 0 && x <= 10 && y >= 0 && y <= 10) {
-        hasFirstSquare = true;
-        hasOuterSquare = true;
-      }
+    for (int i = 0; i < values.length - 1; i++) {
+      gaps.add(values[i + 1] - values[i]);
+    }
 
-      // Check for second square of disjoint squares test
-      if (x >= 20 && x <= 30 && y >= 20 && y <= 30) {
-        hasSecondSquare = true;
-      }
+    if (gaps.isEmpty) return [points];
 
-      // Check for inner square (hole)
-      if (x >= 2 && x <= 8 && y >= 2 && y <= 8) {
-        hasInnerSquare = true;
+    final averageGap = gaps.reduce((a, b) => a + b) / gaps.length;
+    final clusters = <List<Position>>[];
+    var currentCluster = <Position>[sortedPoints[0]];
+
+    for (int i = 0; i < gaps.length; i++) {
+      if (gaps[i] > averageGap * gapFactor) {
+        clusters.add(currentCluster);
+        currentCluster = <Position>[sortedPoints[i + 1]];
+      } else {
+        currentCluster.add(sortedPoints[i + 1]);
       }
     }
 
-    // Special case for two disjoint squares
-    if (hasFirstSquare && hasSecondSquare) {
-      final group1 = <Position>[];
-      final group2 = <Position>[];
-
-      for (final point in points) {
-        final x = point[0] ?? 0;
-        final y = point[1] ?? 0;
-
-        if (x <= 10 && y <= 10) {
-          group1.add(point);
-        } else {
-          group2.add(point);
-        }
-      }
-
-      return [group1, group2];
-    }
-
-    // Special case for polygon with hole
-    if (hasOuterSquare && hasInnerSquare && points.length == 8) {
-      final outerSquare = <Position>[];
-      final innerSquare = <Position>[];
-
-      for (final point in points) {
-        final x = point[0] ?? 0;
-        final y = point[1] ?? 0;
-
-        if ((x == 0 || x == 10) || (y == 0 || y == 10)) {
-          outerSquare.add(point);
-        } else if ((x == 2 || x == 8) || (y == 2 || y == 8)) {
-          innerSquare.add(point);
-        }
-      }
-
-      if (outerSquare.length == 4 && innerSquare.length == 4) {
-        // For a polygon with hole test, we need to return both rings in one group
-        // to ensure they're treated as part of the same polygon
-        return [outerSquare, innerSquare];
-      }
-    }
-
-    return null;
+    clusters.add(currentCluster);
+    return clusters;
   }
 
   /// Cluster points by their X coordinate
   static List<List<Position>> _clusterByXCoordinate(List<Position> points) {
-    // Group by integer x coordinate
-    final pointsByXCoord = <int, List<Position>>{};
-
-    for (final point in points) {
-      final x = point[0]!.toInt();
-      if (!pointsByXCoord.containsKey(x)) {
-        pointsByXCoord[x] = [];
-      }
-      pointsByXCoord[x]!.add(point);
-    }
-
-    // Check if we have distinct groups
-    final xValues = pointsByXCoord.keys.toList()..sort();
-
-    // If we have multiple distinct x coordinates with a gap, split into groups
-    if (xValues.length > 1) {
-      // Calculate the average gap between x coordinates
-      num totalGap = 0;
-      for (int i = 1; i < xValues.length; i++) {
-        totalGap += (xValues[i] - xValues[i - 1]);
-      }
-      final avgGap = totalGap / (xValues.length - 1);
-
-      // Find significant gaps (more than 2x the average)
-      final gaps = <int>[];
-      for (int i = 1; i < xValues.length; i++) {
-        final gap = xValues[i] - xValues[i - 1];
-        if (gap > avgGap * 2) {
-          gaps.add(i);
-        }
-      }
-
-      // If we found significant gaps, split into groups
-      if (gaps.isNotEmpty) {
-        final groups = <List<Position>>[];
-        int startIdx = 0;
-
-        for (final gapIdx in gaps) {
-          final group = <Position>[];
-          for (int i = startIdx; i < gapIdx; i++) {
-            group.addAll(pointsByXCoord[xValues[i]]!);
-          }
-          groups.add(group);
-          startIdx = gapIdx;
-        }
-
-        // Add the last group
-        final lastGroup = <Position>[];
-        for (int i = startIdx; i < xValues.length; i++) {
-          lastGroup.addAll(pointsByXCoord[xValues[i]]!);
-        }
-        groups.add(lastGroup);
-
-        return groups;
-      }
-    }
-
-    return [points]; // Return a single group if no significant gaps found
+    return _clusterByMetric(points, (point) => point[0]!.toDouble(), 2);
   }
 
   /// Cluster points by their Y coordinate
   static List<List<Position>> _clusterByYCoordinate(List<Position> points) {
-    // Group by integer y coordinate
-    final pointsByYCoord = <int, List<Position>>{};
-
-    for (final point in points) {
-      final y = point[1]!.toInt();
-      if (!pointsByYCoord.containsKey(y)) {
-        pointsByYCoord[y] = [];
-      }
-      pointsByYCoord[y]!.add(point);
-    }
-
-    final yValues = pointsByYCoord.keys.toList()..sort();
-
-    // Similar logic for y coordinates
-    if (yValues.length > 1) {
-      num totalGap = 0;
-      for (int i = 1; i < yValues.length; i++) {
-        totalGap += (yValues[i] - yValues[i - 1]);
-      }
-      final avgGap = totalGap / (yValues.length - 1);
-
-      final gaps = <int>[];
-      for (int i = 1; i < yValues.length; i++) {
-        final gap = yValues[i] - yValues[i - 1];
-        if (gap > avgGap * 2) {
-          gaps.add(i);
-        }
-      }
-
-      if (gaps.isNotEmpty) {
-        final groups = <List<Position>>[];
-        int startIdx = 0;
-
-        for (final gapIdx in gaps) {
-          final group = <Position>[];
-          for (int i = startIdx; i < gapIdx; i++) {
-            group.addAll(pointsByYCoord[yValues[i]]!);
-          }
-          groups.add(group);
-          startIdx = gapIdx;
-        }
-
-        final lastGroup = <Position>[];
-        for (int i = startIdx; i < yValues.length; i++) {
-          lastGroup.addAll(pointsByYCoord[yValues[i]]!);
-        }
-        groups.add(lastGroup);
-
-        return groups;
-      }
-    }
-
-    return [points]; // Return a single group if no significant gaps found
+    return _clusterByMetric(points, (point) => point[1]!.toDouble(), 2);
   }
 
   /// Cluster points by distance from centroid (for concentric shapes)
@@ -315,24 +159,5 @@ class PointClustering {
     }
 
     return [points]; // Return a single group if no significant gaps found
-  }
-
-  /// Get coordinates from a feature's geometry
-  static List<dynamic> getCoords(GeoJSONObject geometry) {
-    if (geometry is Point) {
-      // Return as a list with one item for consistency
-      return [geometry.coordinates];
-    } else if (geometry is LineString) {
-      return geometry.coordinates;
-    } else if (geometry is Polygon) {
-      return geometry.coordinates;
-    } else if (geometry is MultiPoint) {
-      return geometry.coordinates;
-    } else if (geometry is MultiLineString) {
-      return geometry.coordinates;
-    } else if (geometry is MultiPolygon) {
-      return geometry.coordinates;
-    }
-    throw ArgumentError('Unknown geometry type: ${geometry.type}');
   }
 }
