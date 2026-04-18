@@ -43,16 +43,17 @@ class Polygonizer {
   ///
   /// var polygons = polygonize(lines);
   /// ```
-  static FeatureCollection<Polygon> polygonize(GeoJSONObject geoJSON, {PolygonizeConfig? config}) {
+  static FeatureCollection<Polygon> polygonize(GeoJSONObject geoJSON,
+      {PolygonizeConfig? config}) {
     // Start the polygonization process
-    
+
     // Create a planar graph from all segments
     final graph = Graph();
-    
+
     // Process all LineString and MultiLineString features and add them to the graph
     flattenEach(geoJSON, (currentFeature, featureIndex, multiFeatureIndex) {
       final geometry = currentFeature.geometry!;
-      
+
       if (geometry is LineString) {
         final coords = getCoords(geometry) as List<Position>;
         _addLineToGraph(graph, coords);
@@ -63,59 +64,56 @@ class Polygonizer {
         }
       } else {
         throw ArgumentError(
-          'Input must be a LineString, MultiLineString, or a FeatureCollection of these types, but got ${geometry.type}'
-        );
+            'Input must be a LineString, MultiLineString, or a FeatureCollection of these types, but got ${geometry.type}');
       }
     });
-    
+
     // Find rings in the graph
     final ringFinder = RingFinder(graph);
     final rings = ringFinder.findRings();
-    
+
     // If no rings were found, try fallback approach
     if (rings.isEmpty) {
-      
       // Extract nodes and try to form a ring
       final nodes = graph.nodes.values.map((node) => node.position).toList();
       if (nodes.length >= 4) {
         // Sort nodes and form a ring
         final sortedNodes = PositionUtils.sortNodesCounterClockwise(nodes);
         final ring = List<Position>.from(sortedNodes);
-        
+
         // Close the ring
-        if (ring.isNotEmpty && 
+        if (ring.isNotEmpty &&
             (ring.first[0] != ring.last[0] || ring.first[1] != ring.last[1])) {
           ring.add(PositionUtils.createPosition(ring.first));
         }
-        
+
         if (ring.length >= 4) {
           // Create a polygon from the ring
           final polygon = Polygon(coordinates: [ring]);
-          return FeatureCollection<Polygon>(features: [
-            Feature<Polygon>(geometry: polygon)
-          ]);
+          return FeatureCollection<Polygon>(
+              features: [Feature<Polygon>(geometry: polygon)]);
         }
       }
     }
-    
+
     // Classify rings as exterior shells or holes
     final classifier = RingClassifier();
     final classifiedRings = classifier.classifyRings(rings);
-    
+
     // Convert classified rings to polygons
     final outputFeatures = <Feature<Polygon>>[];
     for (final polygonRings in classifiedRings) {
       final polygon = Polygon(coordinates: polygonRings);
       outputFeatures.add(Feature<Polygon>(geometry: polygon));
     }
-    
+
     return FeatureCollection<Polygon>(features: outputFeatures);
   }
-  
+
   /// Add a line segment to the graph
   static void _addLineToGraph(Graph graph, List<Position> coords) {
     if (coords.length < 2) return;
-    
+
     for (var i = 0; i < coords.length - 1; i++) {
       graph.addEdge(coords[i], coords[i + 1]);
     }

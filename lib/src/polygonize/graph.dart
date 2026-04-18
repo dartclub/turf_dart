@@ -17,8 +17,8 @@ class Edge {
   String get key {
     final fromKey = '${from[0]},${from[1]}';
     final toKey = '${to[0]},${to[1]}';
-    return fromKey.compareTo(toKey) <= 0 
-        ? '$fromKey|$toKey' 
+    return fromKey.compareTo(toKey) <= 0
+        ? '$fromKey|$toKey'
         : '$toKey|$fromKey';
   }
 
@@ -33,7 +33,7 @@ class Edge {
 class EdgeWithBearing {
   final Edge edge;
   final num bearing;
-  
+
   EdgeWithBearing(this.edge, this.bearing);
 }
 
@@ -90,24 +90,24 @@ class Graph {
       nodes[toKey] = Node(to);
     }
     nodes[toKey]!.addEdge(Edge(to, from));
-    
+
     // Add to edge-by-vertex index for efficient lookup
     _addToEdgesByVertex(from, to);
     _addToEdgesByVertex(to, from);
   }
-  
+
   /// Add edge to the index for efficient lookup by vertex
   void _addToEdgesByVertex(Position from, Position to) {
     final fromKey = '${from[0]},${from[1]}';
     if (!edgesByVertex.containsKey(fromKey)) {
       edgesByVertex[fromKey] = [];
     }
-    
+
     // Calculate bearing for the edge
     final bearing = _calculateBearing(from, to);
     edgesByVertex[fromKey]!.add(EdgeWithBearing(Edge(from, to), bearing));
   }
-  
+
   /// Calculate bearing between two positions
   num _calculateBearing(Position start, Position end) {
     num lng1 = _degreesToRadians(start[0]!);
@@ -121,7 +121,7 @@ class Graph {
     num bearing = _radiansToDegrees(atan2(a, b));
     return (bearing % 360 + 360) % 360; // Normalize to 0-360
   }
-  
+
   /// Create a canonical edge key
   String _createEdgeKey(Position from, Position to) {
     // Create a key based on the actual coordinate values, not the default toString()
@@ -129,12 +129,12 @@ class Graph {
     final toKey = '${to[0]},${to[1]}';
     return fromKey.compareTo(toKey) < 0 ? '$fromKey|$toKey' : '$toKey|$fromKey';
   }
-  
+
   /// Convert degrees to radians
   num _degreesToRadians(num degrees) {
     return degrees * pi / 180;
   }
-  
+
   /// Convert radians to degrees
   num _radiansToDegrees(num radians) {
     return radians * 180 / pi;

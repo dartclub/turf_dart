@@ -1,6 +1,6 @@
 /// Implementation of the polygonize algorithm that converts a collection of
 /// LineString features to a collection of Polygon features.
-/// 
+///
 /// This implementation follows RFC 7946 (GeoJSON) standards for ring orientation:
 /// - Exterior rings are counter-clockwise (CCW)
 /// - Interior rings (holes) are clockwise (CW)
@@ -46,6 +46,7 @@ import 'polygonize/config.dart';
 ///
 /// var polygons = polygonize(lines);
 /// ```
-FeatureCollection<Polygon> polygonize(GeoJSONObject geoJSON, {PolygonizeConfig? config}) {
+FeatureCollection<Polygon> polygonize(GeoJSONObject geoJSON,
+    {PolygonizeConfig? config}) {
   return Polygonizer.polygonize(geoJSON, config: config);
 }
