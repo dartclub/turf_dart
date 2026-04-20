@@ -23,15 +23,15 @@ import '../meta.dart';
 ///
 /// var area = turf.area(polygon);
 /// ```
-num? area(GeoJSONObject geojson) {
-  return geomReduce<num>(geojson, (value, geom, _, __, ___, ____) {
+double? area(GeoJSONObject geojson) {
+  return geomReduce<double>(geojson, (value, geom, _, __, ___, ____) {
     return value! + _calculateArea(geom!);
-  }, 0);
+  }, 0.0);
 }
 
 /// Calculate Area
-num _calculateArea(GeometryType geom) {
-  num total = 0;
+double _calculateArea(GeometryType geom) {
+  double total = 0;
   switch (geom.type) {
     case GeoJSONObjectType.polygon:
       return _polygonArea((geom as Polygon).coordinates);
@@ -51,8 +51,8 @@ num _calculateArea(GeometryType geom) {
   }
 }
 
-num _polygonArea(List<List<Position>> coords) {
-  num total = 0;
+double _polygonArea(List<List<Position>> coords) {
+  double total = 0;
   if (coords.isNotEmpty) {
     total += _ringArea(coords[0]).abs();
     for (var i = 1; i < coords.length; i++) {
@@ -71,7 +71,7 @@ num _polygonArea(List<List<Position>> coords) {
 /// Robert. G. Chamberlain and William H. Duquette, "Some Algorithms for Polygons on a Sphere",
 /// JPL Publication 07-03, Jet Propulsion
 /// Laboratory, Pasadena, CA, June 2007 https://trs.jpl.nasa.gov/handle/2014/40409
-num _ringArea(List<Position> coords) {
+double _ringArea(List<Position> coords) {
   Position p1;
   Position p2;
   Position p3;
@@ -79,7 +79,7 @@ num _ringArea(List<Position> coords) {
   int middleIndex;
   int upperIndex;
   int i;
-  num total = 0;
+  double total = 0;
   final coordsLength = coords.length;
 
   if (coordsLength > 2) {
@@ -111,6 +111,6 @@ num _ringArea(List<Position> coords) {
   return total;
 }
 
-num _rad(num number) {
+double _rad(double number) {
   return (number * pi) / 180;
 }

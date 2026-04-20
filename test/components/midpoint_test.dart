@@ -5,8 +5,8 @@ import 'package:turf/distance.dart';
 import 'package:turf/midpoint.dart';
 
 void checkLatLngInRange(Point result) {
-  bool _lngRange(num lng) => lng >= -180 && lng <= 180;
-  bool _latRange(num lat) => lat >= -90 && lat <= 90;
+  bool _lngRange(double lng) => lng >= -180 && lng <= 180;
+  bool _latRange(double lat) => lat >= -90 && lat <= 90;
 
   expect(_lngRange(result.coordinates.lng), true,
       reason: 'Longitude of ${result.coordinates.lng} out of range');

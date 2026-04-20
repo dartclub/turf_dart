@@ -105,10 +105,10 @@ void main() {
 
               // Create BBox instance
               var geoBbox = BBox.named(
-                lng1: bbox[0], // min longitude
-                lat1: bbox[1], // min latitude
-                lng2: bbox[2], // max longitude
-                lat2: bbox[3], // max latitude
+                lng1: (bbox[0] as num).toDouble(), // min longitude
+                lat1: (bbox[1] as num).toDouble(), // min latitude
+                lng2: (bbox[2] as num).toDouble(), // max longitude
+                lat2: (bbox[3] as num).toDouble(), // max latitude
               );
 
               // Perform square operation (this doesn't change geometry type)

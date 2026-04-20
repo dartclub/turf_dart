@@ -14,17 +14,17 @@ import 'package:turf/src/invariant.dart';
 /// var distance = turf.rhumbDistance(from, to, Unit.meters);
 /// ```
 
-num rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
+double rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
   final origin = getCoord(from);
   final destination = getCoord(to);
 
   // compensate the crossing of the 180th meridian (https://macwright.org/2016/09/26/the-180th-meridian.html)
   // solution from https://github.com/mapbox/mapbox-gl-js/issues/3250#issuecomment-294887678
   final compensateLng = (destination.lng - origin.lng) > 180
-      ? -360
+      ? -360.0
       : (origin.lng - destination.lng) > 180
-          ? 360
-          : 0;
+          ? 360.0
+          : 0.0;
 
   final distanceInMeters = calculateRhumbDistance(
       origin, Position(destination.lng + compensateLng, destination.lat));
@@ -44,8 +44,8 @@ num rhumbDistance(Point from, Point to, [Unit unit = Unit.kilometers]) {
 /// ```
 ///
 
-num calculateRhumbDistance(Position origin, Position destination,
-    [num radius = earthRadius]) {
+double calculateRhumbDistance(Position origin, Position destination,
+    [double radius = earthRadius]) {
   final R = radius;
   final phi1 = (origin.lat * math.pi) / 180;
   final phi2 = (destination.lat * math.pi) / 180;

@@ -25,7 +25,7 @@ import 'nearest_point_on_line.dart';
 FeatureCollection<LineString> lineOverlap(
   Feature feature1,
   Feature feature2, {
-  num tolerance = 0,
+  double tolerance = 0,
   Unit unit = Unit.kilometers,
 }) {
   if (!_isGeometrySupported(getGeom(feature1)) ||
@@ -99,7 +99,7 @@ FeatureCollection<LineString> lineOverlap(
 Feature<LineString>? _getOverlappingPart(
   Feature<LineString> first,
   Feature<LineString> second,
-  num tolerance,
+  double tolerance,
   Unit unit,
 ) {
   final firstCoords = _getCoorsSorted(first);
@@ -136,7 +136,7 @@ List<Position> _getCoorsSorted(Feature feature) {
 bool _isPointOnLine(
   Point point,
   Feature<LineString> line,
-  num tolerance,
+  double tolerance,
   Unit unit,
 ) {
   final lineString = line.geometry as LineString;
@@ -151,7 +151,7 @@ bool _isPointOnLine(
 bool _isSegmentOnLine(
   Feature<LineString> segment,
   Feature<LineString> line,
-  num tolerance,
+  double tolerance,
   Unit unit,
 ) {
   final segmentCoords = getCoords(segment) as List<Position>;
@@ -237,12 +237,12 @@ class _FeatureRBush {
   }
 
   late RBushBase<List<List<double>>> _tree;
-  final num tolerance;
+  final double tolerance;
   final Unit unit;
 
   static _FeatureRBush create(
     FeatureCollection<LineString> segments,
-    num tolerance,
+    double tolerance,
     Unit unit,
   ) {
     final converted = segments.features
@@ -267,7 +267,7 @@ class _FeatureRBush {
   }
 
   FeatureCollection<LineString> _buildFeatureCollection(
-    List<List<List<num>>> result,
+    List<List<List<double>>> result,
   ) {
     return FeatureCollection<LineString>(
       features: result

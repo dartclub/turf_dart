@@ -10,14 +10,14 @@ import 'package:turf/turf.dart';
 // for 3D version, see 3d branch (configurability would draw significant performance overhead)
 
 /// square distance between 2 points
-num _getSqDist(Position p1, Position p2) {
+double _getSqDist(Position p1, Position p2) {
   var dx = p1.lng - p2.lng, dy = p1.lat - p2.lat;
 
   return dx * dx + dy * dy;
 }
 
 /// square distance from a point to a segment
-num _getSqSegDist(Position p, Position p1, Position p2) {
+double _getSqSegDist(Position p, Position p1, Position p2) {
   var x = p1.lng, y = p1.lat, dx = p2.lng - x, dy = p2.lat - y;
 
   if (dx != 0 || dy != 0) {
@@ -60,7 +60,7 @@ List<Position> _simplifyRadialDist(List<Position> points, double sqTolerance) {
 
 List<Position> _simplifyDPStep(List<Position> points, int first, int last,
     double sqTolerance, List<Position> simplified) {
-  num maxSqDist = sqTolerance;
+  double maxSqDist = sqTolerance;
   late int index;
 
   for (var i = first + 1; i < last; i++) {

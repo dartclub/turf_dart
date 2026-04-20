@@ -763,7 +763,7 @@ void main() {
     Map<String, dynamic>? concatPropertyValues(
       Map<String, dynamic>? previousValue,
       Map<String, dynamic>? currentProperties,
-      num featureIndex,
+      int featureIndex,
     ) {
       return {'foo': previousValue!['foo'] + currentProperties!['foo']};
     }

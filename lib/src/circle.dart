@@ -19,8 +19,8 @@ import 'destination.dart';
 /// ```
 Feature<Polygon> circle(
   GeoJSONObject center,
-  num radius, {
-  num? steps,
+  double radius, {
+  int? steps,
   Unit? unit,
   Map<String, dynamic>? properties,
 }) {
@@ -37,7 +37,8 @@ Feature<Polygon> circle(
       center is Feature && center.properties != null ? center.properties : {};
   final List<Position> coordinates = [];
   for (var i = 0; i < steps; i++) {
-    final c = destination(origin, radius, (i * -360) / steps, unit).coordinates;
+    final c =
+        destination(origin, radius, (i * -360) / steps, unit).coordinates;
     coordinates.add(c);
   }
   coordinates.add(coordinates[0]);

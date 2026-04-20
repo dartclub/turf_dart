@@ -219,7 +219,7 @@ void main() {
     expect(snapped.geometry, target);
 
     final index = snapped.properties!['index'] as int;
-    final distance = snapped.properties!['dist'] as num;
+    final distance = snapped.properties!['dist'] as double;
 
     expect(index, 8);
     expect(distance.toStringAsFixed(6), '0.823802');
@@ -292,7 +292,7 @@ void main() {
     final line = snapped.properties!['line'] as int;
     final localIndex = snapped.properties!['localIndex'] as int;
     final globalIndex = snapped.properties!['index'] as int;
-    final distance = snapped.properties!['dist'] as num;
+    final distance = snapped.properties!['dist'] as double;
 
     expect(line, 1);
     expect(localIndex, 7);

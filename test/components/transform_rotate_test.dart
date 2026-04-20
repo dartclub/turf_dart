@@ -52,7 +52,7 @@ void main() {
               var inSource = file.readAsStringSync();
               var feature = Feature.fromJson(jsonDecode(inSource));
 
-              final angle = feature.properties?['angle'];
+              final angle = (feature.properties?['angle'] as num).toDouble();
               var pivot = feature.properties?['pivot'];
               pivot =
                   pivot == null ? null : Point.fromJson({'coordinates': pivot});

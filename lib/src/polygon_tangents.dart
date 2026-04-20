@@ -83,7 +83,7 @@ FeatureCollection<Point> polygonTangents(
           polyCoords[0][0],
           polyCoords[0][polyCoords[0].length - 1],
           pointCoords,
-        ).toDouble();
+        );
         final processed = processPolygon(
           polyCoords[0],
           pointCoords,
@@ -117,7 +117,7 @@ FeatureCollection<Point> polygonTangents(
           polyCoords[0][0][0],
           polyCoords[0][0][polyCoords[0][0].length - 1],
           pointCoords,
-        ).toDouble();
+        );
         polyCoords[0].forEach((polygon) {
           final processed = processPolygon(
             polygon,
@@ -161,14 +161,14 @@ List<Position> processPolygon(List<Position> polygonCoords,
         ltan = currentCoords;
       }
     }
-    eprev = enext.toDouble();
+    eprev = enext;
   }
   return [rtan, ltan];
 }
 
 /// Returns a positive value if [p3] is to the left of the line from [p1] to [p2],
 /// negative if to the right, and 0 if collinear.
-num isLeft(Position p1, Position p2, Position p3) {
+double isLeft(Position p1, Position p2, Position p3) {
   return ((p2[0]! - p1[0]!) * (p3[1]! - p1[1]!) -
       (p3[0]! - p1[0]!) * (p2[1]! - p1[1]!));
 }

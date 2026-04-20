@@ -139,7 +139,7 @@ Feature<Polygon> lineStringToPolygon(
         geometry: Polygon(coordinates: [coords]), properties: properties);
   } else if (line is MultiLineString) {
     List<List<Position>> multiCoords = [];
-    num largestArea = 0;
+    double largestArea = 0;
 
     for (var coord in line.coordinates) {
       if (autoComplete) {
@@ -176,7 +176,7 @@ List<Position> _autoCompleteCoords(List<Position> coords) {
 }
 
 /// Quick calculates approximate area (used to sort)
-num _calculateArea(BBox bbox) {
+double _calculateArea(BBox bbox) {
   var west = bbox[0];
   var south = bbox[1];
   var east = bbox[2];

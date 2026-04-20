@@ -29,8 +29,8 @@ void main() {
               final inSource = file.readAsStringSync();
               final feature = Feature.fromJson(jsonDecode(inSource));
               final properties = feature.properties ?? {};
-              final radius = properties['radius'] ?? 5;
-              final steps = properties['steps'] ?? 64;
+              final radius = (properties['radius'] as num? ?? 5).toDouble();
+              final steps = properties['steps'] as int? ?? 64;
               final unit = properties['units'];
 
               final C = truncate(circle(feature, radius,

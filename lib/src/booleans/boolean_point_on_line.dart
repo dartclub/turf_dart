@@ -19,7 +19,7 @@ import 'package:turf/helpers.dart';
 enum BoundaryType { none, start, end, both }
 
 bool booleanPointOnLine(Point pt, LineString line,
-    {bool ignoreEndVertices = false, num? epsilon}) {
+    {bool ignoreEndVertices = false, double? epsilon}) {
   for (var i = 0; i < line.coordinates.length - 1; i++) {
     BoundaryType ignoreBoundary = BoundaryType.none;
     if (ignoreEndVertices) {
@@ -55,7 +55,7 @@ bool _isPointOnLineSegment(
   Position end,
   Position point,
   BoundaryType excludeBoundary,
-  num? epsilon,
+  double? epsilon,
 ) {
   var x = point[0]!;
   var y = point[1]!;

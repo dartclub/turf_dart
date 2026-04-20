@@ -19,3 +19,7 @@ dev_dependencies:
   build_runner: ^2.4.5
   analyzer: ^6.4.0
   benchmark: ^0.3.0
+
+dependency_overrides:
+  geotypes:
+    path: ../geotypes

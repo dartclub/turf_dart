@@ -9,9 +9,9 @@ import 'intersection.dart';
 
 class _Nearest {
   final Point point;
-  final num distance;
+  final double distance;
   final int index;
-  final num location;
+  final double location;
 
   _Nearest({
     required this.point,
@@ -67,7 +67,7 @@ _Nearest _nearestPointOnLine(
 ]) {
   _Nearest? nearest;
 
-  num length = 0;
+  double length = 0;
 
   for (var i = 0; i < line.coordinates.length - 1; ++i) {
     final startCoordinates = line.coordinates[i];

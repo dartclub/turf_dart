@@ -81,9 +81,9 @@ void _replaceCoords(int precision, int coordinates, GeoJSONObject geojson) {
 /// [factor] is the rounding factor for coordinate decimal precision
 /// [coordinates] sets maximum number of coordinates (primarly used to remove z coordinates)
 /// Returns mutated coordinates
-Position _truncateCoords(Position coord, num factor, int coordinates) {
+Position _truncateCoords(Position coord, int factor, int coordinates) {
   // Remove extra coordinates (usually elevation coordinates and more)
-  List<num> list = [];
+  List<double> list = [];
   list.addAll([coord.lng, coord.lat]);
   if (coord.alt != null) {
     list.add(coord.alt!);

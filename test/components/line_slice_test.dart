@@ -21,7 +21,7 @@ void main() {
     expect(length(slice).round(), equals(length(expectedLineFeature).round()));
   });
   test('lineSlice - interpolation', () {
-    const skipDist = 10;
+    const skipDist = 10.0;
 
     final sliceFrom = along(lineFeature, skipDist, Unit.meters);
     expect(sliceFrom, isNotNull);

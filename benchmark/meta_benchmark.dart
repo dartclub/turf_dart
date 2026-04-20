@@ -99,7 +99,7 @@ void main() {
   group('propEach', () {
     void propEachNoopCB(
       Map<String, dynamic>? currentProperties,
-      num featureIndex,
+      int featureIndex,
     ) {}
 
     benchmark('feature', () {
@@ -114,7 +114,7 @@ void main() {
   group('featureEach', () {
     void featureEachNoopCB(
       Feature currentFeature,
-      num featureIndex,
+      int featureIndex,
     ) {}
 
     benchmark('feature', () {

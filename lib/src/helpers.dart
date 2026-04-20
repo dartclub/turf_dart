@@ -44,11 +44,11 @@ enum DistanceGeometry {
 }
 
 /// Earth Radius used with the Harvesine formula and approximates using a spherical (non-ellipsoid) Earth.
-const earthRadius = 6371008.8;
+const double earthRadius = 6371008.8;
 
 /// Unit of measurement factors using a spherical (non-ellipsoid) earth radius.
 /// Keys are the name of the unit, values are the number of that unit in a single radian
-const factors = <Unit, num>{
+const factors = <Unit, double>{
   Unit.centimeters: earthRadius * 100,
   Unit.degrees: earthRadius / 111325,
   Unit.feet: earthRadius * 3.28084,
@@ -58,50 +58,50 @@ const factors = <Unit, num>{
   Unit.miles: earthRadius / 1609.344,
   Unit.millimeters: earthRadius * 1000,
   Unit.nauticalmiles: earthRadius / 1852,
-  Unit.radians: 1,
+  Unit.radians: 1.0,
   Unit.yards: earthRadius * 1.0936,
 };
 
-const unitsFactors = <Unit, num>{
-  Unit.centimeters: 100,
+const unitsFactors = <Unit, double>{
+  Unit.centimeters: 100.0,
   Unit.degrees: 1 / 111325,
   Unit.feet: 3.28084,
   Unit.inches: 39.370,
   Unit.kilometers: 1 / 1000,
-  Unit.meters: 1,
+  Unit.meters: 1.0,
   Unit.miles: 1 / 1609.344,
-  Unit.millimeters: 1000,
+  Unit.millimeters: 1000.0,
   Unit.nauticalmiles: 1 / 1852,
   Unit.radians: 1 / earthRadius,
   Unit.yards: 1 / 1.0936,
 };
 
 /// Area of measurement factors based on 1 square meter.
-const areaFactors = <Unit, num>{
+const areaFactors = <Unit, double>{
   Unit.acres: 0.000247105,
-  Unit.centimeters: 10000,
+  Unit.centimeters: 10000.0,
   Unit.feet: 10.763910417,
   Unit.inches: 1550.003100006,
   Unit.kilometers: 0.000001,
-  Unit.meters: 1,
+  Unit.meters: 1.0,
   Unit.miles: 3.86e-7,
-  Unit.millimeters: 1000000,
+  Unit.millimeters: 1000000.0,
   Unit.yards: 1.195990046,
 };
 
 /// Round number to precision
-num round(num value, [num precision = 0]) {
+double round(double value, [int precision = 0]) {
   if (!(precision >= 0)) {
     throw Exception("precision must be a positive number");
   }
   num multiplier = pow(10, precision);
-  num result = (value * multiplier);
+  double result = (value * multiplier);
   return result.round() / multiplier;
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from radians to a more friendly unit.
 /// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
-num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
+double radiansToLength(double radians, [Unit unit = Unit.kilometers]) {
   var factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
@@ -111,8 +111,8 @@ num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into radians
 /// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
-num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
-  num? factor = factors[unit];
+double lengthToRadians(double distance, [Unit unit = Unit.kilometers]) {
+  double? factor = factors[unit];
   if (factor == null) {
     throw Exception("$unit units is invalid");
   }
@@ -121,14 +121,14 @@ num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into degrees
 /// Valid units: miles, nauticalmiles, inches, yards, meters, metres, centimeters, kilometres, feet
-num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
+double lengthToDegrees(double distance, [Unit unit = Unit.kilometers]) {
   return radiansToDegrees(lengthToRadians(distance, unit));
 }
 
 /// Converts any bearing angle from the north line direction (positive clockwise)
 /// and returns an angle between 0-360 degrees (positive clockwise), 0 being the north line
-num bearingToAzimuth(num bearing) {
-  num angle = bearing.remainder(360);
+double bearingToAzimuth(double bearing) {
+  double angle = bearing.remainder(360).toDouble();
   if (angle < 0) {
     angle += 360;
   }
@@ -136,21 +136,21 @@ num bearingToAzimuth(num bearing) {
 }
 
 /// Converts an angle in radians to degrees
-num radiansToDegrees(num radians) {
-  num degrees = radians.remainder(2 * pi);
+double radiansToDegrees(double radians) {
+  double degrees = radians.remainder(2 * pi).toDouble();
   return degrees * 180 / pi;
 }
 
 /// Converts an angle in degrees to radians
-num degreesToRadians(num degrees) {
-  num radians = degrees.remainder(360);
+double degreesToRadians(double degrees) {
+  double radians = degrees.remainder(360).toDouble();
   return radians * pi / 180;
 }
 
 /// Converts a length to the requested unit.
 /// Valid units: miles, nauticalmiles, inches, yards, meters, metres, kilometers, centimeters, feet
-num convertLength(
-  num length, [
+double convertLength(
+  double length, [
   Unit originalUnit = Unit.kilometers,
   Unit finalUnit = Unit.kilometers,
 ]) {
@@ -162,18 +162,18 @@ num convertLength(
 
 /// Converts a area to the requested unit.
 /// Valid units: kilometers, kilometres, meters, metres, centimetres, millimeters, acres, miles, yards, feet, inches, hectares
-num convertArea(num area,
+double convertArea(double area,
     [originalUnit = Unit.meters, finalUnit = Unit.kilometers]) {
   if (area < 0) {
     throw Exception("area must be a positive number");
   }
 
-  num? startFactor = areaFactors[originalUnit];
+  double? startFactor = areaFactors[originalUnit];
   if (startFactor == null) {
     throw Exception("invalid original units");
   }
 
-  num? finalFactor = areaFactors[finalUnit];
+  double? finalFactor = areaFactors[finalUnit];
   if (finalFactor == null) {
     throw Exception("invalid final units");
   }
