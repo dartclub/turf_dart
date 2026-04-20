@@ -3,15 +3,16 @@ import 'package:turf/src/meta/short_circuit.dart';
 
 /// Utility to extract "other members" from GeoJSON objects
 /// according to RFC 7946 specification.
-Map<String, dynamic> extractOtherMembers(Map<String, dynamic> json, List<String> standardKeys) {
+Map<String, dynamic> extractOtherMembers(
+    Map<String, dynamic> json, List<String> standardKeys) {
   final otherMembers = <String, dynamic>{};
-  
+
   json.forEach((key, value) {
     if (!standardKeys.contains(key)) {
       otherMembers[key] = value;
     }
   });
-  
+
   return otherMembers;
 }
 
@@ -20,7 +21,7 @@ final _otherMembersExpando = Expando<Map<String, dynamic>>('otherMembers');
 
 /// Extension to add "other members" support to GeoJSONObject
 /// This follows RFC 7946 specification:
-/// "A GeoJSON object MAY have 'other members'. Implementations 
+/// "A GeoJSON object MAY have 'other members'. Implementations
 /// MUST NOT interpret foreign members as having any meaning unless
 /// part of an extension or profile."
 extension GeoJSONObjectOtherMembersExtension on GeoJSONObject {
@@ -28,40 +29,40 @@ extension GeoJSONObjectOtherMembersExtension on GeoJSONObject {
   Map<String, dynamic> get otherMembers {
     return _otherMembersExpando[this] ?? {};
   }
-  
+
   /// Set other members for this GeoJSON object
   void setOtherMembers(Map<String, dynamic> members) {
     _otherMembersExpando[this] = Map<String, dynamic>.from(members);
   }
-  
+
   /// Merge additional other members with existing ones
   void mergeOtherMembers(Map<String, dynamic> newMembers) {
     final current = Map<String, dynamic>.from(otherMembers);
     current.addAll(newMembers);
     setOtherMembers(current);
   }
-  
+
   /// Convert to JSON with other members included
   /// This is the compliant serialization method that includes other members
   /// as per RFC 7946 specification.
   Map<String, dynamic> toJsonWithOtherMembers() {
     final json = toJson();
     final others = otherMembers;
-    
+
     if (others.isNotEmpty) {
       json.addAll(others);
     }
-    
+
     return json;
   }
-  
+
   /// Clone with other members preserved
   T clonePreservingOtherMembers<T extends GeoJSONObject>() {
     final clone = this.clone() as T;
     clone.setOtherMembers(otherMembers);
     return clone;
   }
-  
+
   /// CopyWith method that preserves other members
   /// This is used to create a new GeoJSONObject with some properties modified
   /// while preserving all other members
@@ -74,20 +75,20 @@ extension GeoJSONObjectOtherMembersExtension on GeoJSONObject {
 extension FeatureOtherMembersExtension on Feature {
   /// Standard keys for Feature objects as per GeoJSON specification
   static const standardKeys = ['type', 'geometry', 'properties', 'id', 'bbox'];
-  
+
   /// Create a Feature from JSON with support for other members
   static Feature fromJsonWithOtherMembers(Map<String, dynamic> json) {
     final feature = Feature.fromJson(json);
-    
+
     // Extract other members
     final otherMembers = extractOtherMembers(json, standardKeys);
     if (otherMembers.isNotEmpty) {
       feature.setOtherMembers(otherMembers);
     }
-    
+
     return feature;
   }
-  
+
   /// Create a new Feature with modified properties while preserving other members
   Feature<T> copyWithPreservingOtherMembers<T extends GeometryObject>({
     T? geometry,
@@ -101,7 +102,7 @@ extension FeatureOtherMembersExtension on Feature {
       bbox: bbox ?? this.bbox,
       id: id ?? this.id,
     );
-    
+
     newFeature.setOtherMembers(otherMembers);
     return newFeature;
   }
@@ -111,22 +112,23 @@ extension FeatureOtherMembersExtension on Feature {
 extension FeatureCollectionOtherMembersExtension on FeatureCollection {
   /// Standard keys for FeatureCollection objects as per GeoJSON specification
   static const standardKeys = ['type', 'features', 'bbox'];
-  
+
   /// Create a FeatureCollection from JSON with support for other members
   static FeatureCollection fromJsonWithOtherMembers(Map<String, dynamic> json) {
     final featureCollection = FeatureCollection.fromJson(json);
-    
+
     // Extract other members
     final otherMembers = extractOtherMembers(json, standardKeys);
     if (otherMembers.isNotEmpty) {
       featureCollection.setOtherMembers(otherMembers);
     }
-    
+
     return featureCollection;
   }
-  
+
   /// Create a new FeatureCollection with modified properties while preserving other members
-  FeatureCollection<T> copyWithPreservingOtherMembers<T extends GeometryObject>({
+  FeatureCollection<T>
+      copyWithPreservingOtherMembers<T extends GeometryObject>({
     List<Feature<T>>? features,
     BBox? bbox,
   }) {
@@ -134,7 +136,7 @@ extension FeatureCollectionOtherMembersExtension on FeatureCollection {
       features: features ?? this.features.cast<Feature<T>>(),
       bbox: bbox ?? this.bbox,
     );
-    
+
     newFeatureCollection.setOtherMembers(otherMembers);
     return newFeatureCollection;
   }
@@ -144,26 +146,26 @@ extension FeatureCollectionOtherMembersExtension on FeatureCollection {
 extension GeometryObjectOtherMembersExtension on GeometryObject {
   /// Standard keys for GeometryObject as per GeoJSON specification
   static const standardKeys = ['type', 'coordinates', 'geometries', 'bbox'];
-  
+
   /// Create a GeometryObject from JSON with support for other members
   static GeometryObject fromJsonWithOtherMembers(Map<String, dynamic> json) {
     final geometryObject = GeometryObject.deserialize(json);
-    
+
     // Extract other members
     final otherMembers = extractOtherMembers(json, standardKeys);
     if (otherMembers.isNotEmpty) {
       geometryObject.setOtherMembers(otherMembers);
     }
-    
+
     return geometryObject;
   }
-  
+
   /// Create a new GeometryObject with modified properties while preserving other members
   GeometryObject copyWithPreservingOtherMembers({
     BBox? bbox,
   }) {
     GeometryObject newObject;
-    
+
     // Handle the different geometry types
     if (this is Point) {
       final point = this as Point;
@@ -209,9 +211,9 @@ extension GeometryObjectOtherMembersExtension on GeometryObject {
       );
     } else {
       // Fallback - just clone with proper casting
-      newObject = this.clone() as GeometryObject;
+      newObject = clone() as GeometryObject;
     }
-    
+
     newObject.setOtherMembers(otherMembers);
     return newObject;
   }

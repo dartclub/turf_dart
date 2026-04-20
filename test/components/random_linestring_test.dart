@@ -39,7 +39,7 @@ void main() {
       final maxLength = 0.001;
       final featureCollection = randomLineString(5, maxLength: maxLength);
 
-      featureCollection.features.forEach((feature) {
+      for (var feature in featureCollection.features) {
         final coords = feature.geometry?.coordinates;
         for (int i = 1; i < coords!.length; i++) {
           final dx = coords[i][0]! - coords[i - 1][0]!;
@@ -48,7 +48,7 @@ void main() {
 
           expect(distance, lessThanOrEqualTo(maxLength));
         }
-      });
+      }
     });
   });
 }

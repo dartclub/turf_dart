@@ -63,8 +63,41 @@ final json = point.toJsonWithOtherMembers();
 
 ```dart
 // Clone the object while preserving custom fields
-final clonedPoint = point.cloneWithOtherMembers<Point>();
+final clonedPoint = point.clonePreservingOtherMembers<Point>();
 print(clonedPoint.otherMembers); // Same custom fields as original
+```
+
+### Creating Modified Copies While Preserving Custom Fields
+
+```dart
+// Create a Feature with custom fields
+final feature = Feature(
+  geometry: Point(coordinates: Position(10, 20)),
+  properties: {'name': 'Original Point'},
+);
+feature.setOtherMembers({'custom_field': 'custom_value'});
+
+// Create a new Feature with updated properties, preserving custom fields
+final modifiedFeature = feature.copyWithPreservingOtherMembers<Point>(
+  properties: {'name': 'Modified Point'},
+);
+print(modifiedFeature.otherMembers['custom_field']); // 'custom_value'
+
+// Create a new FeatureCollection with updated features, preserving custom fields
+final featureCollection = FeatureCollection(features: [feature]);
+featureCollection.setOtherMembers({'source': 'test_data'});
+
+final updatedCollection = featureCollection.copyWithPreservingOtherMembers<Point>(
+  features: [modifiedFeature],
+);
+print(updatedCollection.otherMembers['source']); // 'test_data'
+
+// Create a new geometry while preserving custom fields
+final geometry = Point(coordinates: Position(10, 20));
+geometry.setOtherMembers({'category': 'landmark'});
+
+final modifiedGeometry = geometry.copyWithPreservingOtherMembers() as Point;
+print(modifiedGeometry.otherMembers['category']); // 'landmark'
 ```
 
 ### Deserializing from JSON with Custom Fields
@@ -98,13 +131,13 @@ final geometryJson = {
   'custom_field': 'custom_value'
 };
 
-final geometry = GeometryObjectOtherMembersExtension.deserializeWithOtherMembers(geometryJson);
+final geometry = GeometryObjectOtherMembersExtension.fromJsonWithOtherMembers(geometryJson);
 print(geometry.otherMembers['custom_field']); // 'custom_value'
 ```
 
 ## Implementation Notes
 
-- Custom fields are stored in memory using a static map with object identity hash codes as keys
+- Custom fields are stored in memory using Expando to safely attach data to each object without leaks
 - The extension approach was chosen to avoid modifying the core GeoJSON classes defined in the geotypes package
 - This implementation fully complies with RFC 7946's recommendations for handling "other members"
 
