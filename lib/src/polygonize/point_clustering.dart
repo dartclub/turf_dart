@@ -59,7 +59,9 @@ class PointClustering {
     double Function(Position) metric,
     double gapFactor,
   ) {
-    if (points.length < 2) return [points];
+    if (points.length < 2) {
+      return [points];
+    }
 
     final sortedPoints = List<Position>.from(points)
       ..sort((a, b) => metric(a).compareTo(metric(b)));
@@ -71,7 +73,9 @@ class PointClustering {
       gaps.add(values[i + 1] - values[i]);
     }
 
-    if (gaps.isEmpty) return [points];
+    if (gaps.isEmpty) {
+      return [points];
+    }
 
     final averageGap = gaps.reduce((a, b) => a + b) / gaps.length;
     final clusters = <List<Position>>[];
@@ -103,8 +107,9 @@ class PointClustering {
   /// Cluster points by distance from centroid (for concentric shapes)
   static List<List<Position>> _clusterByDistanceFromCentroid(
       List<Position> points) {
-    if (points.length < 8)
+    if (points.length < 8) {
       return [points]; // Not enough points for meaningful clustering
+    }
 
     // Calculate centroid
     final centroidX =

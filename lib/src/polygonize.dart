@@ -1,22 +1,7 @@
-/// Implementation of the polygonize algorithm that converts a collection of
-/// LineString features to a collection of Polygon features.
-///
-/// This implementation follows RFC 7946 (GeoJSON) standards for ring orientation:
-/// - Exterior rings are counter-clockwise (CCW)
-/// - Interior rings (holes) are clockwise (CW)
-///
-/// The algorithm includes:
-/// 1. Building a planar graph of all line segments
-/// 2. Finding rings using the right-hand rule for consistent traversal
-/// 3. Classifying rings as exterior or holes based on containment
-/// 4. Creating proper polygon geometries with correct orientation
-
 import 'package:turf/helpers.dart';
-import 'package:turf/src/invariant.dart';
-import 'package:turf/src/booleans/boolean_clockwise.dart';
 
-import 'polygonize/polygonize.dart';
 import 'polygonize/config.dart';
+import 'polygonize/polygonize.dart';
 
 /// Converts a collection of LineString features to a collection of Polygon features.
 ///
@@ -46,7 +31,9 @@ import 'polygonize/config.dart';
 ///
 /// var polygons = polygonize(lines);
 /// ```
-FeatureCollection<Polygon> polygonize(GeoJSONObject geoJSON,
-    {PolygonizeConfig? config}) {
+FeatureCollection<Polygon> polygonize(
+  GeoJSONObject geoJSON, {
+  PolygonizeConfig? config,
+}) {
   return Polygonizer.polygonize(geoJSON, config: config);
 }
