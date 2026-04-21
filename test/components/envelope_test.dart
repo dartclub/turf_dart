@@ -6,16 +6,18 @@ void main() {
       geometry: Point(coordinates: Position.named(lat: 102.0, lng: 0.5)));
 
   final line = Feature<LineString>(
-    geometry: LineString(coordinates: [
-      Position.named(lat: 102.0, lng: 0.5),
-      Position.named(lat: 103.0, lng: 1.5),
-      Position.named(lat: 104.0, lng: 2.5),
+    geometry: LineString(
+      coordinates: [
+        Position.named(lat: 102.0, lng: 0.5),
+        Position.named(lat: 103.0, lng: 1.5),
+        Position.named(lat: 104.0, lng: 2.5),
       ],
     ),
   );
 
   final poly = Feature<Polygon>(
-      geometry: Polygon(coordinates: [
+    geometry: Polygon(
+      coordinates: [
         [
           Position.named(lat: 101.0, lng: 0.0),
           Position.named(lat: 101.0, lng: 1.0),
@@ -28,7 +30,8 @@ void main() {
   );
 
   final multiLine = Feature<MultiLineString>(
-      geometry: MultiLineString(coordinates: [
+    geometry: MultiLineString(
+      coordinates: [
         [
           Position.named(lat: 100.0, lng: 0.0),
           Position.named(lat: 101.0, lng: 1.0),
@@ -42,7 +45,8 @@ void main() {
   );
 
   final multiPoly = Feature<MultiPolygon>(
-      geometry: MultiPolygon(coordinates: [
+    geometry: MultiPolygon(
+      coordinates: [
         [
           [
             Position.named(lat: 102.0, lng: 2.0),
@@ -81,16 +85,15 @@ void main() {
     expect(
       pointEnvelope,
       equals(Feature<Polygon>(
-        geometry: Polygon(coordinates: [
-          [
-            Position.named(lat: 102.0, lng: 0.5),
-            Position.named(lat: 102.0, lng: 0.5),
-            Position.named(lat: 102.0, lng: 0.5),
-            Position.named(lat: 102.0, lng: 0.5),
-            Position.named(lat: 102.0, lng: 0.5),
-          ]
-        ])
-      )),
+          geometry: Polygon(coordinates: [
+        [
+          Position.named(lat: 102.0, lng: 0.5),
+          Position.named(lat: 102.0, lng: 0.5),
+          Position.named(lat: 102.0, lng: 0.5),
+          Position.named(lat: 102.0, lng: 0.5),
+          Position.named(lat: 102.0, lng: 0.5),
+        ]
+      ]))),
       reason: "point",
     );
   });
@@ -123,16 +126,15 @@ void main() {
     expect(
       polyEnvelope,
       equals(Feature<Polygon>(
-        geometry: Polygon(coordinates: [
-          [
-            Position.named(lat: 100.0, lng: 0.0),
-            Position.named(lat: 101.0, lng: 0.0),
-            Position.named(lat: 101.0, lng: 1.0),
-            Position.named(lat: 100.0, lng: 1.0),
-            Position.named(lat: 100.0, lng: 0.0),
-          ]
-        ])
-      )),
+          geometry: Polygon(coordinates: [
+        [
+          Position.named(lat: 100.0, lng: 0.0),
+          Position.named(lat: 101.0, lng: 0.0),
+          Position.named(lat: 101.0, lng: 1.0),
+          Position.named(lat: 100.0, lng: 1.0),
+          Position.named(lat: 100.0, lng: 0.0),
+        ]
+      ]))),
       reason: "polygon",
     );
   });
@@ -190,13 +192,13 @@ void main() {
       fcEnvelope,
       equals(Feature<Polygon>(
         geometry: Polygon(coordinates: [
-            [
-              Position.named(lat: 100.0, lng: 0.0),
-              Position.named(lat: 104.0, lng: 0.0),
-              Position.named(lat: 104.0, lng: 3.0),
-              Position.named(lat: 100.0, lng: 3.0),
-              Position.named(lat: 100.0, lng: 0.0),
-            ]
+          [
+            Position.named(lat: 100.0, lng: 0.0),
+            Position.named(lat: 104.0, lng: 0.0),
+            Position.named(lat: 104.0, lng: 3.0),
+            Position.named(lat: 100.0, lng: 3.0),
+            Position.named(lat: 100.0, lng: 0.0),
+          ]
         ]),
       )),
       reason: "FeatureCollection",

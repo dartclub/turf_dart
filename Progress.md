@@ -15,7 +15,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [x] [centroid](https://github.com/dartclub/turf_dart/blob/main/lib/src/centroid.dart)
 - [x] [destination](https://github.com/dartclub/turf_dart/blob/main/lib/src/destination.dart)
 - [x] [distance](https://github.com/dartclub/turf_dart/blob/main/lib/src/distance.dart)
-- [ ] envelope
+- [x] [envelope](https://github.com/dartclub/turf_dart/blob/main/lib/src/envelope.dart)
 - [x] [length](https://github.com/dartclub/turf_dart/blob/main/lib/src/length.dart)
 - [x] [midpoint](https://github.com/dartclub/turf_dart/blob/main/lib/src/midpoint.dart)
 - [ ] pointOnFeature
@@ -64,7 +64,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [x] [explode](https://github.com/dartclub/turf_dart/blob/main/lib/src/explode.dart)
 - [ ] flatten
 - [x] [lineToPolygon](https://github.com/dartclub/turf_dart/blob/main/lib/src/line_to_polygon.dart)
-- [ ] polygonize
+- [x] [polygonize](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygonize.dart)
 - [x] [polygonToLine](https://github.com/dartclub/turf_dart/blob/main/lib/src/polygon_to_line.dart)
 
 ### MISC
