@@ -6,12 +6,12 @@ import 'package:turf/helpers.dart';
 /// Some parts from [this implementation](http://facstaff.unca.edu/mcmcclur/GoogleMaps/EncodePolyline/PolylineEncoder.js)
 /// by [Mark McClure](http://facstaff.unca.edu/mcmcclur/)
 class Polyline {
-  static String _encode(num current, num previous, num factor) {
-    current = _py2Round(current * factor);
-    previous = _py2Round(previous * factor);
-    var coordinate = (current - previous).toInt();
+  static String _encode(double current, double previous, num factor) {
+    final currentScaled = _py2Round(current * factor);
+    final previousScaled = _py2Round(previous * factor);
+    var coordinate = currentScaled - previousScaled;
     coordinate <<= 1;
-    if (current - previous < 0) {
+    if (currentScaled - previousScaled < 0) {
       coordinate = ~coordinate;
     }
     var output = '';

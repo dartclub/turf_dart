@@ -9,8 +9,8 @@ Feature<Point> center(
   Map<String, dynamic>? properties,
 }) {
   final BBox ext = t.bbox(geoJSON);
-  final num x = (ext[0]! + ext[2]!) / 2;
-  final num y = (ext[1]! + ext[3]!) / 2;
+  final double x = (ext[0]! + ext[2]!) / 2;
+  final double y = (ext[1]! + ext[3]!) / 2;
 
   return Feature<Point>(
     id: id,

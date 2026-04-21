@@ -45,8 +45,10 @@ void main() {
               var inSource = file.readAsStringSync();
               var feature = Feature<Point>.fromJson(jsonDecode(inSource));
 
-              final bearing = feature.properties?['bearing'] ?? 180;
-              final dist = feature.properties?['dist'] ?? 100;
+              final bearing =
+                  (feature.properties?['bearing'] as num? ?? 180).toDouble();
+              final dist =
+                  (feature.properties?['dist'] as num? ?? 100).toDouble();
               final unitName = feature.properties?['units'];
               final unit =
                   unitName == null ? null : Unit.values.byName(unitName);

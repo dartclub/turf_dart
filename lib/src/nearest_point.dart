@@ -27,11 +27,11 @@ import 'package:geotypes/geotypes.dart';
 Feature<Point> nearestPoint(
     Feature<Point> targetPoint, FeatureCollection<Point> points) {
   Feature<Point> nearest;
-  num minDist = double.infinity;
-  num bestFeatureIndex = 0;
+  double minDist = double.infinity;
+  int bestFeatureIndex = 0;
 
   for (int i = 0; i < points.features.length; i++) {
-    num distanceToPoint =
+    double distanceToPoint =
         distance(targetPoint.geometry!, points.features[i].geometry!);
     if (distanceToPoint < minDist) {
       bestFeatureIndex = i;
@@ -39,7 +39,7 @@ Feature<Point> nearestPoint(
     }
   }
 
-  nearest = points.features[bestFeatureIndex as int].clone();
+  nearest = points.features[bestFeatureIndex].clone();
   nearest.properties!['featureIndex'] = bestFeatureIndex;
   nearest.properties!['distanceToPoint'] = minDist;
   return nearest;

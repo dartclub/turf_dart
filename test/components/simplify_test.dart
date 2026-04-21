@@ -72,12 +72,12 @@ main() {
   );
 }
 
-List<Position> _roundCoords(List<Position> coords, num precision) {
+List<Position> _roundCoords(List<Position> coords, double precision) {
   return coords
       .map((p) => Position(_round(p.lng, precision), _round(p.lat, precision)))
       .toList();
 }
 
-num _round(num value, num precision) {
+double _round(double value, double precision) {
   return (value / precision).roundToDouble() * precision;
 }

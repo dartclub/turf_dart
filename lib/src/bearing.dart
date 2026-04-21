@@ -5,18 +5,18 @@ import 'package:geotypes/geotypes.dart';
 // http://en.wikipedia.org/wiki/Haversine_formula
 // http://www.movable-type.co.uk/scripts/latlong.html
 
-num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
+double bearingRaw(Position start, Position end, {bool calcFinal = false}) {
   // Reverse calculation
   if (calcFinal == true) {
     return calculateFinalBearingRaw(start, end);
   }
 
-  num lng1 = degreesToRadians(start.lng);
-  num lng2 = degreesToRadians(end.lng);
-  num lat1 = degreesToRadians(start.lat);
-  num lat2 = degreesToRadians(end.lat);
-  num a = sin(lng2 - lng1) * cos(lat2);
-  num b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
+  double lng1 = degreesToRadians(start.lng);
+  double lng2 = degreesToRadians(end.lng);
+  double lat1 = degreesToRadians(start.lat);
+  double lat2 = degreesToRadians(end.lat);
+  double a = sin(lng2 - lng1) * cos(lat2);
+  double b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
 
   return radiansToDegrees(atan2(a, b));
 }
@@ -37,15 +37,15 @@ num bearingRaw(Position start, Position end, {bool calcFinal = false}) {
 /// point1.properties.bearing = bearing
 /// ```
 
-num bearing(Point start, Point end, {bool calcFinal = false}) =>
+double bearing(Point start, Point end, {bool calcFinal = false}) =>
     bearingRaw(start.coordinates, end.coordinates, calcFinal: calcFinal);
 
-num calculateFinalBearingRaw(Position start, Position end) {
+double calculateFinalBearingRaw(Position start, Position end) {
   // Swap start & end
-  num reverseBearing = bearingRaw(end, start) + 180;
-  return reverseBearing.remainder(360);
+  double reverseBearing = bearingRaw(end, start) + 180;
+  return reverseBearing.remainder(360).toDouble();
 }
 
 /// Calculates Final Bearing
-num calculateFinalBearing(Point start, Point end) =>
+double calculateFinalBearing(Point start, Point end) =>
     calculateFinalBearingRaw(start.coordinates, end.coordinates);

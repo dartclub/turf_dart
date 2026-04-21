@@ -17,7 +17,7 @@ import 'helpers.dart';
 /// final distance = pointToLineDistance(point, line, unit: Unit.miles);
 /// // distance == 69.11854715938406
 /// ```
-num pointToLineDistance(
+double pointToLineDistance(
   Point point,
   LineString line, {
   Unit unit = Unit.kilometers,
@@ -40,7 +40,7 @@ num pointToLineDistance(
 }
 
 /// Returns the distance between a point P on a segment AB.
-num _distanceToSegment(
+double _distanceToSegment(
   Position p,
   Position a,
   Position b, {
@@ -64,7 +64,7 @@ num _distanceToSegment(
   return _calcDistance(p, pb, method: method, unit: Unit.degrees);
 }
 
-num _calcDistance(
+double _calcDistance(
   Position a,
   Position b, {
   required Unit unit,

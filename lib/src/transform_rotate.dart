@@ -15,7 +15,7 @@ import 'package:turf/src/rhumb_destination.dart';
 
 GeoJSONObject transformRotate(
   GeoJSONObject geoJSON,
-  num angle, {
+  double angle, {
   Point? pivot,
   bool mutate = false,
 }) {

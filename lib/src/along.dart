@@ -14,7 +14,7 @@ import 'invariant.dart';
 ///   the start point of the line is returned.
 /// If [distance] is larger than line length, the end point is returned
 /// If [line] have no geometry or coordinates, an Exception is thrown
-Feature<Point> along(Feature<LineString> line, num distance,
+Feature<Point> along(Feature<LineString> line, double distance,
     [Unit unit = Unit.kilometers]) {
   // Get Coords
   final coords = getCoords(line);
@@ -22,9 +22,9 @@ Feature<Point> along(Feature<LineString> line, num distance,
     throw Exception('line must contain at least one coordinate');
   }
   if (distance < 0) {
-    distance = max(0, length(line, unit) + distance);
+    distance = max(0.0, length(line, unit) + distance);
   }
-  num traveled = 0;
+  double traveled = 0;
   for (int i = 0; i < coords.length; i++) {
     if (distance >= traveled && i == coords.length - 1) {
       break;

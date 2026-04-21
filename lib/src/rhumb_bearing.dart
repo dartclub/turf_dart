@@ -17,8 +17,8 @@ import '../helpers.dart';
 /// point1.properties['bearing'] = bearing;
 /// point2.properties['bearing'] = bearing;
 /// ```
-num rhumbBearing(Point start, Point end, {bool kFinal = false}) {
-  num bear360;
+double rhumbBearing(Point start, Point end, {bool kFinal = false}) {
+  double bear360;
   if (kFinal) {
     bear360 = calculateRhumbBearing(getCoord(end), getCoord(start));
   } else {
@@ -39,14 +39,14 @@ num rhumbBearing(Point start, Point end, {bool kFinal = false}) {
 /// var p2 = Position.named(lng: 50.964, lat: 1.853);
 /// var d = p1.rhumbBearingTo(p2); // 116.7 m
 /// ```
-num calculateRhumbBearing(Position from, Position to) {
+double calculateRhumbBearing(Position from, Position to) {
   // φ => phi
   // Δλ => deltaLambda
   // Δψ => deltaPsi
   // θ => theta
-  num phi1 = degreesToRadians(from.lat);
-  num phi2 = degreesToRadians(to.lat);
-  num deltaLambda = degreesToRadians(to.lng - from.lng);
+  double phi1 = degreesToRadians(from.lat);
+  double phi2 = degreesToRadians(to.lat);
+  double deltaLambda = degreesToRadians(to.lng - from.lng);
   // if deltaLambda over 180° take shorter rhumb line across the anti-meridian:
   if (deltaLambda > math.pi) {
     deltaLambda -= 2 * math.pi;

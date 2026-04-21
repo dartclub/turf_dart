@@ -5,8 +5,8 @@ import 'package:turf/distance.dart';
 import 'package:turf/helpers.dart';
 
 void main() {
-  num defaultBearing = 180;
-  num defaultDistance = 100;
+  double defaultBearing = 180;
+  double defaultDistance = 100;
 
   test('destination', () {
     var start = Position.named(
@@ -29,8 +29,8 @@ void main() {
   });
 
   test('point bearing 0', () {
-    num testBearing = 0;
-    num testDistance = defaultDistance;
+    double testBearing = 0;
+    double testDistance = defaultDistance;
     Point testStart = Point(
       coordinates: Position.named(
         lng: -75,
@@ -53,8 +53,8 @@ void main() {
   });
 
   test('point bearing 90', () {
-    num testBearing = 90;
-    num testDistance = defaultDistance;
+    double testBearing = 90;
+    double testDistance = defaultDistance;
     Point testStart = Point(
       coordinates: Position.named(
         lng: -75,
@@ -77,8 +77,8 @@ void main() {
   });
 
   test('point bearing 180', () {
-    num testBearing = defaultBearing;
-    num testDistance = defaultDistance;
+    double testBearing = defaultBearing;
+    double testDistance = defaultDistance;
     Point testStart = Point(
       coordinates: Position.named(
         lng: -75,
@@ -101,8 +101,8 @@ void main() {
   });
 
   test('point 5000 km away bearing 90', () {
-    num testBearing = 90;
-    num testDistanceKm = 5000;
+    double testBearing = 90;
+    double testDistanceKm = 5000;
     Point testStart = Point(
       coordinates: Position.named(
         lng: -75,
@@ -126,8 +126,8 @@ void main() {
   });
 
   test('point 5000 miles away bearing 90', () {
-    num testBearing = 90;
-    num testDistanceMiles = 5000;
+    double testBearing = 90;
+    double testDistanceMiles = 5000;
     Point testStart = Point(
       coordinates: Position.named(
         lng: -75,

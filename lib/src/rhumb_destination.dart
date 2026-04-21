@@ -23,8 +23,8 @@ import 'package:turf/src/invariant.dart';
 
 Feature<Point> rhumbDestination(
   Point origin,
-  num distance,
-  num bearing, {
+  double distance,
+  double bearing, {
   Unit? unit = Unit.kilometers,
   Map<String, dynamic>? properties,
 }) {
@@ -40,10 +40,10 @@ Feature<Point> rhumbDestination(
   // compensate the crossing of the 180th meridian (https://macwright.org/2016/09/26/the-180th-meridian.html)
   // solution from https://github.com/mapbox/mapbox-gl-js/issues/3250#issuecomment-294887678
   final compensateLng = (destination.lng - coords.lng) > 180
-      ? -360
+      ? -360.0
       : (coords.lng - destination.lng) > 180
-          ? 360
-          : 0;
+          ? 360.0
+          : 0.0;
 
   return Feature<Point>(
       geometry: Point(
@@ -51,8 +51,9 @@ Feature<Point> rhumbDestination(
               Position(destination.lng + compensateLng, destination.lat)));
 }
 
-Position calculateRhumbDestination(Position origin, num distance, num bearing,
-    [num radius = earthRadius]) {
+Position calculateRhumbDestination(
+    Position origin, double distance, double bearing,
+    [double radius = earthRadius]) {
   final R = radius > 0 ? radius : earthRadius;
   final delta = distance / R;
   final lambda1 = (origin.lng * math.pi) / 180;

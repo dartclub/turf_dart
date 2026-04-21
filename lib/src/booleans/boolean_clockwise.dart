@@ -32,7 +32,7 @@ import '../../helpers.dart';
 /// ```
 bool booleanClockwise(LineString line) {
   var ring = getCoords(line) as List<Position>;
-  num sum = 0;
+  double sum = 0;
   int i = 1;
   Position prev;
   Position? cur;

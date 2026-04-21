@@ -13,8 +13,8 @@ Feature<Point> centroid(
   GeoJSONObject geoJSON, {
   Map<String, dynamic>? properties,
 }) {
-  num xSum = 0;
-  num ySum = 0;
+  double xSum = 0;
+  double ySum = 0;
   int len = 0;
 
   coordEach(geoJSON, (coords, _, __, ___, ____) {
