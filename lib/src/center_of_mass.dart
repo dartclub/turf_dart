@@ -1,5 +1,16 @@
 import 'package:turf/turf.dart';
 
+/// Computes the center of mass of any GeoJSON object and returns it as a [Feature<Point>].
+///
+/// Handles the following geometry types:
+/// - [Point]: returns the point itself.
+/// - [LineString]: returns the average of its vertices.
+/// - [Polygon]: uses the geometric centroid formula weighted by area.
+/// - [MultiPolygon]: computes a weighted average of each polygon's center of mass by area.
+/// - All other types: falls back to [centroid].
+///
+/// - [geoJson] the GeoJSON object to compute the center of mass for.
+/// - [properties] optional properties to attach to the returned [Feature].
 Feature<Point> centerOfMass(
   GeoJSONObject geoJson, {
   Map<String, dynamic>? properties = const {},
@@ -84,7 +95,14 @@ Feature<Point> centerOfMass(
   return centroid(geoJson);
 }
 
-/// Computes center of mass for a single Polygon
+/// Computes the center of mass for a single [Polygon] using the standard
+/// geometric centroid formula for polygons.
+///
+/// If the polygon has zero area (i.e. all points are collinear or identical),
+/// falls back to the average of its vertices.
+///
+/// - [polygon] the polygon to compute the center of mass for.
+/// - [properties] optional properties to attach to the returned [Feature].
 Feature<Point> _centerOfMassPolygon(
   Polygon polygon, {
   Map<String, dynamic>? properties = const {},
@@ -135,7 +153,11 @@ Feature<Point> _centerOfMassPolygon(
   );
 }
 
-/// Computes the signed area of a polygon (Position list)
+/// Computes the unsigned area of a polygon ring given as a list of [Position]s,
+/// using the shoelace formula.
+///
+/// - [coords] the list of positions forming the polygon ring (should be closed,
+/// i.e. first and last positions are the same).
 double _polygonArea(List<Position> coords) {
   double area = 0;
   for (int i = 0; i < coords.length - 1; i++) {
