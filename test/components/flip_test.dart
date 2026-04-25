@@ -5,27 +5,27 @@ void main() {
   group('flip tests', () {
     test('flipping individual coordinates - point', () {
       // Original point
-      var point = Feature(
+      final point = Feature(
         geometry: Point(
           coordinates: Position.named(lat: -75, lng: 39),
         ),
       );
 
-      var flipped = flip(point);
+      final flipped = flip(point);
 
       expect(flipped.geometry?.coordinates.lat, equals(39));
       expect(flipped.geometry?.coordinates.lng, equals(-75));
     });
 
     test('flipping coordinates - multipoint', () {
-      var multiPoint = Feature(
+      final multiPoint = Feature(
         geometry: MultiPoint(coordinates: [
           Position.named(lat: -75, lng: 39),
           Position.named(lat: -74, lng: 38),
         ]),
       );
 
-      var flipped = flip(multiPoint);
+      final flipped = flip(multiPoint);
 
       expect(flipped.geometry?.coordinates[0].lat, equals(39));
       expect(flipped.geometry?.coordinates[0].lng, equals(-75));
@@ -35,21 +35,21 @@ void main() {
     });
 
     test('flipping coordinates - linestring', () {
-      var line = Feature(
+      final line = Feature(
         geometry: LineString(coordinates: [
           Position.named(lat: -75, lng: 39),
           Position.named(lat: -74, lng: 38),
         ]),
       );
 
-      var flipped = flip(line);
+      final flipped = flip(line);
 
       expect(flipped.geometry?.coordinates[0].lat, equals(39));
       expect(flipped.geometry?.coordinates[0].lng, equals(-75));
     });
 
     test('flipping coordinates - multilinestring', () {
-      var multiLine = Feature(
+      final multiLine = Feature(
         geometry: MultiLineString(coordinates: [
           [
             Position.named(lat: -75, lng: 39),
@@ -62,7 +62,7 @@ void main() {
         ]),
       );
 
-      var flipped = flip(multiLine);
+      final flipped = flip(multiLine);
 
       expect(flipped.geometry?.coordinates[0][0].lat, equals(39));
       expect(flipped.geometry?.coordinates[0][0].lng, equals(-75));
@@ -79,7 +79,7 @@ void main() {
 
     test('flipping a group of coordinates - polygon', () {
       // Original polygon
-      var polygon = Feature(
+      final polygon = Feature(
         geometry: Polygon(
           coordinates: [
             [
@@ -94,7 +94,7 @@ void main() {
       );
 
       // Expected flipped polygon
-      var expPolygon = [
+      final expPolygon = [
         [
           Position.named(lat: 39, lng: -75),
           Position.named(lat: 38, lng: -75),
@@ -104,7 +104,7 @@ void main() {
         ]
       ];
 
-      var flipped = flip(polygon);
+      final flipped = flip(polygon);
 
       // Compare ring by ring
       for (int i = 0; i < expPolygon[0].length; i++) {
@@ -116,7 +116,7 @@ void main() {
     });
 
     test('flipping coordinates - multipolygon', () {
-      var multiPolygon = Feature(
+      final multiPolygon = Feature(
         geometry: MultiPolygon(coordinates: [
           // First polygon
           [
@@ -141,7 +141,7 @@ void main() {
         ]),
       );
 
-      var flipped = flip(multiPolygon);
+      final flipped = flip(multiPolygon);
 
       // First polygon, first ring
       expect(flipped.geometry?.coordinates[0][0][0].lat, equals(39));
@@ -157,21 +157,21 @@ void main() {
     });
 
     test('flipping coordinates - point with decimal and negative', () {
-      var point = Feature(
+      final point = Feature(
         geometry: Point(
           coordinates: Position.named(lat: -23.456, lng: 45.678),
         ),
       );
 
-      var flipped = flip(point);
+      final flipped = flip(point);
 
       expect(flipped.geometry?.coordinates.lat, equals(45.678));
       expect(flipped.geometry?.coordinates.lng, equals(-23.456));
     });
 
     test('empty geometries should remain empty', () {
-      var emptyLine = Feature(geometry: LineString(coordinates: []));
-      var flipped = flip(emptyLine);
+      final emptyLine = Feature(geometry: LineString(coordinates: []));
+      final flipped = flip(emptyLine);
       expect(flipped.geometry?.coordinates, equals([]));
     });
   });
