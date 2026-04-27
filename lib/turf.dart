@@ -9,6 +9,7 @@ export 'bearing.dart';
 export 'boolean.dart';
 export 'center.dart';
 export 'centroid.dart';
+export 'combine.dart';
 export 'clean_coords.dart';
 export 'clusters.dart';
 export 'destination.dart';
