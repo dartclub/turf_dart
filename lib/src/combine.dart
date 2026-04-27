@@ -1,111 +1,88 @@
 import 'package:turf/meta.dart';
 
-/// Combines a [FeatureCollection] of Point, LineString or Polygon features
-/// into a single MultiPoint, MultiLineString or MultiPolygon feature.
+/// Combines a [FeatureCollection] of [Point], [LineString], or [Polygon] features
+/// (and their Multi* counterparts) into [MultiPoint], [MultiLineString], or
+/// [MultiPolygon] features.
 ///
-/// The [collection] must be a FeatureCollection of the same geometry type.
-/// Supported types are Point, LineString, and Polygon.
+/// Features may be mixed: each non-empty geometry kind becomes one output feature.
+/// Other geometry types and features with null geometry are skipped.
 ///
-/// Returns a [Feature] with a Multi* geometry containing all coordinates from the input collection.
-/// Throws [ArgumentError] if features have inconsistent geometry types or unsupported types.
+/// Returns a [FeatureCollection] with up to three features, in Turf JS order:
+/// MultiLineString, then MultiPoint, then MultiPolygon (only groups that have
+/// coordinates are included).
 ///
-/// If [mergeProperties] is true, properties from the first feature will be preserved.
-/// Otherwise, properties will be empty by default.
+/// Each output feature has `properties.collectedProperties`, a list of the
+/// source features' `properties` values (one entry per contributing feature;
+/// for a Multi* input, one entry applies to all coordinates merged from that feature).
 ///
 /// See: https://turfjs.org/docs/#combine
-Feature combine(
-  FeatureCollection collection, {
-  bool mergeProperties = false,
-}) {
-  // Validate that the collection is not empty
-  if (collection.features.isEmpty) {
-    throw ArgumentError('FeatureCollection must contain at least one feature');
-  }
+FeatureCollection<GeometryObject> combine(FeatureCollection collection) {
+  // Buckets mirror @turf/combine: coordinates + parallel property list per group.
+  final multiPointCoords = <Position>[];
+  final multiPointProps = <Map<String, dynamic>?>[];
 
-  // Get the geometry type of the first feature to validate consistency
-  final firstFeature = collection.features.first;
-  final geometryType = firstFeature.geometry?.runtimeType;
-  if (geometryType == null) {
-    throw ArgumentError('Feature must have a geometry');
-  }
-  
-  final firstGeometry = firstFeature.geometry!;
+  final multiLineCoords = <List<Position>>[];
+  final multiLineProps = <Map<String, dynamic>?>[];
 
-  // Ensure all features have the same geometry type
-  for (final feature in collection.features) {
-    final geometry = feature.geometry;
+  final multiPolyCoords = <List<List<Position>>>[];
+  final multiPolyProps = <Map<String, dynamic>?>[];
+
+  // Walk input; flatten Multi* into the same bucket as their single counterparts.
+  featureEach(collection, (currentFeature, _) {
+    final geometry = currentFeature.geometry;
     if (geometry == null) {
-      throw ArgumentError('All features must have a geometry');
+      return;
     }
-    
-    if (geometry.runtimeType != firstGeometry.runtimeType) {
-      throw ArgumentError(
-        'All features must have the same geometry type. '
-        'Found: ${geometry.type}, expected: ${firstGeometry.type}',
-      );
+    final Map<String, dynamic>? props = currentFeature.properties;
+
+    if (geometry is Point) {
+      multiPointCoords.add(geometry.coordinates);
+      multiPointProps.add(props);
+    } else if (geometry is MultiPoint) {
+      multiPointCoords.addAll(geometry.coordinates);
+      multiPointProps.add(props);
+    } else if (geometry is LineString) {
+      multiLineCoords.add(geometry.coordinates);
+      multiLineProps.add(props);
+    } else if (geometry is MultiLineString) {
+      multiLineCoords.addAll(geometry.coordinates);
+      multiLineProps.add(props);
+    } else if (geometry is Polygon) {
+      multiPolyCoords.add(geometry.coordinates);
+      multiPolyProps.add(props);
+    } else if (geometry is MultiPolygon) {
+      multiPolyCoords.addAll(geometry.coordinates);
+      multiPolyProps.add(props);
     }
+  });
+
+  // Emit one Feature per non-empty group (same key order as Object.keys(...).sort() in Turf).
+  final features = <Feature<GeometryObject>>[];
+
+  if (multiLineCoords.isNotEmpty) {
+    features.add(
+      Feature<GeometryObject>(
+        geometry: MultiLineString(coordinates: multiLineCoords),
+        properties: <String, dynamic>{'collectedProperties': multiLineProps},
+      ),
+    );
   }
-
-  // Set of properties to include in result if mergeProperties is true
-  final properties = mergeProperties && firstFeature.properties != null 
-      ? Map<String, dynamic>.from(firstFeature.properties!)
-      : <String, dynamic>{};
-
-  // Create the appropriate geometry based on type
-  GeometryObject resultGeometry;
-  
-  if (firstGeometry is Point) {
-    // Combine all Point coordinates into a single MultiPoint
-    final coordinates = <Position>[];
-    for (final feature in collection.features) {
-      final point = feature.geometry as Point;
-      coordinates.add(point.coordinates);
-    }
-    
-    resultGeometry = MultiPoint(coordinates: coordinates);
-  } else if (firstGeometry is LineString) {
-    // Combine all LineString coordinate arrays into a MultiLineString
-    final coordinates = <List<Position>>[];
-    for (final feature in collection.features) {
-      final line = feature.geometry as LineString;
-      coordinates.add(line.coordinates);
-    }
-    
-    resultGeometry = MultiLineString(coordinates: coordinates);
-  } else if (firstGeometry is Polygon) {
-    // Combine all Polygon coordinate arrays into a MultiPolygon
-    final coordinates = <List<List<Position>>>[];
-    for (final feature in collection.features) {
-      final polygon = feature.geometry as Polygon;
-      coordinates.add(polygon.coordinates);
-    }
-    
-    resultGeometry = MultiPolygon(coordinates: coordinates);
-  } else {
-    // Throw if unsupported geometry type is encountered
-    throw ArgumentError(
-      'Unsupported geometry type: ${firstGeometry.type}. '
-      'Only Point, LineString, and Polygon are supported.',
+  if (multiPointCoords.isNotEmpty) {
+    features.add(
+      Feature<GeometryObject>(
+        geometry: MultiPoint(coordinates: multiPointCoords),
+        properties: <String, dynamic>{'collectedProperties': multiPointProps},
+      ),
+    );
+  }
+  if (multiPolyCoords.isNotEmpty) {
+    features.add(
+      Feature<GeometryObject>(
+        geometry: MultiPolygon(coordinates: multiPolyCoords),
+        properties: <String, dynamic>{'collectedProperties': multiPolyProps},
+      ),
     );
   }
 
-  // Create the Feature result
-  final result = Feature(
-    geometry: resultGeometry,
-    properties: properties,
-  );
-  
-  // Apply otherMembers from the first feature to preserve GeoJSON compliance
-  final resultJson = result.toJson();
-  final firstFeatureJson = firstFeature.toJson();
-  
-  // Copy any non-standard GeoJSON fields (otherMembers)
-  firstFeatureJson.forEach((key, value) {
-    if (key != 'type' && key != 'geometry' && key != 'properties' && key != 'id') {
-      resultJson[key] = value;
-    }
-  });
-  
-  // Return the result with otherMembers preserved
-  return Feature.fromJson(resultJson);
+  return FeatureCollection<GeometryObject>(features: features);
 }

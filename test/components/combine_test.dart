@@ -1,171 +1,19 @@
-import 'dart:convert';
-
 import 'package:geotypes/geotypes.dart';
 import 'package:test/test.dart';
 import 'package:turf/src/combine.dart';
 
+/// Shorter combine tests: empty input, skips, properties, serialization.
+/// Bulk geometry: `combine_geometry_test.dart`. Flatten / order: `combine_flatten_and_order_test.dart`.
 void main() {
   group('combine:', () {
-    // Geometry-based tests
-    group('geometry transformations:', () {
-      test('combines multiple points to a MultiPoint', () {
-        final point1 = Feature(
-          geometry: Point(coordinates: Position.of([0, 0])),
-          properties: {'name': 'point1'},
-        );
-        final point2 = Feature(
-          geometry: Point(coordinates: Position.of([1, 1])),
-          properties: {'name': 'point2'},
-        );
-        final point3 = Feature(
-          geometry: Point(coordinates: Position.of([2, 2, 10])), // With altitude
-          properties: {'name': 'point3'},
-        );
-
-        final collection = FeatureCollection(features: [point1, point2, point3]);
-        final result = combine(collection);
-
-        expect(result.geometry, isA<MultiPoint>());
-        expect((result.geometry as MultiPoint).coordinates.length, 3);
-        // Check altitude preservation
-        expect((result.geometry as MultiPoint).coordinates[2].length, 3);
-        expect((result.geometry as MultiPoint).coordinates[2][2], 10);
-      });
-
-      test('combines multiple linestrings to a MultiLineString', () {
-        final line1 = Feature(
-          geometry: LineString(coordinates: [
-            Position.of([0, 0]),
-            Position.of([1, 1]),
-          ]),
-          properties: {'name': 'line1'},
-        );
-        final line2 = Feature(
-          geometry: LineString(coordinates: [
-            Position.of([2, 2]),
-            Position.of([3, 3]),
-          ]),
-          properties: {'name': 'line2'},
-        );
-        final line3 = Feature(
-          geometry: LineString(coordinates: [
-            Position.of([4, 4, 10]), // With altitude
-            Position.of([5, 5, 15]), // With altitude
-          ]),
-          properties: {'name': 'line3'},
-        );
-
-        final collection = FeatureCollection(features: [line1, line2, line3]);
-        final result = combine(collection);
-
-        expect(result.geometry, isA<MultiLineString>());
-        expect((result.geometry as MultiLineString).coordinates.length, 3);
-        // Check altitude preservation
-        expect((result.geometry as MultiLineString).coordinates[2][0].length, 3);
-        expect((result.geometry as MultiLineString).coordinates[2][0][2], 10);
-        expect((result.geometry as MultiLineString).coordinates[2][1][2], 15);
-      });
-
-      test('combines multiple polygons to a MultiPolygon', () {
-        final poly1 = Feature(
-          geometry: Polygon(coordinates: [
-            [
-              Position.of([0, 0]),
-              Position.of([1, 0]),
-              Position.of([1, 1]),
-              Position.of([0, 1]),
-              Position.of([0, 0]),
-            ]
-          ]),
-          properties: {'name': 'poly1'},
-        );
-        final poly2 = Feature(
-          geometry: Polygon(coordinates: [
-            [
-              Position.of([2, 2]),
-              Position.of([3, 2]),
-              Position.of([3, 3]),
-              Position.of([2, 3]),
-              Position.of([2, 2]),
-            ]
-          ]),
-          properties: {'name': 'poly2'},
-        );
-        final poly3 = Feature(
-          geometry: Polygon(coordinates: [
-            [
-              Position.of([4, 4, 10]), // With altitude
-              Position.of([5, 4, 10]),
-              Position.of([5, 5, 10]),
-              Position.of([4, 5, 10]),
-              Position.of([4, 4, 10]),
-            ]
-          ]),
-          properties: {'name': 'poly3'},
-        );
-
-        final collection = FeatureCollection(features: [poly1, poly2, poly3]);
-        final result = combine(collection);
-
-        expect(result.geometry, isA<MultiPolygon>());
-        expect((result.geometry as MultiPolygon).coordinates.length, 3);
-        // Check altitude preservation
-        expect((result.geometry as MultiPolygon).coordinates[2][0][0].length, 3);
-        expect((result.geometry as MultiPolygon).coordinates[2][0][0][2], 10);
-      });
-
-      test('preserves negative or high-altitude z-values', () {
-        // Test for extreme altitude values (negative and high)
-        final point1 = Feature(
-          geometry: Point(coordinates: Position.of([0, 0, -9999.5])), // Deep negative altitude
-          properties: {'name': 'deep_point'},
-        );
-        final point2 = Feature(
-          geometry: Point(coordinates: Position.of([1, 1, 9999.5])), // High positive altitude
-          properties: {'name': 'high_point'},
-        );
-
-        final collection = FeatureCollection(features: [point1, point2]);
-        final result = combine(collection);
-
-        expect(result.geometry, isA<MultiPoint>());
-        expect((result.geometry as MultiPoint).coordinates.length, 2);
-        
-        // Check extreme altitude preservation
-        expect((result.geometry as MultiPoint).coordinates[0].length, 3);
-        expect((result.geometry as MultiPoint).coordinates[0][2], -9999.5);
-        expect((result.geometry as MultiPoint).coordinates[1].length, 3);
-        expect((result.geometry as MultiPoint).coordinates[1][2], 9999.5);
-      });
-    });
-
-    // Error tests
-    group('validation and errors:', () {
-      test('throws error on mixed geometry types', () {
-        final point = Feature(
-          geometry: Point(coordinates: Position.of([0, 0])),
-          properties: {'name': 'point'},
-        );
-        final line = Feature(
-          geometry: LineString(coordinates: [
-            Position.of([0, 0]),
-            Position.of([1, 1]),
-          ]),
-          properties: {'name': 'line'},
-        );
-
-        final collection = FeatureCollection(features: [point, line]);
-        expect(() => combine(collection), throwsA(isA<ArgumentError>()));
-      });
-
-      test('throws error on empty collection', () {
+    group('empty and unsupported:', () {
+      test('empty collection yields empty FeatureCollection', () {
         final collection = FeatureCollection<Point>(features: []);
-        expect(() => combine(collection), throwsA(isA<ArgumentError>()));
+        final result = combine(collection);
+        expect(result.features, isEmpty);
       });
 
-      test('throws error on unsupported geometry types (validation test)', () {
-        // This is a validation test - GeometryCollection is not claimed to be
-        // supported by combine(), which only works with Point, LineString, and Polygon.
+      test('skips GeometryCollection features', () {
         final geomCollection = Feature(
           geometry: GeometryCollection(geometries: [
             Point(coordinates: Position.of([0, 0])),
@@ -177,14 +25,48 @@ void main() {
           properties: {'name': 'geomCollection'},
         );
 
-        final collection = FeatureCollection(features: [geomCollection, geomCollection]);
-        expect(() => combine(collection), throwsA(isA<ArgumentError>()));
+        final collection =
+            FeatureCollection(features: [geomCollection, geomCollection]);
+        final result = combine(collection);
+        expect(result.features, isEmpty);
+      });
+
+      test('skips features with null geometry', () {
+        final noGeom =
+            Feature<Point>(geometry: null, properties: {'skip': true});
+        final point = Feature(
+          geometry: Point(coordinates: Position.of([1, 1])),
+          properties: {'keep': true},
+        );
+        final result = combine(FeatureCollection(features: [noGeom, point]));
+        expect(result.features.length, 1);
+        final collected =
+            result.features.first.properties!['collectedProperties'] as List;
+        expect(collected, [
+          {'keep': true}
+        ]);
+      });
+
+      test('point plus unsupported yields only MultiPoint', () {
+        final geomCollection = Feature(
+          geometry: GeometryCollection(geometries: [
+            Point(coordinates: Position.of([99, 99])),
+          ]),
+          properties: {'ignored': true},
+        );
+        final point = Feature(
+          geometry: Point(coordinates: Position.of([0, 0])),
+          properties: {'ok': true},
+        );
+        final result =
+            combine(FeatureCollection(features: [geomCollection, point]));
+        expect(result.features.length, 1);
+        expect(result.features.first.geometry, isA<MultiPoint>());
       });
     });
 
-    // Property handling tests
-    group('property handling:', () {
-      test('has empty properties by default', () {
+    group('collectedProperties:', () {
+      test('lists each source feature properties in order', () {
         final point1 = Feature(
           geometry: Point(coordinates: Position.of([0, 0])),
           properties: {'name': 'point1', 'value': 42},
@@ -197,61 +79,45 @@ void main() {
         final collection = FeatureCollection(features: [point1, point2]);
         final result = combine(collection);
 
-        // By default, properties should be empty
-        expect(result.properties, isEmpty);
+        final collected =
+            result.features.first.properties!['collectedProperties'] as List;
+        expect(collected.length, 2);
+        expect(collected[0], {'name': 'point1', 'value': 42});
+        expect(collected[1], {'name': 'point2', 'otherValue': 'test'});
       });
 
-      test('preserves properties from first feature when mergeProperties=true', () {
-        final point1 = Feature(
+      test('includes null when feature properties are null', () {
+        final a = Feature(
           geometry: Point(coordinates: Position.of([0, 0])),
-          properties: {'name': 'point1', 'value': 42},
+          properties: null,
         );
-        final point2 = Feature(
+        final b = Feature(
           geometry: Point(coordinates: Position.of([1, 1])),
-          properties: {'name': 'point2', 'otherValue': 'test'},
+          properties: {'x': 1},
         );
-
-        final collection = FeatureCollection(features: [point1, point2]);
-        final result = combine(collection, mergeProperties: true);
-
-        // When mergeProperties is true, copies properties from first feature only
-        expect(result.properties!['name'], 'point1');
-        expect(result.properties!['value'], 42);
-        expect(result.properties!.containsKey('otherValue'), isFalse);
+        final collected = combine(FeatureCollection(features: [a, b]))
+            .features
+            .first
+            .properties!['collectedProperties'] as List;
+        expect(collected.length, 2);
+        expect(collected[0], isNull);
+        expect(collected[1], {'x': 1});
       });
     });
 
-    // GeoJSON otherMembers tests
-    group('GeoJSON compliance:', () {
-      test('preserves otherMembers in output', () {
-        // Create a source feature with otherMembers by parsing from JSON
-        final jsonStr = '''{
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [0, 0]
-          },
-          "properties": {"name": "point1"},
-          "customField": "custom value",
-          "metaData": {"source": "test"}
-        }''';
-
-        final sourceFeature = Feature<Point>.fromJson(jsonDecode(jsonStr));
-        
-        // Create a feature collection with this feature
-        final collection = FeatureCollection(features: [sourceFeature]);
-        
-        // Combine (which should use the same feature as the source for the result)
-        final result = combine(collection, mergeProperties: true);
-        
-        // Convert to JSON and check for preservation of otherMembers
-        final resultJson = result.toJson();
-        
-        // Verify the otherMembers exist in the result
-        expect(resultJson.containsKey('customField'), isTrue);
-        expect(resultJson['customField'], 'custom value');
-        expect(resultJson.containsKey('metaData'), isTrue);
-        expect(resultJson['metaData']?['source'], 'test');
+    group('round-trip GeoJSON:', () {
+      test('output serializes like Turf combine', () {
+        final point1 = Feature(
+          geometry: Point(coordinates: Position.of([0, 0])),
+          properties: {'name': 'a'},
+        );
+        final result = combine(FeatureCollection(features: [point1]));
+        final json = result.toJson();
+        expect(json['type'], 'FeatureCollection');
+        expect((json['features'] as List).length, 1);
+        final f = (json['features'] as List).first as Map<String, dynamic>;
+        expect(f['geometry']?['type'], 'MultiPoint');
+        expect(f['properties']?['collectedProperties'], isA<List>());
       });
     });
   });
