@@ -49,15 +49,15 @@ void main() {
     benchmark('point feature', () {
       pointOnFeature(point);
     });
-    
+
     benchmark('polygon feature', () {
       pointOnFeature(polygon);
     });
-    
+
     benchmark('lineString feature', () {
       pointOnFeature(lineString);
     });
-    
+
     benchmark('feature collection', () {
       pointOnFeature(featureCollection);
     });
