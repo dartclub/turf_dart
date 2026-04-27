@@ -130,11 +130,13 @@ class PointClustering {
         .sort((a, b) => a.distanceSquared.compareTo(b.distanceSquared));
 
     // Check if points form two distinct groups by distance
-    num totalDist = 0;
-    for (int i = 1; i < pointsWithDistance.length; i++) {
-      totalDist += (pointsWithDistance[i].distanceSquared -
-          pointsWithDistance[i - 1].distanceSquared);
-    }
+    final totalDist = List.generate(
+      pointsWithDistance.length - 1,
+      (i) =>
+          pointsWithDistance[i + 1].distanceSquared -
+          pointsWithDistance[i].distanceSquared,
+    ).fold<num>(0, (sum, gap) => sum + gap);
+
     final avgDistGap = totalDist / (pointsWithDistance.length - 1);
 
     // Find significant gap in distances
