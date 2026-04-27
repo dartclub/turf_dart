@@ -71,7 +71,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   final poly1Bbox = bbox(geom1);
   final poly2Bbox = bbox(geom2);
-  if (!_doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
+  if (!doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
@@ -82,17 +82,5 @@ bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
       }
     }
   }
-  return true;
-}
-
-/// True when [bbox1] contains [bbox2] in longitude and latitude (RFC 7946 order).
-bool _doBBoxesOverlap(BBox bbox1, BBox bbox2) {
-  if (bbox1.lng1 > bbox2.lng1 ||
-      bbox1.lng2 < bbox2.lng2 ||
-      bbox1.lat1 > bbox2.lat1 ||
-      bbox1.lat2 < bbox2.lat2) {
-    return false;
-  }
-
   return true;
 }
