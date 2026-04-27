@@ -38,12 +38,8 @@ class PositionUtils {
     if (nodes.isEmpty) return [];
 
     // Calculate the centroid of all nodes
-    num sumX = 0;
-    num sumY = 0;
-    for (final node in nodes) {
-      sumX += node[0] ?? 0;
-      sumY += node[1] ?? 0;
-    }
+    final sumX = nodes.fold<num>(0, (s, node) => s + (node[0] ?? 0));
+    final sumY = nodes.fold<num>(0, (s, node) => s + (node[1] ?? 0));
     final centroidX = sumX / nodes.length;
     final centroidY = sumY / nodes.length;
 
