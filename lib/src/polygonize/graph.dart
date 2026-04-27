@@ -32,7 +32,7 @@ class Edge {
 /// Helper class to associate an edge with its bearing
 class EdgeWithBearing {
   final Edge edge;
-  final num bearing;
+  final double bearing;
 
   EdgeWithBearing(this.edge, this.bearing);
 }
@@ -109,17 +109,17 @@ class Graph {
   }
 
   /// Calculate bearing between two positions
-  num _calculateBearing(Position start, Position end) {
-    num lng1 = _degreesToRadians(start[0]!);
-    num lng2 = _degreesToRadians(end[0]!);
-    num lat1 = _degreesToRadians(start[1]!);
-    num lat2 = _degreesToRadians(end[1]!);
-    num a = sin(lng2 - lng1) * cos(lat2);
-    num b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
+  double _calculateBearing(Position start, Position end) {
+    final lng1 = _degreesToRadians(start[0]!);
+    final lng2 = _degreesToRadians(end[0]!);
+    final lat1 = _degreesToRadians(start[1]!);
+    final lat2 = _degreesToRadians(end[1]!);
+    final a = sin(lng2 - lng1) * cos(lat2);
+    final b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
 
     // Convert to azimuth (0-360°, clockwise from north)
-    num bearing = _radiansToDegrees(atan2(a, b));
-    return (bearing % 360 + 360) % 360; // Normalize to 0-360
+    final bearing = _radiansToDegrees(atan2(a, b));
+    return (bearing % 360 + 360) % 360;
   }
 
   /// Create a canonical edge key
@@ -131,12 +131,12 @@ class Graph {
   }
 
   /// Convert degrees to radians
-  num _degreesToRadians(num degrees) {
+  double _degreesToRadians(num degrees) {
     return degrees * pi / 180;
   }
 
   /// Convert radians to degrees
-  num _radiansToDegrees(num radians) {
+  double _radiansToDegrees(num radians) {
     return radians * 180 / pi;
   }
 }
