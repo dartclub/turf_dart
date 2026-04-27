@@ -1,120 +1,98 @@
-import 'dart:math' as math;
-import 'package:geotypes/geotypes.dart';
-import 'package:turf/helpers.dart';
+import 'dart:math';
+import '../meta.dart';
 
-/// Converts WGS84 GeoJSON object to Web Mercator projection.
-///
-/// Accepts a [GeoJSONObject] or [Position] and returns a projected [GeoJSONObject] or [Position].
-/// This function handles all GeoJSON types including Point, LineString, Polygon, 
-/// MultiPoint, MultiLineString, MultiPolygon, Feature, and FeatureCollection.
-///
-/// If [mutate] is true, the input object is mutated for performance.
-///
-/// See: https://en.wikipedia.org/wiki/Web_Mercator_projection
-dynamic geoToMercator(dynamic geojson, {bool mutate = false}) {
-  // For simple Position objects, use the direct conversion
-  if (geojson is Position) {
-    return _toMercatorPosition(geojson);
-  }
-  
-  // Check that input is a GeoJSONObject for all other cases
-  if (geojson is! GeoJSONObject) {
-    throw ArgumentError('Unsupported input type: ${geojson.runtimeType}');
-  }
-  
-  // Clone geojson to avoid side effects if not mutating
-  final workingObject = !mutate ? (geojson as GeoJSONObject).clone() : geojson;
-  
-  // Handle different GeoJSON types
-  if (workingObject is Point) {
-    workingObject.coordinates = _toMercatorPosition(workingObject.coordinates);
-  } else if (workingObject is LineString) {
-    for (var i = 0; i < workingObject.coordinates.length; i++) {
-      workingObject.coordinates[i] = _toMercatorPosition(workingObject.coordinates[i]);
-    }
-  } else if (workingObject is Polygon) {
-    for (var i = 0; i < workingObject.coordinates.length; i++) {
-      for (var j = 0; j < workingObject.coordinates[i].length; j++) {
-        workingObject.coordinates[i][j] = _toMercatorPosition(workingObject.coordinates[i][j]);
-      }
-    }
-  } else if (workingObject is MultiPoint) {
-    for (var i = 0; i < workingObject.coordinates.length; i++) {
-      workingObject.coordinates[i] = _toMercatorPosition(workingObject.coordinates[i]);
-    }
-  } else if (workingObject is MultiLineString) {
-    for (var i = 0; i < workingObject.coordinates.length; i++) {
-      for (var j = 0; j < workingObject.coordinates[i].length; j++) {
-        workingObject.coordinates[i][j] = _toMercatorPosition(workingObject.coordinates[i][j]);
-      }
-    }
-  } else if (workingObject is MultiPolygon) {
-    for (var i = 0; i < workingObject.coordinates.length; i++) {
-      for (var j = 0; j < workingObject.coordinates[i].length; j++) {
-        for (var k = 0; k < workingObject.coordinates[i][j].length; k++) {
-          workingObject.coordinates[i][j][k] = _toMercatorPosition(workingObject.coordinates[i][j][k]);
-        }
-      }
-    }
-  } else if (workingObject is GeometryCollection) {
-    for (var i = 0; i < workingObject.geometries.length; i++) {
-      workingObject.geometries[i] = geoToMercator(workingObject.geometries[i], mutate: true);
-    }
-  } else if (workingObject is Feature) {
-    if (workingObject.geometry != null) {
-      workingObject.geometry = geoToMercator(workingObject.geometry!, mutate: true);
-    }
-  } else if (workingObject is FeatureCollection) {
-    for (var i = 0; i < workingObject.features.length; i++) {
-      workingObject.features[i] = geoToMercator(workingObject.features[i], mutate: true);
-    }
-  } else {
-    throw ArgumentError('Unsupported input type: ${workingObject.runtimeType}');
-  }
-  
-  return workingObject;
+// EPSG:3857 / 900913 constants
+const double _a = 6378137.0;
+const double _maxExtent = 20037508.342789244;
+const double _d2r = pi / 180;
+
+/// Converts a single WGS84 [lonLat] position to Web Mercator (EPSG:3857).
+/// Altitude (Z) is preserved unchanged.
+Position _convertToMercator(Position lonLat) {
+  final lngDouble = lonLat.lng.toDouble();
+  final latDouble = lonLat.lat.toDouble();
+
+  final adjusted =
+      lngDouble.abs() <= 180 ? lngDouble : lngDouble - _sign(lngDouble) * 360;
+
+  var x = _a * adjusted * _d2r;
+  var y = _a * log(tan(pi * 0.25 + 0.5 * latDouble * _d2r));
+
+  // If xy value is beyond maxExtent (e.g. near poles), clamp to maxExtent
+  if (x > _maxExtent) x = _maxExtent;
+  if (x < -_maxExtent) x = -_maxExtent;
+  if (y > _maxExtent) y = _maxExtent;
+  if (y < -_maxExtent) y = -_maxExtent;
+
+  return lonLat.alt != null ? Position(x, y, lonLat.alt) : Position(x, y);
 }
 
-/// Converts a Position from WGS84 to Web Mercator.
+/// Returns the sign of [x]: -1, 0, or 1.
+int _sign(double x) => x < 0 ? -1 : (x > 0 ? 1 : 0);
+
+/// Converts a WGS84 GeoJSON object into Web Mercator (EPSG:3857 / 900913)
+/// projection.
 ///
-/// Implements the spherical Mercator projection formulas.
-/// Valid inputs: [Position] with [longitude, latitude]
-/// Returns: [Position] with [x, y] coordinates in meters
-Position _toMercatorPosition(Position wgs84) {
-  // Constants for Web Mercator projection
-  const double earthRadius = 6378137.0; // in meters
-  const double originShift = 2.0 * math.pi * earthRadius / 2.0;
-  
-  // Extract coordinates
-  final longitude = wgs84[0]?.toDouble() ?? 0.0;
-  final latitude = wgs84[1]?.toDouble() ?? 0.0;
-  
-  // Clamp latitude to avoid infinity near poles
-  final clampedLat = math.min(math.max(latitude, -89.9999), 89.9999);
-  
-  // Convert longitude to x coordinate
-  final x = longitude * originShift / 180.0;
-  
-  // Convert latitude to y coordinate
-  final rad = clampedLat * math.pi / 180.0;
-  final y = earthRadius * math.log(math.tan(math.pi / 4.0 + rad / 2.0));
-  
-  // Clamp to valid Mercator bounds
-  final mercatorLimit = 20037508.34; // Maximum extent of Web Mercator in meters
-  final clampedX = math.max(math.min(x, mercatorLimit), -mercatorLimit);
-  final clampedY = math.max(math.min(y, mercatorLimit), -mercatorLimit);
-  
-  // Preserve altitude if present
-  final alt = wgs84.length > 2 ? wgs84[2] : null;
-  
-  return Position.of(alt != null 
-      ? [
-          clampedX, 
-          clampedY, 
-          alt,
-        ] 
-      : [
-          clampedX, 
-          clampedY,
-        ]);
+/// Supports [Point], [MultiPoint], [LineString], [MultiLineString],
+/// [Polygon], [MultiPolygon], [GeometryCollection], [Feature], and
+/// [FeatureCollection].
+///
+/// - [geojson]: The input GeoJSON object with WGS84 coordinates.
+/// - [mutate]: If `true`, modifies [geojson] in place for a significant
+///   performance increase. Defaults to `false`, which clones the input first.
+///
+/// Returns the projected GeoJSON in Web Mercator coordinates (metres).
+///
+/// Example:
+/// ```dart
+/// var pt = Feature(geometry: Point(coordinates: Position(-71, 41)));
+/// var converted = geoToMercator(pt);
+/// ```
+GeoJSONObject geoToMercator(GeoJSONObject geojson, {bool mutate = false}) {
+  final output = mutate ? geojson : geojson.clone();
+  geomEach(
+    output,
+    (
+      GeometryType? currentGeometry,
+      int? featureIndex,
+      Map<String, dynamic>? featureProperties,
+      BBox? featureBBox,
+      dynamic featureId,
+    ) {
+      if (currentGeometry == null) return;
+
+      coordEach(
+        currentGeometry,
+        (
+          Position? currentCoord,
+          int? coordIndex,
+          int? featureIndex,
+          int? multiFeatureIndex,
+          int? geometryIndex,
+          int? localCoordIndex,
+        ) {
+          if (currentCoord == null) return;
+          final converted = _convertToMercator(currentCoord);
+
+          if (currentGeometry is Point) {
+            currentGeometry.coordinates = converted;
+          } else if (currentGeometry is LineString ||
+              currentGeometry is MultiPoint) {
+            currentGeometry.coordinates[localCoordIndex!] = converted;
+          } else if (currentGeometry is Polygon) {
+            currentGeometry.coordinates[geometryIndex!][localCoordIndex!] =
+                converted;
+          } else if (currentGeometry is MultiLineString) {
+            currentGeometry.coordinates[multiFeatureIndex!][localCoordIndex!] =
+                converted;
+          } else if (currentGeometry is MultiPolygon) {
+            currentGeometry.coordinates[multiFeatureIndex!][geometryIndex!]
+                [localCoordIndex!] = converted;
+          }
+        },
+      );
+    },
+  );
+
+  return output;
 }

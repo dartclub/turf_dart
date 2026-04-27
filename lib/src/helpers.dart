@@ -57,7 +57,7 @@ const double conversionEarthRadius = 6378137.0;
 enum CoordinateSystem {
   /// WGS84 geographic coordinates (longitude/latitude)
   wgs84,
-  
+
   /// Web Mercator projection (EPSG:3857)
   mercator,
 }
@@ -122,7 +122,7 @@ num round(num value, [num precision = 0]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from radians to a more friendly unit.
-/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters],
 /// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
   final factor = factors[unit];
@@ -133,7 +133,7 @@ num radiansToLength(num radians, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into radians
-/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters],
 /// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
   num? factor = factors[unit];
@@ -144,7 +144,7 @@ num lengthToRadians(num distance, [Unit unit = Unit.kilometers]) {
 }
 
 /// Convert a distance measurement (assuming a spherical Earth) from a real-world unit into degrees
-/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters],
 /// [Unit.centimeters], [Unit.kilometers], [Unit.feet]
 num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
   return radiansToDegrees(lengthToRadians(distance, unit));
@@ -173,7 +173,7 @@ num degreesToRadians(num degrees) {
 }
 
 /// Converts a length to the requested unit.
-/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters], 
+/// Valid units: [Unit.miles], [Unit.nauticalmiles], [Unit.inches], [Unit.yards], [Unit.meters],
 /// [Unit.kilometers], [Unit.centimeters], [Unit.feet]
 num convertLength(
   num length, [
@@ -187,7 +187,7 @@ num convertLength(
 }
 
 /// Converts a area to the requested unit.
-/// Valid units: [Unit.kilometers], [Unit.meters], [Unit.centimeters], [Unit.millimeters], [Unit.acres], 
+/// Valid units: [Unit.kilometers], [Unit.meters], [Unit.centimeters], [Unit.millimeters], [Unit.acres],
 /// [Unit.miles], [Unit.yards], [Unit.feet], [Unit.inches]
 num convertArea(num area,
     [originalUnit = Unit.meters, finalUnit = Unit.kilometers]) {
@@ -208,26 +208,25 @@ num convertArea(num area,
   return (area / startFactor) * finalFactor;
 }
 
-
 /// Converts coordinates from one system to another.
 ///
 /// Valid systems: [CoordinateSystem.wgs84], [CoordinateSystem.mercator]
 /// Returns: [Position] in the target system
 Position convertCoordinates(
-  Position coord, 
-  CoordinateSystem fromSystem, 
-  CoordinateSystem toSystem
-) {
+    Position coord, CoordinateSystem fromSystem, CoordinateSystem toSystem) {
   if (fromSystem == toSystem) {
     return coord;
   }
-  
-  if (fromSystem == CoordinateSystem.wgs84 && toSystem == CoordinateSystem.mercator) {
+
+  if (fromSystem == CoordinateSystem.wgs84 &&
+      toSystem == CoordinateSystem.mercator) {
     return toMercator(coord);
-  } else if (fromSystem == CoordinateSystem.mercator && toSystem == CoordinateSystem.wgs84) {
+  } else if (fromSystem == CoordinateSystem.mercator &&
+      toSystem == CoordinateSystem.wgs84) {
     return toWGS84(coord);
   } else {
-    throw ArgumentError("Unsupported coordinate system conversion from ${fromSystem.runtimeType} to ${toSystem.runtimeType}");
+    throw ArgumentError(
+        "Unsupported coordinate system conversion from ${fromSystem.runtimeType} to ${toSystem.runtimeType}");
   }
 }
 
@@ -237,26 +236,27 @@ Position convertCoordinates(
 /// Returns: [Position] with [x, y] coordinates in meters
 Position toMercator(Position coord) {
   // Use the earth radius constant for consistency
-  
+
   // Clamp latitude to avoid infinite values near the poles
   final longitude = coord[0]?.toDouble() ?? 0.0;
   final latitude = max(min(coord[1]?.toDouble() ?? 0.0, 89.99), -89.99);
-  
+
   // Convert longitude to x coordinate
   final x = longitude * (conversionEarthRadius * pi / 180.0);
-  
+
   // Convert latitude to y coordinate
   final latRad = latitude * (pi / 180.0);
   final y = log(tan((pi / 4) + (latRad / 2))) * conversionEarthRadius;
-  
+
   // Clamp to valid Mercator bounds
   final clampedX = max(min(x, mercatorLimit), -mercatorLimit);
   final clampedY = max(min(y, mercatorLimit), -mercatorLimit);
-  
+
   // Preserve altitude if present
   final alt = coord.length > 2 ? coord[2] : null;
-  
-  return Position.of(alt != null ? [clampedX, clampedY, alt] : [clampedX, clampedY]);
+
+  return Position.of(
+      alt != null ? [clampedX, clampedY, alt] : [clampedX, clampedY]);
 }
 
 /// Converts a Web Mercator coordinate to WGS84.
@@ -265,23 +265,27 @@ Position toMercator(Position coord) {
 /// Returns: [Position] with [longitude, latitude] coordinates
 Position toWGS84(Position coord) {
   // Use the earth radius constant for consistency
-  
+
   // Clamp inputs to valid range
-  final x = max(min(coord[0]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
-  final y = max(min(coord[1]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
-  
+  final x =
+      max(min(coord[0]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
+  final y =
+      max(min(coord[1]?.toDouble() ?? 0.0, mercatorLimit), -mercatorLimit);
+
   // Convert x to longitude
   final longitude = x / (conversionEarthRadius * pi / 180.0);
-  
+
   // Convert y to latitude
   final latRad = 2 * atan(exp(y / conversionEarthRadius)) - (pi / 2);
   final latitude = latRad * (180.0 / pi);
-  
+
   // Clamp latitude to valid range
   final clampedLatitude = max(min(latitude, 90.0), -90.0);
-  
+
   // Preserve altitude if present
   final alt = coord.length > 2 ? coord[2] : null;
-  
-  return Position.of(alt != null ? [longitude, clampedLatitude, alt] : [longitude, clampedLatitude]);
+
+  return Position.of(alt != null
+      ? [longitude, clampedLatitude, alt]
+      : [longitude, clampedLatitude]);
 }
