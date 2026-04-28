@@ -71,7 +71,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   final poly1Bbox = bbox(geom1);
   final poly2Bbox = bbox(geom2);
-  if (!_doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
+  if (!doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
@@ -82,14 +82,5 @@ bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
       }
     }
   }
-  return true;
-}
-
-bool _doBBoxesOverlap(BBox bbox1, BBox bbox2) {
-  if (bbox1[0]! > bbox2[0]! ||
-      bbox1[2]! < bbox2[2]! ||
-      bbox1[1]! > bbox2[1]! ||
-      bbox1[3]! < bbox2[3]!) return false;
-
   return true;
 }
