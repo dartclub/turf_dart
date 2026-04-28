@@ -30,7 +30,7 @@ Dart. This is an on going project and functions are being added once needed. If 
 ### Coordinate Mutation
 
 - [x] [cleanCoords](https://github.com/dartclub/turf_dart/blob/main/lib/src/clean_coords.dart)
-- [ ] flip
+- [x] flip
 - [ ] rewind
 - [ ] round
 - [x] [truncate](https://github.com/dartclub/turf_dart/blob/main/lib/src/truncate.dart)
