@@ -14,6 +14,7 @@ export 'clusters.dart';
 export 'destination.dart';
 export 'distance.dart';
 export 'explode.dart';
+export 'flatten.dart';
 export 'extensions.dart';
 export 'helpers.dart';
 export 'invariant.dart';
