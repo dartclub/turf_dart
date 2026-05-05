@@ -81,7 +81,7 @@ void main() {
       final Feature<Point> bboxOnly = original.copyWith<Point>(
         bbox: BBox(5, 5, 15, 15),
       );
-      
+
       expect(bboxOnly.id, equals(original.id));
       expect(bboxOnly.geometry, equals(original.geometry));
       expect(bboxOnly.properties, equals(original.properties));
@@ -90,7 +90,7 @@ void main() {
       expect(bboxOnly.bbox!.lng2, equals(15));
       expect(bboxOnly.bbox!.lat2, equals(15));
     });
-    
+
     test('copyWith handles changing geometry type', () {
       // Create a Point feature
       final Feature<Point> pointFeature = Feature<Point>(
@@ -98,7 +98,7 @@ void main() {
         geometry: Point(coordinates: Position(0, 0)),
         properties: {'type': 'point'},
       );
-      
+
       // Convert to a LineString feature
       final Feature<LineString> lineFeature = pointFeature.copyWith<LineString>(
         geometry: LineString(coordinates: [
@@ -107,28 +107,28 @@ void main() {
         ]),
         properties: {'type': 'line'},
       );
-      
+
       expect(lineFeature.id, equals('point-id'));
       expect(lineFeature.geometry!.type, equals(GeoJSONObjectType.lineString));
       expect(lineFeature.geometry!.coordinates.length, equals(2));
       expect(lineFeature.properties!['type'], equals('line'));
     });
-    
+
     test('copyWith handles type checking', () {
       // Create a Point feature
       final Feature<Point> pointFeature = Feature<Point>(
         geometry: Point(coordinates: Position(0, 0)),
       );
-      
+
       // It's not possible to directly create this error since the Dart type system
-      // prevents it. However, we can verify that the method correctly handles 
+      // prevents it. However, we can verify that the method correctly handles
       // the type checks for valid cases.
-      
+
       // This should work fine - creating a Point feature from another Point feature
       final Feature<Point> stillPointFeature = pointFeature.copyWith<Point>();
       expect(stillPointFeature.geometry, isNotNull);
       expect(stillPointFeature.geometry, isA<Point>());
-      
+
       // This should also work - explicitly changing to a new geometry type
       final Feature<LineString> lineFeature = pointFeature.copyWith<LineString>(
         geometry: LineString(coordinates: [Position(0, 0), Position(1, 1)]),
@@ -136,13 +136,15 @@ void main() {
       expect(lineFeature.geometry, isNotNull);
       expect(lineFeature.geometry, isA<LineString>());
     });
-    
-    test('copyWith throws error when target type is incompatible with original geometry', () {
+
+    test(
+        'copyWith throws error when target type is incompatible with original geometry',
+        () {
       // Create a Point feature
       final Feature<Point> pointFeature = Feature<Point>(
         geometry: Point(coordinates: Position(0, 0)),
       );
-      
+
       // Try to create a LineString feature without providing a new geometry
       expect(() => pointFeature.copyWith<LineString>(), throwsArgumentError);
     });

@@ -786,6 +786,57 @@ void main() {
     expect(featureReduce<int>(fcMixed, countReducer, 5), 8);
     expect(featureReduce<int>(pt, countReducer, null), 1);
   });
+  test('Feature copyWith updates properties without modifying original feature',
+      () {
+    final original = Feature<Point>(
+      id: 'point-1',
+      geometry: Point(coordinates: Position(0, 0)),
+      properties: {'name': 'Original'},
+    );
+
+    final updated = original.copyWith<Point>(
+      properties: {'name': 'Updated'},
+    );
+
+    expect(updated.properties, {'name': 'Updated'});
+    expect(original.properties, {'name': 'Original'});
+    expect(updated.geometry, original.geometry);
+    expect(updated.id, original.id);
+  });
+
+  test('Feature copyWith updates geometry', () {
+    final original = Feature<Point>(
+      geometry: Point(coordinates: Position(0, 0)),
+      properties: {'name': 'Original'},
+    );
+
+    final updated = original.copyWith<Point>(
+      geometry: Point(coordinates: Position(10, 20)),
+    );
+
+    expect(updated.geometry, Point(coordinates: Position(10, 20)));
+    expect(original.geometry, Point(coordinates: Position(0, 0)));
+    expect(updated.properties, original.properties);
+  });
+
+  test('Feature copyWith updates bbox and id', () {
+    final original = Feature<Point>(
+      id: 'old-id',
+      geometry: Point(coordinates: Position(0, 0)),
+      bbox: BBox.fromJson([0, 0, 1, 1]),
+    );
+
+    final updated = original.copyWith<Point>(
+      id: 'new-id',
+      bbox: BBox.fromJson([2, 2, 3, 3]),
+    );
+
+    expect(updated.id, 'new-id');
+    expect(updated.bbox, BBox.fromJson([2, 2, 3, 3]));
+    expect(original.id, 'old-id');
+    expect(original.bbox, BBox.fromJson([0, 0, 1, 1]));
+  });
+
   test('flattenReduce -- with/out initialValue', () {
     int? countReducer(int? previousValue, Feature currentFeature,
         int featureIndex, int multiFeatureIndex) {
