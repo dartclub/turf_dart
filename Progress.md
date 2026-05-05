@@ -84,6 +84,8 @@ Dart. This is an on going project and functions are being added once needed. If 
 - [ ] sector
 - [ ] shortestPath
 - [ ] unkinkPolygon
+- [x]
+  [LineClip](https://github.com/dartclub/turf_dart/blob/main/lib/src/lineclip.dart)
 
 ### Random
 
