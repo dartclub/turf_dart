@@ -30,7 +30,7 @@ void main() {
         reason: 'radiance conversion -pi');
   });
 
-  test('radiansToDegrees', () {
+  test('degreesToRadians', () {
     expect(degreesToRadians(60), equals(pi / 3),
         reason: 'degrees conversion 60');
     expect(degreesToRadians(270), equals(1.5 * pi),

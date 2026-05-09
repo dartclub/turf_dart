@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:turf/helpers.dart';
+import '../bearing.dart';
 
 /// Edge representation for the graph
 class Edge {
@@ -104,39 +104,16 @@ class Graph {
     }
 
     // Calculate bearing for the edge
-    final bearing = _calculateBearing(from, to);
+    final bearing = bearingRaw(from, to).toDouble();
     edgesByVertex[fromKey]!.add(EdgeWithBearing(Edge(from, to), bearing));
-  }
-
-  /// Calculate bearing between two positions
-  double _calculateBearing(Position start, Position end) {
-    final lng1 = _degreesToRadians(start[0]!);
-    final lng2 = _degreesToRadians(end[0]!);
-    final lat1 = _degreesToRadians(start[1]!);
-    final lat2 = _degreesToRadians(end[1]!);
-    final a = sin(lng2 - lng1) * cos(lat2);
-    final b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
-
-    // Convert to azimuth (0-360°, clockwise from north)
-    final bearing = _radiansToDegrees(atan2(a, b));
-    return (bearing % 360 + 360) % 360;
   }
 
   /// Create a canonical edge key
   String _createEdgeKey(Position from, Position to) {
-    // Create a key based on the actual coordinate values, not the default toString()
     final fromKey = '${from[0]},${from[1]}';
+
     final toKey = '${to[0]},${to[1]}';
+
     return fromKey.compareTo(toKey) < 0 ? '$fromKey|$toKey' : '$toKey|$fromKey';
-  }
-
-  /// Convert degrees to radians
-  double _degreesToRadians(num degrees) {
-    return degrees * pi / 180;
-  }
-
-  /// Convert radians to degrees
-  double _radiansToDegrees(num radians) {
-    return radians * 180 / pi;
   }
 }
