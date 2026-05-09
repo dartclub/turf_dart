@@ -1,6 +1,6 @@
 import 'package:turf/helpers.dart';
 import 'package:turf/src/meta/flatten.dart';
-
+import 'package:turf/src/invariant.dart';
 import 'config.dart';
 import 'graph.dart';
 import 'ring_finder.dart';
