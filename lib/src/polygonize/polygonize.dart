@@ -1,10 +1,11 @@
 import 'package:turf/helpers.dart';
-import 'package:turf/src/meta/flatten.dart';
 import 'package:turf/src/invariant.dart';
+import 'package:turf/src/meta/flatten.dart';
+
 import 'config.dart';
 import 'graph.dart';
-import 'ring_finder.dart';
 import 'ring_classifier.dart';
+import 'ring_finder.dart';
 
 /// Implementation of the polygonize function, which converts a set of lines
 /// into a set of polygons based on closed ring detection.
@@ -90,22 +91,5 @@ class Polygonizer {
     for (var i = 0; i < coords.length - 1; i++) {
       graph.addEdge(coords[i], coords[i + 1]);
     }
-  }
-
-  static List<dynamic> getCoords(GeoJSONObject geometry) {
-    if (geometry is Point) {
-      return [geometry.coordinates];
-    } else if (geometry is LineString) {
-      return geometry.coordinates;
-    } else if (geometry is Polygon) {
-      return geometry.coordinates;
-    } else if (geometry is MultiPoint) {
-      return geometry.coordinates;
-    } else if (geometry is MultiLineString) {
-      return geometry.coordinates;
-    } else if (geometry is MultiPolygon) {
-      return geometry.coordinates;
-    }
-    throw ArgumentError('Unknown geometry type: ${geometry.type}');
   }
 }
