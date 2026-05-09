@@ -3,22 +3,6 @@ import 'dart:math';
 
 /// Utility functions for working with Position objects
 class PositionUtils {
-  /// Create a new Position from an existing one, preserving altitude if present
-  static Position createPosition(Position source) {
-    if (source.length > 2 && source[2] != null) {
-      return Position.of([
-        source[0] ?? 0.0,
-        source[1] ?? 0.0,
-        source[2] ?? 0.0,
-      ]);
-    } else {
-      return Position.of([
-        source[0] ?? 0.0,
-        source[1] ?? 0.0,
-      ]);
-    }
-  }
-
   /// Get a sample point from a list of positions (for containment tests)
   static Position getSamplePointFromPositions(List<Position> positions) {
     // Use points from different parts of the polygon for more reliable sampling

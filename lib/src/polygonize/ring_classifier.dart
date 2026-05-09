@@ -32,7 +32,7 @@ class RingClassifier {
       final closed = List<Position>.from(ring);
       if (closed.first[0] != closed.last[0] ||
           closed.first[1] != closed.last[1]) {
-        closed.add(PositionUtils.createPosition(closed.first));
+        closed.add(closed.first);
       }
       return closed;
     }).toList();
@@ -100,7 +100,7 @@ class RingClassifier {
 
           if (lastPoint[0] != exterior.first[0] ||
               lastPoint[1] != exterior.first[1]) {
-            exterior.add(PositionUtils.createPosition(exterior.first));
+            exterior.add(exterior.first);
           } else {
             exterior.add(lastPoint);
           }
@@ -120,7 +120,7 @@ class RingClassifier {
 
               if (lastPoint[0] != hole.first[0] ||
                   lastPoint[1] != hole.first[1]) {
-                hole.add(PositionUtils.createPosition(hole.first));
+                hole.add(hole.first);
               } else {
                 hole.add(lastPoint);
               }
