@@ -73,7 +73,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           }
         }
         if (booleanPointOnLine(Point(coordinates: geom1.coordinates[i]), geom2,
-            ignoreEndVertices: true)) return false;
+            ignoreEndVertices: true)) {
+          return false;
+        }
       }
       return foundTouchingPoint;
     } else if (geom2 is MultiLineString) {
@@ -163,8 +165,12 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           Point(
             coordinates: geom1.coordinates[geom1.coordinates.length - 1],
           ),
-          geom2)) endMatch = true;
-      if (endMatch == false) return false;
+          geom2)) {
+        endMatch = true;
+      }
+      if (endMatch == false) {
+        return false;
+      }
       for (var i = 0; i < geom1.coordinates.length; i++) {
         if (booleanPointOnLine(Point(coordinates: geom1.coordinates[i]), geom2,
             ignoreEndVertices: true)) {
@@ -382,7 +388,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           }
         }
         if (booleanPointInPolygon(geom2.coordinates[i], geom1,
-            ignoreBoundary: true)) return false;
+            ignoreBoundary: true)) {
+          return false;
+        }
       }
       return foundTouchingPoint;
     } else if (geom2 is LineString) {
@@ -584,7 +592,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
 }
 
 bool isPointOnLineEnd(Point point, LineString line) {
-  if (line.coordinates[0] == point.coordinates) return true;
+  if (line.coordinates[0] == point.coordinates) {
+    return true;
+  }
   if (line.coordinates[line.coordinates.length - 1] == point.coordinates) {
     return true;
   }

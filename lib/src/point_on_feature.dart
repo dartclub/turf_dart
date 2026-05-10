@@ -1,4 +1,3 @@
-import 'package:geotypes/geotypes.dart';
 import 'package:turf/area.dart' as turf_area;
 import 'package:turf/centroid.dart' as turf_centroid;
 import 'package:turf/helpers.dart';

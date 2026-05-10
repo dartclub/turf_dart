@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:turf/turf.dart';
 
@@ -12,7 +11,7 @@ void main() {
 
       final result = pointOnFeature(point);
 
-      expect(result.geometry!.coordinates!.toList(), equals([5.0, 10.0]));
+      expect(result.geometry!.coordinates.toList(), equals([5.0, 10.0]));
     });
 
     test('Polygon geometry - returns point inside polygon', () {
@@ -33,7 +32,7 @@ void main() {
       expect(result.geometry, isA<Point>());
 
       // Simple check that result is within bounding box of polygon
-      final coords = result.geometry!.coordinates!;
+      final coords = result.geometry!.coordinates;
       expect(coords[0], greaterThanOrEqualTo(-10.0));
       expect(coords[0], lessThanOrEqualTo(10.0));
       expect(coords[1], greaterThanOrEqualTo(0.0));
@@ -66,7 +65,7 @@ void main() {
       final result = pointOnFeature(multiPolygon);
 
       // Check if point is within first polygon's bounds
-      final coords = result.geometry!.coordinates!;
+      final coords = result.geometry!.coordinates;
       expect(coords[0], greaterThanOrEqualTo(-10.0));
       expect(coords[0], lessThanOrEqualTo(10.0));
       expect(coords[1], greaterThanOrEqualTo(0.0));
@@ -91,7 +90,7 @@ void main() {
       // Check that it returns a point (exact coordinates will vary based on the geodesic calculation)
       expect(result.geometry, isA<Point>());
 
-      final coords = result.geometry!.coordinates!;
+      final coords = result.geometry!.coordinates;
       // Verify coordinates are near the expected midpoint region
       expect(
           coords[0],
@@ -123,7 +122,7 @@ void main() {
       final result = pointOnFeature(fc);
 
       // Check if point is within polygon bounds
-      final coords = result.geometry!.coordinates!;
+      final coords = result.geometry!.coordinates;
       expect(coords[0], greaterThanOrEqualTo(-10.0));
       expect(coords[0], lessThanOrEqualTo(10.0));
       expect(coords[1], greaterThanOrEqualTo(-10.0));
