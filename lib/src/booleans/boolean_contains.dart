@@ -71,7 +71,7 @@ bool booleanContains(GeoJSONObject feature1, GeoJSONObject feature2) {
 bool _isPolyInPoly(GeoJSONObject geom1, GeoJSONObject geom2) {
   final poly1Bbox = bbox(geom1);
   final poly2Bbox = bbox(geom2);
-  if (!_doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
+  if (!doBBoxesOverlap(poly1Bbox, poly2Bbox)) {
     return false;
   }
 
