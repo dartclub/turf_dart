@@ -168,7 +168,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
           geom2)) {
         endMatch = true;
       }
-      if (endMatch == false) return false;
+      if (endMatch == false) {
+        return false;
+      }
       for (var i = 0; i < geom1.coordinates.length; i++) {
         if (booleanPointOnLine(Point(coordinates: geom1.coordinates[i]), geom2,
             ignoreEndVertices: true)) {
@@ -590,7 +592,9 @@ bool booleanTouches(GeoJSONObject feature1, GeoJSONObject feature2) {
 }
 
 bool isPointOnLineEnd(Point point, LineString line) {
-  if (line.coordinates[0] == point.coordinates) return true;
+  if (line.coordinates[0] == point.coordinates) {
+    return true;
+  }
   if (line.coordinates[line.coordinates.length - 1] == point.coordinates) {
     return true;
   }

@@ -116,8 +116,8 @@ num round(num value, [num precision = 0]) {
   if (!(precision >= 0)) {
     throw Exception("precision must be a positive number");
   }
-  num multiplier = pow(10, precision);
-  num result = (value * multiplier);
+  final multiplier = pow(10, precision);
+  final result = value * multiplier;
   return result.round() / multiplier;
 }
 
@@ -153,22 +153,22 @@ num lengthToDegrees(num distance, [Unit unit = Unit.kilometers]) {
 /// Converts any bearing angle from the north line direction (positive clockwise)
 /// and returns an angle between 0-360 degrees (positive clockwise), 0 being the north line
 num bearingToAzimuth(num bearing) {
-  num angle = bearing.remainder(360);
+  final angle = bearing.remainder(360);
   if (angle < 0) {
-    angle += 360;
+    return angle + 360;
   }
   return angle;
 }
 
 /// Converts an angle in radians to degrees
 num radiansToDegrees(num radians) {
-  num degrees = radians.remainder(2 * pi);
+  final degrees = radians.remainder(2 * pi);
   return degrees * 180 / pi;
 }
 
 /// Converts an angle in degrees to radians
 num degreesToRadians(num degrees) {
-  num radians = degrees.remainder(360);
+  final radians = degrees.remainder(360);
   return radians * pi / 180;
 }
 
@@ -195,12 +195,12 @@ num convertArea(num area,
     throw Exception("area must be a positive number");
   }
 
-  num? startFactor = areaFactors[originalUnit];
+  final startFactor = areaFactors[originalUnit];
   if (startFactor == null) {
     throw Exception("invalid original units");
   }
 
-  num? finalFactor = areaFactors[finalUnit];
+  final finalFactor = areaFactors[finalUnit];
   if (finalFactor == null) {
     throw Exception("invalid final units");
   }

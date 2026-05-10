@@ -1,7 +1,5 @@
 import 'dart:math';
 import 'package:turf/turf.dart';
-import 'package:turf/to_mercator.dart';
-import 'package:turf/to_wgs84.dart';
 
 /// This example demonstrates the helper functions available in turf_dart
 void main() {
