@@ -1,3 +1,4 @@
+/// Geometric transformations such as rotation and Mercator/WGS84 reprojection.
 library turf_transform;
 
 export 'package:geotypes/geotypes.dart';

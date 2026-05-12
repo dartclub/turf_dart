@@ -128,22 +128,22 @@ void clusterEach(
 
 /// ClusterReduceCallback
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an [initialValue] argument.
+/// on whether the reduce method has an `initialValue` argument.
 ///
-/// If an [initialValue] is provided to the reduce method:
-///  - The [previousValue] argument is [initialValue].
-///  - The [currentValue] argument is the value of the first element present in the [List].
+/// If an `initialValue` is provided to the reduce method:
+///  - The [previousValue] argument is `initialValue`.
+///  - The `currentValue` argument is the value of the first element present in the [List].
 ///
-/// If an [initialValue] is not provided:
+/// If an `initialValue` is not provided:
 ///  - The [previousValue] argument is the value of the first element present in the [List].
-///  - The [currentValue] argument is the value of the second element present in the [List].
+///  - The `currentValue` argument is the value of the second element present in the [List].
 ///
 /// Takes a [previousValue], the accumulated value previously returned in the last invocation
-/// of the callback, or [initialValue], if supplied, a [FeatureCollection] [cluster], the current
+/// of the callback, or `initialValue`, if supplied, a [FeatureCollection] [cluster], the current
 /// cluster being processed, a [clusterValue] used to create cluster being processed and a
 /// [currentIndex], the index of the current element being processed in the
 /// [List].
-/// Starts at index 0, if an [initialValue] is provided, and at index 1 otherwise.
+/// Starts at index 0, if an `initialValue` is provided, and at index 1 otherwise.
 typedef ClusterReduceCallback<T> = T? Function(
   T? previousValue,
   FeatureCollection? cluster,
@@ -152,8 +152,8 @@ typedef ClusterReduceCallback<T> = T? Function(
 );
 
 /// Reduces clusters in Features, similar to [Iterable.reduce]
-/// Takes a [FeatureCollection][geojson], a dynamic [porperty], a [GeoJSONObject]'s property key/value
-/// used to create clusters, a [ClusterReduceCallback] method, and an [initialValue] to
+/// Takes a [FeatureCollection] `geojson`, a dynamic `property`, a [GeoJSONObject]'s property key/value
+/// used to create clusters, a [ClusterReduceCallback] method, and an `initialValue` to
 /// use as the first argument to the first call of the callback.
 /// Returns the value that results from the reduction.
 /// For example:

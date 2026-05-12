@@ -316,13 +316,13 @@ void _forEachGeomInGeometryObject(
 /// Callback for geomReduce
 ///
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an [initialValue] argument.
+/// on whether the reduce method has an `initialValue` argument.
 ///
-/// If an initialValue is provided to the reduce method:
-///  - The [previousValue] argument is [initialValue].
-///  - The [currentValue] argument is the value of the first element present in the [List].
+/// If an `initialValue` is provided to the reduce method:
+///  - The [previousValue] argument is `initialValue`.
+///  - The `currentValue` argument is the value of the first element present in the [List].
 ///
-/// If an [initialValue] is not provided:
+/// If an `initialValue` is not provided:
 ///  - The [previousValue] argument is the value of the first element present in the [List].
 ///  - The [currentGeometry] argument is the value of the second element present in the [List].
 typedef GeomReduceCallback<T> = T? Function(

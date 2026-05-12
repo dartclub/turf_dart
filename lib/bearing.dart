@@ -1,3 +1,4 @@
+/// Calculates the geographic bearing (and rhumb bearing) between two [Point]s.
 library turf_bearing;
 
 export 'package:geotypes/geotypes.dart';
