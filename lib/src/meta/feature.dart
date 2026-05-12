@@ -152,11 +152,6 @@ extension FeatureExtension on Feature {
     G? geometry,
     BBox? bbox,
   }) {
-    // Runtime type checking for geometry
-    if (geometry != null && geometry is! G) {
-      throw ArgumentError('Provided geometry must be of type $G');
-    }
-
     // If we're not changing the geometry and the current geometry is not null,
     // verify it's compatible with the target type G
     final currentGeometry = this.geometry;
