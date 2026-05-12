@@ -4,7 +4,7 @@ import '../../helpers.dart';
 import 'boolean_point_in_polygon.dart';
 import 'boolean_point_on_line.dart';
 
-/// Boolean-touches [true] if none of the [Point]s common to both geometries
+/// Boolean-touches returns `true` if none of the [Point]s common to both geometries
 /// intersect the interiors of both geometries.
 /// example
 /// ```dart

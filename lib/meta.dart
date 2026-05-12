@@ -1,3 +1,4 @@
+/// Iterators and reducers (`coordEach`, `featureEach`, `flattenEach`, etc.) for traversing GeoJSON.
 library turf_meta;
 
 export 'package:geotypes/geotypes.dart';

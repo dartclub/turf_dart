@@ -3,7 +3,7 @@ import 'package:turf/src/invariant.dart';
 
 import 'boolean_helper.dart';
 
-/// Returns [true] if the first [GeoJSONObject] is completely within the second [GeoJSONObject].
+/// Returns `true` if the first [GeoJSONObject] is completely within the second [GeoJSONObject].
 /// The interiors of both geometries must intersect and, the interior and boundary
 /// of the primary (geometry a) must not intersect the exterior of the secondary
 /// (geometry b). [booleanWithin] returns the exact opposite result of [booleanContains].

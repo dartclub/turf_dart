@@ -1,11 +1,15 @@
 import 'package:turf/helpers.dart';
 
-/// Returns [true] if a point is on a line. Accepts an optional parameter to ignore the
+enum BoundaryType { none, start, end, both }
+
+/// Returns `true` if a point is on a line. Accepts an optional parameter to ignore the
 /// start and end vertices of the [LineString].
-/// The [ignoreEndVertices=false] controls whether to ignore the start and end vertices.
-/// [epsilon] is the Fractional number to compare with the cross product result.
-/// It's useful for dealing with floating points in lng/lat
-/// example:
+/// The `ignoreEndVertices` flag (default `false`) controls whether to ignore the start
+/// and end vertices.
+/// `epsilon` is the fractional number to compare with the cross product result.
+/// It's useful for dealing with floating points in lng/lat.
+///
+/// Example:
 /// ```dart
 /// var pt = Point(coordinates:Position.of([0, 0]));
 /// var line = LineString(coordinates: [
@@ -16,8 +20,6 @@ import 'package:turf/helpers.dart';
 /// var isPointOnLine = booleanPointOnLine(pt, line);
 /// //=true
 /// ```
-enum BoundaryType { none, start, end, both }
-
 bool booleanPointOnLine(Point pt, LineString line,
     {bool ignoreEndVertices = false, num? epsilon}) {
   for (var i = 0; i < line.coordinates.length - 1; i++) {

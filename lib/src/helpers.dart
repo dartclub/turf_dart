@@ -232,8 +232,8 @@ Position convertCoordinates(
 
 /// Converts a WGS84 coordinate to Web Mercator.
 ///
-/// Valid inputs: [Position] with [longitude, latitude]
-/// Returns: [Position] with [x, y] coordinates in meters
+/// Valid inputs: [Position] with `[longitude, latitude]`
+/// Returns: [Position] with `[x, y]` coordinates in meters
 Position toMercator(Position coord) {
   // Use the earth radius constant for consistency
 
@@ -261,8 +261,8 @@ Position toMercator(Position coord) {
 
 /// Converts a Web Mercator coordinate to WGS84.
 ///
-/// Valid inputs: [Position] with [x, y] in meters
-/// Returns: [Position] with [longitude, latitude] coordinates
+/// Valid inputs: [Position] with `[x, y]` in meters
+/// Returns: [Position] with `[longitude, latitude]` coordinates
 Position toWGS84(Position coord) {
   // Use the earth radius constant for consistency
 

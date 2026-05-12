@@ -1,3 +1,7 @@
+/// A turf.js-like geospatial analysis library for Dart.
+///
+/// This is the umbrella library that re-exports every turf module so consumers
+/// can `import 'package:turf/turf.dart';` and access the full API surface.
 library turf;
 
 export 'package:geotypes/geotypes.dart';

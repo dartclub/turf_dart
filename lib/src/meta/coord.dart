@@ -43,7 +43,7 @@ dynamic _callbackWrapper(
   }
 }
 
-/// Iterates over coordinates in any [geoJSONObject], similar to [Iterable.forEach]
+/// Iterates over coordinates in any `geoJSONObject`, similar to [Iterable.forEach]
 /// example:
 /// ```dart
 /// var features = FeatureCollection(features: [
@@ -199,16 +199,16 @@ class _IndexCounter {
 /// The first time the callback function is called, the values provided as arguments depend
 /// on whether the reduce method has an initialValue argument.
 ///
-/// If an [initialValue] is provided to the reduce method:
+/// If an `initialValue` is provided to the reduce method:
 ///  - The [previousValue] argument is initialValue.
-///  - The [currentValue] argument is the value of the first element present in the [List].
+///  - The `currentValue` argument is the value of the first element present in the [List].
 ///
-/// If an [initialValue] is not provided:
+/// If an `initialValue` is not provided:
 ///  - The [previousValue] argument is the value of the first element present in the [List].
-///  - The [currentValue] argument is the value of the second element present in the [List].
+///  - The `currentValue` argument is the value of the second element present in the [List].
 ///
 /// Takes [previousValue], the accumulated value previously returned in the last invocation
-/// of the callback, or [initialValue], if supplied,
+/// of the callback, or `initialValue`, if supplied,
 /// [Position][currentCoord] The current coordinate being processed, [coordIndex]
 /// The current index of the coordinate being processed. Starts at index 0, if an
 /// initialValue is provided, and at index 1 otherwise, [featureIndex] The current
@@ -228,8 +228,8 @@ typedef CoordReduceCallback<T> = T? Function(
 /// Takes [FeatureCollection], [GeometryObject], or a [Feature],
 /// a [CoordReduceCallback] method that takes (previousValue, currentCoord, coordIndex), an
 /// [initialValue] Value to use as the first argument to the first call of the callback,
-/// and a boolean [excludeWrapCoord=false] for whether or not to include the final coordinate
-/// of LinearRings that wraps the ring in its iteration.
+/// and a boolean `excludeWrapCoord` (default `false`) for whether or not to include the
+/// final coordinate of LinearRings that wraps the ring in its iteration.
 /// Returns the value that results from the reduction.
 /// For example:
 ///
