@@ -1,3 +1,10 @@
+## 0.0.12
+
+- Implements support for GeoJSON "other members" / foreign members, including JSON serialization, deserialization, cloning, and copy helpers [#222](https://github.com/dartclub/turf_dart/pull/222)
+- Implements `lineclip` for clipping line strings and polygons to bounding boxes [#235](https://github.com/dartclub/turf_dart/pull/235)
+- Implements `pointOnFeature`, with tests, benchmarks, examples, and generated visualization fixtures [#216](https://github.com/dartclub/turf_dart/pull/216)
+- Adds library-level doc comments to all public libraries and fixes documentation reference warnings [#257](https://github.com/dartclub/turf_dart/pull/257)
+
 ## 0.0.11
 
 - Implements `simplify` for `Feature<LineString>` [#183](https://github.com/dartclub/turf_dart/pull/183)
