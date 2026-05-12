@@ -20,8 +20,10 @@ void checkBBox(BBox? bbox) {
   if (bbox == null) {
     throw ArgumentError("Bbox cannot be null.");
   }
-  if (bbox.length != 4) {
-    throw ArgumentError("Bbox must contain exactly 4 values.");
+  if (bbox.length != 4 && bbox.length != 6) {
+    throw ArgumentError(
+      "Bbox must contain either 4 or 6 values.",
+    );
   }
 }
 
