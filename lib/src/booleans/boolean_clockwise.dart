@@ -2,7 +2,7 @@ import 'package:turf/src/invariant.dart';
 
 import '../../helpers.dart';
 
-/// Takes a ring and return [true] or [false] whether or not the ring is clockwise
+/// Takes a ring and return `true` or `false` whether or not the ring is clockwise
 /// or counter-clockwise.
 /// Takes a [Feature<LineString>] or[LineString] or a [List<Position>] to be
 /// evaluated.

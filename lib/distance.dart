@@ -1,3 +1,4 @@
+/// Calculates the geodesic and rhumb-line distance between two [Point]s.
 library turf_distance;
 
 export 'package:geotypes/geotypes.dart';

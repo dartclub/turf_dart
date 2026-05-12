@@ -1,7 +1,7 @@
 import '../../meta.dart';
 import 'boolean_disjoint.dart';
 
-/// Returns [true] when two geometries intersect.
+/// Returns `true` when two geometries intersect.
 /// Takes [feature1] & [feature2] parameters of type [GeoJSONObject] which can be
 /// a [Feature] or [GeometryType].
 /// example
@@ -11,7 +11,8 @@ import 'boolean_disjoint.dart';
 /// booleanIntersects(line, point);
 /// //=true
 /// ```
-bool booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2) {
+bool booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2,
+    {bool ignoreSelfIntersections = true}) {
   var result = false;
   flattenEach(
     feature1,
@@ -22,7 +23,8 @@ bool booleanIntersects(GeoJSONObject feature1, GeoJSONObject feature2) {
           if (result) {
             return true;
           }
-          result = !booleanDisjoint(flatten1, flatten2);
+          result = !booleanDisjoint(flatten1, flatten2,
+              ignoreSelfIntersections: ignoreSelfIntersections);
         },
       );
     },

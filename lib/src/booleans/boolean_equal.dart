@@ -6,11 +6,11 @@ import '../clean_coords.dart';
 /// Determine whether two geometries of the same type have identical X,Y coordinate values.
 /// See http://edndoc.esri.com/arcsde/9.0/general_topics/understand_spatial_relations.htm
 /// [precision]=6 sets decimal precision to use when comparing coordinates.
-/// With [direction] set to [true], even if the [LineString]s are reverse versions
+/// With [direction] set to `true`, even if the [LineString]s are reverse versions
 /// of each other but they have similar [Position]s, they will be considered the
-/// same. If [shiftedPolygon] is [true], two [Polygon]s with shifted [Position]s
+/// same. If [shiftedPolygon] is `true`, two [Polygon]s with shifted [Position]s
 /// are considered the same.
-/// Returns [true] if the objects are equal, [false] otherwise
+/// Returns `true` if the objects are equal, `false` otherwise
 /// example:
 /// ```dart
 /// var pt1 = Point(coordinates: Position.of([0, 0]));

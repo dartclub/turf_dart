@@ -6,7 +6,7 @@ typedef FeatureEachCallback = dynamic Function(
   int featureIndex,
 );
 
-/// Iterates over features in any [geoJSONObject], calling [callback] on each
+/// Iterates over features in any `geoJSONObject`, calling [callback] on each
 /// iteration. Similar to [Iterable.forEach].
 /// For example:
 ///
@@ -49,7 +49,7 @@ void featureEach(GeoJSONObject geoJSON, FeatureEachCallback callback) {
 ///
 /// FeatureReduceCallback
 /// [previousValue] is the accumulated value previously returned in the last invocation
-/// of the callback, or [initialValue], if supplied.
+/// of the callback, or `initialValue`, if supplied.
 /// currentFeature is the current [Feature] being processed.
 /// [featureIndex] is the current index of the [Feature] being processed.
 

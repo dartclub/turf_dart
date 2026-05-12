@@ -10,7 +10,8 @@ build/
 # Directory created by dartdoc
 doc/api/
 
-coverage/
+# Artefacts Dir for CI/CD
+.artefacts
 
 .idea/
 
