@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:turf/helpers.dart';
+import '../bearing.dart';
 import 'graph.dart';
 
 /// Responsible for finding rings in a planar graph of edges
@@ -85,7 +85,8 @@ class RingFinder {
     if (previousEdge != null) {
       // Reverse the bearing (opposite direction)
       incomingBearing =
-          (_calculateBearing(previousEdge.to, previousEdge.from) + 180) % 360;
+          (bearingRaw(previousEdge.to, previousEdge.from).toDouble() + 180) %
+              360;
     }
 
     // Use the precomputed edge index from the graph
@@ -121,36 +122,10 @@ class RingFinder {
     return candidates.first.edge;
   }
 
-  /// Calculate bearing between two positions
-  num _calculateBearing(Position start, Position end) {
-    // Safe coordinate access with default values
-    num lng1 = _degreesToRadians(start[0] ?? 0.0);
-    num lng2 = _degreesToRadians(end[0] ?? 0.0);
-    num lat1 = _degreesToRadians(start[1] ?? 0.0);
-    num lat2 = _degreesToRadians(end[1] ?? 0.0);
-
-    num a = sin(lng2 - lng1) * cos(lat2);
-    num b = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
-
-    // Convert to azimuth (0-360°, clockwise from north)
-    num bearing = _radiansToDegrees(atan2(a, b));
-    return (bearing % 360 + 360) % 360; // Normalize to 0-360
-  }
-
   /// Create a canonical edge key
   String _createEdgeKey(Position from, Position to) {
     final fromKey = '${from[0]},${from[1]}';
     final toKey = '${to[0]},${to[1]}';
     return fromKey.compareTo(toKey) < 0 ? '$fromKey|$toKey' : '$toKey|$fromKey';
-  }
-
-  /// Convert degrees to radians
-  num _degreesToRadians(num degrees) {
-    return degrees * pi / 180;
-  }
-
-  /// Convert radians to degrees
-  num _radiansToDegrees(num radians) {
-    return radians * 180 / pi;
   }
 }
