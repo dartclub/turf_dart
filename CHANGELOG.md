@@ -1,3 +1,29 @@
+## 0.0.12
+
+- Implements support for GeoJSON "other members" / foreign members, including JSON serialization, deserialization, cloning, and copy helpers [#222](https://github.com/dartclub/turf_dart/pull/222)
+- Implements `lineclip` for clipping line strings and polygons to bounding boxes [#235](https://github.com/dartclub/turf_dart/pull/235)
+- Implements `pointOnFeature`, with tests, benchmarks, examples, and generated visualization fixtures [#216](https://github.com/dartclub/turf_dart/pull/216)
+- Adds library-level doc comments to all public libraries and fixes documentation reference warnings [#257](https://github.com/dartclub/turf_dart/pull/257)
+
+## 0.0.11
+
+- Implements `simplify` for `Feature<LineString>` [#183](https://github.com/dartclub/turf_dart/pull/183)
+- Implements `circle` [#187](https://github.com/dartclub/turf_dart/pull/187)
+- Implements `pointToLineDistance` [#189](https://github.com/dartclub/turf_dart/pull/189)
+- Implements `lineSliceAlong` [#190](https://github.com/dartclub/turf_dart/pull/190)
+- Implements `polygonTangents` [#212](https://github.com/dartclub/turf_dart/pull/212)
+- Implements `square` [#213](https://github.com/dartclub/turf_dart/pull/213)
+- Implements `envelope` [#215](https://github.com/dartclub/turf_dart/pull/215)
+- Implements `centerOfMass` [#221](https://github.com/dartclub/turf_dart/pull/221)
+- Implements `toMercator` and `toWgs84` [#230](https://github.com/dartclub/turf_dart/pull/230)
+- Implements `flip` [#231](https://github.com/dartclub/turf_dart/pull/231)
+- Implements `randomLineString` [#242](https://github.com/dartclub/turf_dart/pull/242)
+- Implements `combine` to convert feature collections to multi-geometries [#245](https://github.com/dartclub/turf_dart/pull/245)
+- Implements `flatten` to flatten Multi* geometries to their single counterparts [#246](https://github.com/dartclub/turf_dart/pull/246)
+- Fixes wrong conversion from meters to yards and from meters to inches [#194](https://github.com/dartclub/turf_dart/pull/194)
+- Fixes `booleanIntersects` false positive [#196](https://github.com/dartclub/turf_dart/pull/196)
+- CI/CD and tooling improvements [#218](https://github.com/dartclub/turf_dart/pull/218) [#247](https://github.com/dartclub/turf_dart/pull/247) [#248](https://github.com/dartclub/turf_dart/pull/248) [#252](https://github.com/dartclub/turf_dart/pull/252)
+
 ## 0.0.10
 
 - Implements `lineSlice` [#158](https://github.com/dartclub/turf_dart/pull/158)

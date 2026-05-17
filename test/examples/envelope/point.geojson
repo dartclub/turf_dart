@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [102.0, 0.5]
+      },
+      "properties": {
+        "name": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [102.0, 0.5],
+            [102.1, 0.5],
+            [102.1, 0.6],
+            [102.0, 0.6],
+            [102.0, 0.5]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Point Envelope"
+      }
+    }
+  ]
+}

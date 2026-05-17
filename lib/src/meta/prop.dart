@@ -38,19 +38,19 @@ void propEach(GeoJSONObject geoJSON, PropEachCallback callback) {
 /// Callback for propReduce
 ///
 /// The first time the callback function is called, the values provided as arguments depend
-/// on whether the reduce method has an [initialValue] argument.
+/// on whether the reduce method has an `initialValue` argument.
 ///
-/// If an [initialValue] is provided to the reduce method:
+/// If an `initialValue` is provided to the reduce method:
 ///  - The [previousValue] argument is initialValue.
-///  - The [currentValue] argument is the value of the first element present in the [List].
+///  - The `currentValue` argument is the value of the first element present in the [List].
 ///
-/// If an [initialValue] is not provided:
+/// If an `initialValue` is not provided:
 ///  - The [previousValue] argument is the value of the first element present in the [List].
-///  - The [currentValue] argument is the value of the second element present in the [List].
+///  - The `currentValue` argument is the value of the second element present in the [List].
 ///
 /// propReduceCallback
 /// [previousValue] The accumulated value previously returned in the last invocation
-/// of the callback, or [initialValue], if supplied.
+/// of the callback, or `initialValue`, if supplied.
 /// [currentProperties] The current Properties being processed.
 /// [featureIndex] The current index of the Feature being processed.
 typedef PropReduceCallback<T> = T? Function(

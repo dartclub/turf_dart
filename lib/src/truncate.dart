@@ -6,7 +6,9 @@ import '../meta.dart';
 /// [coordinates] sets the maximum number of coordinates (primarly used to remove z coordinates)
 /// [mutate] allows [GeoJSONObject] input to be mutated (significant performance increase if true)
 /// Returns [GeoJSONObject] layer with truncated geometry
-/// example:
+///
+/// Example:
+/// ```dart
 /// var point = Point(coordinates: Position.of([
 ///     70.46923055566859,
 ///     58.11088890802906,
@@ -16,6 +18,7 @@ import '../meta.dart';
 /// //=truncated.geometry.coordinates => [70.469, 58.111]
 /// //addToMap
 /// var addToMap = [truncated];
+/// ```
 GeoJSONObject truncate(
   GeoJSONObject geojson, {
   int precision = 6,
