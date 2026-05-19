@@ -4,7 +4,7 @@ import '../../meta.dart';
 import '../line_intersect.dart';
 import '../polygon_to_line.dart';
 
-/// Returns [true] if the intersection of the two geometries is an empty set.
+/// Returns `true` if the intersection of the two geometries is an empty set.
 /// example:
 /// ```dart
 /// var point = Point(coordinates: Position.of([2, 2]));

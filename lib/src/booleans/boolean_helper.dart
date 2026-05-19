@@ -127,7 +127,7 @@ bool _isLineInGeoJsonPolygon(LineString line, GeoJSONObject polygon) {
   final boundingBoxOfPolygon = bbox(polygon);
   final boundingBoxOfLine = bbox(line);
 
-  if (!_doBBoxesOverlap(boundingBoxOfPolygon, boundingBoxOfLine)) {
+  if (!doBBoxesOverlap(boundingBoxOfPolygon, boundingBoxOfLine)) {
     return false;
   }
 
@@ -179,11 +179,19 @@ bool _isLineCrossingThePolygon(LineString line, GeoJSONObject polygon) {
   );
 }
 
-bool _doBBoxesOverlap(BBox bbox1, BBox bbox2) {
-  if (bbox1[0]! > bbox2[0]!) return false;
-  if (bbox1[2]! < bbox2[2]!) return false;
-  if (bbox1[1]! > bbox2[1]!) return false;
-  if (bbox1[3]! < bbox2[3]!) return false;
+/// True when [bbox1] contains [bbox2] in longitude and latitude (RFC 7946 order).
+bool doBBoxesOverlap(BBox bbox1, BBox bbox2) {
+  if (bbox1.lng1 > bbox2.lng1) return false;
+  if (bbox1.lng2 < bbox2.lng2) return false;
+  if (bbox1.lat1 > bbox2.lat1) return false;
+  if (bbox1.lat2 < bbox2.lat2) return false;
+  final z1a = bbox1.alt1;
+  final z1b = bbox1.alt2;
+  final z2a = bbox2.alt1;
+  final z2b = bbox2.alt2;
+  if (z1a != null && z1b != null && z2a != null && z2b != null) {
+    if (z1a > z2a || z1b < z2b) return false;
+  }
   return true;
 }
 
@@ -206,7 +214,7 @@ bool _isPolygonInGeoJsonPolygon(
 ) {
   final boundingBoxOfPolygon1 = bbox(polygon1);
   final boundingBoxOfPolygon2 = bbox(polygon2);
-  if (!_doBBoxesOverlap(boundingBoxOfPolygon2, boundingBoxOfPolygon1)) {
+  if (!doBBoxesOverlap(boundingBoxOfPolygon2, boundingBoxOfPolygon1)) {
     return false;
   }
 

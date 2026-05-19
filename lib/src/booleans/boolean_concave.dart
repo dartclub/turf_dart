@@ -1,6 +1,6 @@
 import 'package:turf/helpers.dart';
 
-/// Takes a [Polygon] and returns [true] or [false] as to whether it is concave
+/// Takes a [Polygon] and returns `true` or `false` as to whether it is concave
 /// or not.
 /// example:
 /// ```dart

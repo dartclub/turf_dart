@@ -176,11 +176,11 @@ int _segmentEachForEachUnit(
 ///
 /// If an [initialValue] is provided to the reduce method:
 ///  - The [previousValue] argument is initialValue.
-///  - The [currentValue] argument is the value of the first element present in the [List].
+///  - The `currentValue` argument is the value of the first element present in the [List].
 ///
 /// If an [initialValue] is not provided:
 ///  - The [previousValue] argument is the value of the first element present in the [List].
-///  - The [currentValue] argument is the value of the second element present in the [List].
+///  - The `currentValue` argument is the value of the second element present in the [List].
 ///
 /// SegmentReduceCallback
 /// [previousValue] The accumulated value previously returned in the last invocation

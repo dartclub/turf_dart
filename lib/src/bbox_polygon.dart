@@ -1,8 +1,8 @@
 import 'package:turf/helpers.dart';
 
-/// Takes a [Bbox] and returns an equivalent [Feature<Polygon>].
+/// Takes a [BBox] and returns an equivalent [Feature<Polygon>].
 /// ```dart
-/// var bbox = Bbox(0, 0, 10, 10);
+/// var bbox = BBox.named(lng1: 0, lat1: 0, lng2: 10, lat2: 10);
 /// var poly = bboxPolygon(bbox);
 /// //addToMap
 /// var addToMap = [poly]

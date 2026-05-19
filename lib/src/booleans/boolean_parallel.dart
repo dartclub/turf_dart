@@ -4,7 +4,7 @@ import '../../helpers.dart';
 import '../../line_segment.dart';
 import '../clean_coords.dart';
 
-/// Returns [true] if each segment of [line1] is parallel to the correspondent
+/// Returns `true` if each segment of [line1] is parallel to the correspondent
 /// segment of [line2]
 /// example:
 /// ```dart

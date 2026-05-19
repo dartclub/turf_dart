@@ -10,9 +10,9 @@ import '../invariant.dart';
 /// Takes a [Point], and a [Polygon] or [MultiPolygon]and determines if the
 /// [Point] resides within the [Polygon]. The [Polygon] can be convex or concave.
 /// The function accounts for holes. By taking a [Feature<Polygon>] or a
-/// [Feature]<[MultiPolygon]>. [ignoreBoundary=false] should be set to [true] if
-/// [Polygon]'s boundary should be ignored when determining if the [Point] is
-/// inside the [Polygon], otherwise, false.
+/// [Feature]<[MultiPolygon]>. The [ignoreBoundary] flag (default `false`) should be
+/// set to `true` if the [Polygon]'s boundary should be ignored when determining if
+/// the [Point] is inside the [Polygon], otherwise `false`.
 /// example:
 /// ```dart
 /// var pt = Point(coordinates: Position([-77, 44]));

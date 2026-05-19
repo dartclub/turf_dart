@@ -1,0 +1,312 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Polygon",
+        "bbox": null,
+        "coordinates": [
+          [
+            [
+              -10.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0
+            ],
+            [
+              0.0,
+              20.0
+            ],
+            [
+              -10.0,
+              0.0
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from polygon_feature.geojson",
+        "stroke": "#0000FF",
+        "stroke-width": 2,
+        "fill": "#0000FF",
+        "fill-opacity": 0.2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          -2.5,
+          5.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "triangle",
+        "name": "Result: polygon_feature.geojson",
+        "description": "Point on a Polygon: Returns a point inside the polygon (prefers centroid)"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Polygon",
+        "bbox": null,
+        "coordinates": [
+          [
+            [
+              -10.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0
+            ],
+            [
+              0.0,
+              20.0
+            ],
+            [
+              -10.0,
+              0.0
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from polygon.geojson",
+        "stroke": "#0000FF",
+        "stroke-width": 2,
+        "fill": "#0000FF",
+        "fill-opacity": 0.2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          -2.5,
+          5.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "triangle",
+        "name": "Result: polygon.geojson",
+        "description": "Point on a Polygon: Returns a point inside the polygon (prefers centroid)"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "LineString",
+        "bbox": null,
+        "coordinates": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            10.0,
+            10.0
+          ],
+          [
+            20.0,
+            20.0
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from linestring.geojson",
+        "stroke": "#0000FF",
+        "stroke-width": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          5.0,
+          5.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "circle",
+        "name": "Result: linestring.geojson",
+        "description": "Point on a LineString: Returns the midpoint of the first segment"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "MultiPolygon",
+        "bbox": null,
+        "coordinates": [
+          [
+            [
+              [
+                -10.0,
+                0.0
+              ],
+              [
+                10.0,
+                0.0
+              ],
+              [
+                0.0,
+                20.0
+              ],
+              [
+                -10.0,
+                0.0
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                30.0,
+                10.0
+              ],
+              [
+                40.0,
+                10.0
+              ],
+              [
+                35.0,
+                20.0
+              ],
+              [
+                30.0,
+                10.0
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from multipolygon.geojson",
+        "stroke": "#0000FF",
+        "stroke-width": 2,
+        "fill": "#0000FF",
+        "fill-opacity": 0.2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          -2.5,
+          5.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "square",
+        "name": "Result: multipolygon.geojson",
+        "description": "Point on a MultiPolygon: Returns a point from the first polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          5.0,
+          10.0
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from point.geojson",
+        "marker-color": "#0000FF"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          5.0,
+          10.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "star",
+        "name": "Result: point.geojson",
+        "description": "Point on a Point: Returns the original point unchanged"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          5.0,
+          10.0
+        ]
+      },
+      "properties": {
+        "name": "Input Geometry",
+        "description": "Original geometry from featurecollection.geojson",
+        "marker-color": "#0000FF"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": null,
+      "geometry": {
+        "type": "Point",
+        "bbox": null,
+        "coordinates": [
+          -2.0,
+          -2.0
+        ]
+      },
+      "properties": {
+        "marker-color": "#FF0000",
+        "marker-size": "medium",
+        "marker-symbol": "circle-stroked",
+        "name": "Result: featurecollection.geojson",
+        "description": "Point on a FeatureCollection: Returns a point on the largest feature"
+      }
+    }
+  ],
+  "bbox": null
+}

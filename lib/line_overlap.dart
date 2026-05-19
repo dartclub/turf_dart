@@ -1,3 +1,4 @@
+/// Finds shared (overlapping) segments between two linear or polygon GeoJSON geometries.
 library turf_line_overlap;
 
 export 'package:geotypes/geotypes.dart';

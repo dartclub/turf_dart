@@ -1,3 +1,7 @@
+/// A turf.js-like geospatial analysis library for Dart.
+///
+/// This is the umbrella library that re-exports every turf module so consumers
+/// can `import 'package:turf/turf.dart';` and access the full API surface.
 library turf;
 
 export 'package:geotypes/geotypes.dart';
@@ -9,11 +13,14 @@ export 'bearing.dart';
 export 'boolean.dart';
 export 'center.dart';
 export 'centroid.dart';
+export 'combine.dart';
 export 'clean_coords.dart';
 export 'clusters.dart';
 export 'destination.dart';
 export 'distance.dart';
+export 'envelope.dart';
 export 'explode.dart';
+export 'flatten.dart';
 export 'extensions.dart';
 export 'helpers.dart';
 export 'invariant.dart';
@@ -24,13 +31,17 @@ export 'line_segment.dart';
 export 'line_slice.dart';
 export 'line_slice_along.dart';
 export 'line_to_polygon.dart';
+export 'lineclip.dart';
 export 'meta.dart';
 export 'midpoint.dart';
 export 'nearest_point_on_line.dart';
 export 'nearest_point.dart';
 export 'point_to_line_distance.dart';
+export 'point_on_feature.dart';
 export 'polygon_smooth.dart';
+export 'polygon_tangents.dart';
 export 'polygon_to_line.dart';
+export 'polygonize.dart';
 export 'polyline.dart';
 export 'square.dart';
 export 'transform.dart';
