@@ -1,14 +1,65 @@
 name: Dart Unit Tests for PRs
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: ["**"]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart --version
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze Project
+        run: dart analyze
+        if: always()
+
+      - name: Run tests with coverage enabled
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .artefacts/test-logs
+          dart test --coverage=.artefacts/coverage 2>&1 \
+            | tee .artefacts/test-logs/dart-test.log
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          {
+            echo "## Unit test result"
+            if [ "$TEST_EXIT_CODE" -eq 0 ]; then
+              echo ""
+              echo "Tests passed."
+            else
+              echo ""
+              echo "Tests failed."
+            fi
+            echo ""
+            echo "### Last 50 lines of output"
+            echo '```text'
+            tail -n 50 .artefacts/test-logs/dart-test.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$TEST_EXIT_CODE"
+        if: always()
+
+      - name: Archive raw coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: raw-coverage
+          path: .artefacts/coverage
+
+  code-coverage:
+    needs: unit-tests
+    if: ${{ needs.unit-tests.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
       - uses: dart-lang/setup-dart@v1
         with:
@@ -20,20 +71,40 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-
-      - name: Analyze project source
-        run: dart analyze
-        if: always()
-
-      - name: Run tests with coverage enabled
-        run: dart test --coverage=./coverage
-        if: always()
-
-      - name: Archive raw coverage artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v8
         with:
           name: raw-coverage
-          path: ./coverage
+          path: .artefacts/coverage
+
+      - name: Convert to LCOV report
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage \
+            --packages=.dart_tool/package_config.json \
+            --report-on=lib \
+            --lcov \
+            -o .artefacts/coverage/lcov.info \
+            -i .artefacts/coverage
+
+      - name: Generate HTML coverage report
+        run: |
+          sudo apt install lcov
+          genhtml -o .artefacts/coverage/report .artefacts/coverage/lcov.info
+
+      - name: Comment on PR with coverage
+        continue-on-error: true
+        uses: romeovs/lcov-reporter-action@v0.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: .artefacts/coverage/lcov.info
+          delete-old-comments: true
+
+      - name: Archive coverage report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: |
+            .artefacts/coverage/report
+            .artefacts/coverage/lcov.info

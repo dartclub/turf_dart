@@ -1,3 +1,4 @@
+/// Boolean spatial predicates for GeoJSON geometries (contains, within, equal, etc.).
 library turf_boolean;
 
 export 'package:geotypes/geotypes.dart';
