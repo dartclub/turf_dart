@@ -3,8 +3,8 @@ import 'package:sweepline_intersections/sweepline_intersections.dart';
 import '../helpers.dart';
 
 /// Takes any [LineString] or [Polygon] and returns the intersecting [Point](s).
-/// [removeDuplicates=true] removes duplicate intersections,
-/// [ignoreSelfIntersections=false] ignores self-intersections on input features
+/// [removeDuplicates] (default `true`) removes duplicate intersections,
+/// [ignoreSelfIntersections] (default `false`) ignores self-intersections on input features
 /// Returns a [FeatureCollection<Point>] containing point(s) that intersect both
 /// example:
 /// ```dart

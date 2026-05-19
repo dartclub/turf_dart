@@ -131,4 +131,3 @@ Feature<GeometryType> greatCircle(
     properties: properties,
   );
 }
-

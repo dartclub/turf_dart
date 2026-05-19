@@ -1,7 +1,7 @@
 import '../../meta.dart';
 import 'boolean_disjoint.dart';
 
-/// Returns [true] when two geometries intersect.
+/// Returns `true` when two geometries intersect.
 /// Takes [feature1] & [feature2] parameters of type [GeoJSONObject] which can be
 /// a [Feature] or [GeometryType].
 /// example

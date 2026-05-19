@@ -2,49 +2,60 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:test/test.dart';
 import 'package:turf/turf.dart';
-import '../context/helper.dart';
 
 void main() {
   group('Polygon Tangents', () {
     // Unit tests for specific scenarios
     test('Calculates Tangents for Valid Geometries', () {
-      final pt = point([61, 5]);
-      final poly = polygon([
-        [
-          [11, 0],
-          [22, 4],
-          [31, 0],
-          [31, 11],
-          [21, 15],
-          [11, 11],
-          [11, 0],
-        ],
-      ]);
+      final pt = Point(
+        coordinates: Position.of([61, 5]),
+      );
+      final poly = Feature<Polygon>(
+        geometry: Polygon(
+          coordinates: [
+            [
+              Position.of([11, 0]),
+              Position.of([22, 4]),
+              Position.of([31, 0]),
+              Position.of([31, 11]),
+              Position.of([21, 15]),
+              Position.of([11, 11]),
+              Position.of([11, 0]),
+            ],
+          ],
+        ),
+      );
 
-      final result = polygonTangents(pt.geometry!, poly);
+      final result = polygonTangents(pt, poly);
 
       expect(result, isNotNull);
       expect(result.features.length, equals(2));
     });
 
     test('Ensures Input Immutability', () {
-      final pt = point([61, 5]);
-      final poly = polygon([
-        [
-          [11, 0],
-          [22, 4],
-          [31, 0],
-          [31, 11],
-          [21, 15],
-          [11, 11],
-          [11, 0],
-        ],
-      ]);
+      final pt = Point(
+        coordinates: Position.of([61, 5]),
+      );
+      final poly = Feature<Polygon>(
+        geometry: Polygon(
+          coordinates: [
+            [
+              Position.of([11, 0]),
+              Position.of([22, 4]),
+              Position.of([31, 0]),
+              Position.of([31, 11]),
+              Position.of([21, 15]),
+              Position.of([11, 11]),
+              Position.of([11, 0]),
+            ],
+          ],
+        ),
+      );
 
       final beforePoly = jsonEncode(poly.toJson());
       final beforePt = jsonEncode(pt.toJson());
 
-      polygonTangents(pt.geometry!, poly);
+      polygonTangents(pt, poly);
 
       expect(jsonEncode(poly.toJson()), equals(beforePoly),
           reason: 'poly should not mutate');
@@ -59,33 +70,37 @@ void main() {
         properties: {},
       );
 
-      final poly = polygon([
-        [
-          [8.788482103824089, 51.56063487730164],
-          [8.788583, 51.561554],
-          [8.78839, 51.562241],
-          [8.78705, 51.563616],
-          [8.785483, 51.564445],
-          [8.785481, 51.564446],
-          [8.785479, 51.564447],
-          [8.785479, 51.564449],
-          [8.785478, 51.56445],
-          [8.785478, 51.564452],
-          [8.785479, 51.564454],
-          [8.78548, 51.564455],
-          [8.785482, 51.564457],
-          [8.786358, 51.565053],
-          [8.787022, 51.565767],
-          [8.787024, 51.565768],
-          [8.787026, 51.565769],
-          [8.787028, 51.56577],
-          [8.787031, 51.565771],
-          [8.787033, 51.565771],
-          [8.789951649580397, 51.56585502173034],
-          [8.789734, 51.563604],
-          [8.788482103824089, 51.56063487730164],
-        ],
-      ]);
+      final poly = Feature<Polygon>(
+        geometry: Polygon(
+          coordinates: [
+            [
+              Position.of([8.788482103824089, 51.56063487730164]),
+              Position.of([8.788583, 51.561554]),
+              Position.of([8.78839, 51.562241]),
+              Position.of([8.78705, 51.563616]),
+              Position.of([8.785483, 51.564445]),
+              Position.of([8.785481, 51.564446]),
+              Position.of([8.785479, 51.564447]),
+              Position.of([8.785479, 51.564449]),
+              Position.of([8.785478, 51.56445]),
+              Position.of([8.785478, 51.564452]),
+              Position.of([8.785479, 51.564454]),
+              Position.of([8.78548, 51.564455]),
+              Position.of([8.785482, 51.564457]),
+              Position.of([8.786358, 51.565053]),
+              Position.of([8.787022, 51.565767]),
+              Position.of([8.787024, 51.565768]),
+              Position.of([8.787026, 51.565769]),
+              Position.of([8.787028, 51.56577]),
+              Position.of([8.787031, 51.565771]),
+              Position.of([8.787033, 51.565771]),
+              Position.of([8.789951649580397, 51.56585502173034]),
+              Position.of([8.789734, 51.563604]),
+              Position.of([8.788482103824089, 51.56063487730164]),
+            ],
+          ],
+        ),
+      );
 
       try {
         final result = polygonTangents(pt.geometry!, poly);
