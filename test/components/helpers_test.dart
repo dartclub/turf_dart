@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';
 
@@ -17,11 +18,19 @@ void main() {
 
       // Verify values are close to the originals
       expect(reconvertedPoint[0]?.toDouble() ?? 0.0,
-          closeTo(wgs84Point[0]?.toDouble() ?? 0.0, 0.001)); // longitude
+          closeTo(wgs84Point[0]?.toDouble() ?? 0.0, 0.001));
       expect(reconvertedPoint[1]?.toDouble() ?? 0.0,
-          closeTo(wgs84Point[1]?.toDouble() ?? 0.0, 0.001)); // latitude
-      expect(reconvertedPoint[2],
-          equals(wgs84Point[2])); // altitude should be preserved
+          closeTo(wgs84Point[1]?.toDouble() ?? 0.0, 0.001));
+      expect(reconvertedPoint[2], equals(wgs84Point[2]));
+    });
+
+    test('degreesToRadians', () {
+      expect(degreesToRadians(60), equals(pi / 3),
+          reason: 'degrees conversion 60');
+      expect(degreesToRadians(270), equals(1.5 * pi),
+          reason: 'degrees conversion 270');
+      expect(degreesToRadians(-180), equals(-pi),
+          reason: 'degrees conversion -180');
     });
 
     test('toMercator should preserve altitude', () {
