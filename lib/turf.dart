@@ -24,6 +24,7 @@ export 'flatten.dart';
 export 'flip.dart';
 export 'extensions.dart';
 export 'helpers.dart';
+export 'intersect.dart';
 export 'invariant.dart';
 export 'length.dart';
 export 'line_intersect.dart';
