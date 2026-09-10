@@ -1,3 +1,7 @@
+// This suite reads fixtures with `dart:io`. A browser cannot read files.
+@TestOn('vm')
+library test_components_polygon_smooth_test;
+
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';

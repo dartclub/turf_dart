@@ -1,3 +1,7 @@
+// This suite reads fixtures with `dart:io`. A browser cannot read files.
+@TestOn('vm')
+library test_booleans_valid_test;
+
 import 'dart:convert';
 import 'dart:io';
 

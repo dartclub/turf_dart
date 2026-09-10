@@ -1,3 +1,7 @@
+## Unreleased
+
+- Fixes `Polyline.decode` on the web. It decoded each negative coordinate delta as a large positive number.
+
 ## 0.0.12
 
 - Implements support for GeoJSON "other members" / foreign members, including JSON serialization, deserialization, cloning, and copy helpers [#222](https://github.com/dartclub/turf_dart/pull/222)

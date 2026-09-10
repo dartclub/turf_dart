@@ -1,3 +1,7 @@
+// This suite reads fixtures with `dart:io`. A browser cannot read files.
+@TestOn('vm')
+library test_components_rhumb_distance_test;
+
 import 'dart:convert';
 import 'dart:io';
 

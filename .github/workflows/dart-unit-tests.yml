@@ -30,3 +30,7 @@ jobs:
       - name: Run tests
         run: dart test
         if: always()
+
+      - name: Run tests on Chrome
+        run: dart test -p chrome
+        if: always()
