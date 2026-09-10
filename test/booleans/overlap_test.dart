@@ -1,3 +1,7 @@
+// This suite reads fixtures with `dart:io`. A browser cannot read files.
+@TestOn('vm')
+library test_booleans_overlap_test;
+
 import 'package:geotypes/geotypes.dart';
 import 'package:test/test.dart';
 import 'package:turf/src/booleans/boolean_helper.dart';

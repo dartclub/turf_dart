@@ -1,3 +1,7 @@
+// This suite reads fixtures with `dart:io`. A browser cannot read files.
+@TestOn('vm')
+library test_components_line_overlap_test;
+
 import 'package:turf/line_overlap.dart';
 import 'package:test/test.dart';
 import 'package:turf/helpers.dart';

@@ -48,6 +48,22 @@ void main() {
       test('decodes with precision 0', () {
         expect(Polyline.decode('mAnFC@CH', precision: 0), equals(exampleZero));
       });
+
+      // These tests fail only in compiled JavaScript. Run them with `-p chrome`.
+      test('decodes negative deltas on every platform', () {
+        final southWest = [
+          Position.named(lat: -33.8688, lng: 151.2093),
+          Position.named(lat: -34.1234, lng: 150.9876),
+          Position.named(lat: -35.5555, lng: 149.1111),
+        ];
+        expect(Polyline.decode(Polyline.encode(southWest)), equals(southWest));
+      });
+
+      test('decodes a single negative delta without sign loss', () {
+        final decoded = Polyline.decode(
+            Polyline.encode([Position.named(lat: 0, lng: -0.00001)]));
+        expect(decoded.single.lng, lessThan(0));
+      });
     });
 
     group('#identity', () {

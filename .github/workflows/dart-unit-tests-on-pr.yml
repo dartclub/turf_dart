@@ -8,6 +8,10 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [vm, chrome]
     steps:
       - uses: actions/checkout@v6
       - uses: dart-lang/setup-dart@v1
@@ -26,11 +30,11 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p .artefacts/test-logs
-          dart test --coverage=.artefacts/coverage 2>&1 \
+          dart test -p ${{ matrix.platform }} --coverage=.artefacts/coverage 2>&1 \
             | tee .artefacts/test-logs/dart-test.log
           TEST_EXIT_CODE=${PIPESTATUS[0]}
           {
-            echo "## Unit test result"
+            echo "## Unit test result (${{ matrix.platform }})"
             if [ "$TEST_EXIT_CODE" -eq 0 ]; then
               echo ""
               echo "Tests passed."
@@ -51,7 +55,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: raw-coverage
+          name: raw-coverage-${{ matrix.platform }}
           path: .artefacts/coverage
 
   code-coverage:
@@ -74,7 +78,7 @@ jobs:
       - name: Download coverage artifact
         uses: actions/download-artifact@v8
         with:
-          name: raw-coverage
+          name: raw-coverage-vm
           path: .artefacts/coverage
 
       - name: Convert to LCOV report

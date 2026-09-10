@@ -29,6 +29,14 @@ class Polyline {
     return (value.abs() + 0.5).floor() * (value >= 0 ? 1 : -1);
   }
 
+  /// Reverses the zigzag encoding. The sign is in the least significant bit.
+  ///
+  /// Do not use `~(value >> 1)` here. In JavaScript, these operators return an
+  /// unsigned 32-bit result. Each negative delta then becomes a large positive
+  /// number. This arithmetic form is correct on all platforms.
+  static int _unzigzag(int value) =>
+      (value & 1) != 0 ? -((value + 1) ~/ 2) : value ~/ 2;
+
   /// Decodes a Polyline to a [List<Position>].
   /// This is adapted from the implementation in Project-OSRM.
   /// See https://github.com/Project-OSRM/osrm-frontend/blob/master/WebContent/routing/OSRM.RoutingGeometry.js
@@ -57,7 +65,7 @@ class Polyline {
         result |= (byte & 0x1f) << shift;
         shift += 5;
       } while (byte >= 0x20);
-      latitudeChange = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      latitudeChange = _unzigzag(result);
       shift = result = 0;
 
       do {
@@ -65,7 +73,7 @@ class Polyline {
         result |= (byte & 0x1f) << shift;
         shift += 5;
       } while (byte >= 0x20);
-      longitudeChange = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      longitudeChange = _unzigzag(result);
 
       lat += latitudeChange;
       lng += longitudeChange;
