@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.13
 
 - Fixes `Polyline.decode` on the web. It decoded each negative coordinate delta as a large positive number.
 
