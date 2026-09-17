@@ -19,25 +19,28 @@ import '../polygon_to_line.dart';
 /// booleanDisjoint(line, point);
 /// //=true
 /// ```
-bool booleanDisjoint(GeoJSONObject feature1, GeoJSONObject feature2,
-    {bool ignoreSelfIntersections = false}) {
-  var bool = true;
+bool booleanDisjoint(
+  GeoJSONObject feature1,
+  GeoJSONObject feature2, {
+  bool ignoreSelfIntersections = false,
+}) {
+  var isDisjoint = true;
   flattenEach(
     feature1,
     (flatten1, featureIndex, multiFeatureIndex) {
       flattenEach(
         feature2,
         (flatten2, featureIndex, multiFeatureIndex) {
-          if (!bool) {
-            return bool;
+          if (!isDisjoint) {
+            return isDisjoint;
           }
-          bool = _disjoint(
+          isDisjoint = _disjoint(
               flatten1.geometry!, flatten2.geometry!, ignoreSelfIntersections);
         },
       );
     },
   );
-  return bool;
+  return isDisjoint;
 }
 
 /// Disjoint operation for simple Geometries ([Point]/[LineString]/[Polygon])
