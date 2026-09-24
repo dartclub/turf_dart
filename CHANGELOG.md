@@ -1,3 +1,7 @@
+## 0.0.14
+
+- Adds missing library exports
+
 ## 0.0.13
 
 - Fixes `Polyline.decode` on the web. It decoded each negative coordinate delta as a large positive number.
